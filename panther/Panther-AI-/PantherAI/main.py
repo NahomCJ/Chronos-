@@ -14,6 +14,7 @@ from routers.chris_chat.router import router as chris_router
 # from routers.webhooks.plaid import router as plaid_webhook_router      # TODO: fix supabase dep
 from routers.insights.router import router as insights_router
 from routers.voice.router import router as voice_router
+from routers.marketplace.router import router as marketplace_router
 
 app = FastAPI(
     title="CHRONOS API",
@@ -42,5 +43,6 @@ app.include_router(voice_router, prefix="/api")
 # app.include_router(transactions_router)
 # app.include_router(plaid_webhook_router)
 app.include_router(insights_router, prefix="/api")
+app.include_router(marketplace_router, prefix="/api")
 
 log.phase("server_started", module="main")
