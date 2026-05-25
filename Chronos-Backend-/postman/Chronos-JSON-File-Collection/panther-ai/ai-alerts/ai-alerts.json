@@ -1,0 +1,36 @@
+{
+  "info": {
+    "name": "Panther AI — AI Alerts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Alerts",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts"
+      }
+    },
+    {
+      "name": "Generate Alerts",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts/generate"
+      }
+    },
+    {
+      "name": "Dismiss Alert",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts/:id"
+      }
+    }
+  ]
+}

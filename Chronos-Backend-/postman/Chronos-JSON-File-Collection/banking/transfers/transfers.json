@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "Banking — Transfers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Transfer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fromWalletId\": \"{{walletId}}\",\n  \"toWalletId\": \"TARGET_WALLET_ID\",\n  \"amount\": 50,\n  \"currency\": \"USD\",\n  \"note\": \"Test transfer\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer"
+      }
+    },
+    {
+      "name": "List Transfers",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer"
+      }
+    },
+    {
+      "name": "Get Transfer",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer/:id"
+      }
+    },
+    {
+      "name": "Cancel Transfer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer/:id/cancel"
+      }
+    },
+    {
+      "name": "Core Transfer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fromWalletId\": \"{{walletId}}\",\n  \"toWalletId\": \"TARGET_WALLET_ID\",\n  \"amount\": 25,\n  \"currency\": \"USD\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/transfer"
+      }
+    }
+  ]
+}

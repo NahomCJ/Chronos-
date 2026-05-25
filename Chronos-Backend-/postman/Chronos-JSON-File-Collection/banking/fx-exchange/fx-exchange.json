@@ -1,0 +1,64 @@
+{
+  "info": {
+    "name": "Banking — FX & Exchange",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "FX Quote",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"from\": \"USD\",\n  \"to\": \"EUR\",\n  \"amount\": 100\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/fx/quote"
+      }
+    },
+    {
+      "name": "FX Execute",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"QUOTE_ID\",\n  \"walletId\": \"{{walletId}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/fx/execute"
+      }
+    },
+    {
+      "name": "Latest Rate",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/rates?base=USD&quote=EUR"
+      }
+    },
+    {
+      "name": "Convert Currency",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/convert?from=USD&to=EUR&amount=100"
+      }
+    },
+    {
+      "name": "Currency History",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/history?base=USD&quote=EUR"
+      }
+    }
+  ]
+}

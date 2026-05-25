@@ -1,0 +1,19 @@
+{
+  "info": {
+    "name": "LifeX — Social",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "My Followers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/followers" } },
+    { "name": "Who I Follow", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/following" } },
+    { "name": "Follow User", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"userId\": \"TARGET_USER_ID\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/follow" } },
+    { "name": "Unfollow User", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/follow/:userId" } },
+    { "name": "Community Feed", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/community" } },
+    { "name": "Join Community", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"communityId\": \"COMMUNITY_ID\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/community/join" } },
+    { "name": "My Posts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts" } },
+    { "name": "Create Post", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"content\": \"Just hit my savings goal!\",\n  \"visibility\": \"PUBLIC\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts" } },
+    { "name": "Like Post", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId/like" } },
+    { "name": "Unlike Post", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId/like" } },
+    { "name": "Delete Post", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId" } }
+  ]
+}

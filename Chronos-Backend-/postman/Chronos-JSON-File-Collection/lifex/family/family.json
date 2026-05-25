@@ -1,0 +1,17 @@
+{
+  "info": {
+    "name": "LifeX — Family",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "My Family Groups", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/" } },
+    { "name": "Create Family Group", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"The Johnsons\",\n  \"description\": \"Family finance group\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/" } },
+    { "name": "Get Group", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId" } },
+    { "name": "Add Member to Group", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"userId\": \"MEMBER_USER_ID\",\n  \"role\": \"MEMBER\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/members" } },
+    { "name": "Remove Member from Group", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/members/:userId" } },
+    { "name": "Family Goals", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/goals" } },
+    { "name": "Create Family Goal", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Family vacation fund\",\n  \"target\": 3000\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/goals" } },
+    { "name": "Family Budgets", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/budgets" } },
+    { "name": "Create Family Budget", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"category\": \"Groceries\",\n  \"amount\": 600\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/budgets" } }
+  ]
+}

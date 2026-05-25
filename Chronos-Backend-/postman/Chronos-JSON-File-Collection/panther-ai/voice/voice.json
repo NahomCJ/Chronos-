@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "Panther AI — Voice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Voice Transcribe (multipart/form-data)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "audio",
+              "type": "file",
+              "src": "/path/to/audio.mp3",
+              "description": "Audio file mp3/wav/m4a"
+            }
+          ]
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/voice/transcribe"
+      }
+    },
+    {
+      "name": "Voice Synthesize",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Hello, your balance is $500\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/voice/synthesize"
+      }
+    }
+  ]
+}

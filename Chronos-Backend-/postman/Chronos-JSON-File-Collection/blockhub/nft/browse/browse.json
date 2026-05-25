@@ -1,0 +1,14 @@
+{
+  "info": {
+    "name": "BlockHub — NFT / Browse",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "List All NFTs", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft" } },
+    { "name": "Get NFT by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}" } },
+    { "name": "Get NFT History", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}/history" } },
+    { "name": "List Collections", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/collections" } },
+    { "name": "Get Collection by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/collections/{{collectionId}}" } },
+    { "name": "Toggle NFT Favorite", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}/favorite" } }
+  ]
+}

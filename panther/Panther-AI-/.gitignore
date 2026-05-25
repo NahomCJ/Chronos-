@@ -1,0 +1,17 @@
+# Nested repos / local artifacts
+Panther-AI-/
+C:UsersNahomAppDataLocalTempchronos_tree.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Env / secrets
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
