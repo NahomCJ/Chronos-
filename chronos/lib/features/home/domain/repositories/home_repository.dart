@@ -1,5 +1,0 @@
-import '../entities/home_summary.dart';
-
-abstract class HomeRepository {
-  Future<HomeSummary> getSummary();
-}
