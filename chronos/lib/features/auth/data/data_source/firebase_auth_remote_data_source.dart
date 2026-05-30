@@ -14,20 +14,16 @@ class FirebaseAuthRemoteDataSourceImpl {
     GoogleSignInAccount? googleUser;
 
     try {
-      // Wrap signIn() to catch user cancellation
-      googleUser = await googleSignIn.authenticate();
+      googleUser = await googleSignIn.signIn();
     } catch (_) {
-      // Any other errors are ignored
       googleUser = null;
     }
 
     if (googleUser == null) {
-      // User canceled the flow
       return null;
     }
 
-    // Get authentication tokens
-    final googleAuth = googleUser.authentication;
+    final googleAuth = await googleUser.authentication;
 
     // Create Firebase credential
     final credential = GoogleAuthProvider.credential(
