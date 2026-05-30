@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../features/auth/data/services/token_storage_service.dart';
 
@@ -31,94 +30,58 @@ class ApiClient {
   }
 
   Future<Map<String, dynamic>> get(String path) async {
-    try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl$path'),
-        headers: _headers,
-      );
-      return _handleMapResponse(response);
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
-    }
+    final response = await _client.get(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+    );
+    return _handleMapResponse(response);
   }
 
   Future<List<dynamic>> getList(String path) async {
-    try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl$path'),
-        headers: _headers,
-      );
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return jsonDecode(response.body) as List<dynamic>;
-      }
-      throw Exception(_extractError(response) ?? 'Request failed');
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
+    final response = await _client.get(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body) as List<dynamic>;
     }
+    throw Exception(_extractError(response) ?? 'Request failed');
   }
 
   Future<Map<String, dynamic>> post(String path, Map<String, dynamic> body) async {
-    try {
-      final response = await _client.post(
-        Uri.parse('$baseUrl$path'),
-        headers: _headers,
-        body: jsonEncode(body),
-      );
-      return _handleMapResponse(response);
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
-    }
+    final response = await _client.post(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    return _handleMapResponse(response);
   }
 
   Future<Map<String, dynamic>> getWithBase(String base, String path) async {
-    try {
-      final response = await _client.get(
-        Uri.parse('$base$path'),
-        headers: _headers,
-      );
-      return _handleMapResponse(response);
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
-    }
+    final response = await _client.get(
+      Uri.parse('$base$path'),
+      headers: _headers,
+    );
+    return _handleMapResponse(response);
   }
 
   Future<Map<String, dynamic>> postWithBase(
       String base, String path, Map<String, dynamic> body) async {
-    try {
-      final response = await _client.post(
-        Uri.parse('$base$path'),
-        headers: _headers,
-        body: jsonEncode(body),
-      );
-      return _handleMapResponse(response);
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
-    }
+    final response = await _client.post(
+      Uri.parse('$base$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    return _handleMapResponse(response);
   }
 
   Future<Map<String, dynamic>> patch(String path, Map<String, dynamic> body) async {
-    try {
-      final response = await _client.patch(
-        Uri.parse('$baseUrl$path'),
-        headers: _headers,
-        body: jsonEncode(body),
-      );
-      return _handleMapResponse(response);
-    } on SocketException {
-      throw Exception('No internet connection.');
-    } on HttpException {
-      throw Exception('Server unreachable. Please try again later.');
-    }
+    final response = await _client.patch(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    return _handleMapResponse(response);
   }
 
   Map<String, dynamic> _handleMapResponse(http.Response response) {
