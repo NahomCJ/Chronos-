@@ -40,6 +40,16 @@ enum RouteConstants {
   ethFlowSimulateRebalance,
   ethFlowRebalanceConfirmation,
   ethFlowRebalanceSuccess,
+  tickpayWelcome,
+  tickpayVerification,
+  tickpayLinkWallets,
+  tickpayCompletion,
+  tickpayDashboard,
+  tickpayCreditOverview,
+  tickpayActivePlans,
+  tickpayNotifications,
+  tickpayRewards,
+  tickpayShortcuts,
   tickPayAi,
   fullPortfolioAnalysis,
   paymentPlan,
@@ -134,6 +144,26 @@ extension RouteConstantsX on RouteConstants {
         return '/eth-flow/rebalance-confirmation';
       case RouteConstants.ethFlowRebalanceSuccess:
         return '/eth-flow/rebalance-success';
+      case RouteConstants.tickpayWelcome:
+        return '/tickpay-welcome';
+      case RouteConstants.tickpayVerification:
+        return '/tickpay-verification';
+      case RouteConstants.tickpayLinkWallets:
+        return '/tickpay-link-wallets';
+      case RouteConstants.tickpayCompletion:
+        return '/tickpay-completion';
+      case RouteConstants.tickpayDashboard:
+        return '/tickpay-dashboard';
+      case RouteConstants.tickpayCreditOverview:
+        return '/tickpay-credit-overview';
+      case RouteConstants.tickpayActivePlans:
+        return '/tickpay-active-plans';
+      case RouteConstants.tickpayNotifications:
+        return '/tickpay-notifications';
+      case RouteConstants.tickpayRewards:
+        return '/tickpay-rewards';
+      case RouteConstants.tickpayShortcuts:
+        return '/tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return '/tickpay-ai';
       case RouteConstants.fullPortfolioAnalysis:
@@ -236,6 +266,26 @@ extension RouteConstantsX on RouteConstants {
         return 'eth-flow-rebalance-confirmation';
       case RouteConstants.ethFlowRebalanceSuccess:
         return 'eth-flow-rebalance-success';
+      case RouteConstants.tickpayWelcome:
+        return 'tickpay-welcome';
+      case RouteConstants.tickpayVerification:
+        return 'tickpay-verification';
+      case RouteConstants.tickpayLinkWallets:
+        return 'tickpay-link-wallets';
+      case RouteConstants.tickpayCompletion:
+        return 'tickpay-completion';
+      case RouteConstants.tickpayDashboard:
+        return 'tickpay-dashboard';
+      case RouteConstants.tickpayCreditOverview:
+        return 'tickpay-credit-overview';
+      case RouteConstants.tickpayActivePlans:
+        return 'tickpay-active-plans';
+      case RouteConstants.tickpayNotifications:
+        return 'tickpay-notifications';
+      case RouteConstants.tickpayRewards:
+        return 'tickpay-rewards';
+      case RouteConstants.tickpayShortcuts:
+        return 'tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return 'tickpay-ai';
       case RouteConstants.fullPortfolioAnalysis:

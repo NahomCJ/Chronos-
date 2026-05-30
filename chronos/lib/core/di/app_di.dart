@@ -7,6 +7,7 @@ import '../../features/transfer/di/transfer_di.dart';
 import '../../features/exchange/di/exchange_di.dart';
 import '../../features/panther_ai/di/panther_ai_di.dart';
 import '../../features/blockhub/di/blockhub_di.dart';
+import '../../features/tickpay/di/tickpay_di.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -18,4 +19,5 @@ Future<void> initAppDi() async {
   initExchangeDi(sl);
   initPantherAiDi(sl);
   initBlockhubDi(sl);
+  initTickpayDi(sl);
 }
