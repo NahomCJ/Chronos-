@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
+import path from "path";
 // import * as Sentry from "@sentry/node";
 // import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
@@ -47,11 +48,17 @@ app.use(morgan("dev"));
 // ===== Routes =====
 app.use("/api", routes);
 
-
-
 // ===== Health Check =====
 app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
+});
+
+// ===== Serve Flutter Web App =====
+const publicDir = path.join(__dirname, "..", "public");
+app.use(express.static(publicDir));
+// SPA fallback — send index.html for any non-API route
+app.get("*", (_req: Request, res: Response) => {
+  res.sendFile(path.join(publicDir, "index.html"));
 });
 
 // ===== Sentry Error Handler =====
