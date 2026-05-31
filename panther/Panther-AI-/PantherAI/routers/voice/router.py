@@ -33,7 +33,7 @@ import json
 import os
 from typing import Any, Optional
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile
 from pydantic import BaseModel
 
 from services.conversational_ai.chris import chris_chat
@@ -64,29 +64,26 @@ class VoiceResponse(BaseModel):
 async def voice_chat(
     user_id: str = Form(...),
     audio: UploadFile = File(...),
-    voice: bool = Form(False),
+    voice: bool = Query(False, description="Set to true to include TTS audio in response"),
     history_user_id: Optional[str] = Form(None),
     transfer_state: Optional[str] = Form(None),
     payment_intent_json: Optional[str] = Form(None),
     conversation_history_json: Optional[str] = Form(None),
-    transcript_override: Optional[str] = Form(None),
 ):
     """
     Voice interface for Chris.
     Transcribes audio, detects transaction intent or routes to Chris chat,
     and optionally speaks the response back via ElevenLabs TTS.
-    transcript_override skips STT — used by test UIs for button-driven confirm/cancel.
     """
-    if transcript_override:
-        transcript = transcript_override
-    else:
-        audio_bytes = await audio.read()
-        filename = audio.filename or "audio.webm"
-        content_type = audio.content_type or "audio/webm"
-        try:
-            transcript = await stt_transcribe(audio_bytes, filename, content_type)
-        except Exception as e:
-            raise HTTPException(status_code=503, detail=f"Transcription failed: {e}")
+    # Transcribe via ElevenLabs Scribe
+    audio_bytes = await audio.read()
+    filename = audio.filename or "audio.webm"
+    content_type = audio.content_type or "audio/webm"
+
+    try:
+        transcript = await stt_transcribe(audio_bytes, filename, content_type)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Transcription failed: {e}")
 
     # Parse JSON fields
     conversation_history = _parse_json(conversation_history_json)
