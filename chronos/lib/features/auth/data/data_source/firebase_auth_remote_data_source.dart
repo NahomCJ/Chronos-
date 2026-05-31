@@ -11,45 +11,20 @@ class FirebaseAuthRemoteDataSourceImpl {
   });
 
   Future<UserCredential?> signInWithGoogle() async {
-    GoogleSignInAccount? googleUser;
-
     try {
-      googleUser = await googleSignIn.signIn();
+      final provider = GoogleAuthProvider()..addScope('email');
+      return await firebaseAuth.signInWithPopup(provider);
     } catch (_) {
-      googleUser = null;
-    }
-
-    if (googleUser == null) {
-      return null;
-    }
-
-    final googleAuth = await googleUser.authentication;
-
-    // Create Firebase credential
-    final credential = GoogleAuthProvider.credential(
-      idToken: googleAuth.idToken,
-    );
-
-    try {
-      // Sign in to Firebase
-      final authResult = await firebaseAuth.signInWithCredential(credential);
-      return authResult;
-    } on FirebaseAuthException catch (e) {
-      // Handle common errors
-      if (e.code == 'account-exists-with-different-credential') {
-        // Optional: handle merging accounts
-      } else if (e.code == 'invalid-credential') {
-        // Optional: handle invalid credentials
-      }
-      return null;
-    } catch (_) {
-      // Any other errors
       return null;
     }
   }
 
   Future<void> signOut() async {
-    await Future.wait([firebaseAuth.signOut(), googleSignIn.signOut()]);
+    try {
+      await Future.wait([firebaseAuth.signOut(), googleSignIn.signOut()]);
+    } catch (_) {
+      await firebaseAuth.signOut();
+    }
   }
 
   // Phone number authentication methods
