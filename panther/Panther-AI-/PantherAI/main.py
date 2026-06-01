@@ -15,6 +15,9 @@ from routers.chris_chat.router import router as chris_router
 from routers.insights.router import router as insights_router
 from routers.voice.router import router as voice_router
 from routers.marketplace.router import router as marketplace_router
+from services.marketplace.mock_partners.nike import router as mock_nike_router
+from services.marketplace.mock_partners.amazon import router as mock_amazon_router
+from services.marketplace.mock_partners.bestbuy import router as mock_bestbuy_router
 
 app = FastAPI(
     title="CHRONOS API",
@@ -44,5 +47,8 @@ app.include_router(voice_router, prefix="/api")
 # app.include_router(plaid_webhook_router)
 app.include_router(insights_router, prefix="/api")
 app.include_router(marketplace_router, prefix="/api")
+app.include_router(mock_nike_router)
+app.include_router(mock_amazon_router)
+app.include_router(mock_bestbuy_router)
 
 log.phase("server_started", module="main")

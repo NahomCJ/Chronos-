@@ -10,12 +10,43 @@ execute_tool(): Dispatcher that routes tool calls to the right service.
 
 from __future__ import annotations
 
+import calendar
+import re
 from collections import defaultdict
 from datetime import date, timedelta
 from typing import Any
 
 from services.banking.mock_api import get_balance, get_transactions, get_upcoming_bills
 from services.risk_assessment.risk_assesment import assess_payment_risk
+
+_MONTH_NAMES = {name.lower(): i for i, name in enumerate(calendar.month_name) if name}
+_MONTH_ABBR  = {name.lower(): i for i, name in enumerate(calendar.month_abbr) if name}
+
+
+def _resolve_month(month_arg: str | None) -> tuple[int, int]:
+    """
+    Converts a month argument to (year, month) integers.
+
+    Accepts: None/'current', 'last', month name ('April'), 'YYYY-MM'.
+    Returns today's month if unrecognised.
+    """
+    today = date.today()
+    if not month_arg or month_arg.lower() == "current":
+        return today.year, today.month
+    if month_arg.lower() == "last":
+        first = today.replace(day=1) - timedelta(days=1)
+        return first.year, first.month
+    # YYYY-MM
+    m = re.fullmatch(r"(\d{4})-(\d{2})", month_arg.strip())
+    if m:
+        return int(m.group(1)), int(m.group(2))
+    # Month name or abbreviation
+    lower = month_arg.lower().strip()
+    num = _MONTH_NAMES.get(lower) or _MONTH_ABBR.get(lower[:3])
+    if num:
+        year = today.year if num <= today.month else today.year - 1
+        return year, num
+    return today.year, today.month
 
 
 # ---------------------------------------------------------------------------
@@ -88,17 +119,20 @@ _BANKING_TOOLS: list[dict[str, Any]] = [
         "function": {
             "name": "get_spending_summary",
             "description": (
-                "Get a summary of the user's spending for the current month. "
-                "Returns total spent, transaction count, and recent transactions. "
+                "Get a summary of the user's spending for a given month. "
+                "Returns total spent, income, transaction count, and recent transactions. "
                 "Call this when the user asks about their spending, expenses, or "
-                "how much they've spent this month."
+                "how much they spent in a specific month."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "days_back": {
-                        "type": "integer",
-                        "description": "Number of days to look back. Defaults to 30.",
+                    "month": {
+                        "type": "string",
+                        "description": (
+                            "Month to summarize. Accepts: 'current', 'last', a month name "
+                            "('April', 'March'), or 'YYYY-MM' format. Defaults to 'current'."
+                        ),
                     },
                 },
                 "required": [],
@@ -141,6 +175,64 @@ _BANKING_TOOLS: list[dict[str, Any]] = [
                 "type": "object",
                 "properties": {},
                 "required": [],
+            },
+        },
+    },
+]
+
+_MARKETPLACE_TOOLS: list[dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "search_products",
+            "description": (
+                "Search for products matching a natural-language query within a budget. "
+                "Returns ranked results with BNPL eligibility for the user. "
+                "Call this when the user wants to find, buy, or shop for a product."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Natural-language product search, e.g. 'Nike Air Max under $200'.",
+                    },
+                    "budget": {
+                        "type": "number",
+                        "description": "Optional price ceiling in USD. Omit if user did not specify one.",
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_bnpl_for_product",
+            "description": (
+                "Check whether the user can afford a specific product on BNPL installments. "
+                "Returns risk score, eligibility, and maximum safe installment count. "
+                "Call this when the user asks 'can I buy X on BNPL', 'what's my BNPL limit for Y', "
+                "or after search_products to give a BNPL recommendation."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "product_name": {
+                        "type": "string",
+                        "description": "Name of the product being evaluated.",
+                    },
+                    "price": {
+                        "type": "number",
+                        "description": "Price of the product in USD.",
+                    },
+                    "num_payments": {
+                        "type": "integer",
+                        "description": "Number of installments to check. Defaults to 3.",
+                    },
+                },
+                "required": ["product_name", "price"],
             },
         },
     },
@@ -201,14 +293,14 @@ _CRYPTO_TOOLS: list[dict[str, Any]] = [
 ]
 
 # All tools available to Kevin
-TOOL_DEFINITIONS: list[dict[str, Any]] = _BANKING_TOOLS + _CRYPTO_TOOLS
+TOOL_DEFINITIONS: list[dict[str, Any]] = _BANKING_TOOLS + _CRYPTO_TOOLS + _MARKETPLACE_TOOLS
 
 # Domain-filtered subsets (B5 routing integration)
 TOOLS_BY_DOMAIN: dict[str, list[dict[str, Any]]] = {
     "banking": _BANKING_TOOLS,
     "crypto": _CRYPTO_TOOLS,
     "investment": _BANKING_TOOLS + _CRYPTO_TOOLS,  # Advisor needs both to assess full picture
-    "marketplace": _BANKING_TOOLS,  # TickPay affordability checks
+    "marketplace": _BANKING_TOOLS + _MARKETPLACE_TOOLS,  # TickPay: affordability + product search
     "unified": TOOL_DEFINITIONS,
 }
 
@@ -267,17 +359,29 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
         }
 
     elif tool_name == "get_spending_summary":
-        days = arguments.get("days_back", 30)
-        txns = get_transactions(user_id, days_back=days)
+        year, month = _resolve_month(arguments.get("month"))
+        _, last_day = calendar.monthrange(year, month)
+        month_start = date(year, month, 1)
+        month_end = date(year, month, last_day)
+        days_back = (date.today() - month_start).days + 1
+
+        txns = get_transactions(user_id, days_back=days_back)
+        # Filter to the exact calendar month
+        txns = [
+            t for t in txns
+            if month_start <= date.fromisoformat(t["date"]) <= month_end
+        ]
         spending = [t for t in txns if t["amount"] < 0]
         total = sum(abs(t["amount"]) for t in spending)
         income = sum(t["amount"] for t in txns if t["amount"] > 0)
+        month_label = f"{calendar.month_name[month]} {year}"
         return {
             "total_spent": round(total, 2),
             "total_income": round(income, 2),
             "transaction_count": len(spending),
-            "period_days": days,
-            "period_label": f"Last {days} days",
+            "period_label": month_label,
+            "month": month,
+            "year": year,
             "recent_transactions": spending[:10],
         }
 
@@ -348,6 +452,48 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
             "recurring_charges": recurring,
             "total_monthly": round(total_monthly, 2),
             "count": len(recurring),
+        }
+
+    # --- Marketplace tools (D7) ---
+    elif tool_name == "search_products":
+        from services.marketplace.product_search_agent import parse_and_search
+        from services.marketplace.bnpl_filter import apply_bnpl_filter
+
+        query = arguments["query"]
+        budget = arguments.get("budget")
+        # Embed budget in the query string if passed separately
+        if budget and f"${budget}" not in query and str(budget) not in query:
+            query = f"{query} under ${budget}"
+
+        results = parse_and_search(query, max_results=10)
+        tagged = apply_bnpl_filter(results, user_id)
+        return {
+            "query": query,
+            "results": tagged,
+            "count": len(tagged),
+        }
+
+    elif tool_name == "check_bnpl_for_product":
+        from services.bnpl_risk_scoring.bnpl_risk_scoring import calculate_bnpl_risk_score
+        from services.marketplace.bnpl_filter import _find_max_safe_installments
+
+        product_name = arguments["product_name"]
+        price = arguments["price"]
+        num_payments = arguments.get("num_payments", 3)
+
+        score_result = calculate_bnpl_risk_score(user_id, price, num_payments)
+        max_safe = _find_max_safe_installments(user_id, price)
+
+        return {
+            "product_name": product_name,
+            "price": price,
+            "num_payments_checked": num_payments,
+            "risk_score": score_result["score"],
+            "risk_level": score_result["risk_level"].value if hasattr(score_result["risk_level"], "value") else score_result["risk_level"],
+            "bnpl_eligible": score_result["risk_level"] != "HIGH" and str(score_result["risk_level"]) != "HIGH",
+            "max_safe_installments": max_safe,
+            "risk_factors": score_result["risk_factors"],
+            "recommendation": score_result["recommendation"],
         }
 
     # --- Crypto / BlockHub tools ---

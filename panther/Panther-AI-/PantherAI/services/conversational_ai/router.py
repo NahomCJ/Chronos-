@@ -142,6 +142,14 @@ def _rule_based_route(text: str) -> Domain:
                 "clothes",
                 "amazon",
                 "nike",
+                "laptop",
+                "phone",
+                "find me",
+                "search for",
+                "look for",
+                "headphone",
+                "tv",
+                "tablet",
             }
         ),
     }
