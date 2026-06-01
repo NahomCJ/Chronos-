@@ -6,6 +6,7 @@ import '../../../../core/theme/text_theme.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
 import '../bloc/chat_state.dart';
+import '../widgets/chris_voice_orb.dart';
 
 class PantherAiChatPage extends StatefulWidget {
   const PantherAiChatPage({super.key});
@@ -29,6 +30,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   ];
 
   late AnimationController _dotController;
+  OrbState _orbState = OrbState.idle;
 
   final List<String> _suggestions = [
     'Show my balance',
@@ -68,6 +70,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
         _ChatMessage(text: text.trim(), isUser: true, time: _currentTime()),
       );
       _controller.clear();
+      _orbState = OrbState.thinking;
     });
     _scrollToBottom();
     _chatBloc.add(ChatMessageSent(text.trim()));
@@ -99,8 +102,11 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       value: _chatBloc,
       child: BlocListener<ChatBloc, ChatState>(
         listener: (context, state) {
-          if (state is ChatReplied) {
+          if (state is ChatThinking) {
+            setState(() => _orbState = OrbState.thinking);
+          } else if (state is ChatReplied) {
             setState(() {
+              _orbState = OrbState.speaking;
               _messages.add(_ChatMessage(
                 text: state.reply,
                 isUser: false,
@@ -108,8 +114,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               ));
             });
             _scrollToBottom();
+            // Return to idle after speaking animation
+            Future.delayed(const Duration(milliseconds: 2200), () {
+              if (mounted) setState(() => _orbState = OrbState.idle);
+            });
           } else if (state is ChatError) {
             setState(() {
+              _orbState = OrbState.idle;
               _messages.add(_ChatMessage(
                 text: 'Sorry, something went wrong. Please try again.',
                 isUser: false,
@@ -130,6 +141,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
                 child: Column(
                   children: [
                     _buildHeader(context),
+                    _buildOrbSection(),
                     Expanded(
                       child: BlocBuilder<ChatBloc, ChatState>(
                         builder: (context, state) {
@@ -164,6 +176,44 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     );
   }
 
+  Widget _buildOrbSection() {
+    final label = switch (_orbState) {
+      OrbState.idle => 'Chris · AI Financial Advisor',
+      OrbState.thinking => 'Thinking...',
+      OrbState.speaking => 'Responding',
+    };
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+      height: _orbState == OrbState.idle ? 150 : 170,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ChrisVoiceOrb(state: _orbState, size: 110),
+          const SizedBox(height: 8),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              label,
+              key: ValueKey(label),
+              style: TextStyles.bodySmall.copyWith(
+                color: _orbState == OrbState.idle
+                    ? Colors.white.withValues(alpha: 0.45)
+                    : _orbState == OrbState.thinking
+                        ? const Color(0xFF8AAAFF).withValues(alpha: 0.85)
+                        : const Color(0xFFDC8F4A).withValues(alpha: 0.90),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -182,18 +232,10 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
+                SizedBox(
                   width: 38,
                   height: 38,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFDC8F4A),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  child: ChrisVoiceOrb(state: _orbState, size: 38),
                 ),
                 const SizedBox(width: 10),
                 Column(
