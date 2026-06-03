@@ -1,7 +1,7 @@
 """
 services/voice/tts.py
 ======================
-TTS layer for Kevin voice responses.
+TTS layer for Chris voice responses.
 
 Priority:
   1. VibeVoice-Realtime-0.5B (local, free) — VIBEVOICE_TTS_ENABLED=true + vibevoice installed

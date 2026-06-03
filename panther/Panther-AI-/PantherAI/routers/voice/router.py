@@ -1,7 +1,7 @@
 """
 routers/voice/router.py
 ========================
-POST /api/kevin/voice — Voice interface for Kevin.
+POST /api/chris/voice — Voice interface for Chris.
 
 Flow:
   1. Accept audio file (webm/mp4/m4a/wav/ogg)
@@ -10,7 +10,7 @@ Flow:
   4. Detect payment intent in transcript (B10)
   5. If payment intent: enter 2FA state machine (B11)
      INTENT_CAPTURED → AWAITING_2FA → EXECUTING → COMPLETED
-  6. Otherwise: run kevin_chat() with domain context (B8/B9)
+  6. Otherwise: run chris_chat() with domain context (B8/B9)
   7. Optionally synthesize TTS audio response (B2)
 
 Request (multipart/form-data):
@@ -41,7 +41,7 @@ from typing import Any, Optional
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from services.conversational_ai.kevin import kevin_chat
+from services.conversational_ai.chris import chris_chat
 from services.conversational_ai.payment_intent import parse_payment_intent
 from services.conversational_ai.router import route_query
 from services.voice.tts import synthesize_base64
@@ -55,7 +55,7 @@ VIBEVOICE_ASR_MODEL = os.getenv("VIBEVOICE_ASR_MODEL", "microsoft/VibeVoice-ASR"
 _vv_asr_model = None
 _vv_asr_processor = None
 
-router = APIRouter(prefix="/kevin", tags=["voice"])
+router = APIRouter(prefix="/chris", tags=["voice"])
 
 
 class VoiceResponse(BaseModel):
@@ -83,7 +83,7 @@ async def voice_chat(
     conversation_history_json: Optional[str] = Form(None),
 ):
     """
-    Voice interface for Kevin — transcribe, route, respond, optionally speak.
+    Voice interface for Chris — transcribe, route, respond, optionally speak.
 
     Pass transfer_state and payment_intent_json back on subsequent requests
     to continue a payment flow through the 2FA gate.
@@ -140,9 +140,9 @@ async def voice_chat(
             transfer_state="INTENT_CAPTURED",
         )
 
-    # Normal Kevin chat with domain context (B8/B9)
+    # Normal Chris chat with domain context (B8/B9)
     try:
-        result = kevin_chat(
+        result = chris_chat(
             user_id=user_id,
             message=transcript,
             conversation_history=conversation_history,

@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-from services.conversational_ai import kevin as kevin_module
+from services.conversational_ai import chris as chris_module
 from routers.liabilities.router import router
 from services.conversational_ai.router import _rule_based_route
 from services.conversational_ai.tools import (
@@ -121,7 +121,7 @@ def test_dti_thresholds_for_demo_users():
     assert bob["dti_status"] == "ELEVATED"
 
 
-def test_kevin_debt_tools_are_registered_and_compliance_safe():
+def test_chris_debt_tools_are_registered_and_compliance_safe():
     debt_tool_names = {
         item["function"]["name"]
         for item in TOOL_DEFINITIONS
@@ -149,14 +149,14 @@ def test_debt_questions_route_to_banking_fallback():
     assert _rule_based_route("can I afford to invest while paying debt?") == "unified"
 
 
-def test_kevin_answers_debt_questions_with_live_data_and_disclaimer(monkeypatch):
+def test_chris_answers_debt_questions_with_live_data_and_disclaimer(monkeypatch):
     monkeypatch.setattr(
-        kevin_module,
+        chris_module,
         "_get_client",
         lambda: (_ for _ in ()).throw(ConnectionError("force mock")),
     )
 
-    result = kevin_module.kevin_chat("user_marcus", "what do I owe?")
+    result = chris_module.chris_chat("user_marcus", "what do I owe?")
 
     assert {
         "get_credit_card_analysis",

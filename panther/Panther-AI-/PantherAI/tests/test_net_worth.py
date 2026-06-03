@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from routers.net_worth.router import router as net_worth_router
-from services.conversational_ai import kevin as kevin_module
+from services.conversational_ai import chris as chris_module
 from services.conversational_ai.router import _rule_based_route
 from services.conversational_ai.tools import TOOL_DEFINITIONS, execute_tool
 from services.net_worth import (
@@ -78,9 +78,9 @@ def test_dta_thresholds_for_marcus_and_sarah():
     assert sarah["dta_ratio"] < 0.3
 
 
-def test_kevin_net_worth_tools_are_registered_and_safe(monkeypatch):
+def test_chris_net_worth_tools_are_registered_and_safe(monkeypatch):
     monkeypatch.setattr(
-        kevin_module,
+        chris_module,
         "_get_client",
         lambda: (_ for _ in ()).throw(ConnectionError("force mock")),
     )
@@ -96,7 +96,7 @@ def test_kevin_net_worth_tools_are_registered_and_safe(monkeypatch):
     score = execute_tool("get_financial_health_score", "sarah", {})
     assert score["score_disclaimer"] == SCORE_DISCLAIMER
 
-    result = kevin_module.kevin_chat("user_sarah", "how am I doing financially?")
+    result = chris_module.chris_chat("user_sarah", "how am I doing financially?")
     assert "get_financial_health_score" in result["tools_called"]
     assert SCORE_DISCLAIMER in result["response"]
     assert "compared to" not in result["response"].lower()

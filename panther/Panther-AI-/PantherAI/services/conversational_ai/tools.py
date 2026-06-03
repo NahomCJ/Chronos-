@@ -1,7 +1,7 @@
 """
 services/conversational_ai/tools.py
 =====================================
-All tools Kevin can call, organized by domain.
+All tools Chris can call, organized by domain.
 
 TOOL_DEFINITIONS: Full list of OpenAI-compatible schemas.
 TOOLS_BY_DOMAIN: Filtered subsets for each routing domain.
@@ -341,7 +341,7 @@ NET_WORTH_TOOLS: list[dict[str, Any]] = [
     },
 ]
 
-# All tools available to Kevin
+# All tools available to Chris
 TOOL_DEFINITIONS: list[dict[str, Any]] = (
     _BANKING_TOOLS + _CRYPTO_TOOLS + DEBT_TOOLS + INCOME_TOOLS + NET_WORTH_TOOLS
 )
@@ -597,7 +597,7 @@ _ANNUAL_INCOME_AMOUNT_FIELDS = {
 
 
 def _sanitize_income_result(value: Any) -> Any:
-    """Removes exact income values before tool output reaches Kevin's prompt."""
+    """Removes exact income values before tool output reaches Chris's prompt."""
     if isinstance(value, dict):
         sanitized: dict[str, Any] = {}
         for key, item in value.items():

@@ -207,7 +207,7 @@ def test_income_endpoints_return_403_without_consent(path: str):
     assert response.status_code == 403
 
 
-def test_kevin_income_tools_are_registered_and_ai_safe():
+def test_chris_income_tools_are_registered_and_ai_safe():
     tool_names = {item["function"]["name"] for item in TOOL_DEFINITIONS}
     assert {
         "get_income_stability",
