@@ -12,36 +12,26 @@ SANDBOX MODE:
 """
 
 import os
-from dotenv import load_dotenv
+from typing import Any
 
-import plaid
-from plaid.api import plaid_api
-from plaid.model.products import Products
-from plaid.model.country_code import CountryCode
+from dotenv import load_dotenv
 
 load_dotenv()
 
 # ---------------------------------------------------------------------------
-# Config — read from .env
+# Config - read from .env
 # ---------------------------------------------------------------------------
-PLAID_CLIENT_ID = os.environ["PLAID_CLIENT_ID"]
-PLAID_SECRET = os.environ["PLAID_SECRET"]
+PLAID_CLIENT_ID = os.getenv("PLAID_CLIENT_ID", "")
+PLAID_SECRET = os.getenv("PLAID_SECRET", "")
 PLAID_ENV = os.getenv("PLAID_ENV", "sandbox")  # sandbox | development | production
-
-# Map env string → Plaid host
-_ENV_MAP = {
-    "sandbox": plaid.Environment.Sandbox,
-    "development": plaid.Environment.Sandbox,
-    "production": plaid.Environment.Production,
-}
 
 # ---------------------------------------------------------------------------
 # Singleton client
 # ---------------------------------------------------------------------------
-_client: plaid_api.PlaidApi | None = None
+_client: Any | None = None
 
 
-def get_plaid_client() -> plaid_api.PlaidApi:
+def get_plaid_client() -> Any:
     """
     Returns a configured Plaid API client (singleton).
     Import and call this wherever you need Plaid access.
@@ -52,8 +42,19 @@ def get_plaid_client() -> plaid_api.PlaidApi:
     if _client is not None:
         return _client
 
+    if not PLAID_CLIENT_ID or not PLAID_SECRET:
+        raise RuntimeError("PLAID_CLIENT_ID and PLAID_SECRET must be configured")
+
+    import plaid
+    from plaid.api import plaid_api
+
+    env_map = {
+        "sandbox": plaid.Environment.Sandbox,
+        "development": plaid.Environment.Sandbox,
+        "production": plaid.Environment.Production,
+    }
     configuration = plaid.Configuration(
-        host=_ENV_MAP.get(PLAID_ENV, plaid.Environment.Sandbox),
+        host=env_map.get(PLAID_ENV, plaid.Environment.Sandbox),
         api_key={
             "clientId": PLAID_CLIENT_ID,
             "secret": PLAID_SECRET,
@@ -67,5 +68,5 @@ def get_plaid_client() -> plaid_api.PlaidApi:
 # ---------------------------------------------------------------------------
 # Constants used across Plaid modules
 # ---------------------------------------------------------------------------
-PLAID_PRODUCTS = [Products("transactions")]
-PLAID_COUNTRY_CODES = [CountryCode("US")]
+PLAID_PRODUCTS = ["transactions"]
+PLAID_COUNTRY_CODES = ["US"]

@@ -1,17 +1,10 @@
 """
 services/conversational_ai/payment_executor.py
 ===============================================
-Executes voice transaction commands via the Chronos Node.js backend.
+Executes voice payment commands via the Chronos Node.js backend.
 
-Each transaction type maps to a dedicated Chronos endpoint:
-  transfer  → POST /api/transfers/create
-  request   → POST /api/requests/create
-  exchange  → POST /api/exchange/create
-  purchase  → POST /api/purchases/create
-  trade     → POST /api/trades/create
-  invest    → POST /api/investments/create
-
-Falls back to mock responses in development when the backend is unreachable.
+Calls POST /api/transfers/create on the Chronos backend.
+Falls back to a mock response in development when the backend is unreachable.
 
 Environment:
     CHRONOS_BACKEND_URL    — default: http://localhost:3001
@@ -30,143 +23,34 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CHRONOS_BACKEND_URL    = os.getenv("CHRONOS_BACKEND_URL", "http://localhost:3001")
+CHRONOS_BACKEND_URL = os.getenv("CHRONOS_BACKEND_URL", "http://localhost:3001")
 CHRONOS_INTERNAL_TOKEN = os.getenv("CHRONOS_INTERNAL_TOKEN", "")
-IS_DEV                 = os.getenv("ENVIRONMENT", "development") == "development"
+IS_DEV = os.getenv("ENVIRONMENT", "development") == "development"
 
 
-# ---------------------------------------------------------------------------
-# Public dispatcher
-# ---------------------------------------------------------------------------
-
-async def execute_transaction(user_id: str, intent: dict) -> dict[str, Any]:
+async def execute_transfer(user_id: str, payment_intent: dict) -> dict[str, Any]:
     """
-    Routes a confirmed TransactionIntent to the correct executor.
+    Executes a transfer by calling the Chronos Node.js backend.
 
     Args:
         user_id: Authenticated user ID.
-        intent:  Parsed TransactionIntent dict from payment_intent.py.
+        payment_intent: Parsed PaymentIntent with amount and recipient.
 
     Returns:
-        Result dict from the Chronos backend (or mock in dev).
+        Transfer result dict with transfer_id and status.
 
     Raises:
-        RuntimeError: On backend error or unknown intent type.
+        RuntimeError: If the backend call fails (and not in dev mode).
     """
-    tx_type = intent.get("type")
-    executors = {
-        "transfer": execute_transfer,
-        "request":  execute_request,
-        "exchange": execute_exchange,
-        "purchase": execute_purchase,
-        "trade":    execute_trade,
-        "invest":   execute_invest,
-    }
-    fn = executors.get(tx_type)
-    if not fn:
-        raise RuntimeError(f"Unknown transaction type: {tx_type!r}")
-    return await fn(user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Transfer — send money to someone
-# ---------------------------------------------------------------------------
-
-async def execute_transfer(user_id: str, intent: dict) -> dict[str, Any]:
     payload = {
-        "userId":    user_id,
-        "recipient": intent["recipient"],
-        "amount":    intent["amount"],
-        "currency":  intent.get("currency", "USD"),
+        "userId": user_id,
+        "recipient": payment_intent["recipient"],
+        "amount": payment_intent["amount"],
+        "currency": payment_intent.get("currency", "USD"),
         "description": "Voice-initiated transfer",
         "source": "voice_command",
     }
-    return await _post("/api/transfers/create", payload, user_id, intent)
 
-
-# ---------------------------------------------------------------------------
-# Request — ask someone to send you money
-# ---------------------------------------------------------------------------
-
-async def execute_request(user_id: str, intent: dict) -> dict[str, Any]:
-    payload = {
-        "userId":   user_id,
-        "fromUser": intent["from_user"],
-        "amount":   intent["amount"],
-        "currency": intent.get("currency", "USD"),
-        "description": "Voice-initiated payment request",
-        "source": "voice_command",
-    }
-    return await _post("/api/requests/create", payload, user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Exchange — convert one currency to another
-# ---------------------------------------------------------------------------
-
-async def execute_exchange(user_id: str, intent: dict) -> dict[str, Any]:
-    payload = {
-        "userId":       user_id,
-        "amount":       intent["amount"],
-        "fromCurrency": intent.get("from_currency", "USD"),
-        "toCurrency":   intent["to_currency"],
-        "source": "voice_command",
-    }
-    return await _post("/api/exchange/create", payload, user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Purchase — buy a product or service
-# ---------------------------------------------------------------------------
-
-async def execute_purchase(user_id: str, intent: dict) -> dict[str, Any]:
-    payload = {
-        "userId":   user_id,
-        "item":     intent.get("item", "item"),
-        "amount":   intent.get("amount"),
-        "currency": intent.get("currency", "USD"),
-        "source": "voice_command",
-    }
-    return await _post("/api/purchases/create", payload, user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Trade — buy or sell crypto / stocks
-# ---------------------------------------------------------------------------
-
-async def execute_trade(user_id: str, intent: dict) -> dict[str, Any]:
-    payload = {
-        "userId":    user_id,
-        "direction": intent["direction"],
-        "asset":     intent["asset"],
-        "amount":    intent.get("amount"),
-        "currency":  intent.get("currency", "USD"),
-        "orderType": "market",
-        "source": "voice_command",
-    }
-    return await _post("/api/trades/create", payload, user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Invest — invest in a fund or portfolio
-# ---------------------------------------------------------------------------
-
-async def execute_invest(user_id: str, intent: dict) -> dict[str, Any]:
-    payload = {
-        "userId":   user_id,
-        "fund":     intent.get("fund", "portfolio"),
-        "amount":   intent["amount"],
-        "currency": intent.get("currency", "USD"),
-        "source": "voice_command",
-    }
-    return await _post("/api/investments/create", payload, user_id, intent)
-
-
-# ---------------------------------------------------------------------------
-# Internal HTTP helper
-# ---------------------------------------------------------------------------
-
-async def _post(path: str, payload: dict, user_id: str, intent: dict) -> dict[str, Any]:
     headers = {}
     if CHRONOS_INTERNAL_TOKEN:
         headers["X-Internal-Token"] = CHRONOS_INTERNAL_TOKEN
@@ -174,7 +58,7 @@ async def _post(path: str, payload: dict, user_id: str, intent: dict) -> dict[st
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
-                f"{CHRONOS_BACKEND_URL}{path}",
+                f"{CHRONOS_BACKEND_URL}/api/transfers/create",
                 json=payload,
                 headers=headers,
             )
@@ -182,23 +66,24 @@ async def _post(path: str, payload: dict, user_id: str, intent: dict) -> dict[st
             return resp.json()
     except httpx.HTTPStatusError as e:
         raise RuntimeError(
-            f"Transaction failed ({e.response.status_code}): {e.response.text}"
+            f"Transfer failed ({e.response.status_code}): {e.response.text}"
         )
     except httpx.RequestError:
         if IS_DEV:
-            return _mock_result(user_id, intent)
+            return _mock_transfer(user_id, payment_intent)
         raise RuntimeError(
             "Cannot reach Chronos backend. Make sure CHRONOS_BACKEND_URL is set."
         )
 
 
-def _mock_result(user_id: str, intent: dict) -> dict:
-    """Mock response for local development when Chronos backend is unreachable."""
+def _mock_transfer(user_id: str, payment_intent: dict) -> dict:
+    """Returns a mock transfer result for local development."""
     return {
-        "transaction_id": f"mock_{uuid.uuid4().hex[:8]}",
-        "status":         "COMPLETED",
-        "type":           intent.get("type"),
-        "user_id":        user_id,
-        "details":        intent,
-        "mock":           True,
+        "transfer_id": f"mock_{uuid.uuid4().hex[:8]}",
+        "status": "COMPLETED",
+        "amount": payment_intent["amount"],
+        "recipient": payment_intent["recipient"],
+        "currency": payment_intent.get("currency", "USD"),
+        "user_id": user_id,
+        "mock": True,
     }

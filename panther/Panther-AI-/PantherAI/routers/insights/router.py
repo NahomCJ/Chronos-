@@ -24,7 +24,9 @@ from services.insights.warnings import compile_warnings_history
 from services.insights.top_categories import compute_top_categories
 from services.insights.spending_summary import compute_spending_summary
 from routers.insights.models import (
+    CashflowForecastResponse,
     SpendingSummaryResponse,
+    SubscriptionsResponse,
     TopCategoriesResponse,
     WarningsHistoryResponse,
 )
@@ -197,3 +199,88 @@ def warnings_history(
     result = compile_warnings_history(raw_warnings, limit, offset, now=anchor)
     result["meta"]["user_id"] = user_id
     return result
+
+
+@router.get("/cashflow-forecast", response_model=CashflowForecastResponse)
+@contract
+def cashflow_forecast(
+    user_id: str = Query(
+        ...,
+        pattern=r"^[a-z0-9_]{3,50}$",
+        description="User identifier (e.g. 'user_marcus')",
+    ),
+    days: int = Query(30, ge=1, le=365, description="Forecast horizon in days"),
+):
+    """
+    Returns chart-ready projected balances and informational overdraft risk.
+
+    The router is intentionally thin: all forecasting logic lives in
+    services.cashflow.cashflow_predictor.
+    """
+    from services.cashflow.cashflow_predictor import predict_cashflow
+
+    try:
+        forecast = predict_cashflow(user_id, days=[days])
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    return {
+        "projected_balance_series": forecast["projected_balance_series"],
+        "overdraft_risk": forecast["overdraft_risk"],
+        "days_until_projected_zero": forecast["days_until_zero"],
+        "income_spike_expected": forecast["income_spike_expected"],
+        "confidence": forecast["confidence"],
+    }
+
+
+@router.get("/subscriptions", response_model=SubscriptionsResponse)
+@contract
+def subscriptions(
+    user_id: str = Query(
+        ...,
+        pattern=r"^[a-z0-9_]{3,50}$",
+        description="User identifier (e.g. 'user_marcus')",
+    ),
+):
+    """
+    Returns detected recurring charge patterns for the user.
+
+    `unused_for_30_days` is included for the dashboard UI, but defaults to
+    false until product activity data is wired into this service.
+    """
+    from services.subscriptions.detector import detect_subscriptions
+
+    try:
+        detected = detect_subscriptions(user_id, persist=True)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    enriched = [
+        {
+            **charge,
+            "unused_for_30_days": _unused_for_30_days(user_id, charge["merchant"]),
+        }
+        for charge in detected
+    ]
+    return {
+        "subscriptions": enriched,
+        "monthly_total": round(sum(_monthly_equivalent(c) for c in enriched), 2),
+    }
+
+
+def _unused_for_30_days(user_id: str, merchant: str) -> bool:
+    # Activity telemetry is not present in the current backend. Return a
+    # conservative descriptive flag rather than implying cancellation guidance.
+    return False
+
+
+def _monthly_equivalent(charge: dict) -> float:
+    amount = float(charge["amount"])
+    frequency = charge["frequency"]
+    if frequency == "weekly":
+        return amount * 52 / 12
+    if frequency == "annual":
+        return amount / 12
+    if frequency == "quarterly":
+        return amount / 3
+    return amount
