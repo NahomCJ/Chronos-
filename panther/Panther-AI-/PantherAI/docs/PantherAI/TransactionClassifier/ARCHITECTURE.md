@@ -17,8 +17,8 @@
 └──────────────────────────────┬──────────────────────────────────────────┘
                                ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  TIER 0: CACHE  [PLANNED]                  Latency: ~0.1ms            │
-│  LRU cache of recently classified transactions                         │
+│  TIER 0: CACHE  [LIVE]                     Latency: ~0.1ms            │
+│  LRU+TTL cache of normalized merchant strings                          │
 │  Hit → Return immediately                                              │
 └──────────────────────────────┬──────────────────────────────────────────┘
                                ▼ Miss
@@ -31,14 +31,14 @@
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  TIER 2: DISTILBERT  [LIVE]                Latency: ~15-30ms          │
 │  Fine-tuned on panther_ground_truth_v3                                 │
-│  Confidence threshold: conf >= 0.6                                     │
+│  Confidence threshold: top1 - top2 > 0.3                               │
 │  High confidence → Return prediction                                   │
 └──────────────────────────────┬──────────────────────────────────────────┘
                                ▼ Low Confidence
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  TIER 3: RARE QUEUE + GEMMA3:4B  [PLANNED] Async Batch Processing     │
-│  Queue accumulates until N=100 rare transactions                       │
-│  Gemma analyzes patterns → Human reviews → New regex patterns          │
+│  TIER 3: CLAUDE QUEUE  [LIVE]             Async Batch Processing      │
+│  Low-confidence transactions queue after DB write                      │
+│  Claude classifies sanitized text → DB record updated                  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -46,17 +46,19 @@
 
 ## Tier Details
 
-### Tier 0: Cache Layer [PLANNED]
+### Tier 0: Cache Layer [LIVE]
 
 | Property | Value |
 |----------|-------|
 | Type | LRU Cache (in-memory) |
 | Size | 10,000 entries |
-| Key | MD5 hash of normalized description |
+| Key | Normalized merchant string |
 | TTL | 24 hours |
 | Expected Hit Rate | 30-40% (users repeat merchants) |
 
-> Not yet implemented. Will be added as a wrapper around `pipeline.predict()`.
+Implemented in `services/TC-TransactionClassifier/classifier/tier0_cache.py`.
+Cache hits return before regex or DistilBERT and emit a `tier0_cache_hit`
+log line; misses emit `tier0_cache_miss`.
 
 ### Tier 1: Regex Classifier [LIVE]
 
@@ -81,7 +83,7 @@
 | Output | 44 class probabilities (softmax) |
 | Performance | **99.97% Accuracy** on balanced test set |
 | Metrics | [Evaluation Report](../../PantherAI/TC-TransactionClassifier/audit/per_class_metrics.csv) |
-| Threshold | `conf >= 0.6` (simple threshold on top-1 softmax probability) |
+| Threshold | `top1 - top2 > 0.3` (margin between the two highest softmax probabilities) |
 | Expected Coverage | 12-17% of transactions (after Tier 1) |
 | Fallback | Returns prediction with source `"Low Confidence"` if below threshold |
 | Model Path | Resolved via `PANTHER_MODEL_PATH` env var or default `models/distilbert_v1_colab/` |
@@ -92,17 +94,20 @@
 - **Metric Context**: 99.97% reflects balanced test data, not real-world class distribution
 - **Last Eval**: 2026-02-05
 
-### Tier 3: Gemma3:4B Batch Processor [PLANNED]
+### Tier 3: Claude Batch Processor [LIVE]
 
 | Property | Value |
 |----------|-------|
-| Model | `gemma3:4b` via Ollama (local) |
-| Trigger | When queue reaches 100 transactions |
-| Mode | Async batch (not real-time) |
-| Output | Proposed new regex patterns |
-| Human Review | Required before merging |
+| Model | `claude-opus-4-6` via Anthropic SDK |
+| Trigger | DistilBERT result fails the margin threshold |
+| Mode | Async batch; main classifier path does not block |
+| Output | Final subcategory label written back to `transactions` |
+| Prompt safety | Sanitized transaction text + `user_id` only; no balances, account numbers, names, or confidence internals |
+| Prompt caching | System prompt uses `cache_control: {"type": "ephemeral"}` |
 
-> Not yet implemented. Currently, low-confidence predictions are returned with `source: "Low Confidence"` — no queue exists yet.
+Implemented in `services/TC-TransactionClassifier/classifier/tier3_queue.py`.
+The prompt sends only `index`, `user_id`, and sanitized `description`; local
+transaction IDs are never sent to Claude and are used only for DB updates.
 
 ---
 
@@ -138,29 +143,19 @@
 
 ## Confidence Threshold Strategy
 
-### Current Implementation (conf >= 0.6)
+### Current Implementation (Margin > 0.3)
 
-The pipeline uses a simple softmax threshold. If the top-1 probability is >= 0.6, the prediction is accepted. Otherwise it's returned with a `"Low Confidence"` flag.
+The pipeline accepts a DistilBERT prediction only when the top-1 softmax
+probability beats the top-2 probability by more than 0.3. Otherwise it returns
+a `"Low Confidence"` source and queues the persisted transaction for Tier 3
+when `transaction_id` and `user_id` are provided.
 
 ```python
 # pipeline.py — actual logic
-if model_conf >= self.confidence_threshold:  # default: 0.6
+if is_confident(raw_probabilities):  # top1 - top2 > 0.3
     return {"subcategory": model_sub, "confidence": model_conf, "source": "Model"}
 else:
     return {"subcategory": model_sub, "confidence": model_conf, "source": "Low Confidence"}
-```
-
-### Future Improvement: Margin-Based Confidence
-
-> **NOTE**: This is NOT yet implemented. Documented here as a planned upgrade.
-
-Instead of a fixed threshold, use the **margin** between the top-2 predictions:
-
-```python
-def is_confident(probabilities):
-    sorted_probs = sorted(probabilities, reverse=True)
-    margin = sorted_probs[0] - sorted_probs[1]  # top1 - top2
-    return margin > 0.3
 ```
 
 **Why margin is better for 44-class multiclass:**
@@ -170,38 +165,32 @@ def is_confident(probabilities):
 
 ---
 
-## Feedback Loop (Tier 3) [PLANNED]
+## Feedback Loop (Tier 3)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  RARE_TRANSACTIONS_QUEUE                                    │
+│  LOW_CONFIDENCE_TRANSACTIONS_QUEUE                          │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │  {                                                   │   │
 │  │    "id": "txn_abc123",                              │   │
 │  │    "description": "UNKNOWN MERCHANT XYZ",           │   │
-│  │    "bert_top3": [                                   │   │
-│  │      {"subcat": "sub_shopping", "conf": 0.25},     │   │
-│  │      {"subcat": "sub_groceries", "conf": 0.22},    │   │
-│  │      {"subcat": "sub_home_general", "conf": 0.18}  │   │
-│  │    ],                                               │   │
+│  │    "user_id": "user_123"                            │   │
 │  │    "timestamp": "2026-02-03T10:30:00Z"             │   │
 │  │  }                                                   │   │
 │  └─────────────────────────────────────────────────────┘   │
 └──────────────────────────────┬──────────────────────────────┘
-                               ▼ When queue.size >= 100
+                               ▼ Async batch
 ┌─────────────────────────────────────────────────────────────┐
-│  GEMMA3:4B BATCH ANALYSIS                                   │
-│  Prompt:                                                    │
-│  "Analyze these 100 unclassified transactions.             │
-│   Identify common merchant patterns and suggest regex      │
-│   patterns for classifier/regex_dictionary.py"             │
+│  CLAUDE CLASSIFICATION                                      │
+│  Prompt cache: taxonomy + instructions in cached system msg │
+│  User msg: [{index, user_id, sanitized description}, ...]   │
 └──────────────────────────────┬──────────────────────────────┘
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  HUMAN REVIEW                                               │
-│  - Validate proposed patterns                               │
-│  - Merge approved patterns to regex_dictionary.py          │
-│  - Retrain DistilBERT periodically                         │
+│  DB UPDATE                                                  │
+│  - transactions.subcategory = final Claude label            │
+│  - transactions.category_source = "Claude"                  │
+│  - no confidence internals exposed for Tier 3               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -215,9 +204,11 @@ PantherAI/TC-TransactionClassifier/
 │   ├── __init__.py
 │   ├── taxonomy.py             # 14 categories, 44 subcategories (v1.2.0)
 │   ├── regex_dictionary.py     # Tier 1: 700+ merchant patterns + keyword rules
-│   ├── pipeline.py             # Orchestrator: Tier 1 → Tier 2 → fallback
+│   ├── tier0_cache.py          # Tier 0: normalized merchant LRU+TTL cache
+│   ├── pipeline.py             # Orchestrator: Tier 0 → Tier 1 → Tier 2 → Tier 3
 │   ├── tier1_regex.py          # Mega-Regex compiler and matcher
-│   └── tier2_bert.py           # DistilBERT inference + text normalization
+│   ├── tier2_bert.py           # DistilBERT inference + probabilities
+│   └── tier3_queue.py          # Claude async fallback queue
 ├── models/
 │   └── distilbert_v1_colab/    # Trained model + tokenizer artifacts
 ├── scripts/
@@ -236,11 +227,6 @@ PantherAI/TC-TransactionClassifier/
     ├── per_class_metrics.csv
     └── failure_cases_v1.csv
 ```
-
-**Not yet created** (planned for Tier 0 and Tier 3):
-- `tier0_cache.py` — LRU cache wrapper
-- `tier3_queue.py` — Rare transaction queue
-- `batch_analyze_rare.py` — Gemma batch processor
 
 ---
 

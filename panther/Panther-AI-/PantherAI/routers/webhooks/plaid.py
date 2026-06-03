@@ -23,18 +23,36 @@ from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from supabase import create_client
 
 from core.logger import log
-from services.categorizer import categorize
+from services.categorizer import categorize, enqueue_low_confidence
 
 load_dotenv()
 
 router = APIRouter(prefix="/webhooks/plaid", tags=["webhooks"])
 
-supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+_supabase = None
+_supabase_loaded = False
+
+
+def _get_supabase():
+    global _supabase, _supabase_loaded
+    if _supabase_loaded:
+        return _supabase
+
+    _supabase_loaded = True
+    if not (os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_KEY")):
+        return None
+
+    try:
+        from supabase import create_client
+    except ImportError:
+        return None
+
+    _supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+    return _supabase
 
 # Webhook types we care about
 TRANSACTION_WEBHOOK_TYPES = {"INITIAL_UPDATE", "HISTORICAL_UPDATE", "DEFAULT_UPDATE"}
@@ -82,6 +100,10 @@ def handle_plaid_webhook(payload: PlaidWebhookPayload):
         log.failure("handle_plaid_webhook", error_type="PlaidError", message=str(payload.error))
         raise HTTPException(status_code=400, detail=f"Plaid error in webhook: {payload.error}")
 
+    supabase = _get_supabase()
+    if supabase is None:
+        raise HTTPException(status_code=503, detail="Supabase is not configured")
+
     # Resolve user_id + access_token from item_id
     token_res = (
         supabase.table("plaid_tokens")
@@ -108,7 +130,7 @@ def handle_plaid_webhook(payload: PlaidWebhookPayload):
     account_id = acct_res.data[0]["id"]
 
     # Categorize and upsert each transaction
-    saved = _categorize_and_save(transactions, account_id)
+    saved = _categorize_and_save(transactions, account_id, user_id)
 
     log.result("handle_plaid_webhook", duration_ms=0, categorized=saved)
     return {"status": "ok", "categorized": saved}
@@ -143,15 +165,32 @@ def _fetch_plaid_transactions(access_token: str, days_back: int = 30) -> List[Di
         return []
 
 
-def _categorize_and_save(transactions: List[Dict], account_id: str) -> int:
+def _categorize_and_save(transactions: List[Dict], account_id: str, user_id: str) -> int:
     """
     Runs each transaction through the classifier and upserts into Supabase.
     Returns the number of transactions saved.
     """
+    supabase = _get_supabase()
+    if supabase is None:
+        return 0
+
     rows = []
+    tier3_pending: list[dict[str, str]] = []
     for t in transactions:
         merchant = t.get("merchant_name") or t.get("name") or "Unknown"
-        result = categorize(merchant)
+        result = categorize(
+            merchant,
+            transaction_id=t["transaction_id"],
+            user_id=user_id,
+            queue_tier3=False,
+        )
+        if result["source"] == "Low Confidence":
+            tier3_pending.append(
+                {
+                    "transaction_id": t["transaction_id"],
+                    "merchant": merchant,
+                }
+            )
 
         rows.append({
             "id": t["transaction_id"],        # Plaid transaction_id as PK
@@ -174,5 +213,12 @@ def _categorize_and_save(transactions: List[Dict], account_id: str) -> int:
         on_conflict="id",
         ignore_duplicates=True,
     ).execute()
+
+    for pending in tier3_pending:
+        enqueue_low_confidence(
+            transaction_id=pending["transaction_id"],
+            user_id=user_id,
+            merchant_name=pending["merchant"],
+        )
 
     return len(rows)
