@@ -2,7 +2,7 @@
 tests/test_nlp_utils.py
 ========================
 Tests for extract_amount() utility.
-Intent detection is now handled by Qwen via tool calling — see test_kevin_chat.py.
+Intent detection is now handled by Qwen via tool calling — see test_chris_chat.py.
 """
 
 import sys

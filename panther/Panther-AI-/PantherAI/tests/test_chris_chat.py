@@ -1,7 +1,7 @@
 """
-tests/test_kevin_chat.py
+tests/test_chris_chat.py
 =========================
-Tests for Kevin chat core (mock mode — no LLM API key required).
+Tests for Chris chat core (mock mode — no LLM API key required).
 
 Tests verify:
   1. Affordability question -> response references balance and risk
@@ -20,13 +20,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import pytest
 
-from services.conversational_ai.kevin import kevin_chat
+from services.conversational_ai.chris import chris_chat
 from services.conversational_ai.tools import execute_tool
 
 
 # ---- Test 1: Affordability question ----
 def test_affordability_question():
-    result = kevin_chat("user_marcus", "Can I afford to spend $200 on new shoes?")
+    result = chris_chat("user_marcus", "Can I afford to spend $200 on new shoes?")
     assert "response" in result
     assert "check_affordability" in result["tools_called"]
     assert result["context_used"]["balance"] == 1600.0
@@ -36,21 +36,21 @@ def test_affordability_question():
 
 # ---- Test 2: Balance inquiry ----
 def test_balance_inquiry():
-    result = kevin_chat("user_marcus", "What's my balance?")
+    result = chris_chat("user_marcus", "What's my balance?")
     assert "1,600" in result["response"] or "1600" in result["response"]
     assert "check_balance" in result["tools_called"]
 
 
 # ---- Test 3: Bills inquiry ----
 def test_bills_inquiry():
-    result = kevin_chat("user_marcus", "What bills do I have coming up?")
+    result = chris_chat("user_marcus", "What bills do I have coming up?")
     assert "get_upcoming_bills" in result["tools_called"]
     assert "Rent" in result["response"]
 
 
 # ---- Test 4: General chat fallback ----
 def test_general_chat():
-    result = kevin_chat("user_marcus", "Tell me a joke")
+    result = chris_chat("user_marcus", "Tell me a joke")
     assert "response" in result
     # General chat should not call any banking tools
     assert result["tools_called"] == []
@@ -59,12 +59,12 @@ def test_general_chat():
 # ---- Test 5: Unknown user raises ValueError ----
 def test_unknown_user():
     with pytest.raises(ValueError, match="Unknown user"):
-        kevin_chat("user_nonexistent", "What's my balance?")
+        chris_chat("user_nonexistent", "What's my balance?")
 
 
 # ---- Test 6: Multi-turn conversation ----
 def test_conversation_history_threads():
-    result1 = kevin_chat("user_marcus", "What's my balance?")
+    result1 = chris_chat("user_marcus", "What's my balance?")
     conv = result1["conversation_history"]
 
     assert conv["user_id"] == "user_marcus"
@@ -72,7 +72,7 @@ def test_conversation_history_threads():
     assert conv["messages"][0]["role"] == "user"
     assert conv["messages"][1]["role"] == "assistant"
 
-    result2 = kevin_chat(
+    result2 = chris_chat(
         "user_marcus",
         "And my bills?",
         conversation_history=conv["messages"],

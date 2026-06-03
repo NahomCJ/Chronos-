@@ -1,7 +1,7 @@
 """
-services/conversational_ai/kevin.py
+services/conversational_ai/chris.py
 =====================================
-Kevin — Chronos' conversational financial assistant.
+Chris — Chronos' conversational financial assistant.
 
 Uses Qwen via Ollama (local) with tool calling.
 The LLM decides when to query banking data (balance, bills, risk assessment)
@@ -16,10 +16,10 @@ Flow:
   6. Return value sanitized: only verified history included in response
 
 Provider config (env vars):
-  KEVIN_OLLAMA_HOST    — default: http://localhost:11434 (Ollama native SDK)
-  KEVIN_MODEL          — default: qwen3.5:latest
+  CHRIS_OLLAMA_HOST    — default: http://localhost:11434 (Ollama native SDK)
+  CHRIS_MODEL          — default: qwen3.5:latest
 
-Fallback: If Ollama is not running, Kevin returns a mock response for testing.
+Fallback: If Ollama is not running, Chris returns a mock response for testing.
 """
 
 from __future__ import annotations
@@ -44,8 +44,8 @@ load_dotenv()
 # ---------------------------------------------------------------------------
 _client = None
 
-KEVIN_MODEL = os.getenv("KEVIN_MODEL", "qwen3.5:latest")
-KEVIN_OLLAMA_HOST = os.getenv("KEVIN_OLLAMA_HOST", "http://localhost:11434")
+CHRIS_MODEL = os.getenv("CHRIS_MODEL", "qwen3.5:latest")
+CHRIS_OLLAMA_HOST = os.getenv("CHRIS_OLLAMA_HOST", "http://localhost:11434")
 
 
 def _get_client():
@@ -58,7 +58,7 @@ def _get_client():
     except ImportError as exc:
         raise ConnectionError("Ollama SDK is not installed") from exc
 
-    _client = Client(host=KEVIN_OLLAMA_HOST)
+    _client = Client(host=CHRIS_OLLAMA_HOST)
     return _client
 
 
@@ -95,7 +95,7 @@ CRYPTO MODE — how to explain it:
 
 
 def _build_system_prompt(user_id: str, domain: str | None = None) -> str:
-    base = f"""You are Kevin — the financial sidekick built into Chronos.
+    base = f"""You are Chris — the financial sidekick built into Chronos.
 You're serving: {user_id}
 
 YOUR VIBE:
@@ -156,7 +156,7 @@ HARD RULES:
 # ---------------------------------------------------------------------------
 # Core chat function
 # ---------------------------------------------------------------------------
-def kevin_chat(
+def chris_chat(
     user_id: str,
     message: str,
     conversation_history: list[dict[str, str]] | None = None,
@@ -164,7 +164,7 @@ def kevin_chat(
     domain: str | None = None,
 ) -> dict[str, Any]:
     """
-    Process a user message through Kevin with 3-layer cross-user data protection.
+    Process a user message through Chris with 3-layer cross-user data protection.
 
     Callers MUST pass history_user_id to enable Layer 1 (hard strip). Without it,
     Layer 2 (dollar-amount redaction) fires as a fallback — safe, but degrades
@@ -183,7 +183,7 @@ def kevin_chat(
 
     Returns:
         dict: {
-            "response": str,                    # Kevin's reply text
+            "response": str,                    # Chris's reply text
             "tools_called": list[str],           # e.g. ["check_balance", "check_affordability"]
             "context_used": dict,                # Raw data from tool calls
             "conversation_history": {
@@ -309,7 +309,7 @@ def _llm_chat(
         has_tool_results = any(m.get("role") == "tool" for m in messages)
 
         response = client.chat(
-            model=KEVIN_MODEL,
+            model=CHRIS_MODEL,
             messages=messages,
             tools=tools,
             think=has_tool_results,  # Think only when composing answer with tool data
@@ -376,7 +376,7 @@ def _llm_chat(
         # If we hit the loop limit, get a final response without tools
         step_start = time.perf_counter()
         response = client.chat(
-            model=KEVIN_MODEL,
+            model=CHRIS_MODEL,
             messages=messages,
             think=True,  # Final response — thinking is fine here
             keep_alive="10m",
@@ -413,7 +413,7 @@ def _llm_chat(
         "debug": {
             "total_duration_s": round(total_elapsed, 2),
             "llm_steps": llm_steps,
-            "model": KEVIN_MODEL,
+            "model": CHRIS_MODEL,
         },
     }
 
@@ -600,7 +600,7 @@ def _mock_response(
             reply = "nothing due in the next 7 days. you're clear."
     else:
         reply = (
-            "hey, I'm Kevin — your money sidekick. "
+            "hey, I'm Chris — your money sidekick. "
             "ask me about your balance, what's due, or whether you can actually afford something."
         )
 

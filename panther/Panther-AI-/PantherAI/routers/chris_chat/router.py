@@ -1,7 +1,7 @@
 """
-routers/kevin_chat/router.py
+routers/chris_chat/router.py
 ==============================
-POST /api/kevin/chat — Exposes Kevin to the frontend.
+POST /api/chris/chat — Exposes Chris to the frontend.
 
 Request:  { user_id, message, conversation_history?, history_user_id? }
 Response: { response, tools_called, context_used, conversation_history? }
@@ -14,13 +14,13 @@ from typing import Any, Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, field_validator
 
-from services.conversational_ai.kevin import kevin_chat
+from services.conversational_ai.chris import chris_chat
 from services.conversational_ai.router import route_query
 
 router = APIRouter()
 
 
-class KevinChatRequest(BaseModel):
+class ChrisChatRequest(BaseModel):
     user_id: str
     message: str
     conversation_history: Optional[list[dict[str, str]]] = None
@@ -34,7 +34,7 @@ class KevinChatRequest(BaseModel):
         return v
 
 
-class KevinChatResponse(BaseModel):
+class ChrisChatResponse(BaseModel):
     response: str
     tools_called: list[str]
     context_used: dict[str, Any]
@@ -42,17 +42,17 @@ class KevinChatResponse(BaseModel):
     conversation_history: Optional[dict[str, Any]] = None
 
 
-@router.post("/kevin/chat", response_model=KevinChatResponse)
-def chat(request: KevinChatRequest):
+@router.post("/chris/chat", response_model=ChrisChatResponse)
+def chat(request: ChrisChatRequest):
     """
-    Process a chat message through Kevin.
+    Process a chat message through Chris.
 
     Args:
-        request (KevinChatRequest): Must include user_id and message.
+        request (ChrisChatRequest): Must include user_id and message.
             Pass history_user_id to enable Layer 1 cross-user protection.
 
     Returns:
-        KevinChatResponse: Kevin's reply with tools called and context data.
+        ChrisChatResponse: Chris's reply with tools called and context data.
 
     Raises:
         HTTPException(404): If user_id is unknown in banking data.
@@ -61,7 +61,7 @@ def chat(request: KevinChatRequest):
     domain = route_query(request.message)
 
     try:
-        result = kevin_chat(
+        result = chris_chat(
             user_id=request.user_id,
             message=request.message,
             conversation_history=request.conversation_history,
@@ -71,7 +71,7 @@ def chat(request: KevinChatRequest):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-    return KevinChatResponse(
+    return ChrisChatResponse(
         response=result["response"],
         tools_called=result["tools_called"],
         context_used=result["context_used"],

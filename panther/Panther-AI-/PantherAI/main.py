@@ -2,7 +2,7 @@
 CHRONOS API — Backend gateway for the Chronos fintech platform.
 
 Boots a FastAPI server with /health and /api/authorize-payment endpoints.
-Routers for Kevin chat, transaction queries, etc. will be added in future sprints.
+Routers for Chris chat, transaction queries, etc. will be added in future sprints.
 """
 
 from fastapi import FastAPI
@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.logger import log
 from routers.payment_authorization.router import router as payment_router
-from routers.kevin_chat.router import router as kevin_router
+from routers.chris_chat.router import router as chris_router
 from routers.transactions.router import router as transactions_router
 from routers.webhooks.plaid import router as plaid_webhook_router
 from routers.insights.router import router as insights_router
@@ -41,7 +41,7 @@ def health_check():
 
 
 app.include_router(payment_router, prefix="/api")
-app.include_router(kevin_router, prefix="/api")
+app.include_router(chris_router, prefix="/api")
 app.include_router(voice_router, prefix="/api")
 app.include_router(transactions_router)
 app.include_router(plaid_webhook_router)

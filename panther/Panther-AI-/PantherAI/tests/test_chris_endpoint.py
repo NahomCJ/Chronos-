@@ -1,7 +1,7 @@
 """
-tests/test_kevin_endpoint.py
+tests/test_chris_endpoint.py
 ==============================
-Tests for POST /api/kevin/chat endpoint.
+Tests for POST /api/chris/chat endpoint.
 
 1. Valid request returns 200 with expected shape
 2. Unknown user_id returns 404
@@ -21,7 +21,7 @@ client = TestClient(app)
 
 
 def test_valid_request_returns_200():
-    resp = client.post("/api/kevin/chat", json={
+    resp = client.post("/api/chris/chat", json={
         "user_id": "user_marcus",
         "message": "What's my balance?",
     })
@@ -33,7 +33,7 @@ def test_valid_request_returns_200():
 
 
 def test_unknown_user_returns_404():
-    resp = client.post("/api/kevin/chat", json={
+    resp = client.post("/api/chris/chat", json={
         "user_id": "user_nonexistent",
         "message": "What's my balance?",
     })
@@ -42,7 +42,7 @@ def test_unknown_user_returns_404():
 
 
 def test_empty_message_returns_422():
-    resp = client.post("/api/kevin/chat", json={
+    resp = client.post("/api/chris/chat", json={
         "user_id": "user_marcus",
         "message": "   ",
     })

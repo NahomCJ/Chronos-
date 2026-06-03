@@ -1,9 +1,9 @@
 """
 services/conversational_ai/nlp_utils.py
 ========================================
-Text extraction utilities for Kevin.
+Text extraction utilities for Chris.
 
-Intent detection is handled by the LLM via tool calling (see kevin.py).
+Intent detection is handled by the LLM via tool calling (see chris.py).
 This module only provides regex-based entity extraction as a fallback utility.
 """
 
