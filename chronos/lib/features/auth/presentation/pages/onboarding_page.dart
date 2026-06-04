@@ -19,33 +19,39 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   late final PageController _controller;
-  late final VideoPlayerController _videoCtrl;
+
+  VideoPlayerController? _currentCtrl;
+  VideoPlayerController? _nextCtrl;
+
   int _index = 0;
   bool _videoReady = false;
+  bool _isSwitching = false;
 
-  static const _videoUrl =
-      'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4';
-
-  final List<OnboardingSlideModel> _slides = const [
+  static const _slides = [
     OnboardingSlideModel(
       title: 'All your money.\nOne system.',
       subtitle: 'Banking, crypto, payments and\nlife tools — all connected.',
+      videoUrl: 'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Powered by\nPanther AI',
       subtitle: 'Real-time insights, predictions\nand guidance built around you.',
+      videoUrl: 'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Buy now.\nPay intelligently.',
       subtitle: 'Flexible payments, smart limits\nand responsible spending.',
+      videoUrl: 'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Trade beyond\nthe basics',
       subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
+      videoUrl: 'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Your Life,\nOrganized',
       subtitle: 'Learning, growth, vision and\nwellbeing in one place.',
+      videoUrl: 'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
     ),
   ];
 
@@ -53,27 +59,70 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void initState() {
     super.initState();
     _controller = PageController();
-    _videoCtrl = VideoPlayerController.networkUrl(Uri.parse(_videoUrl))
-      ..initialize().then((_) {
-        if (!mounted) return;
-        setState(() => _videoReady = true);
-        _videoCtrl
-          ..setLooping(true)
-          ..setVolume(0)
-          ..play();
-      });
+    _initVideo(0);
+  }
+
+  Future<void> _initVideo(int index) async {
+    final ctrl = VideoPlayerController.networkUrl(
+      Uri.parse(_slides[index].videoUrl),
+    );
+    await ctrl.initialize();
+    if (!mounted) { ctrl.dispose(); return; }
+    ctrl.setLooping(true);
+    ctrl.setVolume(0);
+    ctrl.play();
+    setState(() {
+      _currentCtrl?.dispose();
+      _currentCtrl = ctrl;
+      _videoReady = true;
+    });
+  }
+
+  Future<void> _preloadAndSwitch(int nextIndex) async {
+    if (_isSwitching) return;
+    _isSwitching = true;
+
+    final next = VideoPlayerController.networkUrl(
+      Uri.parse(_slides[nextIndex].videoUrl),
+    );
+    await next.initialize();
+    if (!mounted) { next.dispose(); _isSwitching = false; return; }
+    next.setLooping(true);
+    next.setVolume(0);
+
+    setState(() {
+      _nextCtrl?.dispose();
+      _nextCtrl = next;
+    });
+
+    next.play();
+
+    // Brief crossfade: mark videoReady false then re-true
+    setState(() => _videoReady = false);
+    await Future.delayed(const Duration(milliseconds: 150));
+    if (!mounted) { _isSwitching = false; return; }
+
+    setState(() {
+      _currentCtrl?.dispose();
+      _currentCtrl = next;
+      _nextCtrl = null;
+      _videoReady = true;
+    });
+    _isSwitching = false;
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _videoCtrl.dispose();
+    _currentCtrl?.dispose();
+    _nextCtrl?.dispose();
     super.dispose();
   }
 
   bool get _isLast => _index == _slides.length - 1;
 
-  void _finish() => context.read<OnboardingBloc>().add(const OnboardingCompleted());
+  void _finish() =>
+      context.read<OnboardingBloc>().add(const OnboardingCompleted());
 
   void _next() {
     if (_isLast) { _finish(); return; }
@@ -83,11 +132,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
+  void _onPageChanged(int v) {
+    setState(() => _index = v);
+    _preloadAndSwitch(v);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<OnboardingBloc, OnboardingState>(
       listener: (context, state) {
-        if (state is OnboardingNotRequired) context.go(RouteConstants.signUp.toPath);
+        if (state is OnboardingNotRequired) {
+          context.go(RouteConstants.signUp.toPath);
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -95,16 +151,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
           fit: StackFit.expand,
           children: [
             // ── Video background ──────────────────────────────────────────
-            if (_videoReady)
-              FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _videoCtrl.value.size.width,
-                  height: _videoCtrl.value.size.height,
-                  child: VideoPlayer(_videoCtrl),
-                ),
-              )
-            else
+            AnimatedOpacity(
+              opacity: _videoReady ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              child: _videoReady && _currentCtrl != null
+                  ? FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _currentCtrl!.value.size.width,
+                        height: _currentCtrl!.value.size.height,
+                        child: VideoPlayer(_currentCtrl!),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+
+            if (!_videoReady)
               Container(color: const Color(0xFF0D0A1E)),
 
             // ── Gradient overlay ──────────────────────────────────────────
@@ -114,7 +176,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0x55000000),
+                    Color(0x44000000),
                     Color(0x11000000),
                     Color(0xEE000000),
                   ],
@@ -134,26 +196,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: (_index + 1) / _slides.length,
-                        backgroundColor: Colors.white.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation(Color(0xFFF5B400)),
+                        backgroundColor:
+                            Colors.white.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation(
+                            Color(0xFFF5B400)),
                         minHeight: 3,
                       ),
                     ),
                   ),
 
-                  // Slide text — bottom-weighted
+                  // Slide text
                   Expanded(
                     child: PageView.builder(
                       controller: _controller,
                       itemCount: _slides.length,
-                      onPageChanged: (v) => setState(() => _index = v),
-                      itemBuilder: (context, i) {
-                        final slide = _slides[i];
-                        return _SlideContent(
-                          title: slide.title,
-                          subtitle: slide.subtitle,
-                        );
-                      },
+                      onPageChanged: _onPageChanged,
+                      itemBuilder: (context, i) => _SlideContent(
+                        title: _slides[i].title,
+                        subtitle: _slides[i].subtitle,
+                      ),
                     ),
                   ),
 
@@ -174,14 +235,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               decoration: BoxDecoration(
                                 color: i == _index
                                     ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.35),
+                                    : Colors.white
+                                        .withValues(alpha: 0.35),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
                         ),
                         const Spacer(),
-                        // Skip
                         TextButton(
                           onPressed: _finish,
                           child: Text(
@@ -193,7 +254,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        // Next / Get Started
                         GestureDetector(
                           onTap: _next,
                           child: Container(

@@ -93,9 +93,31 @@ class TickPayMedia {
   static const String shoppingVideo =
       'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
 
-  /// Cinematic city bokeh night drive — onboarding bg (Pexels #20407079)
+  /// Cinematic city bokeh night drive — kept as fallback (Pexels #20407079)
   static const String onboardingVideo =
       'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4';
+
+  // ── Onboarding per-slide videos ───────────────────────────────────────────
+
+  /// Slide 1 — Finance: contactless payment (Pexels #7669659)
+  static const String onboardingFinance =
+      'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4';
+
+  /// Slide 2 — AI: dynamic purple light waves (Pexels #34576602)
+  static const String onboardingAi =
+      'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4';
+
+  /// Slide 3 — Shopping/BNPL: woman shopping boutique (Pexels #7680438)
+  static const String onboardingShopping =
+      'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
+
+  /// Slide 4 — Crypto: crypto trading on smartphone (Pexels #34453413)
+  static const String onboardingCrypto =
+      'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4';
+
+  /// Slide 5 — Lifestyle: yoga in the park (Pexels #8173075)
+  static const String onboardingLifestyle =
+      'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4';
 
   /// Purple abstract background (Pexels #7101912)
   static const String purpleAbstractVideo =

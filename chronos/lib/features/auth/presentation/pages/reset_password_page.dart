@@ -87,11 +87,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           body: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset(
-                  'assets/auth_bg_img.png',
+                child: Image.network(
+                  'https://images.pexels.com/photos/5741419/pexels-photo-5741419.jpeg?auto=compress&cs=tinysrgb&w=1280',
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
                   filterQuality: FilterQuality.high,
+                  loadingBuilder: (_, child, progress) =>
+                      progress == null ? child : Container(color: const Color(0xFF0D1117)),
+                  errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0D1117)),
                 ),
               ),
               Positioned.fill(
@@ -259,7 +262,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         prefixIcon: Icon(icon, color: Colors.white70),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         errorMaxLines: 2,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
