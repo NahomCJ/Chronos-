@@ -44,6 +44,7 @@ enum RouteConstants {
   tickpayVerification,
   tickpayLinkWallets,
   tickpayCompletion,
+  tickpaySetupComplete,
   tickpayDashboard,
   tickpayCreditOverview,
   tickpayActivePlans,
@@ -51,6 +52,20 @@ enum RouteConstants {
   tickpayRewards,
   tickpayShortcuts,
   tickPayAi,
+  // New TickPay screens
+  tickpayDiscover,
+  tickpaySearch,
+  tickpayAiPicks,
+  tickpayProductDetail,
+  tickpayShopDetail,
+  tickpayBnplCheckout,
+  tickpayOrderConfirmed,
+  tickpayOrderHistory,
+  tickpayUpcomingPayments,
+  tickpayRepayNow,
+  tickpayPaymentHistory,
+  tickpayAlerts,
+  tickpayAutoPay,
   fullPortfolioAnalysis,
   paymentPlan,
   productDiscovery,
@@ -166,6 +181,34 @@ extension RouteConstantsX on RouteConstants {
         return '/tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return '/tickpay-ai';
+      case RouteConstants.tickpaySetupComplete:
+        return '/tickpay/setup-complete';
+      case RouteConstants.tickpayDiscover:
+        return '/tickpay/discover';
+      case RouteConstants.tickpaySearch:
+        return '/tickpay/search';
+      case RouteConstants.tickpayAiPicks:
+        return '/tickpay/ai-picks';
+      case RouteConstants.tickpayProductDetail:
+        return '/tickpay/product-detail';
+      case RouteConstants.tickpayShopDetail:
+        return '/tickpay/shop-detail';
+      case RouteConstants.tickpayBnplCheckout:
+        return '/tickpay/bnpl-checkout';
+      case RouteConstants.tickpayOrderConfirmed:
+        return '/tickpay/order-confirmed';
+      case RouteConstants.tickpayOrderHistory:
+        return '/tickpay/order-history';
+      case RouteConstants.tickpayUpcomingPayments:
+        return '/tickpay/upcoming-payments';
+      case RouteConstants.tickpayRepayNow:
+        return '/tickpay/repay-now';
+      case RouteConstants.tickpayPaymentHistory:
+        return '/tickpay/payment-history';
+      case RouteConstants.tickpayAlerts:
+        return '/tickpay/alerts';
+      case RouteConstants.tickpayAutoPay:
+        return '/tickpay/auto-pay';
       case RouteConstants.fullPortfolioAnalysis:
         return '/full-portfolio-analysis';
       case RouteConstants.paymentPlan:
@@ -288,6 +331,34 @@ extension RouteConstantsX on RouteConstants {
         return 'tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return 'tickpay-ai';
+      case RouteConstants.tickpaySetupComplete:
+        return 'tickpay-setup-complete';
+      case RouteConstants.tickpayDiscover:
+        return 'tickpay-discover';
+      case RouteConstants.tickpaySearch:
+        return 'tickpay-search';
+      case RouteConstants.tickpayAiPicks:
+        return 'tickpay-ai-picks';
+      case RouteConstants.tickpayProductDetail:
+        return 'tickpay-product-detail';
+      case RouteConstants.tickpayShopDetail:
+        return 'tickpay-shop-detail';
+      case RouteConstants.tickpayBnplCheckout:
+        return 'tickpay-bnpl-checkout';
+      case RouteConstants.tickpayOrderConfirmed:
+        return 'tickpay-order-confirmed';
+      case RouteConstants.tickpayOrderHistory:
+        return 'tickpay-order-history';
+      case RouteConstants.tickpayUpcomingPayments:
+        return 'tickpay-upcoming-payments';
+      case RouteConstants.tickpayRepayNow:
+        return 'tickpay-repay-now';
+      case RouteConstants.tickpayPaymentHistory:
+        return 'tickpay-payment-history';
+      case RouteConstants.tickpayAlerts:
+        return 'tickpay-alerts';
+      case RouteConstants.tickpayAutoPay:
+        return 'tickpay-auto-pay';
       case RouteConstants.fullPortfolioAnalysis:
         return 'full-portfolio-analysis';
       case RouteConstants.paymentPlan:

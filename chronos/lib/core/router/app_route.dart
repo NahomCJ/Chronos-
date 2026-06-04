@@ -57,13 +57,27 @@ import '../../features/panther_ai/presentation/pages/market_intelligence_page.da
 import '../../features/tickpay/presentation/pages/tickpay_welcome_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_verification_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_link_wallets_page.dart';
-import '../../features/tickpay/presentation/pages/tickpay_completion_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_dashboard_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_credit_overview_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_active_plans_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_notifications_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_rewards_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_shortcuts_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_setup_complete_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_discover_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_search_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_ai_picks_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_product_detail_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_shop_detail_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_bnpl_checkout_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_order_confirmed_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_order_history_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_upcoming_payments_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_repay_now_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_payment_history_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_alerts_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_auto_pay_page.dart';
+import '../../features/tickpay/presentation/utils/tickpay_media.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'route_constants.dart';
 import '../di/app_di.dart';
@@ -397,61 +411,153 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayWelcome.toPath,
       name: RouteConstants.tickpayWelcome.name,
-      builder: (context, state) => const TickpayWelcomePage(),
+      builder: (context, state) => const TickPayWelcomePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayVerification.toPath,
       name: RouteConstants.tickpayVerification.name,
-      builder: (context, state) => const TickpayVerificationPage(),
+      builder: (context, state) => const TickPayVerificationPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayLinkWallets.toPath,
       name: RouteConstants.tickpayLinkWallets.name,
-      builder: (context, state) => const TickpayLinkWalletsPage(),
+      builder: (context, state) => const TickPayLinkWalletsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayCompletion.toPath,
       name: RouteConstants.tickpayCompletion.name,
-      builder: (context, state) => const TickpayCompletionPage(),
+      builder: (context, state) => const TickPaySetupCompletePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayDashboard.toPath,
       name: RouteConstants.tickpayDashboard.name,
-      builder: (context, state) => const TickpayDashboardPage(),
+      builder: (context, state) => const TickPayDashboardPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayCreditOverview.toPath,
       name: RouteConstants.tickpayCreditOverview.name,
-      builder: (context, state) => const TickpayCreditOverviewPage(),
+      builder: (context, state) => const TickPayCreditOverviewPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayActivePlans.toPath,
       name: RouteConstants.tickpayActivePlans.name,
-      builder: (context, state) => const TickpayActivePlansPage(),
+      builder: (context, state) => const TickPayActivePlansPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayNotifications.toPath,
       name: RouteConstants.tickpayNotifications.name,
-      builder: (context, state) => const TickpayNotificationsPage(),
+      builder: (context, state) => const TickPayNotificationsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayRewards.toPath,
       name: RouteConstants.tickpayRewards.name,
-      builder: (context, state) => const TickpayRewardsPage(),
+      builder: (context, state) => const TickPayRewardsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayShortcuts.toPath,
       name: RouteConstants.tickpayShortcuts.name,
       builder: (context, state) => const TickpayShortcutsPage(),
+    ),
+    // ── New TickPay screens ───────────────────────────────────────────────
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpaySetupComplete.toPath,
+      name: RouteConstants.tickpaySetupComplete.name,
+      builder: (context, state) => const TickPaySetupCompletePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayDiscover.toPath,
+      name: RouteConstants.tickpayDiscover.name,
+      builder: (context, state) => const TickPayDiscoverPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpaySearch.toPath,
+      name: RouteConstants.tickpaySearch.name,
+      builder: (context, state) => const TickPaySearchPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAiPicks.toPath,
+      name: RouteConstants.tickpayAiPicks.name,
+      builder: (context, state) => const TickPayAiPicksPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayProductDetail.toPath,
+      name: RouteConstants.tickpayProductDetail.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, String>?;
+        return TickPayProductDetailPage(
+          name: extra?['name'] ?? 'iPhone 15 Pro',
+          price: extra?['price'] ?? '\$999',
+          asset: extra?['asset'] ?? TickPayMedia.iphone15Pro,
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayShopDetail.toPath,
+      name: RouteConstants.tickpayShopDetail.name,
+      builder: (context, state) => const TickPayShopDetailPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayBnplCheckout.toPath,
+      name: RouteConstants.tickpayBnplCheckout.name,
+      builder: (context, state) => const TickPayBnplCheckoutPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayOrderConfirmed.toPath,
+      name: RouteConstants.tickpayOrderConfirmed.name,
+      builder: (context, state) => const TickPayOrderConfirmedPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayOrderHistory.toPath,
+      name: RouteConstants.tickpayOrderHistory.name,
+      builder: (context, state) => const TickPayOrderHistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayUpcomingPayments.toPath,
+      name: RouteConstants.tickpayUpcomingPayments.name,
+      builder: (context, state) => const TickPayUpcomingPaymentsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayRepayNow.toPath,
+      name: RouteConstants.tickpayRepayNow.name,
+      builder: (context, state) => const TickPayRepayNowPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayPaymentHistory.toPath,
+      name: RouteConstants.tickpayPaymentHistory.name,
+      builder: (context, state) => const TickPayPaymentHistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAlerts.toPath,
+      name: RouteConstants.tickpayAlerts.name,
+      builder: (context, state) => const TickPayAlertsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAutoPay.toPath,
+      name: RouteConstants.tickpayAutoPay.name,
+      builder: (context, state) => const TickPayAutoPayPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
