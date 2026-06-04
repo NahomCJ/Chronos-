@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../bloc/tickpay_account_cubit.dart';
+import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayRepayNowPage extends StatefulWidget {
@@ -379,21 +382,65 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
   }
 
   Widget _buildConfirmButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => context.pop(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1A0A2E),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
-          elevation: 0,
-        ),
-        child: const Text('Confirm Payment',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-      ),
+    return BlocConsumer<TickpayAccountCubit, TickpayAccountState>(
+      listener: (context, state) {
+        if (state is TickpayRepaymentSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment successful!'),
+              backgroundColor: Color(0xFF2E7D32),
+            ),
+          );
+          context.pop();
+        } else if (state is TickpayActionError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final loaded = state is TickpayAccountLoaded ? state : null;
+        final isLoading = state is TickpayActionLoading;
+
+        // Compute repayment amount from real account data or fallback to defaults
+        final balance = loaded?.balance ?? 0.0;
+        final dueNow = balance * 0.25; // 25% minimum payment
+        final fullAmount = _amountChoice == 0 ? balance : dueNow;
+
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: isLoading
+                ? null
+                : () {
+                    context.read<TickpayAccountCubit>().createRepayment(
+                          amount: fullAmount > 0 ? fullAmount : (_amountChoice == 0 ? 749.25 : 249.75),
+                        );
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A0A2E),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
+            ),
+            child: isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : const Text('Confirm Payment',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../bloc/tickpay_account_cubit.dart';
+import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayBnplCheckoutPage extends StatefulWidget {
@@ -510,26 +513,56 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
   }
 
   Widget _buildAcceptButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _agreedToTerms
-            ? () => context.pushReplacement(
-                RouteConstants.tickpayOrderConfirmed.toPath)
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1A0A2E),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32)),
-          elevation: 0,
-          disabledBackgroundColor: const Color(0xFFDDDDDD),
-          disabledForegroundColor: const Color(0xFF999999),
-        ),
-        child: const Text('Accept Terms to Continue',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-      ),
+    return BlocConsumer<TickpayAccountCubit, TickpayAccountState>(
+      listener: (context, state) {
+        if (state is TickpayPurchaseSuccess) {
+          context.pushReplacement(RouteConstants.tickpayOrderConfirmed.toPath);
+        } else if (state is TickpayActionError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is TickpayActionLoading;
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: (_agreedToTerms && !isLoading)
+                ? () {
+                    final plan = _plans[_selectedPlan];
+                    context.read<TickpayAccountCubit>().createPurchase(
+                          amount: plan.count * plan.installment,
+                          merchant: 'TickPay Purchase',
+                        );
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A0A2E),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32)),
+              elevation: 0,
+              disabledBackgroundColor: const Color(0xFFDDDDDD),
+              disabledForegroundColor: const Color(0xFF999999),
+            ),
+            child: isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  )
+                : const Text('Accept & Confirm Purchase',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+          ),
+        );
+      },
     );
   }
 }

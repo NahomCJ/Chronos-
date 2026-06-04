@@ -63,7 +63,9 @@ class HomeSummaryModel {
     final cat = json['byCategory'] as Map<String, dynamic>? ?? {};
 
     return HomeSummaryModel(
-      accountBalance: (json['accountBalance'] as num?)?.toDouble() ?? 0.0,
+      accountBalance: (json['accountBalance'] as num?)?.toDouble() ??
+          (json['totalBalance'] as num?)?.toDouble() ??
+          0.0,
       totalSpent: (json['totalSpent'] as num?)?.toDouble() ?? 0.0,
       recentTransactions: txList,
       byCategory: cat,

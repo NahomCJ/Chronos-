@@ -83,6 +83,8 @@ import 'route_constants.dart';
 import '../di/app_di.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
+import '../../features/tickpay/presentation/bloc/tickpay_account_cubit.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -184,10 +186,13 @@ final GoRouter router = GoRouter(
       name: RouteConstants.transferConfirmation.name,
       builder: (context, state) {
         final extra = state.extra as Map<String, String>?;
-        return TransferConfirmationPage(
-          amount: extra?['amount'] ?? '0',
-          recipientName: extra?['recipientName'] ?? 'Alex Johnson',
-          method: extra?['method'] ?? 'Chronos User',
+        return BlocProvider(
+          create: (_) => sl<TransferBloc>(),
+          child: TransferConfirmationPage(
+            amount: extra?['amount'] ?? '0',
+            recipientName: extra?['recipientName'] ?? 'Alex Johnson',
+            method: extra?['method'] ?? 'Chronos User',
+          ),
         );
       },
     ),
@@ -435,13 +440,19 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayDashboard.toPath,
       name: RouteConstants.tickpayDashboard.name,
-      builder: (context, state) => const TickPayDashboardPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayDashboardPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayCreditOverview.toPath,
       name: RouteConstants.tickpayCreditOverview.name,
-      builder: (context, state) => const TickPayCreditOverviewPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayCreditOverviewPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -515,7 +526,10 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayBnplCheckout.toPath,
       name: RouteConstants.tickpayBnplCheckout.name,
-      builder: (context, state) => const TickPayBnplCheckoutPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>(),
+        child: const TickPayBnplCheckoutPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -539,7 +553,10 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayRepayNow.toPath,
       name: RouteConstants.tickpayRepayNow.name,
-      builder: (context, state) => const TickPayRepayNowPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayRepayNowPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
