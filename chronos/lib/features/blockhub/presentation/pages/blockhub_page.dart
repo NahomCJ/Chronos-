@@ -1,9 +1,9 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
 import 'buy/buy_btc_page.dart';
 import 'bitcoin_detail_page.dart';
-import 'panther_ai_insights_page.dart';
 import '../widgets/more_options_modal.dart';
 import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
@@ -344,24 +344,27 @@ class _BlockHubPageState extends State<BlockHubPage> {
                         ),
                         SizedBox(height: isSmallScreen ? 12 : 16),
 
-                        // Crypto Icons Row
+                        // Crypto Icons Row — animated spinning coins
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _buildCryptoIconDark(
-                              'assets/ethereum.png',
-                              false,
-                              isSmallScreen,
+                            _SpinningCoinIcon(
+                              assetPath: 'assets/ethereum.png',
+                              isHighlighted: false,
+                              isSmallScreen: isSmallScreen,
+                              delayMs: 200,
                             ),
-                            _buildCryptoIconDark(
-                              'assets/btc.png',
-                              true,
-                              isSmallScreen,
+                            _SpinningCoinIcon(
+                              assetPath: 'assets/btc.png',
+                              isHighlighted: true,
+                              isSmallScreen: isSmallScreen,
+                              delayMs: 0,
                             ),
-                            _buildCryptoIconDark(
-                              'assets/solana.png',
-                              false,
-                              isSmallScreen,
+                            _SpinningCoinIcon(
+                              assetPath: 'assets/solana.png',
+                              isHighlighted: false,
+                              isSmallScreen: isSmallScreen,
+                              delayMs: 400,
                             ),
                           ],
                         ),
@@ -451,85 +454,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
                     ),
                   ),
 
-                  SizedBox(height: isSmallScreen ? 20 : 24),
-
-                  // Panther AI Insights
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF7C3AED).withValues(alpha: 0.5),
-                      // gradient: const LinearGradient(
-                      //   colors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-                      //   begin: Alignment.topLeft,
-                      //   end: Alignment.bottomRight,
-                      // ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.psychology,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                            SizedBox(width: isSmallScreen ? 6 : 8),
-                            Text(
-                              'Panther AI Insights',
-                              style: TextStyles.titleMedium.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: isSmallScreen ? 16 : 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: isSmallScreen ? 10 : 12),
-                        Text(
-                          'BTC volatility increased by 8% today. Consider smaller position sizes and dollar-cost averaging for entry.',
-                          style: TextStyles.bodyMedium.copyWith(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            height: 1.4,
-                            fontSize: isSmallScreen ? 13 : 14,
-                          ),
-                        ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const PantherAiInsightsPage(),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'View AI Insights',
-                                style: TextStyles.bodyMedium.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 13 : 14,
-                                ),
-                              ),
-                              SizedBox(width: isSmallScreen ? 6 : 8),
-                              const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
                   const SizedBox(height: 120),
                 ],
               ),
@@ -608,51 +532,14 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  Widget _buildCryptoIconDark(
-    String assetPath,
-    bool isHighlighted,
-    bool isSmallScreen,
-  ) {
-    // Make highlighted (BTC) icon larger
-    final containerSize =
-        isHighlighted
-            ? (isSmallScreen ? 100.0 : 100.0)
-            : (isSmallScreen ? 56.0 : 60.0);
-    final imageSize =
-        isHighlighted
-            ? (isSmallScreen ? 100.0 : 100.0)
-            : (isSmallScreen ? 36.0 : 40.0);
-    final padding =
-        isHighlighted
-            ? (isSmallScreen ? 5.0 : 7.0)
-            : (isSmallScreen ? 5.0 : 7.0);
-
-    return Container(
-      width: containerSize,
-      height: containerSize,
-      padding: EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white.withValues(alpha: 0.1),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-          width: isHighlighted ? 3 : 1,
-        ),
-
-        // Add shadow for highlighted icon
-      ),
-      child: Image.asset(assetPath, width: imageSize, height: imageSize),
-    );
-  }
-
   Widget _buildWatchlistItem(CryptoAsset asset, bool isSmallScreen) {
     return Container(
       margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.15)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -661,9 +548,9 @@ class _BlockHubPageState extends State<BlockHubPage> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.25)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
             ),
             child: Icon(
               _getCryptoIcon(asset.symbol),
@@ -689,7 +576,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                 Text(
                   asset.symbol,
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -850,4 +737,96 @@ class MiniChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// ── Spinning coin icon — entrance + idle slow rotation ────────────────────────
+class _SpinningCoinIcon extends StatefulWidget {
+  final String assetPath;
+  final bool isHighlighted;
+  final bool isSmallScreen;
+  final int delayMs;
+
+  const _SpinningCoinIcon({
+    required this.assetPath,
+    required this.isHighlighted,
+    required this.isSmallScreen,
+    this.delayMs = 0,
+  });
+
+  @override
+  State<_SpinningCoinIcon> createState() => _SpinningCoinIconState();
+}
+
+class _SpinningCoinIconState extends State<_SpinningCoinIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    // Entrance spin: 800 ms, then idle repeating slow rotation
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.delayMs), () {
+      if (mounted) {
+        _ctrl.forward().then((_) {
+          if (mounted) {
+            _ctrl.duration = const Duration(seconds: 5);
+            _ctrl.repeat();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = widget.isHighlighted ? 100.0 : (widget.isSmallScreen ? 56.0 : 60.0);
+    final imgSize = widget.isHighlighted ? 86.0 : (widget.isSmallScreen ? 34.0 : 38.0);
+
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) {
+        final angle = _ctrl.value * 2 * math.pi;
+        return Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(angle),
+          alignment: Alignment.center,
+          child: Container(
+            width: size,
+            height: size,
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.1),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.25),
+                width: widget.isHighlighted ? 2.5 : 1,
+              ),
+              boxShadow: widget.isHighlighted
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      )
+                    ]
+                  : null,
+            ),
+            child: Image.asset(widget.assetPath, width: imgSize, height: imgSize),
+          ),
+        );
+      },
+    );
+  }
 }
