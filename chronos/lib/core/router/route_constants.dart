@@ -73,6 +73,7 @@ enum RouteConstants {
   marketIntelligence,
   pantherAiSettings,
   pantherAiChat,
+  profile,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -223,6 +224,8 @@ extension RouteConstantsX on RouteConstants {
         return '/panther-ai-settings';
       case RouteConstants.pantherAiChat:
         return '/panther-ai-chat';
+      case RouteConstants.profile:
+        return '/profile';
     }
   }
 
@@ -373,6 +376,8 @@ extension RouteConstantsX on RouteConstants {
         return 'panther-ai-settings';
       case RouteConstants.pantherAiChat:
         return 'panther-ai-chat';
+      case RouteConstants.profile:
+        return 'profile';
     }
   }
 }
