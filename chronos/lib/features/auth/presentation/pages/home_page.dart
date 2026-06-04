@@ -169,11 +169,14 @@ class _HomeViewState extends State<_HomeView> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 18 * scale,
-                        backgroundColor: const Color(0xFFCD853F),
-                        child: Icon(Icons.person, color: Colors.white,
-                            size: 20 * scale),
+                      GestureDetector(
+                        onTap: () => context.push(RouteConstants.profile.toPath),
+                        child: CircleAvatar(
+                          radius: 18 * scale,
+                          backgroundColor: const Color(0xFFCD853F),
+                          child: Icon(Icons.person, color: Colors.white,
+                              size: 20 * scale),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(

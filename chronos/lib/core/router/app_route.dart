@@ -85,6 +85,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
 import '../../features/tickpay/presentation/bloc/tickpay_account_cubit.dart';
+import '../../features/profile/presentation/bloc/profile_cubit.dart';
+import '../../features/profile/presentation/pages/profile_page.dart' as profile_page;
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -617,6 +619,18 @@ final GoRouter router = GoRouter(
       path: RouteConstants.pantherAiChat.toPath,
       name: RouteConstants.pantherAiChat.name,
       builder: (context, state) => const PantherAiChatPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.profile.toPath,
+      name: RouteConstants.profile.name,
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<ProfileCubit>()..loadProfile()),
+          BlocProvider(create: (_) => sl<AuthBloc>()),
+        ],
+        child: const profile_page.ProfilePage(),
+      ),
     ),
 
     // ── Shell: only the 3 main tabs get the bottom nav ────────────────────
