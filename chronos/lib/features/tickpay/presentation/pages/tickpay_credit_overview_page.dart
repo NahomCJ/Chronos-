@@ -1,6 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import '../bloc/tickpay_account_cubit.dart';
+import '../bloc/tickpay_account_state.dart';
 
 class TickPayCreditOverviewPage extends StatelessWidget {
   const TickPayCreditOverviewPage({super.key});
@@ -10,38 +14,43 @@ class TickPayCreditOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _kLight,
-      body: Column(
-        children: [
-          Container(
-            color: _kDark,
-            child: SafeArea(
-              bottom: false,
-              child: _buildHeader(context),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  _buildCreditHeader(),
-                  const SizedBox(height: 24),
-                  _buildUtilizationCard(),
-                  const SizedBox(height: 24),
-                  _buildRecentActivity(),
-                  const SizedBox(height: 24),
-                  _buildActionButtons(context),
-                  const SizedBox(height: 40),
-                ],
+    return BlocBuilder<TickpayAccountCubit, TickpayAccountState>(
+      builder: (context, state) {
+        final account = state is TickpayAccountLoaded ? state : null;
+        return Scaffold(
+          backgroundColor: _kLight,
+          body: Column(
+            children: [
+              Container(
+                color: _kDark,
+                child: SafeArea(
+                  bottom: false,
+                  child: _buildHeader(context),
+                ),
               ),
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      _buildCreditHeader(account),
+                      const SizedBox(height: 24),
+                      _buildUtilizationCard(account),
+                      const SizedBox(height: 24),
+                      _buildRecentActivity(account),
+                      const SizedBox(height: 24),
+                      _buildActionButtons(context),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -84,7 +93,11 @@ class TickPayCreditOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCreditHeader() {
+  Widget _buildCreditHeader(TickpayAccountLoaded? account) {
+    final fmt = NumberFormat('#,##0.00');
+    final available = account?.available ?? 0.0;
+    final limit = account?.creditLimit ?? 0.0;
+    final used = account?.creditUsed ?? 0.0;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -110,27 +123,30 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text(
-                '\$3,150',
-                style: TextStyle(
+              Text(
+                account == null ? '---' : '\$${fmt.format(available)}',
+                style: const TextStyle(
                   color: Color(0xFF1A1A1A),
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(width: 8),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 6),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
-                  'of \$5,000 limit',
-                  style: TextStyle(color: Color(0xFF999999), fontSize: 13),
+                  account == null
+                      ? 'of --- limit'
+                      : 'of \$${fmt.format(limit)} limit',
+                  style: const TextStyle(
+                      color: Color(0xFF999999), fontSize: 13),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 4),
           const Text(
-            'Valid until 05/34',
+            'TickPay Credit Line',
             style: TextStyle(color: Color(0xFF999999), fontSize: 12),
           ),
           const SizedBox(height: 16),
@@ -141,14 +157,14 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFEEEEEE)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('User Credit',
+                const Text('Credit Used',
                     style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
                 Text(
-                  '\$1,850',
-                  style: TextStyle(
+                  account == null ? '---' : '\$${fmt.format(used)}',
+                  style: const TextStyle(
                     color: Color(0xFF1A1A1A),
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -162,7 +178,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildUtilizationCard() {
+  Widget _buildUtilizationCard(TickpayAccountLoaded? account) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -194,20 +210,27 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               width: 140,
               height: 140,
               child: CustomPaint(
-                painter: _DonutPainter(value: 0.37),
-                child: const Center(
+                painter: _DonutPainter(
+                    value: account == null
+                        ? 0.0
+                        : (account.creditLimit == 0
+                            ? 0.0
+                            : account.creditUsed / account.creditLimit)),
+                child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '37%',
-                        style: TextStyle(
+                        account == null
+                            ? '0%'
+                            : '${(account.creditLimit == 0 ? 0 : (account.creditUsed / account.creditLimit * 100)).toStringAsFixed(0)}%',
+                        style: const TextStyle(
                           color: Color(0xFF1A1A1A),
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Used',
                         style: TextStyle(
                           color: Color(0xFF888888),
@@ -221,9 +244,21 @@ class TickPayCreditOverviewPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          _buildUtilRow('Active Plans', '\$1,629', 0.326, const Color(0xFF7C3AED)),
+          _buildUtilRow(
+              'Credit Used',
+              account == null ? '\$0' : '\$${account.creditUsed.toStringAsFixed(2)}',
+              account == null || account.creditLimit == 0
+                  ? 0.0
+                  : math.min(account.creditUsed / account.creditLimit, 1.0),
+              const Color(0xFF7C3AED)),
           const SizedBox(height: 10),
-          _buildUtilRow('Pending Charges', '\$221', 0.044, const Color(0xFFDC8F4A)),
+          _buildUtilRow(
+              'Available',
+              account == null ? '\$0' : '\$${account.available.toStringAsFixed(2)}',
+              account == null || account.creditLimit == 0
+                  ? 1.0
+                  : math.min(account.available / account.creditLimit, 1.0),
+              const Color(0xFF2E7D32)),
         ],
       ),
     );
@@ -267,13 +302,9 @@ class TickPayCreditOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
-    final items = [
-      ('Amazon', 'Dec 20 · Shopping', '+\$149.75', true),
-      ('Payment Received', 'Dec 18 · Payment', '+\$300.00', true),
-      ('Nike', 'Dec 15 · Shopping', '+\$150.00', true),
-      ('Apple Store', 'Dec 10 · Electronics', '+\$324.75', true),
-    ];
+  Widget _buildRecentActivity(TickpayAccountLoaded? account) {
+    final fmt = NumberFormat('#,##0.00');
+    final txs = account?.transactions.take(4).toList() ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -295,12 +326,19 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        ...items.map((item) => _buildActivityRow(
-              item.$1,
-              item.$2,
-              item.$3,
-              item.$4,
-            )),
+        if (txs.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Text('No transactions yet.',
+                style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
+          )
+        else
+          ...txs.map((tx) => _buildActivityRow(
+                tx.merchant ?? tx.type,
+                '${tx.createdAt.month}/${tx.createdAt.day} · ${tx.type}',
+                '\$${fmt.format(tx.amount)}',
+                tx.isRepayment,
+              )),
       ],
     );
   }

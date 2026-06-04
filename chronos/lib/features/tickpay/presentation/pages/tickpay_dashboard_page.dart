@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_fab.dart';
+import '../bloc/tickpay_account_cubit.dart';
+import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayDashboardPage extends StatelessWidget {
@@ -12,46 +16,71 @@ class TickPayDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _kLight,
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(bottom: 80),
-        child: const ChrisFab(),
-      ),
-      body: Column(
-        children: [
-          // ── Dark hero header ──────────────────────────────────────────────
-          Container(
-            color: _kDark,
-            child: SafeArea(
-              bottom: false,
-              child: Column(
-                children: [
-                  _buildTopBar(context),
-                  _buildCreditCard(context),
-                  const SizedBox(height: 24),
-                  _buildQuickActions(context),
-                  const SizedBox(height: 28),
-                ],
-              ),
-            ),
+    return BlocBuilder<TickpayAccountCubit, TickpayAccountState>(
+      builder: (context, state) {
+        final loaded = state is TickpayAccountLoaded ? state : null;
+        return Scaffold(
+          backgroundColor: _kLight,
+          floatingActionButton: Container(
+            margin: const EdgeInsets.only(bottom: 80),
+            child: const ChrisFab(),
           ),
-          // ── White content body ────────────────────────────────────────────
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 28, bottom: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildActivePlans(context),
-                  const SizedBox(height: 28),
-                  _buildAiPicks(context),
-                ],
+          body: Column(
+            children: [
+              // ── Dark hero header ──────────────────────────────────────────────
+              Container(
+                color: _kDark,
+                child: SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      _buildTopBar(context),
+                      _buildCreditCard(context, loaded),
+                      const SizedBox(height: 24),
+                      _buildQuickActions(context),
+                      const SizedBox(height: 28),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              // ── White content body ────────────────────────────────────────────
+              Expanded(
+                child: state is TickpayAccountLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : state is TickpayAccountError
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.credit_card_off,
+                                      size: 48, color: Color(0xFF7C3AED)),
+                                  const SizedBox(height: 12),
+                                  Text(state.message,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Color(0xFF555555))),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            padding: const EdgeInsets.only(top: 28, bottom: 100),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildActivePlans(context, loaded),
+                                const SizedBox(height: 28),
+                                _buildAiPicks(context),
+                              ],
+                            ),
+                          ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -139,7 +168,10 @@ class TickPayDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCreditCard(BuildContext context) {
+  Widget _buildCreditCard(BuildContext context, TickpayAccountLoaded? account) {
+    final fmt = NumberFormat('#,##0.00');
+    final available = account?.available ?? 0.0;
+    final creditUsed = account?.creditUsed ?? 0.0;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -192,7 +224,7 @@ class TickPayDashboardPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Valid until 05/34',
+                      account == null ? 'Loading...' : 'TickPay Card',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 12,
@@ -201,9 +233,9 @@ class TickPayDashboardPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  '\$3,150',
-                  style: TextStyle(
+                Text(
+                  account == null ? '---' : '\$${fmt.format(available)}',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
@@ -220,7 +252,9 @@ class TickPayDashboardPage extends StatelessWidget {
                         color: Colors.white.withValues(alpha: 0.12)),
                   ),
                   child: Text(
-                    'User Credit  \$1,850',
+                    account == null
+                        ? 'Credit Used  ---'
+                        : 'Credit Used  \$${fmt.format(creditUsed)}',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 12,
@@ -286,7 +320,9 @@ class TickPayDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildActivePlans(BuildContext context) {
+  Widget _buildActivePlans(BuildContext context, TickpayAccountLoaded? account) {
+    final fmt = NumberFormat('#,##0.00');
+    final purchases = account?.purchases ?? [];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -317,23 +353,28 @@ class TickPayDashboardPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          _buildPlanItem(
-            logo: Icons.shopping_cart_outlined,
-            brand: 'Amazon',
-            orderRef: '#9012',
-            info: '3 of 4 payments left',
-            amount: '\$599',
-            color: const Color(0xFFFF9900),
-          ),
-          const SizedBox(height: 10),
-          _buildPlanItem(
-            logo: Icons.check_circle_outline,
-            brand: 'Nike',
-            orderRef: '#9012',
-            info: '2 of 3 payments left',
-            amount: '\$450',
-            color: const Color(0xFF1A1A1A),
-          ),
+          if (purchases.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                'No active plans yet. Start shopping!',
+                style: TextStyle(color: Color(0xFF888888), fontSize: 13),
+              ),
+            )
+          else
+            ...purchases.take(2).map((tx) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _buildPlanItem(
+                  logo: Icons.shopping_bag_outlined,
+                  brand: tx.merchant ?? 'Purchase',
+                  orderRef: '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
+                  info: tx.status,
+                  amount: '\$${fmt.format(tx.amount)}',
+                  color: const Color(0xFF7C3AED),
+                ),
+              );
+            }),
         ],
       ),
     );

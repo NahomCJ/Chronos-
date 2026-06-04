@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/preset_colors.dart';
 import '../../../../core/utils/error_toast.dart';
+import '../../../home/data/data_source/home_remote_data_source.dart';
 
 class EnterAmountPage extends StatefulWidget {
   final String recipientName;
@@ -22,8 +24,29 @@ class EnterAmountPage extends StatefulWidget {
 
 class _EnterAmountPageState extends State<EnterAmountPage> {
   String _amountStr = "0";
-  final double _availableBalance = 12450.5;
+  double _availableBalance = 0.0;
+  bool _isBalanceLoading = true;
   final NumberFormat _formatter = NumberFormat("#,##0.##");
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    try {
+      final summary = await GetIt.I<HomeRemoteDataSource>().getSummary();
+      if (mounted) {
+        setState(() {
+          _availableBalance = summary.accountBalance;
+          _isBalanceLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isBalanceLoading = false);
+    }
+  }
 
   void _onKeyPress(String value) {
     setState(() {
@@ -70,7 +93,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
       ErrorToast.show(context, "Please enter a valid amount");
       return;
     }
-    if (amount > _availableBalance) {
+    if (!_isBalanceLoading && amount > _availableBalance) {
       ErrorToast.show(context, "Insufficient balance");
       return;
     }
@@ -241,9 +264,11 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Available: \$${_formatter.format(_availableBalance)}',
+            _isBalanceLoading
+                ? 'Loading balance...'
+                : 'Available: \$${_formatter.format(_availableBalance)}',
             style: TextStyle(
-              color: Colors.greenAccent,
+              color: _isBalanceLoading ? Colors.white38 : Colors.greenAccent,
               fontSize: 12 * textScale,
             ),
           ),
@@ -294,7 +319,9 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
                   ),
                 ),
                 Text(
-                  '\$12,450.5',
+                  _isBalanceLoading
+                      ? '...'
+                      : '\$${_formatter.format(_availableBalance)}',
                   style: TextStyle(
                     color: Colors.white60,
                     fontSize: 11 * textScale,

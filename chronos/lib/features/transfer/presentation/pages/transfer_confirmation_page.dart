@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/preset_colors.dart';
 import '../bloc/transfer_bloc.dart';
 import '../bloc/transfer_event.dart';
+import '../bloc/transfer_state.dart';
 
 class TransferConfirmationPage extends StatefulWidget {
   final String amount;
@@ -84,25 +84,14 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
   }
 
   void _handleSuccess() {
+    if (_isSuccess) return;
     setState(() => _isSuccess = true);
-    // Fire the backend transfer
     context.read<TransferBloc>().add(TransferSubmitted(
           amount: double.tryParse(widget.amount) ?? 0.0,
           recipientName: widget.recipientName,
           method: widget.method,
         ));
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        context.go(
-          RouteConstants.transferSuccess.toPath,
-          extra: {
-            'amount': widget.amount,
-            'recipientName': widget.recipientName,
-            'method': widget.method,
-          },
-        );
-      }
-    });
+    // Navigation happens via BlocListener on TransferSuccess/Failure
   }
 
   void _onConfirmLongPressStart(LongPressStartDetails details) {
@@ -124,9 +113,28 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.I<TransferBloc>(),
-      child: Builder(builder: (ctx) => _buildBody(ctx)),
+    return BlocListener<TransferBloc, TransferState>(
+      listener: (context, state) {
+        if (state is TransferSuccess) {
+          context.go(
+            RouteConstants.transferSuccess.toPath,
+            extra: {
+              'amount': widget.amount,
+              'recipientName': widget.recipientName,
+              'method': widget.method,
+            },
+          );
+        } else if (state is TransferFailure) {
+          setState(() => _isSuccess = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      child: _buildBody(context),
     );
   }
 
