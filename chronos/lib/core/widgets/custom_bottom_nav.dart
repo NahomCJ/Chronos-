@@ -21,24 +21,33 @@ class CustomBottomNav extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A2E).withValues(alpha: 0),
+              // Apple-style frosted glass — dark tinted
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFF2A2A3E).withValues(alpha: 0.82),
+                  const Color(0xFF1A1A2E).withValues(alpha: 0.92),
+                ],
+              ),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.18),
                 width: 0.8,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  color: Colors.black.withValues(alpha: 0.40),
+                  blurRadius: 32,
+                  offset: const Offset(0, 10),
                 ),
+                // Inner top highlight — key to Apple glass look
                 BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.04),
+                  color: Colors.white.withValues(alpha: 0.06),
                   blurRadius: 1,
                   offset: const Offset(0, -1),
                 ),
@@ -71,6 +80,18 @@ class CustomBottomNav extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (active)
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 4),
+                decoration: const BoxDecoration(
+                  color: _amber,
+                  shape: BoxShape.circle,
+                ),
+              )
+            else
+              const SizedBox(height: 8),
             Icon(icon, color: color, size: 22),
             const SizedBox(height: 3),
             Text(
@@ -98,6 +119,18 @@ class CustomBottomNav extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (active)
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 4),
+                decoration: const BoxDecoration(
+                  color: _amber,
+                  shape: BoxShape.circle,
+                ),
+              )
+            else
+              const SizedBox(height: 8),
             ColorFiltered(
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               child: Image.asset(
@@ -105,6 +138,8 @@ class CustomBottomNav extends StatelessWidget {
                 width: 22,
                 height: 22,
                 fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) =>
+                    Icon(Icons.psychology, color: color, size: 22),
               ),
             ),
             const SizedBox(height: 3),

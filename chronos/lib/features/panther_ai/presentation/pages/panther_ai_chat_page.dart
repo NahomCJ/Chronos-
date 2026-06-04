@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/theme/text_theme.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
@@ -32,6 +33,11 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   late AnimationController _dotController;
   OrbState _orbState = OrbState.idle;
 
+  // ── Voice input ──────────────────────────────────────────────────────────
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _speechAvailable = false;
+  bool _isListening = false;
+
   final List<String> _suggestions = [
     'Show my balance',
     'Why is my spending high?',
@@ -52,6 +58,48 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       isUser: false,
       time: _currentTime(),
     );
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechAvailable = await _speech.initialize(
+      onError: (_) => setState(() => _isListening = false),
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _toggleListening() async {
+    if (!_speechAvailable) return;
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    } else {
+      setState(() => _isListening = true);
+      await _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controller.text.length),
+            );
+          });
+          if (result.finalResult && result.recognizedWords.isNotEmpty) {
+            _sendMessage(result.recognizedWords);
+          }
+        },
+        listenOptions: stt.SpeechListenOptions(
+          partialResults: true,
+          cancelOnError: true,
+          listenFor: const Duration(seconds: 30),
+          pauseFor: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
@@ -417,10 +465,19 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             ),
           ),
           const SizedBox(width: 8),
-          Icon(
-            Icons.mic_none_outlined,
-            color: Colors.white.withValues(alpha: 0.45),
-            size: 20,
+          GestureDetector(
+            onTap: _toggleListening,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                _isListening ? Icons.mic : Icons.mic_none_outlined,
+                key: ValueKey(_isListening),
+                color: _isListening
+                    ? const Color(0xFFDC8F4A)
+                    : Colors.white.withValues(alpha: 0.45),
+                size: 20,
+              ),
+            ),
           ),
           const SizedBox(width: 8),
           GestureDetector(

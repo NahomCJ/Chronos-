@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_fab.dart';
 
 class ExchangePage extends StatefulWidget {
   const ExchangePage({super.key});
@@ -514,6 +515,7 @@ class _ExchangePageState extends State<ExchangePage> {
               ),
             ),
           ),
+          const ChrisFabPositioned(),
         ],
       ),
     );

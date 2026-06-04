@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_fab.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayDashboardPage extends StatelessWidget {
@@ -13,6 +14,10 @@ class TickPayDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _kLight,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 80),
+        child: const ChrisFab(),
+      ),
       body: Column(
         children: [
           // ── Dark hero header ──────────────────────────────────────────────

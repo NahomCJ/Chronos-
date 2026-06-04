@@ -104,7 +104,7 @@ class _HomeViewState extends State<_HomeView> {
         ],
       ),
       child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => context.push(RouteConstants.pantherAiChat.toPath),
         backgroundColor: Colors.black,
         elevation: 0,
         shape: const CircleBorder(),
@@ -286,32 +286,59 @@ class _HomeViewState extends State<_HomeView> {
                           ),
                         ),
                   const Spacer(),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _buildQuickAction(Icons.arrow_upward, 'Transfer',
-                            scale, textScale,
-                            () => context.go(RouteConstants.transfer.toPath)),
-                        SizedBox(width: 24 * scale),
-                        _buildQuickAction(Icons.add, 'Add Money', scale,
-                            textScale,
-                            () => context.push(RouteConstants.addMoney.toPath)),
-                        SizedBox(width: 24 * scale),
-                        _buildQuickAction(Icons.swap_horiz, 'Exchange', scale,
-                            textScale,
-                            () => context.go(RouteConstants.exchange.toPath)),
-                        SizedBox(width: 24 * scale),
-                        _buildQuickAction(Icons.wallet, 'Wallet', scale,
-                            textScale,
-                            () => context.go(RouteConstants.wallet.toPath)),
-                        SizedBox(width: 24 * scale),
-                        _buildQuickAction(Icons.receipt_long, 'TickPay',
-                            scale, textScale, () => context.push(RouteConstants.tickpayWelcome.toPath)),
-                      ],
+                  // ── Frosted glass quick-actions pill ─────────────────────
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14 * scale, vertical: 10 * scale),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.18),
+                              Colors.white.withValues(alpha: 0.08),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.20),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              _buildQuickAction(Icons.arrow_upward, 'Transfer',
+                                  scale, textScale,
+                                  () => context.go(RouteConstants.transfer.toPath)),
+                              SizedBox(width: 20 * scale),
+                              _buildQuickAction(Icons.add, 'Add Money', scale,
+                                  textScale,
+                                  () => context.push(RouteConstants.addMoney.toPath)),
+                              SizedBox(width: 20 * scale),
+                              _buildQuickAction(Icons.swap_horiz, 'Exchange',
+                                  scale, textScale,
+                                  () => context.go(RouteConstants.exchange.toPath)),
+                              SizedBox(width: 20 * scale),
+                              _buildQuickAction(Icons.wallet, 'Wallet', scale,
+                                  textScale,
+                                  () => context.go(RouteConstants.wallet.toPath)),
+                              SizedBox(width: 20 * scale),
+                              _buildQuickAction(Icons.receipt_long, 'TickPay',
+                                  scale, textScale,
+                                  () => context.push(RouteConstants.tickpayWelcome.toPath)),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 30 * scale),
+                  SizedBox(height: 24 * scale),
                 ],
               ),
             ),

@@ -608,14 +608,7 @@ final GoRouter router = GoRouter(
       builder: (context, state, child) {
         return Scaffold(
           backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
-              ),
-              child,
-            ],
-          ),
+          body: child,
           extendBody: true,
           bottomNavigationBar: CustomBottomNav(
             selectedIndex: _calculateSelectedIndex(state.matchedLocation),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/chris_fab.dart';
 
 class TransferPage extends StatelessWidget {
   const TransferPage({super.key});
@@ -29,7 +30,7 @@ class TransferPage extends StatelessWidget {
           ),
           // Dark Overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.2)),
+            child: Container(color: Colors.black.withValues(alpha: 0.2)),
           ),
           SafeArea(
             child: SingleChildScrollView(
@@ -164,6 +165,7 @@ class TransferPage extends StatelessWidget {
               ),
             ),
           ),
+          const ChrisFabPositioned(),
         ],
       ),
     );
