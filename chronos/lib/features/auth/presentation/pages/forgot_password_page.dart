@@ -116,10 +116,26 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           body: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
+                child: Image.asset(
+                  'assets/auth_bg_img.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  filterQuality: FilterQuality.high,
+                ),
               ),
               Positioned.fill(
-                child: Container(color: Colors.black.withOpacity(0.6)),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0x22000000),
+                        Color(0x99000000),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               SafeArea(
                 child: SingleChildScrollView(
@@ -226,7 +242,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     backgroundColor:
                                         _otpController.text.length == 6
                                             ? CColor.primaryButton
-                                            : Colors.white.withOpacity(0.1),
+                                            : Colors.white.withValues(alpha: 0.1),
                                     foregroundColor:
                                         _otpController.text.length == 6
                                             ? Colors.white
@@ -307,7 +323,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         hintStyle: const TextStyle(color: Colors.white60),
         prefixIcon: Icon(icon, color: Colors.white70),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

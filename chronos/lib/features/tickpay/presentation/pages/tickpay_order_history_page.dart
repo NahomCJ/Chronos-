@@ -28,44 +28,39 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'In Transit':
-        return const Color(0xFF3B82F6);
-      case 'Delivered':
-        return const Color(0xFF00C853);
-      case 'Cancelled':
-        return const Color(0xFFFF5252);
-      case 'Processing':
-        return const Color(0xFFDC8F4A);
-      default:
-        return Colors.white54;
+      case 'In Transit': return const Color(0xFF3B82F6);
+      case 'Delivered':  return const Color(0xFF00C853);
+      case 'Cancelled':  return const Color(0xFFFF5252);
+      case 'Processing': return const Color(0xFFDC8F4A);
+      default:           return const Color(0xFF888888);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          Container(
+            color: const Color(0xFF1A0A2E),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  _buildHeader(context),
+                  _buildFilters(),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildFilters(),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: _orders.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, i) =>
-                        _buildOrderCard(context, _orders[i]),
-                  ),
-                ),
-              ],
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: _orders.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, i) => _buildOrderCard(context, _orders[i]),
             ),
           ),
         ],
@@ -86,8 +81,7 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
               decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   shape: BoxShape.circle),
-              child:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -122,17 +116,18 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
                 margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 7),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Colors.white
-                      : Colors.white.withValues(alpha: 0.08),
+                      : Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(e.value,
                     style: TextStyle(
-                        color: isSelected ? Colors.black : Colors.white70,
+                        color: isSelected
+                            ? const Color(0xFF1A0A2E)
+                            : Colors.white70,
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -150,9 +145,16 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,16 +163,14 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(order.id,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
+                  style: const TextStyle(
+                      color: Color(0xFF999999), fontSize: 11)),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.15),
+                  color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                      color: statusColor.withValues(alpha: 0.4)),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.3)),
                 ),
                 child: Text(order.status,
                     style: TextStyle(
@@ -182,8 +182,7 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
           ),
           const SizedBox(height: 2),
           Text(order.date,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+              style: const TextStyle(color: Color(0xFFBBBBBB), fontSize: 11)),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -191,11 +190,11 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.shopping_bag_outlined,
-                    color: Colors.white54, size: 22),
+                    color: Color(0xFF999999), size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -206,28 +205,26 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A1A),
                             fontSize: 14,
                             fontWeight: FontWeight.w500)),
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        Text('Total',
+                        const Text('Total',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.4),
-                                fontSize: 12)),
+                                color: Color(0xFF999999), fontSize: 12)),
                         const SizedBox(width: 8),
                         Text(order.total,
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF1A1A1A),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600)),
                       ],
                     ),
                     Text('Payment  ${order.installments}',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.35),
-                            fontSize: 11)),
+                        style: const TextStyle(
+                            color: Color(0xFFBBBBBB), fontSize: 11)),
                   ],
                 ),
               ),
@@ -240,10 +237,9 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                 child: OutlinedButton(
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF1A0A2E),
                     padding: const EdgeInsets.symmetric(vertical: 8),
-                    side:
-                        BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                    side: const BorderSide(color: Color(0xFFCCCCCC)),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
@@ -258,7 +254,7 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: order.status == 'In Transit'
                         ? const Color(0xFF3B82F6)
-                        : Colors.black,
+                        : const Color(0xFF1A0A2E),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(

@@ -87,10 +87,26 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           body: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
+                child: Image.asset(
+                  'assets/auth_bg_img.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  filterQuality: FilterQuality.high,
+                ),
               ),
               Positioned.fill(
-                child: Container(color: Colors.black.withOpacity(0.6)),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0x22000000),
+                        Color(0x99000000),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               SafeArea(
                 child: SingleChildScrollView(

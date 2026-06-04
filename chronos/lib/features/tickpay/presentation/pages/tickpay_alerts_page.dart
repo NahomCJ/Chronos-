@@ -35,28 +35,28 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          Container(
+            color: const Color(0xFF1A0A2E),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  _buildHeader(context),
+                  _buildNotifToggle(),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildNotifToggle(),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: _alerts.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (context, i) =>
-                        _buildAlertCard(_alerts[i]),
-                  ),
-                ),
-              ],
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: _alerts.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, i) => _buildAlertCard(_alerts[i]),
             ),
           ),
         ],
@@ -77,8 +77,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
               decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   shape: BoxShape.circle),
-              child:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -106,9 +105,9 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
         ),
         child: Row(
           children: [
@@ -138,9 +137,16 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: colors.$1.withValues(alpha: 0.08),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.$1.withValues(alpha: 0.25)),
+        border: Border.all(color: colors.$1.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +155,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: colors.$1.withValues(alpha: 0.15),
+              color: colors.$1.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(colors.$2, color: colors.$1, size: 20),
@@ -164,22 +170,19 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
                     Expanded(
                       child: Text(alert.title,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 14,
                               fontWeight: FontWeight.w600)),
                     ),
                     Text(alert.time,
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.35),
-                            fontSize: 11)),
+                        style: const TextStyle(
+                            color: Color(0xFFBBBBBB), fontSize: 11)),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(alert.body,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 12,
-                        height: 1.4)),
+                    style: const TextStyle(
+                        color: Color(0xFF666666), fontSize: 12, height: 1.4)),
                 if (alert.amount != null) ...[
                   const SizedBox(height: 8),
                   Row(
@@ -188,15 +191,14 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: const Color(0xFFF5F5F5),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.15)),
+                          border: Border.all(color: const Color(0xFFEEEEEE)),
                         ),
                         child: Text(
                             '${alert.amount}  ${alert.store ?? ''}',
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF1A1A1A),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500)),
                       ),
@@ -205,7 +207,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: colors.$1.withValues(alpha: 0.15),
+                          color: colors.$1.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text('Pay Now →',

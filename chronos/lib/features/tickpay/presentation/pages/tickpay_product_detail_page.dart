@@ -18,29 +18,21 @@ class TickPayProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-          Container(color: Colors.black.withValues(alpha: 0.4)),
-          CustomScrollView(
-            slivers: [
-              _buildSliverAppBar(context),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildProductInfo(context),
-                    _buildBNPLCard(context),
-                    _buildDescription(),
-                    _buildKeyFeatures(),
-                    const SizedBox(height: 100),
-                  ],
-                ),
-              ),
-            ],
+      backgroundColor: const Color(0xFFF8F9FB),
+      body: CustomScrollView(
+        slivers: [
+          _buildSliverAppBar(context),
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProductInfo(context),
+                _buildBNPLCard(context),
+                _buildDescription(),
+                _buildKeyFeatures(),
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ],
       ),
@@ -132,7 +124,7 @@ class TickPayProductDetailPage extends StatelessWidget {
         children: [
           Text(name,
               style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 22,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
@@ -158,12 +150,12 @@ class TickPayProductDetailPage extends StatelessWidget {
               const SizedBox(width: 4),
               const Text('4.8',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 13,
                       fontWeight: FontWeight.w600)),
               Text(' (2,847 reviews)',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: Colors.grey.shade400,
                       fontSize: 12)),
               const SizedBox(width: 12),
               Container(
@@ -182,14 +174,14 @@ class TickPayProductDetailPage extends StatelessWidget {
             children: [
               Text(price,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 28,
                       fontWeight: FontWeight.bold)),
               const SizedBox(width: 10),
               Text(
                   '\$${(int.tryParse(price.replaceAll(RegExp(r'[^\d]'), '')) ?? 999) + 200}',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: Colors.grey.shade400,
                       fontSize: 16,
                       decoration: TextDecoration.lineThrough)),
             ],
@@ -205,9 +197,9 @@ class TickPayProductDetailPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
         ),
         child: Column(
           children: [
@@ -226,7 +218,7 @@ class TickPayProductDetailPage extends StatelessWidget {
                 const SizedBox(width: 8),
                 const Text('Buy Now, Pay Later',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
               ],
@@ -269,11 +261,10 @@ class TickPayProductDetailPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
           Text(value,
               style: TextStyle(
-                  color: valueColor ?? Colors.white,
+                  color: valueColor ?? const Color(0xFF1A1A2E),
                   fontSize: 13,
                   fontWeight: FontWeight.w500)),
         ],
@@ -289,16 +280,13 @@ class TickPayProductDetailPage extends StatelessWidget {
         children: [
           const Text('Description',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 16,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
             'The $name features a titanium design with a 48MP main camera, A17 Pro chip, and Action button. Experience ProMotion display technology and all-day battery life.',
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 13,
-                height: 1.5),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.5),
           ),
         ],
       ),
@@ -321,7 +309,7 @@ class TickPayProductDetailPage extends StatelessWidget {
         children: [
           const Text('Key Features',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 16,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
@@ -335,9 +323,7 @@ class TickPayProductDetailPage extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(f,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 13)),
+                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
                     ),
                   ],
                 ),

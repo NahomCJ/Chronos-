@@ -55,18 +55,18 @@ class _TickPayWelcomePageState extends State<TickPayWelcomePage> {
           else
             Image.asset('assets/background.png', fit: BoxFit.cover),
 
-          // ── Dark gradient overlay ─────────────────────────────────────────
+          // ── Gradient overlay — light at top, readable at bottom ───────────
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0x771A0A2E),
-                  Color(0x22000000),
-                  Color(0xDD000000),
+                  Color(0x331A0A2E),
+                  Color(0x11000000),
+                  Color(0xBB000000),
                 ],
-                stops: [0.0, 0.45, 1.0],
+                stops: [0.0, 0.5, 1.0],
               ),
             ),
           ),

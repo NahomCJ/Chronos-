@@ -49,7 +49,7 @@ class _HomeViewState extends State<_HomeView> {
         final transactions = summary?.recentTransactions ?? [];
 
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: const Color(0xFFF5F5F5),
           body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,16 +61,7 @@ class _HomeViewState extends State<_HomeView> {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: const AssetImage('assets/home_bg2.png'),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withValues(alpha: 0.5),
-                        BlendMode.darken,
-                      ),
-                    ),
-                  ),
+                  color: const Color(0xFFF5F5F5),
                   child: Column(
                     children: [
                       const SizedBox(height: 12),
@@ -401,10 +392,16 @@ class _HomeViewState extends State<_HomeView> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15), width: 0.7),
+              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: transactions.isEmpty
                 ? _buildFallbackTransactions(scale, textScale)
@@ -419,8 +416,8 @@ class _HomeViewState extends State<_HomeView> {
                                   '${tx.isCredit ? '+' : '-'}\$${tx.amount.abs().toStringAsFixed(2)}',
                               isNegative: !tx.isCredit,
                               iconBg: tx.isCredit
-                                  ? const Color(0xFF1B4332)
-                                  : const Color(0xFF2E1A47),
+                                  ? const Color(0xFF2E7D32)
+                                  : const Color(0xFF7C3AED),
                               scale: scale,
                               textScale: textScale,
                             ))
@@ -435,11 +432,11 @@ class _HomeViewState extends State<_HomeView> {
   Widget _buildFallbackTransactions(double scale, double textScale) {
     final items = [
       ('Apple Store', 'Today', '-\$299.00', true,
-          Icons.apple, const Color(0xFF2E1A47)),
+          Icons.apple, const Color(0xFF7C3AED)),
       ('Salary Deposit', 'Today', '+\$5,200.00', false,
-          Icons.south_west, const Color(0xFF1B4332)),
+          Icons.south_west, const Color(0xFF2E7D32)),
       ('Uber Eats', 'Yesterday', '-\$32.50', true,
-          Icons.restaurant, const Color(0xFF432C1E)),
+          Icons.restaurant, const Color(0xFFDC8F4A)),
     ];
     return Column(
       children: items
@@ -508,12 +505,12 @@ class _HomeViewState extends State<_HomeView> {
               children: [
                 Text(title,
                     style: TextStyles.titleSmall.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF1A1A1A),
                         fontWeight: FontWeight.bold,
                         fontSize: 14 * textScale)),
                 Text(subtitle,
                     style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white, fontSize: 11 * textScale)),
+                        color: const Color(0xFF888888), fontSize: 11 * textScale)),
               ],
             ),
           ),
@@ -523,7 +520,7 @@ class _HomeViewState extends State<_HomeView> {
                   fontSize: 14 * textScale,
                   color: isNegative ? Colors.red : const Color(0xFF2E7D32))),
           const SizedBox(width: 4),
-          Icon(Icons.chevron_right, color: Colors.white, size: 20 * scale),
+          Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20 * scale),
         ],
       ),
     );
@@ -541,7 +538,7 @@ class _HomeViewState extends State<_HomeView> {
               const SizedBox(width: 8),
               Text('Offers For You',
                   style: TextStyles.titleMedium.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.bold,
                       fontSize: 16 * textScale)),
               const Spacer(),
@@ -560,10 +557,16 @@ class _HomeViewState extends State<_HomeView> {
           child: Container(
             padding: EdgeInsets.all(16 * scale),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15), width: 0.7),
+              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               children: [
@@ -583,16 +586,18 @@ class _HomeViewState extends State<_HomeView> {
                     children: [
                       Text('Cashback Boost',
                           style: TextStyles.titleSmall.copyWith(
-                              color: Colors.white,
+                              color: const Color(0xFF1A1A1A),
                               fontWeight: FontWeight.bold,
                               fontSize: 14 * textScale)),
                       Text('Get 5% cashback on dining',
                           style: TextStyles.bodySmall.copyWith(
-                              color: Colors.white, fontSize: 11 * textScale)),
+                              color: const Color(0xFF888888),
+                              fontSize: 11 * textScale)),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, size: 18 * scale, color: Colors.grey),
+                Icon(Icons.chevron_right, size: 18 * scale,
+                    color: const Color(0xFFCCCCCC)),
               ],
             ),
           ),
@@ -630,7 +635,7 @@ class _HomeViewState extends State<_HomeView> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text('Spending Analysis',
               style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.bold,
                   fontSize: 16 * textScale)),
         ),
@@ -640,10 +645,16 @@ class _HomeViewState extends State<_HomeView> {
           child: Container(
             padding: EdgeInsets.all(20 * scale),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15), width: 0.7),
+              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               children: [
@@ -658,7 +669,7 @@ class _HomeViewState extends State<_HomeView> {
                         'Total\n\$${total.toStringAsFixed(0)}',
                         textAlign: TextAlign.center,
                         style: TextStyles.labelSmall.copyWith(
-                            color: Colors.white,
+                            color: const Color(0xFF1A1A1A),
                             fontWeight: FontWeight.bold,
                             fontSize: 10 * textScale),
                       ),
@@ -702,12 +713,12 @@ class _HomeViewState extends State<_HomeView> {
               const SizedBox(width: 8),
               Text(label,
                   style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white, fontSize: 11 * textScale)),
+                      color: const Color(0xFF555555), fontSize: 11 * textScale)),
             ],
           ),
           Text(value,
               style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.bold,
                   fontSize: 11 * textScale)),
         ],
@@ -723,7 +734,7 @@ class _HomeViewState extends State<_HomeView> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text('Net Worth Summary',
               style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A1A),
                   fontWeight: FontWeight.bold,
                   fontSize: 16 * textScale)),
         ),
@@ -733,10 +744,16 @@ class _HomeViewState extends State<_HomeView> {
           child: Container(
             padding: EdgeInsets.all(20 * scale),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15), width: 0.7),
+              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -758,12 +775,12 @@ class _HomeViewState extends State<_HomeView> {
                       children: [
                         Text('Total Net Worth',
                             style: TextStyles.labelSmall.copyWith(
-                                color: Colors.white,
+                                color: const Color(0xFF888888),
                                 fontSize: 11 * textScale)),
                         Text('\$${balance.toStringAsFixed(0)}',
                             style: TextStyles.titleMedium.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: const Color(0xFF1A1A1A),
                                 fontSize: 16 * textScale)),
                       ],
                     ),
@@ -808,7 +825,7 @@ class _HomeViewState extends State<_HomeView> {
             style: TextStyle(
                 fontSize: 9 * scale,
                 fontWeight: FontWeight.w600,
-                color: Colors.white)),
+                color: const Color(0xFF555555))),
       ],
     );
   }

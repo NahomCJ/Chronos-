@@ -6,6 +6,9 @@ import '../utils/tickpay_media.dart';
 class TickPayDiscoverPage extends StatelessWidget {
   const TickPayDiscoverPage({super.key});
 
+  static const _kDark = Color(0xFF1A0A2E);
+  static const _kLight = Color(0xFFF8F9FA);
+
   static const _categories = [
     (Icons.devices_outlined, 'Electronics'),
     (Icons.checkroom_outlined, 'Fashion'),
@@ -18,35 +21,38 @@ class TickPayDiscoverPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: _kLight,
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          // ── Dark header ───────────────────────────────────────────────────
+          Container(
+            color: _kDark,
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  _buildTopBar(context),
+                  _buildSearchBar(context),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.45)),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildTopBar(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSearchBar(context),
-                        const SizedBox(height: 24),
-                        _buildCategories(context),
-                        const SizedBox(height: 28),
-                        _buildFeaturedDeals(context),
-                        const SizedBox(height: 28),
-                        _buildRecommended(context),
-                        const SizedBox(height: 80),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          // ── White content ─────────────────────────────────────────────────
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  _buildCategories(context),
+                  const SizedBox(height: 28),
+                  _buildFeaturedDeals(context),
+                  const SizedBox(height: 28),
+                  _buildRecommended(context),
+                  const SizedBox(height: 80),
+                ],
+              ),
             ),
           ),
         ],
@@ -68,8 +74,7 @@ class TickPayDiscoverPage extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -116,24 +121,24 @@ class TickPayDiscoverPage extends StatelessWidget {
 
   Widget _buildSearchBar(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: GestureDetector(
         onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
           ),
           child: Row(
             children: [
               Icon(Icons.search,
-                  color: Colors.white.withValues(alpha: 0.4), size: 20),
+                  color: Colors.white.withValues(alpha: 0.5), size: 20),
               const SizedBox(width: 10),
               Text('Search products...',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.35), fontSize: 14)),
+                      color: Colors.white.withValues(alpha: 0.4), fontSize: 14)),
             ],
           ),
         ),
@@ -149,7 +154,7 @@ class TickPayDiscoverPage extends StatelessWidget {
         children: [
           const Text('Categories',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A1A),
                   fontSize: 16,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
@@ -168,20 +173,25 @@ class TickPayDiscoverPage extends StatelessWidget {
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.07),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(color: const Color(0xFFEEEEEE)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(c.$1, color: Colors.white70, size: 26),
+                      Icon(c.$1, color: const Color(0xFF7C3AED), size: 26),
                       const SizedBox(height: 6),
                       Text(c.$2,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 11)),
+                          style: const TextStyle(
+                              color: Color(0xFF444444), fontSize: 11)),
                     ],
                   ),
                 ),
@@ -204,19 +214,18 @@ class TickPayDiscoverPage extends StatelessWidget {
             children: [
               const Text('Featured Deals',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A1A),
                       fontSize: 16,
                       fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
-                child: Row(
+                child: const Row(
                   children: [
                     Text('View All',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            fontSize: 13)),
+                            color: Color(0xFF7C3AED), fontSize: 13)),
                     Icon(Icons.arrow_forward,
-                        color: Colors.white.withValues(alpha: 0.5), size: 14),
+                        color: Color(0xFF7C3AED), size: 14),
                   ],
                 ),
               ),
@@ -225,7 +234,7 @@ class TickPayDiscoverPage extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         SizedBox(
-          height: 190,
+          height: 200,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -257,19 +266,19 @@ class TickPayDiscoverPage extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 20,
-                    height: 20,
+                    width: 22,
+                    height: 22,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.auto_awesome,
-                        color: Color(0xFF7C3AED), size: 12),
+                        color: Color(0xFF7C3AED), size: 13),
                   ),
                   const SizedBox(width: 6),
                   const Text('Recommended for You',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A1A),
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
                 ],
@@ -277,22 +286,22 @@ class TickPayDiscoverPage extends StatelessWidget {
               GestureDetector(
                 onTap: () =>
                     context.push(RouteConstants.tickpayAiPicks.toPath),
-                child: Text('View',
+                child: const Text('View',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+                        color: Color(0xFF7C3AED), fontSize: 13)),
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
         SizedBox(
-          height: 190,
+          height: 200,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
-              _aiProductCard(context, 'Fitbit Charge 4', '\$129',
-                  TickPayMedia.smartwatch),
+              _aiProductCard(
+                  context, 'Fitbit Charge 4', '\$129', TickPayMedia.smartwatch),
               const SizedBox(width: 12),
               _aiProductCard(context, 'Samsung Galaxy Buds', '\$149',
                   TickPayMedia.wirelessEarbuds),
@@ -314,9 +323,16 @@ class TickPayDiscoverPage extends StatelessWidget {
       child: Container(
         width: 148,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -326,8 +342,8 @@ class TickPayDiscoverPage extends StatelessWidget {
                 TickPayImage(
                   asset,
                   height: 110,
-                  borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10),
@@ -338,13 +354,13 @@ class TickPayDiscoverPage extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 2),
                       Text(price,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -359,10 +375,10 @@ class TickPayDiscoverPage extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.favorite_border,
-                    color: Colors.white, size: 14),
+                    color: Color(0xFF444444), size: 14),
               ),
             ),
             if (discount > 0)
@@ -397,9 +413,16 @@ class TickPayDiscoverPage extends StatelessWidget {
       child: Container(
         width: 148,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -409,8 +432,8 @@ class TickPayDiscoverPage extends StatelessWidget {
                 TickPayImage(
                   asset,
                   height: 110,
-                  borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10),
@@ -421,13 +444,13 @@ class TickPayDiscoverPage extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 2),
                       Text(price,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -458,10 +481,10 @@ class TickPayDiscoverPage extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.favorite_border,
-                    color: Colors.white, size: 14),
+                    color: Color(0xFF444444), size: 14),
               ),
             ),
           ],

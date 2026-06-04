@@ -4,7 +4,7 @@ class OnboardingSlideModel {
   final String subtitle;
 
   const OnboardingSlideModel({
-    required this.assetPath,
+    this.assetPath = '',
     required this.title,
     required this.subtitle,
   });

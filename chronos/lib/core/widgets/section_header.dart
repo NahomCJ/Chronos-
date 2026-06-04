@@ -25,7 +25,7 @@ class SectionHeader extends StatelessWidget {
             title,
             style: TextStyles.titleMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: const Color(0xFF1A1A1A),
             ),
           ),
           if (actionText != null)

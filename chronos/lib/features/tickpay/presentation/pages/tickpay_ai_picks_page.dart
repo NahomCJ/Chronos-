@@ -18,20 +18,46 @@ class TickPayAiPicksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          // ── Dark header + AI chat card ────────────────────────────────────
+          Container(
+            color: const Color(0xFF1A0A2E),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  _buildTopBar(context),
+                  _buildChatCard(),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
+          // ── White picks list ──────────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildTopBar(context),
-                _buildChatCard(),
-                Expanded(child: _buildPicksList(context)),
+                const Text('Top Picks for You',
+                    style: TextStyle(
+                        color: Color(0xFF1A1A1A),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                Text('${_picks.length} items',
+                    style: const TextStyle(
+                        color: Color(0xFF888888), fontSize: 13)),
               ],
+            ),
+          ),
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: _picks.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, i) => _buildPickRow(context, _picks[i]),
             ),
           ),
         ],
@@ -52,8 +78,7 @@ class TickPayAiPicksPage extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   shape: BoxShape.circle),
-              child:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -95,7 +120,7 @@ class TickPayAiPicksPage extends StatelessWidget {
 
   Widget _buildChatCard() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -119,8 +144,7 @@ class TickPayAiPicksPage extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Text('👋',
-                        style: TextStyle(fontSize: 20)),
+                    child: Text('👋', style: TextStyle(fontSize: 20)),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -133,7 +157,7 @@ class TickPayAiPicksPage extends StatelessWidget {
                             fontSize: 15,
                             fontWeight: FontWeight.bold)),
                     Text(
-                        'I\'ve analyzed your shopping patterns and\npreferences to find products you\'ll love.',
+                        'Analyzed your patterns to find products you\'ll love.',
                         style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.7),
                             fontSize: 11)),
@@ -143,8 +167,7 @@ class TickPayAiPicksPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(24),
@@ -167,40 +190,6 @@ class TickPayAiPicksPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPicksList(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Top Picks for You',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
-              Text('${_picks.length} items',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontSize: 13)),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: _picks.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (context, i) =>
-                _buildPickRow(context, _picks[i]),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPickRow(BuildContext context, _Pick pick) {
     final matchColor = pick.match >= 90
         ? const Color(0xFF00C853)
@@ -214,9 +203,16 @@ class TickPayAiPicksPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -233,20 +229,19 @@ class TickPayAiPicksPage extends StatelessWidget {
                 children: [
                   Text(pick.name,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A1A),
                           fontSize: 14,
                           fontWeight: FontWeight.w600)),
                   const SizedBox(height: 2),
                   Text(pick.store,
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
-                          fontSize: 12)),
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       Text(pick.price,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 15,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(width: 8),
@@ -254,11 +249,11 @@ class TickPayAiPicksPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00A693).withValues(alpha: 0.2),
+                          color: const Color(0xFF00A693).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                               color: const Color(0xFF00A693)
-                                  .withValues(alpha: 0.4)),
+                                  .withValues(alpha: 0.35)),
                         ),
                         child: const Text('BNPL',
                             style: TextStyle(
@@ -275,7 +270,7 @@ class TickPayAiPicksPage extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: matchColor.withValues(alpha: 0.15),
+                color: matchColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
                 border: Border.all(
                     color: matchColor.withValues(alpha: 0.4), width: 1.5),

@@ -46,28 +46,23 @@ class TickPayNotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          Container(
+            color: const Color(0xFF1A0A2E),
+            child: SafeArea(
+              bottom: false,
+              child: _buildHeader(context),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    itemCount: _items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (_, i) => _buildNotifCard(_items[i]),
-                  ),
-                ),
-              ],
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              itemCount: _items.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (_, i) => _buildNotifCard(_items[i]),
             ),
           ),
         ],
@@ -77,7 +72,7 @@ class TickPayNotificationsPage extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 20, 8),
+      padding: const EdgeInsets.fromLTRB(16, 16, 20, 16),
       child: Row(
         children: [
           GestureDetector(
@@ -117,7 +112,7 @@ class TickPayNotificationsPage extends StatelessWidget {
           Text(
             'Mark all read',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 13,
             ),
           ),
@@ -130,15 +125,20 @@ class TickPayNotificationsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: notif.unread
-            ? Colors.white.withValues(alpha: 0.09)
-            : Colors.white.withValues(alpha: 0.05),
+        color: notif.unread ? const Color(0xFFF3EFFF) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: notif.unread
-              ? Colors.white.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.08),
+              ? const Color(0xFFD4C8FF)
+              : const Color(0xFFEEEEEE),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,10 +147,16 @@ class TickPayNotificationsPage extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: notif.unread
+                  ? const Color(0xFFEDE7FF)
+                  : const Color(0xFFF5F5F5),
               shape: BoxShape.circle,
             ),
-            child: Icon(notif.icon, color: Colors.white70, size: 18),
+            child: Icon(notif.icon,
+                color: notif.unread
+                    ? const Color(0xFF7C3AED)
+                    : const Color(0xFF888888),
+                size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -160,7 +166,7 @@ class TickPayNotificationsPage extends StatelessWidget {
                 Text(
                   notif.title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: const Color(0xFF1A1A1A),
                     fontSize: 14,
                     fontWeight:
                         notif.unread ? FontWeight.w600 : FontWeight.w500,
@@ -169,8 +175,8 @@ class TickPayNotificationsPage extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   notif.body,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                  style: const TextStyle(
+                    color: Color(0xFF888888),
                     fontSize: 12,
                     height: 1.4,
                   ),

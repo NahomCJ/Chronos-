@@ -48,12 +48,22 @@ class _SignInPageState extends State<SignInPage> {
                 child: Image.asset(
                   'assets/auth_bg_img.png',
                   fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
                   filterQuality: FilterQuality.high,
                 ),
               ),
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withOpacity(0.25),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0x22000000),
+                        Color(0x99000000),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               SafeArea(
@@ -107,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                             child: Text(
                               'or',
                               style: TextStyles.labelLarge.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                             ),
                           ),

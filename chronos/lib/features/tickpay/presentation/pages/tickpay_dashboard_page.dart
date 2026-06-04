@@ -6,30 +6,41 @@ import '../utils/tickpay_media.dart';
 class TickPayDashboardPage extends StatelessWidget {
   const TickPayDashboardPage({super.key});
 
+  static const _kDark = Color(0xFF1A0A2E);
+  static const _kLight = Color(0xFFF8F9FA);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: _kLight,
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-          Container(color: Colors.black.withValues(alpha: 0.4)),
-          SafeArea(
-            child: SingleChildScrollView(
+          // ── Dark hero header ──────────────────────────────────────────────
+          Container(
+            color: _kDark,
+            child: SafeArea(
+              bottom: false,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTopBar(context),
                   _buildCreditCard(context),
                   const SizedBox(height: 24),
                   _buildQuickActions(context),
                   const SizedBox(height: 28),
+                ],
+              ),
+            ),
+          ),
+          // ── White content body ────────────────────────────────────────────
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 28, bottom: 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   _buildActivePlans(context),
                   const SizedBox(height: 28),
                   _buildAiPicks(context),
-                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -80,8 +91,7 @@ class TickPayDashboardPage extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () =>
-                context.push(RouteConstants.tickpayAlerts.toPath),
+            onTap: () => context.push(RouteConstants.tickpayAlerts.toPath),
             child: Stack(
               children: [
                 Container(
@@ -133,7 +143,8 @@ class TickPayDashboardPage extends StatelessWidget {
             onTap: () =>
                 context.push(RouteConstants.tickpayCreditOverview.toPath),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
@@ -156,7 +167,7 @@ class TickPayDashboardPage extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF1C1C2E), Color(0xFF2D2D44)],
+                colors: [Color(0xFF2D1B4E), Color(0xFF3D2B5E)],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
@@ -198,10 +209,10 @@ class TickPayDashboardPage extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12)),
                   ),
                   child: Text(
                     'User Credit  \$1,850',
@@ -247,7 +258,7 @@ class TickPayDashboardPage extends StatelessWidget {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                     border: Border.all(
                         color: Colors.white.withValues(alpha: 0.2), width: 0.8),
@@ -258,7 +269,7 @@ class TickPayDashboardPage extends StatelessWidget {
                 Text(
                   actions[i].$2,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withValues(alpha: 0.75),
                     fontSize: 11,
                   ),
                 ),
@@ -281,7 +292,7 @@ class TickPayDashboardPage extends StatelessWidget {
               const Text(
                 'Active Plans',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A1A),
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -289,11 +300,12 @@ class TickPayDashboardPage extends StatelessWidget {
               GestureDetector(
                 onTap: () =>
                     context.push(RouteConstants.tickpayActivePlans.toPath),
-                child: Text(
+                child: const Text(
                   'View All',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Color(0xFF7C3AED),
                     fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -315,7 +327,7 @@ class TickPayDashboardPage extends StatelessWidget {
             orderRef: '#9012',
             info: '2 of 3 payments left',
             amount: '\$450',
-            color: Colors.white,
+            color: const Color(0xFF1A1A1A),
           ),
         ],
       ),
@@ -333,9 +345,16 @@ class TickPayDashboardPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -343,7 +362,7 @@ class TickPayDashboardPage extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: color.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(logo, color: color, size: 20),
@@ -358,15 +377,15 @@ class TickPayDashboardPage extends StatelessWidget {
                     Text(
                       brand,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A1A),
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       orderRef,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                      style: const TextStyle(
+                        color: Color(0xFF999999),
                         fontSize: 13,
                       ),
                     ),
@@ -375,8 +394,8 @@ class TickPayDashboardPage extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   info,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                  style: const TextStyle(
+                    color: Color(0xFF888888),
                     fontSize: 12,
                   ),
                 ),
@@ -386,7 +405,7 @@ class TickPayDashboardPage extends StatelessWidget {
           Text(
             amount,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF1A1A1A),
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
@@ -413,7 +432,7 @@ class TickPayDashboardPage extends StatelessWidget {
               const Text(
                 'AI Picks for You',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A1A),
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -421,11 +440,12 @@ class TickPayDashboardPage extends StatelessWidget {
               GestureDetector(
                 onTap: () =>
                     context.push(RouteConstants.tickpayAiPicks.toPath),
-                child: Text(
+                child: const Text(
                   'View All',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: Color(0xFF7C3AED),
                     fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -434,7 +454,7 @@ class TickPayDashboardPage extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         SizedBox(
-          height: 180,
+          height: 190,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -444,10 +464,16 @@ class TickPayDashboardPage extends StatelessWidget {
               return Container(
                 width: 150,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.07),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                  border: Border.all(color: const Color(0xFFEEEEEE)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Stack(
                   children: [
@@ -468,7 +494,7 @@ class TickPayDashboardPage extends StatelessWidget {
                               Text(
                                 picks[i].$1,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF1A1A1A),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -479,7 +505,7 @@ class TickPayDashboardPage extends StatelessWidget {
                               Text(
                                 picks[i].$2,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF1A1A1A),
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -496,11 +522,11 @@ class TickPayDashboardPage extends StatelessWidget {
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.4),
+                          color: Colors.white.withValues(alpha: 0.85),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.favorite_border,
-                            color: Colors.white, size: 14),
+                            color: Color(0xFF444444), size: 14),
                       ),
                     ),
                   ],

@@ -81,17 +81,25 @@ class TickPayMedia {
 
   // ── Background videos ─────────────────────────────────────────────────────
 
-  /// Woman doing online shopping — portrait HD (Pexels video #6238179)
+  /// Woman shopping in boutique — TickPay welcome bg (Pexels #7680438)
   static const String welcomeVideo =
-      'https://videos.pexels.com/video-files/6238179/6238179-hd_1080_1920_30fps.mp4';
+      'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
 
   /// Woman using smartphone for e-payment (Pexels video #4109600)
   static const String paymentVideo =
       'https://videos.pexels.com/video-files/4109600/4109600-hd_1080_1920_30fps.mp4';
 
-  /// Woman shopping for clothes in store (Pexels video #7680438)
+  /// Woman shopping for clothes in boutique — TickPay welcome bg (Pexels #7680438)
   static const String shoppingVideo =
       'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
+
+  /// Cinematic city bokeh night drive — onboarding bg (Pexels #20407079)
+  static const String onboardingVideo =
+      'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4';
+
+  /// Purple abstract background (Pexels #7101912)
+  static const String purpleAbstractVideo =
+      'https://videos.pexels.com/video-files/7101912/7101912-hd_1080_1920_30fps.mp4';
 }
 
 // ── Shared helper widget ──────────────────────────────────────────────────────

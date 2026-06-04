@@ -26,14 +26,8 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          CustomScrollView(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: CustomScrollView(
             slivers: [
               _buildSliverHeader(context),
               SliverToBoxAdapter(child: _buildStoreInfo()),
@@ -46,18 +40,16 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                     children: [
                       const Text('All Products',
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 16,
                               fontWeight: FontWeight.bold)),
-                      Row(
+                      const Row(
                         children: [
                           Text('Sort by',
                               style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: 13)),
+                                  color: Color(0xFF888888), fontSize: 13)),
                           Icon(Icons.keyboard_arrow_down,
-                              color: Colors.white.withValues(alpha: 0.5),
-                              size: 16),
+                              color: Color(0xFF888888), size: 16),
                         ],
                       ),
                     ],
@@ -83,8 +75,6 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
               const SliverToBoxAdapter(child: SizedBox(height: 80)),
             ],
           ),
-        ],
-      ),
     );
   }
 
@@ -92,7 +82,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
     return SliverAppBar(
       expandedHeight: 180,
       pinned: true,
-      backgroundColor: Colors.black.withValues(alpha: 0.8),
+      backgroundColor: const Color(0xFF1A0A2E),
       leading: GestureDetector(
         onTap: () => context.pop(),
         child: Container(
@@ -157,7 +147,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
             children: [
               const Text('Apple Store',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A1A),
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
               const SizedBox(width: 6),
@@ -171,25 +161,21 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
               const SizedBox(width: 4),
               const Text('4.9',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A1A),
                       fontSize: 13,
                       fontWeight: FontWeight.w500)),
-              Text(' (13,xxx reviews)',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+              const Text(' (13,xxx reviews)',
+                  style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
               const SizedBox(width: 12),
-              Text('2.4M products',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+              const Text('2.4M products',
+                  style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
             ],
           ),
           const SizedBox(height: 10),
-          Text(
+          const Text(
             'Official Apple products and accessories. Authorized retailer offering the latest iPhones, MacBooks, iPads, and more with manufacturer warranty.',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.55),
-                fontSize: 12,
-                height: 1.5),
+                color: Color(0xFF666666), fontSize: 12, height: 1.5),
           ),
         ],
       ),
@@ -213,13 +199,18 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                     horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: 0.08),
+                      ? const Color(0xFF1A0A2E)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF1A0A2E)
+                        : const Color(0xFFDDDDDD),
+                  ),
                 ),
                 child: Text(e.value,
                     style: TextStyle(
-                        color: isSelected ? Colors.black : Colors.white70,
+                        color: isSelected ? Colors.white : const Color(0xFF555555),
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -238,9 +229,16 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
           extra: {'name': p.$1, 'price': p.$2, 'asset': p.$3}),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -262,13 +260,13 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 3),
                       Text(p.$2,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -283,10 +281,10 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.favorite_border,
-                    color: Colors.white, size: 14),
+                    color: Color(0xFF444444), size: 14),
               ),
             ),
           ],

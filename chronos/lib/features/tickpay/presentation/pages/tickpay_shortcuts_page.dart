@@ -40,8 +40,7 @@ class TickpayShortcutsPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: TickpayColors.scaffoldDark,
-      body: TickpayBackground(
-        child: SafeArea(
+      body: SafeArea(
           child: Column(
             children: [
               TickpayHeader(
@@ -122,7 +121,6 @@ class TickpayShortcutsPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

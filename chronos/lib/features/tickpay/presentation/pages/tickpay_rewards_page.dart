@@ -4,40 +4,38 @@ import 'package:go_router/go_router.dart';
 class TickPayRewardsPage extends StatelessWidget {
   const TickPayRewardsPage({super.key});
 
+  static const _kDark = Color(0xFF1A0A2E);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          Container(
+            color: _kDark,
+            child: SafeArea(
+              bottom: false,
+              child: _buildHeader(context),
+            ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 16),
-                        _buildStatCards(),
-                        const SizedBox(height: 28),
-                        _buildActiveCampaigns(),
-                        const SizedBox(height: 28),
-                        _buildRecentActivity(),
-                        const SizedBox(height: 24),
-                        _buildRedeemButton(),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildStatCards(),
+                  const SizedBox(height: 28),
+                  _buildActiveCampaigns(),
+                  const SizedBox(height: 28),
+                  _buildRecentActivity(),
+                  const SizedBox(height: 24),
+                  _buildRedeemButton(),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ],
@@ -47,7 +45,7 @@ class TickPayRewardsPage extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 20, 16),
       child: Row(
         children: [
           GestureDetector(
@@ -129,7 +127,7 @@ class TickPayRewardsPage extends StatelessWidget {
             label: 'Cashback',
             value: '\$156.75',
             sub: 'Apply to balance',
-            subColor: Colors.white54,
+            subColor: const Color(0xFF7C3AED),
             subTappable: true,
           ),
         ),
@@ -148,27 +146,31 @@ class TickPayRewardsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.white54, size: 18),
+          Icon(icon, color: const Color(0xFF7C3AED), size: 18),
           const SizedBox(height: 10),
           Text(
             label,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Color(0xFF888888), fontSize: 12),
           ),
           const SizedBox(height: 2),
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF1A1A1A),
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -212,7 +214,7 @@ class TickPayRewardsPage extends StatelessWidget {
         const Text(
           'Active Campaigns',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF1A1A1A),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -223,10 +225,16 @@ class TickPayRewardsPage extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.09)),
+                  border: Border.all(color: const Color(0xFFEEEEEE)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
@@ -234,11 +242,11 @@ class TickPayRewardsPage extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: const Color(0xFFF0EBFF),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Icons.grid_view_rounded,
-                          color: Colors.white54, size: 20),
+                          color: Color(0xFF7C3AED), size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -248,7 +256,7 @@ class TickPayRewardsPage extends StatelessWidget {
                           Text(
                             c.$1,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -256,8 +264,8 @@ class TickPayRewardsPage extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             c.$2,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.45),
+                            style: const TextStyle(
+                              color: Color(0xFF888888),
                               fontSize: 11,
                             ),
                           ),
@@ -269,8 +277,8 @@ class TickPayRewardsPage extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 c.$3,
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                style: const TextStyle(
+                                  color: Color(0xFF999999),
                                   fontSize: 11,
                                 ),
                               ),
@@ -279,8 +287,8 @@ class TickPayRewardsPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Icon(Icons.chevron_right,
-                        color: Colors.white.withValues(alpha: 0.3), size: 20),
+                    const Icon(Icons.chevron_right,
+                        color: Color(0xFFCCCCCC), size: 20),
                   ],
                 ),
               ),
@@ -304,26 +312,30 @@ class TickPayRewardsPage extends StatelessWidget {
             const Text(
               'Recent Activity',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFF1A1A1A),
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
+            const Text(
               'View All',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
-                fontSize: 13,
-              ),
+              style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
             ),
           ],
         ),
         const SizedBox(height: 14),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.09)),
+            border: Border.all(color: const Color(0xFFEEEEEE)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             children: items
@@ -339,11 +351,10 @@ class TickPayRewardsPage extends StatelessWidget {
                             children: [
                               Text(item.$1,
                                   style: const TextStyle(
-                                      color: Colors.white, fontSize: 14)),
+                                      color: Color(0xFF1A1A1A), fontSize: 14)),
                               Text(item.$2,
-                                  style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.4),
-                                      fontSize: 12)),
+                                  style: const TextStyle(
+                                      color: Color(0xFF999999), fontSize: 12)),
                             ],
                           ),
                         ),
@@ -373,9 +384,9 @@ class TickPayRewardsPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: const Color(0xFFF0EBFF),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFD4C8FF)),
       ),
       child: Row(
         children: [
@@ -383,18 +394,17 @@ class TickPayRewardsPage extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+              color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child:
-                const Icon(Icons.redeem, color: Color(0xFF7C3AED), size: 18),
+            child: const Icon(Icons.redeem, color: Color(0xFF7C3AED), size: 18),
           ),
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
               'Ready to redeem',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFF1A1A1A),
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),

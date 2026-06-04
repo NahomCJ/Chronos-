@@ -30,24 +30,22 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-          Container(color: Colors.black.withValues(alpha: 0.5)),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildSearchInput(),
-                _buildFilters(),
-                _buildResultsBar(),
-                Expanded(child: _buildGrid(context)),
-              ],
+          // ── Dark header ───────────────────────────────────────────────────
+          Container(
+            color: const Color(0xFF1A0A2E),
+            child: SafeArea(
+              bottom: false,
+              child: _buildHeader(context),
             ),
           ),
+          // ── White search + filters + grid ─────────────────────────────────
+          _buildSearchInput(),
+          _buildFilters(),
+          _buildResultsBar(),
+          Expanded(child: _buildGrid(context)),
         ],
       ),
     );
@@ -55,7 +53,7 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 20, 16),
       child: Row(
         children: [
           GestureDetector(
@@ -108,25 +106,31 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
 
   Widget _buildSearchInput() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(Icons.search,
-                color: Colors.white.withValues(alpha: 0.4), size: 20),
+            const Icon(Icons.search, color: Color(0xFF999999), size: 20),
             const SizedBox(width: 10),
             const Expanded(
               child: TextField(
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(color: Color(0xFF1A1A1A), fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Search products...',
-                  hintStyle: TextStyle(color: Colors.white38),
+                  hintStyle: TextStyle(color: Color(0xFFBBBBBB)),
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
@@ -141,22 +145,22 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
 
   Widget _buildFilters() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('CATEGORY',
+          const Text('CATEGORY',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Color(0xFF999999),
                   fontSize: 11,
                   letterSpacing: 1.2)),
           const SizedBox(height: 8),
           _chipRow(_categories, _selectedCategory,
               (v) => setState(() => _selectedCategory = v)),
           const SizedBox(height: 14),
-          Text('PRICE RANGE',
+          const Text('PRICE RANGE',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Color(0xFF999999),
                   fontSize: 11,
                   letterSpacing: 1.2)),
           const SizedBox(height: 8),
@@ -167,7 +171,7 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('BNPL Only',
-                  style: TextStyle(color: Colors.white, fontSize: 14)),
+                  style: TextStyle(color: Color(0xFF1A1A1A), fontSize: 14)),
               Switch(
                 value: _bnplOnly,
                 onChanged: (v) => setState(() => _bnplOnly = v),
@@ -192,21 +196,20 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               margin: const EdgeInsets.only(right: 8),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: 0.08),
+                    ? const Color(0xFF1A0A2E)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                     color: isSelected
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.15)),
+                        ? const Color(0xFF1A0A2E)
+                        : const Color(0xFFDDDDDD)),
               ),
               child: Text(o,
                   style: TextStyle(
-                      color: isSelected ? Colors.black : Colors.white70,
+                      color: isSelected ? Colors.white : const Color(0xFF555555),
                       fontSize: 13,
                       fontWeight: isSelected
                           ? FontWeight.w600
@@ -220,20 +223,18 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
 
   Widget _buildResultsBar() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text('${_products.length} products found',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6), fontSize: 13)),
-          Row(
+              style: const TextStyle(color: Color(0xFF888888), fontSize: 13)),
+          const Row(
             children: [
               Text('Sort by',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6), fontSize: 13)),
+                  style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
               Icon(Icons.keyboard_arrow_down,
-                  color: Colors.white.withValues(alpha: 0.6), size: 16),
+                  color: Color(0xFF888888), size: 16),
             ],
           ),
         ],
@@ -261,9 +262,16 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
           extra: {'name': p.name, 'price': p.price, 'asset': p.asset}),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -273,8 +281,8 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
                 TickPayImage(
                   p.asset,
                   height: 130,
-                  borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10),
@@ -285,13 +293,13 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 4),
                       Text(p.price,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A1A),
                               fontSize: 14,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -306,10 +314,10 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.4),
+                    color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.favorite_border,
-                    color: Colors.white, size: 14),
+                    color: Color(0xFF444444), size: 14),
               ),
             ),
           ],
