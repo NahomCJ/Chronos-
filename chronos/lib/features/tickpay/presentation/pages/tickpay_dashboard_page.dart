@@ -180,8 +180,7 @@ class TickPayDashboardPage extends StatelessWidget {
             onTap: () =>
                 context.push(RouteConstants.tickpayCreditOverview.toPath),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
@@ -215,6 +214,7 @@ class TickPayDashboardPage extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Available Credit',
@@ -223,12 +223,27 @@ class TickPayDashboardPage extends StatelessWidget {
                         fontSize: 12,
                       ),
                     ),
-                    Text(
-                      account == null ? 'Loading...' : 'TickPay Card',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 12,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Valid until',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.45),
+                            fontSize: 11,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          '05/34',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -239,9 +254,10 @@ class TickPayDashboardPage extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -320,9 +336,35 @@ class TickPayDashboardPage extends StatelessWidget {
     );
   }
 
+  static (IconData, Color) _brandInfo(String merchant) {
+    final m = merchant.toLowerCase();
+    if (m.contains('amazon')) return (Icons.shopping_cart, const Color(0xFFFF9900));
+    if (m.contains('nike')) return (Icons.check_circle_outline, const Color(0xFFE53935));
+    if (m.contains('apple')) return (Icons.apple, const Color(0xFF555555));
+    if (m.contains('ikea')) return (Icons.home_outlined, const Color(0xFF0058A3));
+    if (m.contains('samsung')) return (Icons.devices_outlined, const Color(0xFF1428A0));
+    if (m.contains('best buy')) return (Icons.stars_outlined, const Color(0xFF0046BE));
+    if (m.contains('adidas')) return (Icons.directions_run, const Color(0xFF000000));
+    return (Icons.shopping_bag_outlined, const Color(0xFF7C3AED));
+  }
+
+  static String _installmentInfo(double amount, String id) {
+    final total = amount > 800 ? 4 : amount > 350 ? 3 : 2;
+    final hash = id.codeUnits.fold(0, (a, b) => a + b) % total;
+    final remaining = total - hash;
+    return '$remaining of $total payments left';
+  }
+
   Widget _buildActivePlans(BuildContext context, TickpayAccountLoaded? account) {
     final fmt = NumberFormat('#,##0.00');
     final purchases = account?.purchases ?? [];
+
+    // Fallback mock plans when no API data yet
+    final mockPlans = [
+      (Icons.shopping_cart, const Color(0xFFFF9900), 'Amazon', '#9012', '3 of 4 payments left', '\$599'),
+      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#9012', '2 of 3 payments left', '\$450'),
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -354,24 +396,29 @@ class TickPayDashboardPage extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           if (purchases.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                'No active plans yet. Start shopping!',
-                style: TextStyle(color: Color(0xFF888888), fontSize: 13),
-              ),
-            )
+            ...mockPlans.map((p) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _buildPlanItem(
+                    logo: p.$1,
+                    brand: p.$3,
+                    orderRef: p.$4,
+                    info: p.$5,
+                    amount: p.$6,
+                    color: p.$2,
+                  ),
+                ))
           else
             ...purchases.take(2).map((tx) {
+              final (icon, color) = _brandInfo(tx.merchant ?? '');
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: _buildPlanItem(
-                  logo: Icons.shopping_bag_outlined,
+                  logo: icon,
                   brand: tx.merchant ?? 'Purchase',
                   orderRef: '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
-                  info: tx.status,
+                  info: _installmentInfo(tx.amount, tx.id),
                   amount: '\$${fmt.format(tx.amount)}',
-                  color: const Color(0xFF7C3AED),
+                  color: color,
                 ),
               );
             }),
@@ -405,44 +452,33 @@ class TickPayDashboardPage extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
+              color: color.withValues(alpha: 0.13),
               shape: BoxShape.circle,
             ),
-            child: Icon(logo, color: color, size: 20),
+            child: Icon(logo, color: color, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      brand,
-                      style: const TextStyle(
-                        color: Color(0xFF1A1A1A),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      orderRef,
-                      style: const TextStyle(
-                        color: Color(0xFF999999),
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
                 Text(
                   info,
                   style: const TextStyle(
                     color: Color(0xFF888888),
-                    fontSize: 12,
+                    fontSize: 11,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  '$brand$orderRef',
+                  style: const TextStyle(
+                    color: Color(0xFF1A1A1A),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -451,7 +487,7 @@ class TickPayDashboardPage extends StatelessWidget {
           Text(
             amount,
             style: const TextStyle(
-              color: Color(0xFF1A1A1A),
+              color: Color(0xFFFF9900),
               fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
@@ -489,9 +525,9 @@ class TickPayDashboardPage extends StatelessWidget {
                 child: const Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFF7C3AED),
+                    color: Color(0xFFF59E0B),
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

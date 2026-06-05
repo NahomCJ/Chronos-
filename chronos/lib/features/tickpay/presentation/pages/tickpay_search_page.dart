@@ -19,12 +19,15 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
   static const _prices = ['All', 'Under \$100', '\$100-\$500', '\$500+'];
 
   static const _products = [
-    _Product('iPhone 15 Pro', '\$999', TickPayMedia.iphone15Pro, 'Apple'),
-    _Product('Adidas Ultraboost', '\$180', TickPayMedia.adidasShoes, 'Adidas'),
-    _Product('Sony WH-1000XM4', '\$350', TickPayMedia.headphonesBlack, 'Best Buy'),
-    _Product('Apple Watch Series 6', '\$399', TickPayMedia.appleWatch, 'Apple'),
-    _Product('Fitbit Charge 4', '\$129', TickPayMedia.smartwatch, 'Fitbit'),
-    _Product('Samsung Galaxy Buds', '\$148', TickPayMedia.wirelessEarbuds, 'Samsung'),
+    _Product('iPhone 15 Pro', '\$999', TickPayMedia.iphone15Pro, 'Apple', 95),
+    _Product('Adidas Ultraboost', '\$180', TickPayMedia.adidasShoes, 'Adidas', 88),
+    _Product('Sony WH-1000XM4', '\$350', TickPayMedia.headphonesBlack, 'Best Buy', 84),
+    _Product('Apple Watch Series 6', '\$399', TickPayMedia.appleWatch, 'Apple', 82),
+    _Product('Fitbit Charge 4', '\$129', TickPayMedia.smartwatch, 'Fitbit', 79),
+    _Product('Samsung Galaxy Buds', '\$148', TickPayMedia.wirelessEarbuds, 'Samsung', 78),
+    _Product('MacBook Air M3', '\$1,099', TickPayMedia.macbook, 'Apple', 76),
+    _Product('iPad Pro 12.9"', '\$1,099', TickPayMedia.ipad, 'Apple', 74),
+    _Product('Apple Watch Ultra', '\$799', TickPayMedia.appleWatchBlack, 'Apple', 71),
   ];
 
   @override
@@ -45,7 +48,7 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
           _buildSearchInput(),
           _buildFilters(),
           _buildResultsBar(),
-          Expanded(child: _buildGrid(context)),
+          Expanded(child: _buildList(context)),
         ],
       ),
     );
@@ -242,18 +245,20 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
     );
   }
 
-  Widget _buildGrid(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(20),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.72,
-      ),
+  Widget _buildList(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       itemCount: _products.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
       itemBuilder: (context, i) => _buildProductCard(context, _products[i]),
     );
+  }
+
+  Color _scoreColor(int score) {
+    if (score >= 90) return const Color(0xFF00C853);
+    if (score >= 80) return const Color(0xFF3B82F6);
+    if (score >= 70) return const Color(0xFFF59E0B);
+    return const Color(0xFF888888);
   }
 
   Widget _buildProductCard(BuildContext context, _Product p) {
@@ -261,6 +266,7 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
       onTap: () => context.push(RouteConstants.tickpayProductDetail.toPath,
           extra: {'name': p.name, 'price': p.price, 'asset': p.asset}),
       child: Container(
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -273,52 +279,70 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
             ),
           ],
         ),
-        child: Stack(
+        child: Row(
           children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: TickPayImage(
+                p.asset,
+                width: 72,
+                height: 72,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(p.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: Color(0xFF1A1A1A),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 2),
+                  Text(p.store,
+                      style: const TextStyle(
+                          color: Color(0xFF888888), fontSize: 12)),
+                  const SizedBox(height: 6),
+                  Text(p.price,
+                      style: const TextStyle(
+                          color: Color(0xFF1A1A1A),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                TickPayImage(
-                  p.asset,
-                  height: 130,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(p.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 4),
-                      Text(p.price,
-                          style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold)),
-                    ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _scoreColor(p.aiScore).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '${p.aiScore}%',
+                    style: TextStyle(
+                      color: _scoreColor(p.aiScore),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                const SizedBox(height: 8),
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F5), shape: BoxShape.circle),
+                  child: const Icon(Icons.favorite_border,
+                      color: Color(0xFF999999), size: 14),
+                ),
               ],
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    shape: BoxShape.circle),
-                child: const Icon(Icons.favorite_border,
-                    color: Color(0xFF444444), size: 14),
-              ),
             ),
           ],
         ),
@@ -329,5 +353,6 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
 
 class _Product {
   final String name, price, asset, store;
-  const _Product(this.name, this.price, this.asset, this.store);
+  final int aiScore;
+  const _Product(this.name, this.price, this.asset, this.store, this.aiScore);
 }

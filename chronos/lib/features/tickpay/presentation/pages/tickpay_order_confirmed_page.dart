@@ -13,14 +13,14 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0x884C1D95), Color(0xCC000000)],
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF1A0A2E), Color(0xFF2D1B4E), Color(0xFF0A0014)],
+                  stops: [0.0, 0.45, 1.0],
+                ),
               ),
             ),
           ),
