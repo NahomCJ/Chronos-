@@ -46,7 +46,7 @@ class _HomeViewState extends State<_HomeView> {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final summary = state is HomeLoaded ? state.summary : null;
-        final balance = summary?.accountBalance ?? 0.0;
+        final balance = summary?.accountBalance ?? 8342.30;
         final transactions = summary?.recentTransactions ?? [];
 
         return Scaffold(
@@ -156,38 +156,41 @@ class _HomeViewState extends State<_HomeView> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                            child: Container(
-                              height: 40 * scale,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.18),
-                                  width: 0.8,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 12),
-                                  Icon(Icons.search, color: Colors.white,
-                                      size: 18 * scale),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'Search services, transactions...',
-                                      style: TextStyles.bodySmall.copyWith(
-                                        color: Colors.white.withValues(
-                                            alpha: 0.85),
-                                        fontSize: 12 * textScale,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                        child: GestureDetector(
+                          onTap: () => context.push('/search'),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                              child: Container(
+                                height: 40 * scale,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.18),
+                                    width: 0.8,
                                   ),
-                                ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 12),
+                                    Icon(Icons.search, color: Colors.white,
+                                        size: 18 * scale),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Search services, transactions...',
+                                        style: TextStyles.bodySmall.copyWith(
+                                          color: Colors.white.withValues(
+                                              alpha: 0.85),
+                                          fontSize: 12 * textScale,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -282,7 +285,15 @@ class _HomeViewState extends State<_HomeView> {
                           () => context.go(RouteConstants.wallet.toPath)),
                       _buildQuickAction(Icons.confirmation_number, 'TickPay',
                           scale, textScale,
-                          () => context.push(RouteConstants.tickpayWelcome.toPath)),
+                          () => context.push(RouteConstants.tickpayWelcome.toPath),
+                          iconOverride: const Text(
+                            'T',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          )),
                     ],
                   ),
                   SizedBox(height: 24 * scale),
@@ -324,7 +335,7 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   Widget _buildQuickAction(IconData icon, String label, double scale,
-      double textScale, VoidCallback onTap) {
+      double textScale, VoidCallback onTap, {Widget? iconOverride}) {
     final double circleSize = 54 * scale;
     return GestureDetector(
       onTap: onTap,
@@ -339,7 +350,9 @@ class _HomeViewState extends State<_HomeView> {
               border: Border.all(
                   color: Colors.white.withValues(alpha: 0.30), width: 1.0),
             ),
-            child: Icon(icon, color: Colors.white, size: 24 * scale),
+            child: Center(
+              child: iconOverride ?? Icon(icon, color: Colors.white, size: 24 * scale),
+            ),
           ),
           const SizedBox(height: 8),
           Text(label,

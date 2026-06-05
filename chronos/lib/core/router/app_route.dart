@@ -87,6 +87,7 @@ import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
 import '../../features/tickpay/presentation/bloc/tickpay_account_cubit.dart';
 import '../../features/profile/presentation/bloc/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart' as profile_page;
+import '../pages/search_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -631,6 +632,11 @@ final GoRouter router = GoRouter(
         ],
         child: const profile_page.ProfilePage(),
       ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/search',
+      builder: (context, state) => const SearchPage(),
     ),
 
     // ── Shell: only the 3 main tabs get the bottom nav ────────────────────

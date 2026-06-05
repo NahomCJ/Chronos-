@@ -6,11 +6,13 @@ enum OrbState { idle, thinking, speaking }
 class ChrisVoiceOrb extends StatefulWidget {
   final OrbState state;
   final double size;
+  final List<Color>? idleColorOverride;
 
   const ChrisVoiceOrb({
     super.key,
     required this.state,
     this.size = 140,
+    this.idleColorOverride,
   });
 
   @override
@@ -84,6 +86,7 @@ class _ChrisVoiceOrbState extends State<ChrisVoiceOrb>
             state: _currentState,
             transitionProgress: _stateTransitionController.value,
             targetState: _targetState,
+            idleColorOverride: widget.idleColorOverride,
           ),
         );
       },
@@ -97,6 +100,7 @@ class _OrbPainter extends CustomPainter {
   final OrbState state;
   final double transitionProgress;
   final OrbState targetState;
+  final List<Color>? idleColorOverride;
 
   const _OrbPainter({
     required this.pulseValue,
@@ -104,6 +108,7 @@ class _OrbPainter extends CustomPainter {
     required this.state,
     required this.transitionProgress,
     required this.targetState,
+    this.idleColorOverride,
   });
 
   @override
@@ -132,7 +137,7 @@ class _OrbPainter extends CustomPainter {
 
   List<Color> _stateColors(OrbState s) {
     return switch (s) {
-      OrbState.idle => [
+      OrbState.idle => idleColorOverride ?? [
           const Color(0xFFDC8F4A),
           const Color(0xFFB06428),
           const Color(0xFFFFBF7C),
@@ -252,5 +257,6 @@ class _OrbPainter extends CustomPainter {
       old.morphValue != morphValue ||
       old.state != state ||
       old.transitionProgress != transitionProgress ||
-      old.targetState != targetState;
+      old.targetState != targetState ||
+      old.idleColorOverride != idleColorOverride;
 }

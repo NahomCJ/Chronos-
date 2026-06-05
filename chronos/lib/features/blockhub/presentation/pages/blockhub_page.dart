@@ -8,6 +8,65 @@ import '../widgets/more_options_modal.dart';
 import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
 
+// ── Coin data model ────────────────────────────────────────────────────────────
+class _CoinData {
+  final String symbol;
+  final String name;
+  final double price;
+  final double change;
+  final bool isPositive;
+  final Color primaryColor;
+  final Color secondaryColor;
+  const _CoinData({
+    required this.symbol,
+    required this.name,
+    required this.price,
+    required this.change,
+    required this.isPositive,
+    required this.primaryColor,
+    required this.secondaryColor,
+  });
+}
+
+const List<_CoinData> _coins = [
+  _CoinData(
+    symbol: 'BTC', name: 'Bitcoin', price: 67.4, change: 2.3, isPositive: true,
+    primaryColor: Color(0xFFF7931A), secondaryColor: Color(0xFFFF9900),
+  ),
+  _CoinData(
+    symbol: 'ETH', name: 'Ethereum', price: 3.8, change: 1.8, isPositive: true,
+    primaryColor: Color(0xFF627EEA), secondaryColor: Color(0xFF8A9FF0),
+  ),
+  _CoinData(
+    symbol: 'SOL', name: 'Solana', price: 178, change: 0.9, isPositive: false,
+    primaryColor: Color(0xFF9945FF), secondaryColor: Color(0xFF14F195),
+  ),
+  _CoinData(
+    symbol: 'BNB', name: 'BNB', price: 608, change: 3.1, isPositive: true,
+    primaryColor: Color(0xFFF3BA2F), secondaryColor: Color(0xFFFFD700),
+  ),
+  _CoinData(
+    symbol: 'ADA', name: 'Cardano', price: 0.62, change: 1.2, isPositive: false,
+    primaryColor: Color(0xFF0033AD), secondaryColor: Color(0xFF4A90D9),
+  ),
+  _CoinData(
+    symbol: 'DOT', name: 'Polkadot', price: 9.8, change: 0.7, isPositive: true,
+    primaryColor: Color(0xFFE6007A), secondaryColor: Color(0xFFFF4DA1),
+  ),
+  _CoinData(
+    symbol: 'MATIC', name: 'Polygon', price: 1.05, change: 4.2, isPositive: true,
+    primaryColor: Color(0xFF8247E5), secondaryColor: Color(0xFFA855F7),
+  ),
+  _CoinData(
+    symbol: 'LINK', name: 'Chainlink', price: 18.2, change: 2.9, isPositive: true,
+    primaryColor: Color(0xFF2A5ADA), secondaryColor: Color(0xFF4B7BF5),
+  ),
+  _CoinData(
+    symbol: 'AVAX', name: 'Avalanche', price: 42.1, change: 1.5, isPositive: true,
+    primaryColor: Color(0xFFE84142), secondaryColor: Color(0xFFFF6B6B),
+  ),
+];
+
 class BlockHubPage extends StatefulWidget {
   const BlockHubPage({super.key});
 
@@ -344,79 +403,23 @@ class _BlockHubPageState extends State<BlockHubPage> {
                         ),
                         SizedBox(height: isSmallScreen ? 12 : 16),
 
-                        // Crypto Icons Row — animated spinning coins
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _SpinningCoinIcon(
-                              assetPath: 'assets/ethereum.png',
-                              isHighlighted: false,
-                              isSmallScreen: isSmallScreen,
-                              delayMs: 200,
-                            ),
-                            _SpinningCoinIcon(
-                              assetPath: 'assets/btc.png',
-                              isHighlighted: true,
-                              isSmallScreen: isSmallScreen,
-                              delayMs: 0,
-                            ),
-                            _SpinningCoinIcon(
-                              assetPath: 'assets/solana.png',
-                              isHighlighted: false,
-                              isSmallScreen: isSmallScreen,
-                              delayMs: 400,
-                            ),
-                          ],
+                        // Horizontal coin slideshow
+                        SizedBox(
+                          height: 200,
+                          child: PageView.builder(
+                            controller: PageController(viewportFraction: 0.72),
+                            itemCount: _coins.length,
+                            itemBuilder: (context, index) {
+                              final coin = _coins[index];
+                              return GestureDetector(
+                                onTap: () => _showCoinDetail(context, coin),
+                                child: _buildCoinCard(coin),
+                              );
+                            },
+                          ),
                         ),
 
                         SizedBox(height: isSmallScreen ? 12 : 16),
-
-                        // Bitcoin Price (highlighted)
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                'BTC',
-                                style: TextStyles.bodyMedium.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.7),
-                                  fontSize: isSmallScreen ? 13 : 14,
-                                ),
-                              ),
-
-                              Text(
-                                'Bitcoin',
-                                style: TextStyles.bodySmall.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.5),
-                                  fontSize: isSmallScreen ? 11 : 12,
-                                ),
-                              ),
-                              SizedBox(height: isSmallScreen ? 6 : 8),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '\$28,291',
-                                    style: TextStyles.titleLarge.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: isSmallScreen ? 20 : 24,
-                                    ),
-                                  ),
-                                  SizedBox(width: isSmallScreen ? 6 : 8),
-                                  Text(
-                                    '-0.25%',
-                                    style: TextStyles.bodyMedium.copyWith(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: isSmallScreen ? 13 : 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -501,33 +504,255 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  Widget _buildCryptoIcon(
-    String assetPath,
-    bool isHighlighted,
-    bool isSmallScreen,
-  ) {
+  // ── 3-D coin card ──────────────────────────────────────────────────────────
+  Widget _buildCoinCard(_CoinData coin) {
+    final priceStr = coin.price >= 1000
+        ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
+        : coin.price >= 1
+            ? '\$${coin.price.toStringAsFixed(coin.price < 10 ? 2 : 1)}'
+            : '\$${coin.price.toStringAsFixed(2)}';
+
     return Container(
-      width: isSmallScreen ? 56 : 60,
-      height: isSmallScreen ? 56 : 60,
-      padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color:
-            isHighlighted
-                ? Colors.orange.withValues(alpha: 0.1)
-                : Colors.grey.withValues(alpha: 0.1),
-        border: Border.all(
-          color:
-              isHighlighted
-                  ? Colors.orange
-                  : Colors.grey.withValues(alpha: 0.3),
-          width: isHighlighted ? 2 : 1,
+        color: const Color(0xFF1A1A2E),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: coin.primaryColor.withValues(alpha: 0.25),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 3-D coin
+            CustomPaint(
+              size: const Size(90, 90),
+              painter: _CoinPainter(coin: coin),
+            ),
+            const SizedBox(height: 10),
+            // Symbol
+            Text(
+              coin.symbol,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              coin.name,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.5),
+                fontSize: 11,
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Price row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  priceStr,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: coin.isPositive
+                        ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                        : Colors.red.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      color: coin.isPositive ? const Color(0xFF10B981) : Colors.red,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      child: Image.asset(
-        assetPath,
-        width: isSmallScreen ? 36 : 40,
-        height: isSmallScreen ? 36 : 40,
+    );
+  }
+
+  // ── Coin detail bottom sheet ────────────────────────────────────────────────
+  void _showCoinDetail(BuildContext context, _CoinData coin) {
+    final priceStr = coin.price >= 1000
+        ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
+        : coin.price >= 1
+            ? '\$${coin.price.toStringAsFixed(coin.price < 10 ? 2 : 1)}'
+            : '\$${coin.price.toStringAsFixed(2)}';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF0D0D1A),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Drag handle
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Coin icon + name row
+            Row(
+              children: [
+                CustomPaint(
+                  size: const Size(56, 56),
+                  painter: _CoinPainter(coin: coin),
+                ),
+                const SizedBox(width: 14),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      coin.name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      coin.symbol,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      priceStr,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: coin.isPositive
+                            ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                            : Colors.red.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}% 24h',
+                        style: TextStyle(
+                          color: coin.isPositive ? const Color(0xFF10B981) : Colors.red,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            // Buy / Sell buttons
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BuyBtcPage()),
+                      );
+                    },
+                    child: Container(
+                      height: 52,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [coin.primaryColor, coin.secondaryColor],
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Buy',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BitcoinDetailPage()),
+                      );
+                    },
+                    child: Container(
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.15),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Sell',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
@@ -608,19 +833,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
         ],
       ),
     );
-  }
-
-  Color _getCryptoColor(String symbol) {
-    switch (symbol) {
-      case 'BTC':
-        return Colors.orange;
-      case 'ETH':
-        return Colors.blue;
-      case 'SOL':
-        return const Color(0xFF9945FF);
-      default:
-        return Colors.white;
-    }
   }
 
   IconData _getCryptoIcon(String symbol) {
@@ -739,94 +951,104 @@ class MiniChartPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// ── Spinning coin icon — entrance + idle slow rotation ────────────────────────
-class _SpinningCoinIcon extends StatefulWidget {
-  final String assetPath;
-  final bool isHighlighted;
-  final bool isSmallScreen;
-  final int delayMs;
-
-  const _SpinningCoinIcon({
-    required this.assetPath,
-    required this.isHighlighted,
-    required this.isSmallScreen,
-    this.delayMs = 0,
-  });
+// ── 3-D coin painter ──────────────────────────────────────────────────────────
+class _CoinPainter extends CustomPainter {
+  final _CoinData coin;
+  const _CoinPainter({required this.coin});
 
   @override
-  State<_SpinningCoinIcon> createState() => _SpinningCoinIconState();
-}
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = math.min(cx, cy) - 4;
 
-class _SpinningCoinIconState extends State<_SpinningCoinIcon>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    // Entrance spin: 800 ms, then idle repeating slow rotation
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
+    // Drop shadow
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.45)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, cy + r * 0.15), width: r * 1.6, height: r * 0.45),
+      shadowPaint,
     );
 
-    Future.delayed(Duration(milliseconds: widget.delayMs), () {
-      if (mounted) {
-        _ctrl.forward().then((_) {
-          if (mounted) {
-            _ctrl.duration = const Duration(seconds: 5);
-            _ctrl.repeat();
-          }
-        });
-      }
-    });
+    // Base fill — radial gradient: primary center → secondary → dark edge
+    final basePaint = Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(-0.3, -0.35),
+        radius: 1.1,
+        colors: [
+          Color.lerp(coin.primaryColor, Colors.white, 0.25)!,
+          coin.primaryColor,
+          coin.secondaryColor,
+          Color.lerp(coin.secondaryColor, Colors.black, 0.55)!,
+        ],
+        stops: const [0.0, 0.35, 0.72, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r));
+    canvas.drawCircle(Offset(cx, cy), r, basePaint);
+
+    // Depth ring — dark border gradient
+    final ringPaint = Paint()
+      ..shader = SweepGradient(
+        colors: [
+          Colors.white.withValues(alpha: 0.35),
+          Colors.black.withValues(alpha: 0.50),
+          Colors.white.withValues(alpha: 0.15),
+          Colors.black.withValues(alpha: 0.50),
+          Colors.white.withValues(alpha: 0.35),
+        ],
+        stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = r * 0.08;
+    canvas.drawCircle(Offset(cx, cy), r - r * 0.04, ringPaint);
+
+    // Metallic shine — upper-left oval highlight
+    final shinePath = Path()
+      ..addOval(
+        Rect.fromCenter(
+          center: Offset(cx - r * 0.22, cy - r * 0.28),
+          width: r * 0.85,
+          height: r * 0.42,
+        ),
+      );
+    canvas.save();
+    canvas.clipPath(Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)));
+    final shinePaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment.center,
+        radius: 0.5,
+        colors: [
+          Colors.white.withValues(alpha: 0.62),
+          Colors.white.withValues(alpha: 0.0),
+        ],
+      ).createShader(
+        Rect.fromCenter(
+          center: Offset(cx - r * 0.22, cy - r * 0.28),
+          width: r * 0.85,
+          height: r * 0.42,
+        ),
+      );
+    canvas.drawPath(shinePath, shinePaint);
+    canvas.restore();
+
+    // Symbol text
+    final tp = TextPainter(
+      text: TextSpan(
+        text: coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w900,
+          fontSize: r * (coin.symbol.length <= 2 ? 0.48 : 0.36),
+          shadows: [
+            Shadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 4),
+          ],
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(cx - tp.width / 2, cy - tp.height / 2));
   }
 
   @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final size = widget.isHighlighted ? 100.0 : (widget.isSmallScreen ? 56.0 : 60.0);
-    final imgSize = widget.isHighlighted ? 86.0 : (widget.isSmallScreen ? 34.0 : 38.0);
-
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (_, __) {
-        final angle = _ctrl.value * 2 * math.pi;
-        return Transform(
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateY(angle),
-          alignment: Alignment.center,
-          child: Container(
-            width: size,
-            height: size,
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.1),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25),
-                width: widget.isHighlighted ? 2.5 : 1,
-              ),
-              boxShadow: widget.isHighlighted
-                  ? [
-                      BoxShadow(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
-                        blurRadius: 20,
-                        spreadRadius: 2,
-                      )
-                    ]
-                  : null,
-            ),
-            child: Image.asset(widget.assetPath, width: imgSize, height: imgSize),
-          ),
-        );
-      },
-    );
-  }
+  bool shouldRepaint(covariant _CoinPainter old) => old.coin != coin;
 }

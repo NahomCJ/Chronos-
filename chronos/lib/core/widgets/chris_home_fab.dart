@@ -52,10 +52,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
             if (mounted) _openSheet();
           }
         },
-        listenFor: const Duration(seconds: 60),
-        pauseFor: const Duration(seconds: 6),
-        cancelOnError: false,
-        listenMode: stt.ListenMode.dictation,
+        listenOptions: stt.SpeechListenOptions(
+          cancelOnError: false,
+          listenMode: stt.ListenMode.dictation,
+          listenFor: const Duration(seconds: 60),
+          pauseFor: const Duration(seconds: 6),
+        ),
       );
     } catch (_) {
       if (mounted) setState(() => _wakeActive = false);
@@ -113,21 +115,10 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            ShaderMask(
-              shaderCallback: (b) => const LinearGradient(
-                colors: [Color(0xFF00D4B8), Color(0xFF80FFE8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(b),
-              child: const Text(
-                'C',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  height: 1,
-                ),
-              ),
+            const Icon(
+              Icons.near_me_rounded,
+              color: Color(0xFF00D4B8),
+              size: 28,
             ),
             // Mic active dot
             if (_wakeActive)
@@ -209,8 +200,12 @@ class _ChrisSheetState extends State<_ChrisSheet> {
           setState(() => _ctrl.text = r.recognizedWords);
         }
       },
-      listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 4),
+      listenOptions: stt.SpeechListenOptions(
+        cancelOnError: false,
+        listenMode: stt.ListenMode.dictation,
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 4),
+      ),
     );
   }
 
@@ -269,20 +264,11 @@ class _ChrisSheetState extends State<_ChrisSheet> {
                       border: Border.all(
                           color: _teal.withValues(alpha: 0.55), width: 1.2),
                     ),
-                    child: Center(
-                      child: ShaderMask(
-                        shaderCallback: (b) => const LinearGradient(
-                          colors: [_teal, Color(0xFF80FFE8)],
-                        ).createShader(b),
-                        child: const Text(
-                          'C',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            height: 1,
-                          ),
-                        ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.near_me_rounded,
+                        color: _teal,
+                        size: 18,
                       ),
                     ),
                   ),
