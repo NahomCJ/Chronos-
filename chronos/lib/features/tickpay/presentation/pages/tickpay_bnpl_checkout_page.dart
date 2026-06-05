@@ -535,7 +535,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                 ? () {
                     final plan = _plans[_selectedPlan];
                     context.read<TickpayAccountCubit>().createPurchase(
-                          amount: plan.count * plan.installment,
+                          amount: plan.count * plan.amount,
                           merchant: 'TickPay Purchase',
                         );
                   }
