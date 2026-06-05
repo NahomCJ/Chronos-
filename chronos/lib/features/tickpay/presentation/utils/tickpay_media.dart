@@ -81,9 +81,9 @@ class TickPayMedia {
 
   // ── Background videos ─────────────────────────────────────────────────────
 
-  /// Woman with shopping bags, colourful fashion — TickPay welcome bg (Pexels #6984060)
+  /// Woman with shopping bags, portrait — TickPay welcome bg (Pexels #6565836)
   static const String welcomeVideo =
-      'https://videos.pexels.com/video-files/6984060/6984060-hd_1080_1920_30fps.mp4';
+      'https://videos.pexels.com/video-files/6565836/6565836-hd_1080_1920_24fps.mp4';
 
   /// Woman using smartphone for e-payment (Pexels video #4109600)
   static const String paymentVideo =

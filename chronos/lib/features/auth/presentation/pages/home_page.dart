@@ -11,6 +11,7 @@ import '../../../../features/home/domain/entities/home_summary.dart';
 import '../../../../features/home/presentation/bloc/home_bloc.dart';
 import '../../../../features/home/presentation/bloc/home_event.dart';
 import '../../../../features/home/presentation/bloc/home_state.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -80,37 +81,12 @@ class _HomeViewState extends State<_HomeView> {
               ],
             ),
           ),
-          floatingActionButton: _buildFloatingActionButton(scale),
+          floatingActionButton: Container(
+            margin: const EdgeInsets.only(bottom: 90),
+            child: const ChrisHomeFab(),
+          ),
         );
       },
-    );
-  }
-
-  Widget _buildFloatingActionButton(double scale) {
-    final double fabSize = 56 * scale;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 90),
-      width: fabSize,
-      height: fabSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.withValues(alpha: 0.4),
-            blurRadius: 20,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: FloatingActionButton(
-        onPressed: () => context.push(RouteConstants.pantherAiChat.toPath),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        shape: const CircleBorder(),
-        child: Icon(Icons.chat_bubble_outline, color: Colors.white,
-            size: 24 * scale),
-      ),
     );
   }
 
@@ -202,7 +178,7 @@ class _HomeViewState extends State<_HomeView> {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      'Search...',
+                                      'Search services, transactions...',
                                       style: TextStyles.bodySmall.copyWith(
                                         color: Colors.white.withValues(
                                             alpha: 0.85),
@@ -289,57 +265,25 @@ class _HomeViewState extends State<_HomeView> {
                           ),
                         ),
                   const Spacer(),
-                  // ── Frosted glass quick-actions pill ─────────────────────
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14 * scale, vertical: 10 * scale),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.white.withValues(alpha: 0.18),
-                              Colors.white.withValues(alpha: 0.08),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(28),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.20),
-                            width: 0.8,
-                          ),
-                        ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              _buildQuickAction(Icons.arrow_upward, 'Transfer',
-                                  scale, textScale,
-                                  () => context.go(RouteConstants.transfer.toPath)),
-                              SizedBox(width: 20 * scale),
-                              _buildQuickAction(Icons.add, 'Add Money', scale,
-                                  textScale,
-                                  () => context.push(RouteConstants.addMoney.toPath)),
-                              SizedBox(width: 20 * scale),
-                              _buildQuickAction(Icons.swap_horiz, 'Exchange',
-                                  scale, textScale,
-                                  () => context.go(RouteConstants.exchange.toPath)),
-                              SizedBox(width: 20 * scale),
-                              _buildQuickAction(Icons.wallet, 'Wallet', scale,
-                                  textScale,
-                                  () => context.go(RouteConstants.wallet.toPath)),
-                              SizedBox(width: 20 * scale),
-                              _buildQuickAction(Icons.receipt_long, 'TickPay',
-                                  scale, textScale,
-                                  () => context.push(RouteConstants.tickpayWelcome.toPath)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildQuickAction(Icons.arrow_upward, 'Transfer',
+                          scale, textScale,
+                          () => context.go(RouteConstants.transfer.toPath)),
+                      _buildQuickAction(Icons.add, 'Add Money', scale,
+                          textScale,
+                          () => context.push(RouteConstants.addMoney.toPath)),
+                      _buildQuickAction(Icons.swap_horiz, 'Exchange',
+                          scale, textScale,
+                          () => context.go(RouteConstants.exchange.toPath)),
+                      _buildQuickAction(Icons.wallet, 'Wallet', scale,
+                          textScale,
+                          () => context.go(RouteConstants.wallet.toPath)),
+                      _buildQuickAction(Icons.confirmation_number, 'TickPay',
+                          scale, textScale,
+                          () => context.push(RouteConstants.tickpayWelcome.toPath)),
+                    ],
                   ),
                   SizedBox(height: 24 * scale),
                 ],
@@ -381,7 +325,7 @@ class _HomeViewState extends State<_HomeView> {
 
   Widget _buildQuickAction(IconData icon, String label, double scale,
       double textScale, VoidCallback onTap) {
-    final double circleSize = 58 * scale;
+    final double circleSize = 54 * scale;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -390,19 +334,19 @@ class _HomeViewState extends State<_HomeView> {
             width: circleSize,
             height: circleSize,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: Colors.white.withValues(alpha: 0.16),
               shape: BoxShape.circle,
               border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2), width: 0.7),
+                  color: Colors.white.withValues(alpha: 0.30), width: 1.0),
             ),
-            child: Icon(icon, color: Colors.white, size: 26 * scale),
+            child: Icon(icon, color: Colors.white, size: 24 * scale),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(label,
               style: TextStyles.labelSmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
-                  fontSize: 11 * textScale)),
+                  fontSize: 10 * textScale)),
         ],
       ),
     );
@@ -461,11 +405,11 @@ class _HomeViewState extends State<_HomeView> {
 
   Widget _buildFallbackTransactions(double scale, double textScale) {
     final items = [
-      ('Apple Store', 'Today', '-\$299.00', true,
+      ('Apple Store', 'Today, 2:34 PM', '-\$299.00', true,
           Icons.apple, const Color(0xFF7C3AED)),
-      ('Salary Deposit', 'Today', '+\$5,200.00', false,
+      ('Salary Deposit', 'Today, 9:00 AM', '+\$5,200.00', false,
           Icons.south_west, const Color(0xFF2E7D32)),
-      ('Uber Eats', 'Yesterday', '-\$32.50', true,
+      ('Uber Eats', 'Yesterday, 8:12 PM', '-\$32.50', true,
           Icons.restaurant, const Color(0xFFDC8F4A)),
     ];
     return Column(
@@ -501,8 +445,18 @@ class _HomeViewState extends State<_HomeView> {
     try {
       final dt = DateTime.parse(iso);
       final now = DateTime.now();
-      if (dt.day == now.day) return 'Today';
-      if (dt.day == now.day - 1) return 'Yesterday';
+      final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+      final minute = dt.minute.toString().padLeft(2, '0');
+      final period = dt.hour >= 12 ? 'PM' : 'AM';
+      final time = '$hour:$minute $period';
+      if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+        return 'Today, $time';
+      }
+      final yesterday = now.subtract(const Duration(days: 1));
+      if (dt.year == yesterday.year && dt.month == yesterday.month &&
+          dt.day == yesterday.day) {
+        return 'Yesterday, $time';
+      }
       return '${dt.month}/${dt.day}/${dt.year}';
     } catch (_) {
       return iso;
@@ -548,7 +502,9 @@ class _HomeViewState extends State<_HomeView> {
               style: TextStyles.bodyLarge.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: 14 * textScale,
-                  color: isNegative ? Colors.red : const Color(0xFF2E7D32))),
+                  color: isNegative
+                      ? const Color(0xFF1A1A1A)
+                      : const Color(0xFFCD853F))),
           const SizedBox(width: 4),
           Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20 * scale),
         ],
