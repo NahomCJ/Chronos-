@@ -174,113 +174,184 @@ class TickPayDashboardPage extends StatelessWidget {
     final creditUsed = account?.creditUsed ?? 0.0;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: () =>
-                context.push(RouteConstants.tickpayCreditOverview.toPath),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+      child: GestureDetector(
+        onTap: () => context.push(RouteConstants.tickpayCreditOverview.toPath),
+        child: Container(
+          width: double.infinity,
+          clipBehavior: Clip.hardEdge,
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF2D1B4E), Color(0xFF4A2C72), Color(0xFF3D2B5E)],
+              stops: [0.0, 0.5, 1.0],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12), width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1A0A2E).withValues(alpha: 0.5),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
-              child: const Text(
-                'Credit Overview',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+            ],
+          ),
+          child: Stack(
+            children: [
+              // Decorative circle top-right
+              Positioned(
+                top: -30,
+                right: -20,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.04),
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF2D1B4E), Color(0xFF3D2B5E)],
+              Positioned(
+                top: 20,
+                right: 40,
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.03),
+                  ),
+                ),
               ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.1), width: 0.8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Available Credit',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        fontSize: 12,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Row: chip + TickPay branding ──
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Chip
+                      Container(
+                        width: 36,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFDC8F4A), Color(0xFFE8B06A)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
+                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
+                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
+                          ],
+                        ),
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Valid until',
+                      // TickPay branding
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [Color(0xFFFF2D87), Color(0xFFFF6EB4)],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'TickPay',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.45),
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  // ── Available Credit label ──
+                  Text(
+                    'Available Credit',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.55),
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // ── Amount ──
+                  Text(
+                    account == null ? '—' : '\$${fmt.format(available)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // ── Card number row ──
+                  Row(
+                    children: [
+                      Text(
+                        '•••• •••• •••• 4892',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 13,
+                          letterSpacing: 2,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          account == null
+                              ? 'Used  —'
+                              : 'Used  \$${fmt.format(creditUsed)}',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.75),
                             fontSize: 11,
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
-                          '05/34',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.5,
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // ── Valid until ──
+                  Row(
+                    children: [
+                      Text(
+                        'Valid until',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 10,
+                          letterSpacing: 0.5,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  account == null ? '---' : '\$${fmt.format(available)}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+                      ),
+                      const SizedBox(width: 6),
+                      const Text(
+                        '05/34',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12)),
-                  ),
-                  child: Text(
-                    account == null
-                        ? 'Credit Used  ---'
-                        : 'Credit Used  \$${fmt.format(creditUsed)}',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -362,7 +433,7 @@ class TickPayDashboardPage extends StatelessWidget {
     // Fallback mock plans when no API data yet
     final mockPlans = [
       (Icons.shopping_cart, const Color(0xFFFF9900), 'Amazon', '#9012', '3 of 4 payments left', '\$599'),
-      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#9012', '2 of 3 payments left', '\$450'),
+      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#8234', '2 of 3 payments left', '\$450'),
     ];
 
     return Padding(
@@ -435,6 +506,15 @@ class TickPayDashboardPage extends StatelessWidget {
     required String amount,
     required Color color,
   }) {
+    // Parse progress from info string e.g. "3 of 4 payments left"
+    double progress = 0.5;
+    final match = RegExp(r'(\d+) of (\d+)').firstMatch(info);
+    if (match != null) {
+      final remaining = int.tryParse(match.group(1) ?? '1') ?? 1;
+      final total = int.tryParse(match.group(2) ?? '4') ?? 4;
+      progress = (total - remaining) / total;
+    }
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -449,47 +529,73 @@ class TickPayDashboardPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.13),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(logo, color: color, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  info,
-                  style: const TextStyle(
-                    color: Color(0xFF888888),
-                    fontSize: 11,
-                  ),
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.13),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  '$brand$orderRef',
-                  style: const TextStyle(
-                    color: Color(0xFF1A1A1A),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Icon(logo, color: color, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          brand,
+                          style: const TextStyle(
+                            color: Color(0xFF1A1A1A),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          orderRef,
+                          style: const TextStyle(
+                            color: Color(0xFFBBBBBB),
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      info,
+                      style: const TextStyle(
+                        color: Color(0xFF999999),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Text(
+                amount,
+                style: const TextStyle(
+                  color: Color(0xFFFF9900),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          Text(
-            amount,
-            style: const TextStyle(
-              color: Color(0xFFFF9900),
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: const Color(0xFFF0F0F0),
+              valueColor: AlwaysStoppedAnimation(color),
+              minHeight: 4,
             ),
           ),
         ],
@@ -499,9 +605,9 @@ class TickPayDashboardPage extends StatelessWidget {
 
   Widget _buildAiPicks(BuildContext context) {
     final picks = [
-      ('Samsung Galaxy Buds', '\$149', TickPayMedia.wirelessEarbuds),
-      ('Adidas Ultraboost', '\$180', TickPayMedia.adidasShoes),
-      ('Sony WH-1000XM4', '\$350', TickPayMedia.headphonesBlack),
+      ('Samsung Galaxy Buds', '\$149', TickPayMedia.wirelessEarbuds, 88),
+      ('Adidas Ultraboost', '\$180', TickPayMedia.adidasShoes, 84),
+      ('Sony WH-1000XM4', '\$350', TickPayMedia.headphonesBlack, 82),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,17 +617,31 @@ class TickPayDashboardPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'AI Picks for You',
-                style: TextStyle(
-                  color: Color(0xFF1A1A1A),
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.auto_awesome,
+                        color: Color(0xFF7C3AED), size: 13),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'AI Picks for You',
+                    style: TextStyle(
+                      color: Color(0xFF1A1A1A),
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               GestureDetector(
-                onTap: () =>
-                    context.push(RouteConstants.tickpayAiPicks.toPath),
+                onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
                 child: const Text(
                   'View All',
                   style: TextStyle(
@@ -536,82 +656,132 @@ class TickPayDashboardPage extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         SizedBox(
-          height: 190,
+          height: 200,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: picks.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
-              return Container(
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFEEEEEE)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+              final pick = picks[i];
+              return GestureDetector(
+                onTap: () => context.push(
+                  RouteConstants.tickpayProductDetail.toPath,
+                  extra: {'name': pick.$1, 'price': pick.$2, 'asset': pick.$3},
                 ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TickPayImage(
-                          picks[i].$3,
-                          height: 110,
-                          borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                picks[i].$1,
-                                style: const TextStyle(
-                                  color: Color(0xFF1A1A1A),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                picks[i].$2,
-                                style: const TextStyle(
-                                  color: Color(0xFF1A1A1A),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.favorite_border,
-                            color: Color(0xFF444444), size: 14),
+                child: Container(
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFEEEEEE)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(16)),
+                            child: TickPayImage(
+                              pick.$3,
+                              height: 115,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  pick.$1,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1A1A1A),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      pick.$2,
+                                      style: const TextStyle(
+                                        color: Color(0xFF1A1A1A),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Text(
+                                        '${pick.$4}%',
+                                        style: const TextStyle(
+                                          color: Color(0xFF3B82F6),
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      // AI badge
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF7C3AED),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text('AI',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      // Heart button
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.favorite_border,
+                              color: Color(0xFF444444), size: 14),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
