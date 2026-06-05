@@ -88,6 +88,8 @@ import '../../features/tickpay/presentation/bloc/tickpay_account_cubit.dart';
 import '../../features/profile/presentation/bloc/profile_cubit.dart';
 import '../../features/profile/presentation/pages/profile_page.dart' as profile_page;
 import '../../features/profile/presentation/pages/theme_settings_page.dart';
+import '../../features/profile/presentation/pages/change_password_page.dart';
+import '../../features/profile/presentation/pages/notification_settings_page.dart';
 import '../theme/theme_cubit.dart';
 import '../pages/search_page.dart';
 
@@ -634,6 +636,18 @@ final GoRouter router = GoRouter(
         ],
         child: const profile_page.ProfilePage(),
       ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.changePassword.toPath,
+      name: RouteConstants.changePassword.name,
+      builder: (context, state) => const ChangePasswordPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.notificationSettings.toPath,
+      name: RouteConstants.notificationSettings.name,
+      builder: (context, state) => const NotificationSettingsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

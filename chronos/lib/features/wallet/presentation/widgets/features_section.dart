@@ -36,32 +36,20 @@ class FeaturesSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         _buildFeatureItem(
-          icon: Icons.account_balance_wallet_outlined,
-          title: 'Crypto balance (live price)',
-          onTap: () {},
-        ),
-        const SizedBox(height: 12),
-        _buildFeatureItem(
           icon: Icons.swap_horiz,
-          title: 'Convert Crypto to Cash',
+          title: 'Exchange Currency',
           onTap: () {},
         ),
         const SizedBox(height: 12),
         _buildFeatureItem(
-          icon: Icons.add_chart,
-          title: 'Buy Crypto',
+          icon: Icons.account_balance_outlined,
+          title: 'Fund Wallet',
           onTap: () {},
         ),
         const SizedBox(height: 12),
         _buildFeatureItem(
-          icon: Icons.trending_down,
-          title: 'Sell Crypto',
-          onTap: () {},
-        ),
-        const SizedBox(height: 12),
-        _buildFeatureItem(
-          icon: Icons.network_check,
-          title: 'View Network Fees',
+          icon: Icons.send_outlined,
+          title: 'Withdraw Funds',
           onTap: () {},
         ),
       ],
@@ -80,10 +68,10 @@ class FeaturesSection extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
           ),
         ),
         child: Row(
@@ -93,10 +81,10 @@ class FeaturesSection extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.25),
+                  color: Colors.white.withValues(alpha: 0.25),
                 ),
               ),
               child: Icon(
@@ -122,7 +110,7 @@ class FeaturesSection extends StatelessWidget {
             /// Chevron
             Icon(
               Icons.chevron_right,
-              color: Colors.white.withOpacity(0.4),
+              color: Colors.white.withValues(alpha: 0.4),
               size: 22,
             ),
           ],

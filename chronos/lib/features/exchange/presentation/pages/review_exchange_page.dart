@@ -86,21 +86,8 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
     final isLoading = state is ExchangeLoading;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-
-          // Dark Overlay
-          Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.7)),
-          ),
-
-          // Content
-          SafeArea(
+      backgroundColor: const Color(0xFF0A0A14),
+      body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -123,7 +110,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                           style: TextStyles.titleLarge.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
-                            fontSize: isSmallScreen ? 20 : 24,
+                            fontSize: 18,
                           ),
                         ),
                       ],
@@ -137,10 +124,10 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                     margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
                     padding: EdgeInsets.all(isSmallScreen ? 20 : 24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                      color: const Color(0xFF1A1A2E),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
                     ),
                     child: Column(
@@ -206,10 +193,10 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                     margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
                     padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: const Color(0xFF1A1A2E),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
                     ),
                     child: Column(
@@ -300,57 +287,44 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
 
                   SizedBox(height: isSmallScreen ? 32 : 40),
 
-                  // Confirm Button
+                  // Confirm Button — white pill
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
                     width: double.infinity,
+                    height: 52,
                     child: ElevatedButton(
                       onPressed: (_isProcessing || isLoading || quote == null)
                           ? null
                           : () => _confirmExchange(quote.quoteId, convertedAmount),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFB0B0B0),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          vertical: isSmallScreen ? 14 : 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0A0A14),
                         elevation: 0,
-                        disabledBackgroundColor: Colors.grey.withValues(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        disabledBackgroundColor: Colors.white.withValues(
                           alpha: 0.3,
                         ),
                       ),
                       child: (_isProcessing || isLoading)
                           ? SizedBox(
-                              width: isSmallScreen ? 18 : 20,
-                              height: isSmallScreen ? 18 : 20,
-                              child: const CircularProgressIndicator(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  const Color(0xFF0A0A14),
                                 ),
                               ),
                             )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.check_circle_outline,
-                                  color: Colors.white,
-                                  size: isSmallScreen ? 18 : 20,
-                                ),
-                                SizedBox(width: isSmallScreen ? 6 : 8),
-                                Text(
-                                  'Confirm Exchange',
-                                  style: TextStyles.bodyLarge.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                          : Text(
+                              'Confirm Exchange',
+                              style: TextStyles.bodyLarge.copyWith(
+                                color: const Color(0xFF0A0A14),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                              ),
                             ),
                     ),
                   ),
@@ -359,8 +333,6 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                 ],
               ),
             ),
-          ),
-        ],
       ),
     );
   }

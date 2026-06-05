@@ -3,13 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 // ---------------------------------------------------------------------------
-// Constants
+// Constants — unified dark-glass design language
 // ---------------------------------------------------------------------------
 const _kBg = Color(0xFF0A0A14);
-const _kCard = Color(0xFF141428);
-const _kAccent = Color(0xFF6C5CE7);
-const _kAccentLight = Color(0xFF8B5CF6);
-const _kSurface = Color(0xFF1C1C32);
+const _kCard = Color(0xFF1A1A2E);
+const _kSheetBg = Color(0xFF0F0F1E);
+const _kBorderSubtle = Color(0x1AFFFFFF); // white 10%
+const _kBorderUnselected = Color(0x4DFFFFFF); // white 30%
+
+// ---------------------------------------------------------------------------
+// Data classes
+// ---------------------------------------------------------------------------
+class _BankOption {
+  const _BankOption(this.name, this.location, this.asset);
+  final String name;
+  final String location;
+  final String asset; // asset path — may not exist, fallback icon used
+}
 
 // ---------------------------------------------------------------------------
 // Page
@@ -43,14 +53,11 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
           _amount = '$_amount.';
         }
       } else {
-        // digit
         if (_amount == '0') {
           _amount = key;
         } else {
-          // Guard: max 2 decimal places
           final dotIndex = _amount.indexOf('.');
           if (dotIndex != -1 && _amount.length - dotIndex > 2) return;
-          // Guard: max 7 digits before decimal
           if (dotIndex == -1 && _amount.length >= 7) return;
           _amount = '$_amount$key';
         }
@@ -74,7 +81,6 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
   // ── Display string ────────────────────────────────────────────────────────
 
   String get _displayAmount {
-    if (_amount.endsWith('.')) return '\$$_amount';
     return '\$$_amount';
   }
 
@@ -88,8 +94,36 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
       builder: (_) => _MethodSheet(
         selected: _selectedMethod,
         onSelect: (method) {
-          setState(() => _selectedMethod = method);
           Navigator.pop(context);
+          if (method == 'Bank Transfer') {
+            // Show bank picker after method sheet closes
+            Future.microtask(() => _showBankPickerSheet());
+          } else {
+            setState(() => _selectedMethod = method);
+          }
+        },
+      ),
+    );
+  }
+
+  void _showBankPickerSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _BankPickerSheet(
+        onSelect: (bankName) {
+          Navigator.pop(context);
+          setState(() => _selectedMethod = bankName);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Connecting to $bankName...'),
+              backgroundColor: _kCard,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
         },
       ),
     );
@@ -192,6 +226,7 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
             ),
           ),
           const SizedBox(height: 4),
+          // White/light underline bar — no purple gradient
           Container(
             height: 1,
             width: 120,
@@ -199,7 +234,7 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  _kAccent.withValues(alpha: isZero ? 0.3 : 0.8),
+                  Colors.white.withValues(alpha: isZero ? 0.15 : 0.55),
                   Colors.transparent,
                 ],
               ),
@@ -231,17 +266,17 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
-                color: _kSurface,
+                color: _kCard,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: _kAccent.withValues(alpha: 0.35),
+                  color: _kBorderSubtle,
                   width: 1,
                 ),
               ),
               child: Text(
                 label,
                 style: const TextStyle(
-                  color: _kAccentLight,
+                  color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
@@ -265,9 +300,9 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: _kCard,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.07),
+              color: _kBorderSubtle,
               width: 1,
             ),
           ),
@@ -277,12 +312,12 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: _kAccent.withValues(alpha: 0.15),
+                  color: Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.credit_card_rounded,
-                  color: _kAccentLight,
+                  color: Colors.white.withValues(alpha: 0.7),
                   size: 18,
                 ),
               ),
@@ -349,7 +384,7 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
     );
   }
 
-  // ── Continue button ───────────────────────────────────────────────────────
+  // ── Continue button — white pill ──────────────────────────────────────────
 
   Widget _buildContinueButton() {
     final enabled = _parsedAmount > 0;
@@ -359,24 +394,17 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
         onTap: enabled ? _showConfirmSheet : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 54,
+          height: 56,
           decoration: BoxDecoration(
-            gradient: enabled
-                ? const LinearGradient(
-                    colors: [_kAccent, _kAccentLight],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  )
-                : null,
-            color: enabled ? null : _kSurface,
-            borderRadius: BorderRadius.circular(16),
+            color: enabled ? Colors.white : Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(30),
           ),
           alignment: Alignment.center,
           child: Text(
             'Continue',
             style: TextStyle(
               color: enabled
-                  ? Colors.white
+                  ? const Color(0xFF0A0A14)
                   : Colors.white.withValues(alpha: 0.3),
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -435,30 +463,21 @@ class _MethodSheet extends StatelessWidget {
   final ValueChanged<String> onSelect;
 
   static const _methods = [
-    _MethodOption(
-      icon: Icons.account_balance_rounded,
-      label: 'Bank Transfer',
-    ),
-    _MethodOption(
-      icon: Icons.credit_card_rounded,
-      label: 'Debit Card',
-    ),
-    _MethodOption(
-      icon: Icons.apple_rounded,
-      label: 'Apple Pay',
-    ),
-    _MethodOption(
-      icon: Icons.g_mobiledata_rounded,
-      label: 'Google Pay',
-    ),
+    _MethodOption(icon: Icons.account_balance_rounded, label: 'Bank Transfer'),
+    _MethodOption(icon: Icons.credit_card_rounded, label: 'Debit Card'),
+    _MethodOption(icon: Icons.apple_rounded, label: 'Apple Pay'),
+    _MethodOption(icon: Icons.g_mobiledata_rounded, label: 'Google Pay'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: _kCard,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: _kSheetBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        ),
       ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       child: Column(
@@ -523,14 +542,12 @@ class _MethodRow extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? _kAccent.withValues(alpha: 0.12)
-              : _kSurface,
+          color: _kCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? _kAccent.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.06),
+                ? Colors.white.withValues(alpha: 0.45)
+                : _kBorderSubtle,
             width: 1,
           ),
         ),
@@ -539,7 +556,7 @@ class _MethodRow extends StatelessWidget {
             Icon(
               option.icon,
               color: isSelected
-                  ? _kAccentLight
+                  ? Colors.white
                   : Colors.white.withValues(alpha: 0.6),
               size: 20,
             ),
@@ -556,14 +573,259 @@ class _MethodRow extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(
-              isSelected
-                  ? Icons.check_circle_rounded
-                  : Icons.chevron_right_rounded,
-              color: isSelected
-                  ? _kAccentLight
-                  : Colors.white.withValues(alpha: 0.25),
-              size: 18,
+            // Selected: white fill circle with dark checkmark
+            // Unselected: outlined circle
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? Colors.white : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? Colors.white
+                      : _kBorderUnselected,
+                  width: 1.5,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check_rounded,
+                      color: Color(0xFF0A0A14), size: 14)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bank picker bottom sheet
+// ---------------------------------------------------------------------------
+class _BankPickerSheet extends StatefulWidget {
+  const _BankPickerSheet({required this.onSelect});
+  final ValueChanged<String> onSelect;
+
+  @override
+  State<_BankPickerSheet> createState() => _BankPickerSheetState();
+}
+
+class _BankPickerSheetState extends State<_BankPickerSheet> {
+  final _searchCtrl = TextEditingController();
+  String _query = '';
+
+  static const _sfBanks = [
+    _BankOption('First Republic Bank', 'San Francisco, CA',
+        'assets/banks/frb.png'),
+    _BankOption(
+        'Wells Fargo', 'San Francisco, CA', 'assets/banks/wf.png'),
+    _BankOption(
+        'Bank of America', 'San Francisco, CA', 'assets/banks/boa.png'),
+    _BankOption(
+        'Chase Bank', 'San Francisco, CA', 'assets/banks/chase.png'),
+    _BankOption(
+        'Silicon Valley Bank', 'Santa Clara, CA', 'assets/banks/svb.png'),
+    _BankOption('Citibank', 'San Francisco, CA', 'assets/banks/citi.png'),
+    _BankOption('US Bank', 'San Francisco, CA', 'assets/banks/usb.png'),
+    _BankOption(
+        'East West Bank', 'San Francisco, CA', 'assets/banks/ewb.png'),
+  ];
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  List<_BankOption> get _filtered => _query.isEmpty
+      ? _sfBanks
+      : _sfBanks
+          .where((b) => b.name.toLowerCase().contains(_query.toLowerCase()))
+          .toList();
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
+      maxChildSize: 0.92,
+      expand: false,
+      builder: (_, scrollCtrl) => Container(
+        decoration: BoxDecoration(
+          color: _kSheetBg,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border(
+            top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.08), width: 1),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            const SizedBox(height: 12),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Title row + Plaid badge
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Select Your Bank',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Connect your bank account securely via Plaid',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Green "Connect with Plaid" badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF16A34A),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Connect with Plaid',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Search field
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                height: 44,
+                decoration: BoxDecoration(
+                  color: _kCard,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: _kBorderSubtle, width: 1),
+                ),
+                child: TextField(
+                  controller: _searchCtrl,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  cursorColor: Colors.white,
+                  onChanged: (v) => setState(() => _query = v),
+                  decoration: InputDecoration(
+                    hintText: 'Search banks…',
+                    hintStyle: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        fontSize: 14),
+                    prefixIcon: Icon(Icons.search_rounded,
+                        color: Colors.white.withValues(alpha: 0.4), size: 18),
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Bank list
+            Expanded(
+              child: ListView.separated(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+                itemCount: _filtered.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (_, i) {
+                  final bank = _filtered[i];
+                  return GestureDetector(
+                    onTap: () => widget.onSelect(bank.name),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: _kCard,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: _kBorderSubtle, width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          // Bank icon — fallback since assets won't exist
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.account_balance_rounded,
+                              color: Colors.white.withValues(alpha: 0.8),
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  bank.name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  bank.location,
+                                  style: TextStyle(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.45),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: Colors.white.withValues(alpha: 0.35),
+                            size: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -596,9 +858,12 @@ class _ConfirmSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: _kCard,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: _kSheetBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        ),
       ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 36),
       child: Column(
@@ -613,19 +878,16 @@ class _ConfirmSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          // Icon circle — white bg, dark icon (no purple gradient)
           Container(
             width: 72,
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [_kAccent, _kAccentLight],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: _kAccent.withValues(alpha: 0.35),
+                  color: Colors.white.withValues(alpha: 0.12),
                   blurRadius: 20,
                   offset: const Offset(0, 6),
                 ),
@@ -633,7 +895,7 @@ class _ConfirmSheet extends StatelessWidget {
             ),
             child: const Icon(
               Icons.arrow_downward_rounded,
-              color: Colors.white,
+              color: Color(0xFF0A0A14),
               size: 28,
             ),
           ),
@@ -659,8 +921,9 @@ class _ConfirmSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _kSurface,
+              color: _kCard,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: _kBorderSubtle, width: 1),
             ),
             child: Column(
               children: [
@@ -673,23 +936,20 @@ class _ConfirmSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+          // Confirm button — white pill
           GestureDetector(
             onTap: onConfirm,
             child: Container(
-              height: 54,
+              height: 56,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [_kAccent, _kAccentLight],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
               ),
               alignment: Alignment.center,
               child: const Text(
                 'Confirm',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF0A0A14),
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.3,

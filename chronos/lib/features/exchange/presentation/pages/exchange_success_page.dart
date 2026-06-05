@@ -24,21 +24,8 @@ class ExchangeSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-
-          // Dark Overlay
-          Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.7)),
-          ),
-
-          // Content
-          SafeArea(
+      backgroundColor: const Color(0xFF0A0A14),
+      body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -61,17 +48,17 @@ class ExchangeSuccessPage extends StatelessWidget {
 
                   const SizedBox(height: 60),
 
-                  // Success Icon
+                  // Success Icon — white circle, green checkmark
                   Container(
                     width: 80,
                     height: 80,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF10B981),
+                      color: Colors.white,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: Color(0xFF10B981),
                       size: 40,
                     ),
                   ),
@@ -104,10 +91,10 @@ class ExchangeSuccessPage extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                      color: const Color(0xFF1A1A2E),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
                     ),
                     child: Column(
@@ -258,27 +245,28 @@ class ExchangeSuccessPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        // View Wallet Button
+                        // View Wallet Button — white pill
                         SizedBox(
                           width: double.infinity,
+                          height: 52,
                           child: ElevatedButton(
                             onPressed: () {
                               context.go(RouteConstants.wallet.toPath);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFB0B0B0),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF0A0A14),
                               elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(26),
+                              ),
                             ),
                             child: Text(
                               'View Wallet',
                               style: TextStyles.bodyLarge.copyWith(
-                                color: Colors.white,
+                                color: const Color(0xFF0A0A14),
                                 fontWeight: FontWeight.w600,
+                                fontSize: 15,
                               ),
                             ),
                           ),
@@ -286,21 +274,21 @@ class ExchangeSuccessPage extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        // Make Another Exchange Button
+                        // Make Another Exchange — ghost pill
                         SizedBox(
                           width: double.infinity,
+                          height: 52,
                           child: OutlinedButton(
                             onPressed: () {
                               context.go(RouteConstants.exchange.toPath);
                             },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(26),
                               ),
                               side: BorderSide(
-                                color: Colors.white.withValues(alpha: 0.3),
+                                color: Colors.white.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Text(
@@ -308,6 +296,7 @@ class ExchangeSuccessPage extends StatelessWidget {
                               style: TextStyles.bodyLarge.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
+                                fontSize: 15,
                               ),
                             ),
                           ),
@@ -320,8 +309,6 @@ class ExchangeSuccessPage extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
       ),
     );
   }

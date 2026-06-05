@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/theme_cubit.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -20,54 +19,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  static const _kBg = Color(0xFFF4F6FA);
-  static const _kCard = Colors.white;
-  static const _kDark = Color(0xFF1A0A2E);
-  static const _kPurple = Color(0xFF7C3AED);
-  static const _kGold = Color(0xFFDC8F4A);
-  static const _kText = Color(0xFF1A1A1A);
-  static const _kSub = Color(0xFF888888);
-  static const _kBorder = Color(0xFFEEEEEE);
+  // ── Design tokens ──────────────────────────────────────────────────────────
+  static const _kBg = Color(0xFF0A0A14);
+  static const _kCard = Color(0xFF1A1A2E);
+  static const _kTeal = Color(0xFF14B8A6);
 
-  bool _pushTransactions = true;
-  bool _pushPayments = true;
-  bool _pushAiAlerts = true;
-  bool _pushTickPay = true;
-  bool _marketingEmails = false;
-  bool _biometricsEnabled = false;
-  bool _twoFactorEnabled = true;
-  String _appearance = 'dark';
-  String _currency = 'USD';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPrefs();
-  }
-
-  Future<void> _loadPrefs() async {
-    final p = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _pushTransactions = p.getBool('notif_transactions') ?? true;
-      _pushPayments = p.getBool('notif_payments') ?? true;
-      _pushAiAlerts = p.getBool('notif_ai') ?? true;
-      _pushTickPay = p.getBool('notif_tickpay') ?? true;
-      _marketingEmails = p.getBool('notif_marketing') ?? false;
-      _biometricsEnabled = p.getBool('sec_biometrics') ?? false;
-      _twoFactorEnabled = p.getBool('sec_2fa') ?? true;
-      _appearance = p.getString('pref_appearance') ?? 'dark';
-      _currency = p.getString('pref_currency') ?? 'USD';
-    });
-  }
-
-  Future<void> _savePref(String key, dynamic value) async {
-    final p = await SharedPreferences.getInstance();
-    if (value is bool) await p.setBool(key, value);
-    if (value is String) await p.setString(key, value);
-  }
-
-  // ── Root build: stable listeners outside of any builder ─────────────────────
+  // ── Root build ─────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -76,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
           listener: (ctx, state) {
             if (state is ProfileLoaded) {
               if (state.updateSuccess != null) {
-                _snack(ctx, state.updateSuccess!, _kPurple);
+                _snack(ctx, state.updateSuccess!, _kTeal);
               } else if (state.updateError != null) {
                 _snack(ctx, state.updateError!, Colors.redAccent);
               }
@@ -110,13 +67,13 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: _kBg,
             body: Column(
               children: [
-                _buildHeroHeader(context, user),
+                _buildHeader(context, user),
                 Expanded(
                   child: isLoading && user == null
                       ? _buildSkeletonLoading()
                       : errorMsg != null && user == null
                           ? _buildErrorState(context, errorMsg)
-                          : _buildScrollBody(context, user, isLoading),
+                          : _buildBody(context, user, isLoading),
                 ),
               ],
             ),
@@ -126,19 +83,18 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ── Hero header (dark, matches TickPay style) ────────────────────────────────
-  Widget _buildHeroHeader(BuildContext context, UserProfileModel? user) {
+  // ── Header ─────────────────────────────────────────────────────────────────
+  Widget _buildHeader(BuildContext context, UserProfileModel? user) {
     final initials = user?.initials ?? '??';
     final name = user?.fullName ?? 'Loading...';
     final tier = _tierLabel(user?.tier ?? 'standard');
     final tierColor = _tierColor(user?.tier ?? 'standard');
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF1A0A2E), Color(0xFF2D1B4E)],
+      decoration: BoxDecoration(
+        color: _kCard,
+        border: Border(
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
       ),
       child: SafeArea(
@@ -147,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             // Top bar
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -157,9 +113,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withValues(alpha: 0.08),
                         border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.15)),
+                            color: Colors.white.withValues(alpha: 0.12)),
                       ),
                       child: const Icon(Icons.arrow_back_ios_new,
                           color: Colors.white, size: 16),
@@ -181,10 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          color: _kPurple.withValues(alpha: 0.25),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: _kPurple.withValues(alpha: 0.5)),
+                              color: Colors.white.withValues(alpha: 0.15)),
                         ),
                         child: const Text('Edit',
                             style: TextStyle(
@@ -196,32 +152,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-            const SizedBox(height: 28),
-            // Avatar
+            const SizedBox(height: 24),
+            // Avatar — dark circle, no gradient
             Stack(
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 88,
-                  height: 88,
+                  width: 84,
+                  height: 84,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _kPurple.withValues(alpha: 0.5),
-                        blurRadius: 24,
-                        spreadRadius: 2,
-                      ),
-                    ],
+                    color: Colors.white.withValues(alpha: 0.1),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.15), width: 2),
                   ),
                   child: Center(
                     child: Text(initials,
                         style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
+                            fontSize: 28,
                             fontWeight: FontWeight.w800)),
                   ),
                 ),
@@ -231,55 +180,52 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: GestureDetector(
                     onTap: () => _comingSoon(context, 'Photo upload'),
                     child: Container(
-                      width: 28,
-                      height: 28,
+                      width: 26,
+                      height: 26,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _kPurple,
-                        border: Border.all(
-                            color: const Color(0xFF1A0A2E), width: 2.5),
+                        color: _kTeal,
+                        border: Border.all(color: _kBg, width: 2),
                       ),
                       child: const Icon(Icons.camera_alt_rounded,
-                          color: Colors.white, size: 13),
+                          color: Colors.white, size: 12),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             Text(name,
                 style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: tierColor.withValues(alpha: 0.18),
+                color: tierColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                    color: tierColor.withValues(alpha: 0.4), width: 0.8),
+                    color: tierColor.withValues(alpha: 0.35), width: 0.8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.workspace_premium_rounded,
-                      color: tierColor, size: 13),
+                      color: tierColor, size: 12),
                   const SizedBox(width: 5),
                   Text(tier,
                       style: TextStyle(
                           color: tierColor,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
-            const SizedBox(height: 22),
-            // Stats row
+            const SizedBox(height: 20),
             _buildStatsRow(user),
-            const SizedBox(height: 0),
           ],
         ),
       ),
@@ -297,29 +243,28 @@ class _ProfilePageState extends State<ProfilePage> {
         : '---';
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
+          topLeft: Radius.circular(14),
+          topRight: Radius.circular(14),
         ),
-        border: Border.all(
-            color: Colors.white.withValues(alpha: 0.12), width: 0.8),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Row(
         children: [
           Expanded(child: _stat('Balance', balance)),
           Container(
               width: 0.6,
-              height: 36,
-              color: Colors.white.withValues(alpha: 0.15)),
+              height: 34,
+              color: Colors.white.withValues(alpha: 0.12)),
           Expanded(child: _stat('Transactions', txCount)),
           Container(
               width: 0.6,
-              height: 36,
-              color: Colors.white.withValues(alpha: 0.15)),
+              height: 34,
+              color: Colors.white.withValues(alpha: 0.12)),
           Expanded(child: _stat('Member Since', sinceStr)),
         ],
       ),
@@ -331,21 +276,21 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(value,
               style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 3),
           Text(label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.45),
                   fontSize: 10,
                   fontWeight: FontWeight.w500)),
         ],
       );
 
-  // ── Loading skeleton ──────────────────────────────────────────────────────────
+  // ── Loading skeleton ────────────────────────────────────────────────────────
   Widget _buildSkeletonLoading() {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 40),
       children: List.generate(
           4,
           (i) => Container(
@@ -354,13 +299,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 decoration: BoxDecoration(
                   color: _kCard,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _kBorder),
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08)),
                 ),
               )),
     );
   }
 
-  // ── Error state ───────────────────────────────────────────────────────────────
+  // ── Error state ─────────────────────────────────────────────────────────────
   Widget _buildErrorState(BuildContext context, String msg) {
     return Center(
       child: Padding(
@@ -372,37 +318,38 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: _kPurple.withValues(alpha: 0.08),
+                color: Colors.red.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.wifi_off_rounded,
-                  color: _kPurple, size: 32),
+                  color: Colors.redAccent, size: 32),
             ),
             const SizedBox(height: 16),
             const Text('Could not load profile',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             Text(msg,
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(color: _kSub, fontSize: 13)),
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () =>
-                  context.read<ProfileCubit>().loadProfile(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _kPurple,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+            GestureDetector(
+              onTap: () => context.read<ProfileCubit>().loadProfile(),
+              child: Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: const Text('Retry',
+                    style: TextStyle(
+                        color: Color(0xFF0A0A14),
+                        fontWeight: FontWeight.w600)),
               ),
-              child: const Text('Retry',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
             ),
           ],
         ),
@@ -410,49 +357,23 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ── Scrollable settings body ──────────────────────────────────────────────────
-  Widget _buildScrollBody(
+  // ── Scrollable body ─────────────────────────────────────────────────────────
+  Widget _buildBody(
       BuildContext context, UserProfileModel? user, bool isUpdating) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 100),
       children: [
-        if (isUpdating)
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: _kPurple.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: _kPurple.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: _kPurple.withValues(alpha: 0.8)),
-                ),
-                const SizedBox(width: 12),
-                const Text('Saving changes...',
-                    style: TextStyle(
-                        color: _kPurple,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500)),
-              ],
-            ),
-          ),
-        _section('Account', [
+        if (isUpdating) _buildUpdatingBanner(),
+        _section('ACCOUNT', [
           _tile(Icons.person_outline_rounded, 'Full Name',
               user?.fullName ?? '---',
               onTap: user != null
                   ? () => _showEditSheet(context, user)
                   : null),
+          _div(),
           _tile(Icons.email_outlined, 'Email', user?.email ?? '---',
               onTap: () => _comingSoon(context, 'Email change')),
+          _div(),
           _tile(Icons.phone_outlined, 'Phone',
               user?.phone ?? 'Not set',
               onTap: user != null
@@ -465,166 +386,200 @@ class _ProfilePageState extends State<ProfilePage> {
                           .read<ProfileCubit>()
                           .updateProfile(phone: v))
                   : null),
+          _div(),
           _tile(Icons.location_on_outlined, 'Country', 'Ethiopia',
               onTap: () => _comingSoon(context, 'Country')),
         ]),
         const SizedBox(height: 20),
-        _section('Security', [
+        _section('SECURITY', [
           _tile(Icons.lock_outline_rounded, 'Change PIN', '6-digit PIN',
               onTap: () => _showPinSheet(context)),
+          _div(),
           _tile(Icons.password_rounded, 'Change Password',
               'Update your password',
               onTap: () =>
-                  context.push(RouteConstants.forgotPassword.toPath)),
-          _toggleTile(
-            Icons.fingerprint_rounded,
-            'Biometric Login',
-            'Face ID / Fingerprint',
-            _biometricsEnabled,
-            (v) {
-              setState(() => _biometricsEnabled = v);
-              _savePref('sec_biometrics', v);
-            },
-          ),
-          _toggleTile(
-            Icons.verified_user_outlined,
-            'Two-Factor Auth',
-            'SMS code on every login',
-            _twoFactorEnabled,
-            (v) {
-              setState(() => _twoFactorEnabled = v);
-              _savePref('sec_2fa', v);
-            },
-          ),
+                  context.push(RouteConstants.changePassword.toPath)),
+          _div(),
           _tile(Icons.devices_rounded, 'Active Sessions',
               'Manage devices',
               onTap: () => _showSessionsSheet(context)),
+          _div(),
+          _tile(Icons.verified_user_outlined, 'Two-Factor Auth',
+              'Authenticator app',
+              onTap: () => _show2faDialog(context)),
         ]),
         const SizedBox(height: 20),
-        _section('Notifications', [
-          _toggleTile(Icons.swap_horiz_rounded, 'Transaction Alerts',
-              'Every deposit & withdrawal', _pushTransactions, (v) {
-            setState(() => _pushTransactions = v);
-            _savePref('notif_transactions', v);
-          }),
-          _toggleTile(Icons.event_outlined, 'Payment Due',
-              'TickPay installment reminders', _pushPayments, (v) {
-            setState(() => _pushPayments = v);
-            _savePref('notif_payments', v);
-          }),
-          _toggleTile(Icons.psychology_outlined, 'AI Insights',
-              'Panther AI alerts & tips', _pushAiAlerts, (v) {
-            setState(() => _pushAiAlerts = v);
-            _savePref('notif_ai', v);
-          }),
-          _toggleTile(Icons.shopping_bag_outlined, 'TickPay Alerts',
-              'BNPL reminders & offers', _pushTickPay, (v) {
-            setState(() => _pushTickPay = v);
-            _savePref('notif_tickpay', v);
-          }),
-          _toggleTile(Icons.mark_email_unread_outlined,
-              'Marketing Emails', 'Offers, tips, promotions',
-              _marketingEmails, (v) {
-            setState(() => _marketingEmails = v);
-            _savePref('notif_marketing', v);
-          }),
+        _section('NOTIFICATIONS', [
+          _tile(Icons.notifications_outlined, 'Notification Settings',
+              'Push, alerts, marketing',
+              onTap: () =>
+                  context.push(RouteConstants.notificationSettings.toPath)),
         ]),
         const SizedBox(height: 20),
-        _section('Verification', [
+        _section('VERIFICATION', [
           _tile(Icons.badge_outlined, 'KYC Status', 'Verified',
               badge: _pill('Verified', const Color(0xFF10B981)),
               onTap: () => _comingSoon(context, 'KYC Details')),
+          _div(),
           _tile(Icons.account_balance_outlined, 'Linked Banks',
               '3 accounts connected',
               onTap: () => _comingSoon(context, 'Linked Banks')),
+          _div(),
           _tile(Icons.credit_score_rounded, 'Identity Docs',
               'Government ID verified',
               onTap: () => _comingSoon(context, 'Identity Documents')),
         ]),
         const SizedBox(height: 20),
-        _section('Membership', [
+        _section('MEMBERSHIP', [
           _membershipCard(context, user),
         ]),
         const SizedBox(height: 20),
-        _section('TickPay', [
+        _section('TICKPAY', [
           _tile(Icons.credit_card_outlined, 'TickPay Credit',
               'View your BNPL credit line',
               onTap: () =>
                   context.push(RouteConstants.tickpayDashboard.toPath)),
-          _toggleTile(
-            Icons.autorenew_rounded,
-            'Auto-Pay',
-            'Auto-deduct on due dates',
-            false,
-            (_) => _comingSoon(context, 'Auto-Pay setup'),
-          ),
+          _div(),
+          _tile(Icons.autorenew_rounded, 'Auto-Pay',
+              'Auto-deduct on due dates',
+              onTap: () => _comingSoon(context, 'Auto-Pay setup')),
         ]),
         const SizedBox(height: 20),
-        _section('Referral', [
+        _section('REFERRAL', [
           _referralCard(context, user),
+          _div(),
           _tile(Icons.share_rounded, 'Invite Friends',
-              'Share your code & earn rewards',
+              'Share your code and earn rewards',
               onTap: () => _comingSoon(context, 'Referral sharing')),
+          _div(),
           _tile(Icons.monetization_on_outlined, 'Referral Earnings',
               '\$0.00',
               onTap: () => _comingSoon(context, 'Referral earnings')),
         ]),
         const SizedBox(height: 20),
-        _section('App Preferences', [
+        _section('APP PREFERENCES', [
           _tile(Icons.palette_outlined, 'Appearance',
               _appearanceLabel(),
               onTap: () => _showAppearancePicker(context)),
+          _div(),
           _themeTile(context),
+          _div(),
           _tile(Icons.language_rounded, 'Language', 'English',
               onTap: () => _comingSoon(context, 'Language')),
+          _div(),
           _tile(Icons.currency_exchange_rounded, 'Display Currency',
               _currency,
               onTap: () => _showCurrencyPicker(context)),
         ]),
         const SizedBox(height: 20),
-        _section('Data & Privacy', [
+        _section('DATA & PRIVACY', [
           _tile(Icons.download_outlined, 'Export Transactions',
               'Download CSV or PDF',
               onTap: () => _comingSoon(context, 'Export')),
+          _div(),
           _tile(Icons.privacy_tip_outlined, 'Privacy Policy', '',
               onTap: () => _comingSoon(context, 'Privacy Policy')),
+          _div(),
           _tile(Icons.gavel_rounded, 'Terms of Service', '',
               onTap: () => _comingSoon(context, 'Terms of Service')),
+          _div(),
           _tile(Icons.headset_mic_rounded, 'Help & Support',
               'FAQs, contact us',
               onTap: () => _showSupportSheet(context)),
         ]),
         const SizedBox(height: 20),
-        // Danger zone
-        Container(
-          decoration: BoxDecoration(
-            color: _kCard,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-                color: Colors.red.withValues(alpha: 0.2)),
-          ),
-          child: _tile(
-            Icons.delete_forever_rounded,
-            'Delete Account',
-            'Permanently remove all data',
-            iconColor: Colors.red.withValues(alpha: 0.8),
-            valueColor: Colors.red.withValues(alpha: 0.6),
-            onTap: () => _confirmDelete(context),
-          ),
-        ),
-        const SizedBox(height: 16),
-        _signOutButton(context),
+        // Danger zone card
+        _buildDangerZone(context),
         const SizedBox(height: 16),
         Center(
           child: Text('Chronos v1.0.0',
               style: TextStyle(
-                  color: _kSub.withValues(alpha: 0.5), fontSize: 12)),
+                  color: Colors.white.withValues(alpha: 0.2), fontSize: 12)),
         ),
       ],
     );
   }
 
-  // ── Section container ─────────────────────────────────────────────────────────
+  Widget _buildUpdatingBanner() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: _kTeal.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border:
+            Border.all(color: _kTeal.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+                strokeWidth: 2, color: _kTeal.withValues(alpha: 0.8)),
+          ),
+          const SizedBox(width: 12),
+          Text('Saving changes...',
+              style: TextStyle(
+                  color: _kTeal,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDangerZone(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 8),
+          child: Text(
+            'DANGER ZONE',
+            style: TextStyle(
+              color: Colors.red.withValues(alpha: 0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.1,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A0808),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: [
+              _tile(
+                Icons.logout_rounded,
+                'Sign Out',
+                'Sign out of your account',
+                iconColor: Colors.red.withValues(alpha: 0.8),
+                valueColor: Colors.red.withValues(alpha: 0.5),
+                onTap: () => _confirmSignOut(context),
+              ),
+              Divider(
+                  height: 1,
+                  color: Colors.red.withValues(alpha: 0.12)),
+              _tile(
+                Icons.delete_forever_rounded,
+                'Delete Account',
+                'Permanently remove all data',
+                iconColor: Colors.red.withValues(alpha: 0.8),
+                valueColor: Colors.red.withValues(alpha: 0.5),
+                onTap: () => _confirmDelete(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Section wrapper ─────────────────────────────────────────────────────────
   Widget _section(String title, List<Widget> children) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -632,9 +587,9 @@ class _ProfilePageState extends State<ProfilePage> {
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 8),
           child: Text(
-            title.toUpperCase(),
-            style: const TextStyle(
-              color: _kSub,
+            title,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.45),
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.1,
@@ -644,35 +599,19 @@ class _ProfilePageState extends State<ProfilePage> {
         Container(
           decoration: BoxDecoration(
             color: _kCard,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _kBorder),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
-          child: Column(
-            children: [
-              for (int i = 0; i < children.length; i++) ...[
-                children[i],
-                if (i < children.length - 1)
-                  Divider(
-                      height: 1,
-                      indent: 56,
-                      endIndent: 0,
-                      color: _kBorder),
-              ],
-            ],
-          ),
+          child: Column(children: children),
         ),
       ],
     );
   }
 
-  // ── Basic tile ────────────────────────────────────────────────────────────────
+  Widget _div() =>
+      Divider(height: 1, color: Colors.white.withValues(alpha: 0.05));
+
+  // ── Basic tile ──────────────────────────────────────────────────────────────
   Widget _tile(
     IconData icon,
     String label,
@@ -682,6 +621,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Color? iconColor,
     Color? valueColor,
   }) {
+    final ic = iconColor ?? Colors.white.withValues(alpha: 0.7);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -693,11 +633,10 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: (iconColor ?? _kPurple).withValues(alpha: 0.1),
+                color: ic.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon,
-                  color: iconColor ?? _kPurple, size: 18),
+              child: Icon(icon, color: ic, size: 18),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -706,14 +645,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(label,
                       style: const TextStyle(
-                          color: _kText,
+                          color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
                   if (value.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(value,
                         style: TextStyle(
-                            color: valueColor ?? _kSub,
+                            color: valueColor ??
+                                Colors.white.withValues(alpha: 0.45),
                             fontSize: 12)),
                   ],
                 ],
@@ -721,62 +661,31 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             badge ??
                 Icon(Icons.chevron_right_rounded,
-                    color: _kSub.withValues(alpha: 0.5), size: 20),
+                    color: Colors.white.withValues(alpha: 0.3), size: 20),
           ],
         ),
       ),
     );
   }
 
-  // ── Toggle tile ───────────────────────────────────────────────────────────────
-  Widget _toggleTile(IconData icon, String label, String subtitle,
-      bool value, ValueChanged<bool> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: _kPurple.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: _kPurple, size: 18),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label,
-                    style: const TextStyle(
-                        color: _kText,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                Text(subtitle,
-                    style: const TextStyle(
-                        color: _kSub, fontSize: 12)),
-              ],
-            ),
-          ),
-          Transform.scale(
-            scale: 0.85,
-            child: Switch(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Colors.white,
-              activeTrackColor: _kPurple,
-              inactiveThumbColor: Colors.white,
-              inactiveTrackColor: const Color(0xFFDDDDDD),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // ── Pill badge ──────────────────────────────────────────────────────────────
+  Widget _pill(String text, Color color) => Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(20),
+          border:
+              Border.all(color: color.withValues(alpha: 0.3), width: 0.8),
+        ),
+        child: Text(text,
+            style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w600)),
+      );
 
-  // ── Membership card ───────────────────────────────────────────────────────────
+  // ── Membership card ─────────────────────────────────────────────────────────
   Widget _membershipCard(BuildContext context, UserProfileModel? user) {
     final tier = user?.tier ?? 'standard';
     final label = _tierLabel(tier);
@@ -796,12 +705,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [color.withValues(alpha: 0.8), color]),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
                 ),
-                child: const Icon(Icons.workspace_premium_rounded,
-                    color: Colors.white, size: 22),
+                child: Icon(Icons.workspace_premium_rounded,
+                    color: color, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -810,12 +719,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(label,
                         style: const TextStyle(
-                            color: _kText,
+                            color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w700)),
                     Text('Member since $sinceStr',
-                        style: const TextStyle(
-                            color: _kSub, fontSize: 12)),
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.45),
+                            fontSize: 12)),
                   ],
                 ),
               ),
@@ -829,22 +739,21 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [_kPurple, _kPurple.withValues(alpha: 0.8)]),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50),
               ),
               child: const Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.rocket_launch_rounded,
-                        color: Colors.white, size: 16),
+                        color: Color(0xFF0A0A14), size: 16),
                     SizedBox(width: 8),
                     Text('Upgrade Plan',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF0A0A14),
                             fontSize: 14,
-                            fontWeight: FontWeight.w600)),
+                            fontWeight: FontWeight.w700)),
                   ],
                 ),
               ),
@@ -855,7 +764,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ── Referral card ─────────────────────────────────────────────────────────────
+  // ── Referral card ───────────────────────────────────────────────────────────
   Widget _referralCard(BuildContext context, UserProfileModel? user) {
     final code = user != null
         ? 'CHR-${user.id.substring(0, 6).toUpperCase()}'
@@ -866,32 +775,29 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              _kPurple.withValues(alpha: 0.08),
-              const Color(0xFF5B21B6).withValues(alpha: 0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: _kPurple.withValues(alpha: 0.2)),
+          color: Colors.white.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(12),
+          border:
+              Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           children: [
-            const Icon(Icons.card_giftcard_rounded,
-                color: _kPurple, size: 22),
+            Icon(Icons.card_giftcard_rounded,
+                color: Colors.white.withValues(alpha: 0.7), size: 22),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Your Referral Code',
+                  Text('Your Referral Code',
                       style: TextStyle(
-                          color: _kSub, fontSize: 11)),
+                          color: Colors.white.withValues(alpha: 0.45),
+                          fontSize: 11)),
                   const SizedBox(height: 3),
                   Text(code,
                       style: const TextStyle(
-                          color: _kText,
-                          fontSize: 18,
+                          color: Colors.white,
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1)),
                 ],
@@ -900,14 +806,16 @@ class _ProfilePageState extends State<ProfilePage> {
             GestureDetector(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: code));
-                _snack(context, 'Code copied!', _kPurple);
+                _snack(context, 'Code copied!', _kTeal);
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _kPurple,
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.15)),
                 ),
                 child: const Text('Copy',
                     style: TextStyle(
@@ -922,53 +830,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ── Sign out button ───────────────────────────────────────────────────────────
-  Widget _signOutButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _confirmSignOut(context),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        decoration: BoxDecoration(
-          color: _kCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.logout_rounded,
-                color: Colors.red.withValues(alpha: 0.8), size: 18),
-            const SizedBox(width: 10),
-            Text('Sign Out',
-                style: TextStyle(
-                    color: Colors.red.withValues(alpha: 0.85),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── Pill badge ────────────────────────────────────────────────────────────────
-  Widget _pill(String text, Color color) => Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: color.withValues(alpha: 0.3), width: 0.8),
-        ),
-        child: Text(text,
-            style: TextStyle(
-                color: color,
-                fontSize: 11,
-                fontWeight: FontWeight.w600)),
-      );
-
-  // ── Theme tile ────────────────────────────────────────────────────────────────
+  // ── Theme tile ──────────────────────────────────────────────────────────────
   Widget _themeTile(BuildContext context) {
     final currentTheme = context.watch<ThemeCubit>().state;
     return GestureDetector(
@@ -982,11 +844,11 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: _kPurple.withValues(alpha: 0.1),
+                color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.palette_outlined,
-                  color: _kPurple, size: 18),
+              child: Icon(Icons.color_lens_outlined,
+                  color: Colors.white.withValues(alpha: 0.7), size: 18),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -995,13 +857,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const Text('Theme',
                       style: TextStyle(
-                          color: _kText,
+                          color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
                   const SizedBox(height: 2),
                   Text(currentTheme.name,
-                      style:
-                          const TextStyle(color: _kSub, fontSize: 12)),
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.45),
+                          fontSize: 12)),
                 ],
               ),
             ),
@@ -1013,7 +876,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: currentTheme.accentColor,
                 boxShadow: [
                   BoxShadow(
-                    color: currentTheme.accentColor.withValues(alpha: 0.5),
+                    color:
+                        currentTheme.accentColor.withValues(alpha: 0.5),
                     blurRadius: 6,
                   ),
                 ],
@@ -1021,14 +885,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(width: 6),
             Icon(Icons.chevron_right_rounded,
-                color: _kSub.withValues(alpha: 0.5), size: 20),
+                color: Colors.white.withValues(alpha: 0.3), size: 20),
           ],
         ),
       ),
     );
   }
 
-  // ── Sheets ────────────────────────────────────────────────────────────────────
+  // ── Sheets & dialogs ────────────────────────────────────────────────────────
   void _showEditSheet(BuildContext context, UserProfileModel user) {
     final firstCtrl = TextEditingController(text: user.firstName);
     final lastCtrl = TextEditingController(text: user.lastName);
@@ -1037,9 +901,9 @@ class _ProfilePageState extends State<ProfilePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
           left: 24,
@@ -1056,41 +920,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
             const Text('Edit Profile',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 20),
-            _field('First Name', firstCtrl),
+            _darkField('First Name', firstCtrl),
             const SizedBox(height: 14),
-            _field('Last Name', lastCtrl),
+            _darkField('Last Name', lastCtrl),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
+              child: GestureDetector(
+                onTap: () {
                   Navigator.pop(ctx);
                   cubit.updateProfile(
                     firstName: firstCtrl.text.trim(),
                     lastName: lastCtrl.text.trim(),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _kPurple,
-                  foregroundColor: Colors.white,
+                child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  elevation: 0,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: const Center(
+                    child: Text('Save Changes',
+                        style: TextStyle(
+                            color: Color(0xFF0A0A14),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                  ),
                 ),
-                child: const Text('Save Changes',
-                    style: TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600)),
               ),
             ),
           ],
@@ -1105,7 +972,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: _kCard,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)),
         title: Row(
@@ -1114,36 +981,85 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                  color: _kPurple.withValues(alpha: 0.1),
+                  color: Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: _kPurple, size: 18),
+              child: Icon(icon,
+                  color: Colors.white.withValues(alpha: 0.7), size: 18),
             ),
             const SizedBox(width: 12),
             Text('Edit $label',
                 style: const TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 16)),
           ],
         ),
-        content: _field(label, ctrl),
+        content: _darkField(label, ctrl),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel',
-                  style: TextStyle(color: _kSub))),
-          ElevatedButton(
-            onPressed: () {
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5)))),
+          GestureDetector(
+            onTap: () {
               Navigator.pop(ctx);
               onSave(ctrl.text.trim());
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: _kPurple,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            child: const Text('Save'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text('Save',
+                  style: TextStyle(
+                      color: Color(0xFF0A0A14),
+                      fontWeight: FontWeight.w600)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _show2faDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCard,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.security_rounded, color: Colors.white, size: 22),
+            SizedBox(width: 10),
+            Text('Two-Factor Auth',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.w700)),
+          ],
+        ),
+        content: Text(
+          'Enable 2FA via your authenticator app.\n\nFeature coming in next release.',
+          style:
+              TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () => Navigator.pop(ctx),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text('OK',
+                  style: TextStyle(
+                      color: Color(0xFF0A0A14),
+                      fontWeight: FontWeight.w600)),
+            ),
           ),
         ],
       ),
@@ -1154,9 +1070,9 @@ class _ProfilePageState extends State<ProfilePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
           left: 24,
@@ -1173,18 +1089,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
             const Text('Change PIN',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 6),
-            const Text('Enter current PIN then set your new one',
-                style: TextStyle(color: _kSub, fontSize: 13)),
+            Text('Enter current PIN then set your new one',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.45),
+                    fontSize: 13)),
             const SizedBox(height: 20),
             _pinField('Current PIN'),
             const SizedBox(height: 12),
@@ -1194,21 +1112,25 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
+              child: GestureDetector(
+                onTap: () {
                   Navigator.pop(ctx);
                   _comingSoon(context, 'PIN change');
                 },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: _kPurple,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14))),
-                child: const Text('Update PIN',
-                    style: TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600)),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: const Center(
+                    child: Text('Update PIN',
+                        style: TextStyle(
+                            color: Color(0xFF0A0A14),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700)),
+                  ),
+                ),
               ),
             ),
           ],
@@ -1220,9 +1142,9 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showSessionsSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -1234,13 +1156,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
             const Text('Active Sessions',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 16),
@@ -1258,8 +1180,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _comingSoon(context, 'Sign out all devices');
                 },
                 icon: const Icon(Icons.logout_rounded, size: 16),
-                label:
-                    const Text('Sign out all other devices'),
+                label: const Text('Sign out all other devices'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
                   side:
@@ -1284,9 +1205,9 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -1298,13 +1219,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
             const Text('Appearance',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 16),
@@ -1312,7 +1233,6 @@ class _ProfilePageState extends State<ProfilePage> {
               GestureDetector(
                 onTap: () {
                   setState(() => _appearance = opt.$1);
-                  _savePref('pref_appearance', opt.$1);
                   Navigator.pop(ctx);
                 },
                 child: Container(
@@ -1321,34 +1241,33 @@ class _ProfilePageState extends State<ProfilePage> {
                       horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: _appearance == opt.$1
-                        ? _kPurple.withValues(alpha: 0.07)
-                        : const Color(0xFFF8F8F8),
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.white.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                         color: _appearance == opt.$1
-                            ? _kPurple.withValues(alpha: 0.4)
-                            : _kBorder),
+                            ? Colors.white.withValues(alpha: 0.25)
+                            : Colors.white.withValues(alpha: 0.06)),
                   ),
                   child: Row(
                     children: [
                       Icon(opt.$3,
                           color: _appearance == opt.$1
-                              ? _kPurple
-                              : _kSub,
+                              ? Colors.white
+                              : Colors.white.withValues(alpha: 0.4),
                           size: 20),
                       const SizedBox(width: 14),
                       Text(opt.$2,
                           style: TextStyle(
-                              color: _kText,
+                              color: Colors.white,
                               fontSize: 14,
-                              fontWeight:
-                                  _appearance == opt.$1
-                                      ? FontWeight.w600
-                                      : FontWeight.w400)),
+                              fontWeight: _appearance == opt.$1
+                                  ? FontWeight.w600
+                                  : FontWeight.w400)),
                       const Spacer(),
                       if (_appearance == opt.$1)
-                        const Icon(Icons.check_circle_rounded,
-                            color: _kPurple, size: 20),
+                        Icon(Icons.check_circle_rounded,
+                            color: _kTeal, size: 20),
                     ],
                   ),
                 ),
@@ -1363,9 +1282,9 @@ class _ProfilePageState extends State<ProfilePage> {
     final currencies = ['USD', 'EUR', 'GBP', 'ETB', 'CAD', 'AUD', 'AED'];
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -1377,13 +1296,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
             const Text('Display Currency',
                 style: TextStyle(
-                    color: _kText,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 16),
@@ -1394,7 +1313,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   .map((c) => GestureDetector(
                         onTap: () {
                           setState(() => _currency = c);
-                          _savePref('pref_currency', c);
                           Navigator.pop(ctx);
                         },
                         child: Container(
@@ -1402,15 +1320,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
                             color: _currency == c
-                                ? _kPurple
-                                : const Color(0xFFF4F4F8),
+                                ? Colors.white
+                                : Colors.white.withValues(alpha: 0.06),
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _currency == c
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.1),
+                            ),
                           ),
                           child: Text(c,
                               style: TextStyle(
                                   color: _currency == c
-                                      ? Colors.white
-                                      : _kText,
+                                      ? const Color(0xFF0A0A14)
+                                      : Colors.white,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14)),
                         ),
@@ -1427,9 +1350,9 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showSupportSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: _kCard,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -1440,7 +1363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                      color: _kBorder,
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 20),
@@ -1448,7 +1371,7 @@ class _ProfilePageState extends State<ProfilePage> {
               alignment: Alignment.centerLeft,
               child: Text('Help & Support',
                   style: TextStyle(
-                      color: _kText,
+                      color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700)),
             ),
@@ -1472,9 +1395,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F8FC),
+                    color: Colors.white.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: _kBorder),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.08)),
                   ),
                   child: Row(
                     children: [
@@ -1482,31 +1406,33 @@ class _ProfilePageState extends State<ProfilePage> {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: _kPurple.withValues(alpha: 0.1),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(item.$1,
-                            color: _kPurple, size: 18),
+                            color: Colors.white.withValues(alpha: 0.7),
+                            size: 18),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(item.$2,
                                 style: const TextStyle(
-                                    color: _kText,
+                                    color: Colors.white,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             Text(item.$3,
-                                style: const TextStyle(
-                                    color: _kSub, fontSize: 12)),
+                                style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.45),
+                                    fontSize: 12)),
                           ],
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios_rounded,
-                          color: _kSub, size: 13),
+                      Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.white.withValues(alpha: 0.3),
+                          size: 13),
                     ],
                   ),
                 ),
@@ -1521,33 +1447,40 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: _kCard,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)),
         title: const Text('Sign out?',
             style: TextStyle(
-                color: _kText, fontWeight: FontWeight.w700)),
-        content: const Text(
+                color: Colors.white, fontWeight: FontWeight.w700)),
+        content: Text(
           'You\'ll need to sign in again to access your account.',
-          style: TextStyle(color: _kSub),
+          style:
+              TextStyle(color: Colors.white.withValues(alpha: 0.55)),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel',
-                  style: TextStyle(color: _kSub))),
-          ElevatedButton(
-            onPressed: () {
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5)))),
+          GestureDetector(
+            onTap: () {
               Navigator.pop(ctx);
               context.read<AuthBloc>().add(const SignOutRequested());
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            child: const Text('Sign out'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text('Sign out',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600)),
+            ),
           ),
         ],
       ),
@@ -1558,7 +1491,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: _kCard,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)),
         title: Row(
@@ -1568,55 +1501,147 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(width: 10),
             const Text('Delete Account?',
                 style: TextStyle(
-                    color: _kText, fontWeight: FontWeight.w700)),
+                    color: Colors.white, fontWeight: FontWeight.w700)),
           ],
         ),
-        content: const Text(
+        content: Text(
           'This permanently removes all your data — transactions, wallets, and TickPay history. This cannot be undone.',
-          style: TextStyle(color: _kSub),
+          style:
+              TextStyle(color: Colors.white.withValues(alpha: 0.55)),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child:
-                  const Text('Cancel', style: TextStyle(color: _kSub))),
-          ElevatedButton(
-            onPressed: () {
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5)))),
+          GestureDetector(
+            onTap: () {
               Navigator.pop(ctx);
-              _comingSoon(context, 'Account deletion');
+              _confirmDeleteStep2(context);
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            child: const Text('Delete'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text('Continue',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600)),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // ── Small helper widgets ──────────────────────────────────────────────────────
-  Widget _field(String label, TextEditingController ctrl) {
+  void _confirmDeleteStep2(BuildContext context) {
+    final ctrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCard,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)),
+        title: const Text('Type DELETE to confirm',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w700)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('This action is irreversible.',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.55),
+                    fontSize: 13)),
+            const SizedBox(height: 14),
+            TextField(
+              controller: ctrl,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'DELETE',
+                hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.25)),
+                filled: true,
+                fillColor: Colors.white.withValues(alpha: 0.06),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                      color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('Cancel',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5)))),
+          StatefulBuilder(
+            builder: (_, setInner) => GestureDetector(
+              onTap: () {
+                if (ctrl.text.trim() == 'DELETE') {
+                  Navigator.pop(ctx);
+                  _snack(context, 'Request submitted.', Colors.red);
+                } else {
+                  setInner(() {});
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text('Delete',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Small helpers ───────────────────────────────────────────────────────────
+  Widget _darkField(String label, TextEditingController ctrl) {
     return TextField(
       controller: ctrl,
-      style: const TextStyle(color: _kText),
+      style: const TextStyle(color: Colors.white, fontSize: 15),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: _kSub),
+        labelStyle:
+            TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 13),
         filled: true,
-        fillColor: const Color(0xFFF8F8FC),
+        fillColor: Colors.white.withValues(alpha: 0.06),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.12))),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.12))),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kPurple)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.35))),
       ),
     );
   }
@@ -1626,22 +1651,27 @@ class _ProfilePageState extends State<ProfilePage> {
       obscureText: true,
       maxLength: 6,
       keyboardType: TextInputType.number,
-      style: const TextStyle(color: _kText, letterSpacing: 8),
+      style: const TextStyle(
+          color: Colors.white, letterSpacing: 8, fontSize: 18),
       decoration: InputDecoration(
         labelText: label,
         counterText: '',
-        labelStyle: const TextStyle(color: _kSub),
+        labelStyle:
+            TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 13),
         filled: true,
-        fillColor: const Color(0xFFF8F8FC),
+        fillColor: Colors.white.withValues(alpha: 0.06),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.12))),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.12))),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kPurple)),
+            borderSide:
+                BorderSide(color: Colors.white.withValues(alpha: 0.35))),
       ),
     );
   }
@@ -1652,18 +1682,21 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isCurrent
-            ? _kPurple.withValues(alpha: 0.06)
-            : const Color(0xFFF8F8FC),
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: isCurrent
-                ? _kPurple.withValues(alpha: 0.25)
-                : _kBorder),
+                ? Colors.white.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.06)),
       ),
       child: Row(
         children: [
           Icon(icon,
-              color: isCurrent ? _kPurple : _kSub, size: 20),
+              color: isCurrent
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.4),
+              size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1671,12 +1704,13 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Text(device,
                     style: const TextStyle(
-                        color: _kText,
+                        color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w500)),
                 Text(time,
-                    style:
-                        const TextStyle(color: _kSub, fontSize: 11)),
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 11)),
               ],
             ),
           ),
@@ -1686,14 +1720,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ── Utilities ──────────────────────────────────────────────────────────────────
+  // ── Utilities ───────────────────────────────────────────────────────────────
+  String _appearance = 'dark';
+  String _currency = 'USD';
+
   void _comingSoon(BuildContext context, String feature) =>
-      _snack(context, '$feature — coming soon', _kDark);
+      _snack(context, '$feature — coming soon', _kCard);
 
   void _snack(BuildContext context, String msg, Color bg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: const TextStyle(color: Colors.white)),
-      backgroundColor: bg,
+      backgroundColor: bg == _kCard ? const Color(0xFF2A2A3E) : bg,
       behavior: SnackBarBehavior.floating,
       shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1716,7 +1753,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Color _tierColor(String tier) {
     switch (tier.toLowerCase()) {
       case 'gold':
-        return _kGold;
+        return const Color(0xFFDC8F4A);
       case 'silver':
         return const Color(0xFF9CA3AF);
       case 'platinum':
@@ -1739,7 +1776,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String _mon(int m) {
     const names = [
-      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      '',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
     return names[m];

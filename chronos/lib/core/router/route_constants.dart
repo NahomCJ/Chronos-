@@ -74,6 +74,8 @@ enum RouteConstants {
   pantherAiSettings,
   pantherAiChat,
   profile,
+  changePassword,
+  notificationSettings,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -226,6 +228,10 @@ extension RouteConstantsX on RouteConstants {
         return '/panther-ai-chat';
       case RouteConstants.profile:
         return '/profile';
+      case RouteConstants.changePassword:
+        return '/profile/change-password';
+      case RouteConstants.notificationSettings:
+        return '/profile/notifications';
     }
   }
 
@@ -378,6 +384,10 @@ extension RouteConstantsX on RouteConstants {
         return 'panther-ai-chat';
       case RouteConstants.profile:
         return 'profile';
+      case RouteConstants.changePassword:
+        return 'change-password';
+      case RouteConstants.notificationSettings:
+        return 'notification-settings';
     }
   }
 }

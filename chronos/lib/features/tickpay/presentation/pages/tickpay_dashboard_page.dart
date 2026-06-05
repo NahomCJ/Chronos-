@@ -8,11 +8,16 @@ import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
 
+// ---------------------------------------------------------------------------
+// Design constants
+// ---------------------------------------------------------------------------
+const _kBg = Color(0xFF0A0A14);
+const _kCard = Color(0xFF1A1A2E);
+const _kBorder = Color(0x1AFFFFFF); // white 10%
+const _kDarkHero = Color(0xFF1A0A2E);
+
 class TickPayDashboardPage extends StatelessWidget {
   const TickPayDashboardPage({super.key});
-
-  static const _kDark = Color(0xFF1A0A2E);
-  static const _kLight = Color(0xFFF8F9FA);
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +25,16 @@ class TickPayDashboardPage extends StatelessWidget {
       builder: (context, state) {
         final loaded = state is TickpayAccountLoaded ? state : null;
         return Scaffold(
-          backgroundColor: _kLight,
+          backgroundColor: _kBg,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 80),
             child: const ChrisFab(),
           ),
           body: Column(
             children: [
-              // ── Dark hero header ──────────────────────────────────────────────
+              // ── Dark hero header ──────────────────────────────────────────
               Container(
-                color: _kDark,
+                color: _kDarkHero,
                 child: SafeArea(
                   bottom: false,
                   child: Column(
@@ -43,10 +48,11 @@ class TickPayDashboardPage extends StatelessWidget {
                   ),
                 ),
               ),
-              // ── White content body ────────────────────────────────────────────
+              // ── Dark scrollable body ──────────────────────────────────────
               Expanded(
                 child: state is TickpayAccountLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                        child: CircularProgressIndicator(color: Colors.white54))
                     : state is TickpayAccountError
                         ? Center(
                             child: Padding(
@@ -54,19 +60,23 @@ class TickPayDashboardPage extends StatelessWidget {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.credit_card_off,
-                                      size: 48, color: Color(0xFF7C3AED)),
+                                  Icon(Icons.credit_card_off,
+                                      size: 48,
+                                      color:
+                                          Colors.white.withValues(alpha: 0.4)),
                                   const SizedBox(height: 12),
                                   Text(state.message,
                                       textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          color: Color(0xFF555555))),
+                                      style: TextStyle(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.55))),
                                 ],
                               ),
                             ),
                           )
                         : SingleChildScrollView(
-                            padding: const EdgeInsets.only(top: 28, bottom: 100),
+                            padding:
+                                const EdgeInsets.only(top: 28, bottom: 100),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -98,7 +108,8 @@ class TickPayDashboardPage extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              child:
+                  const Icon(Icons.arrow_back, color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -168,7 +179,8 @@ class TickPayDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCreditCard(BuildContext context, TickpayAccountLoaded? account) {
+  Widget _buildCreditCard(
+      BuildContext context, TickpayAccountLoaded? account) {
     final fmt = NumberFormat('#,##0.00');
     final available = account?.available ?? 0.0;
     final creditUsed = account?.creditUsed ?? 0.0;
@@ -184,7 +196,11 @@ class TickPayDashboardPage extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF2D1B4E), Color(0xFF4A2C72), Color(0xFF3D2B5E)],
+              colors: [
+                Color(0xFF2D1B4E),
+                Color(0xFF4A2C72),
+                Color(0xFF3D2B5E)
+              ],
               stops: [0.0, 0.5, 1.0],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -200,7 +216,7 @@ class TickPayDashboardPage extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              // Decorative circle top-right
+              // Decorative circles
               Positioned(
                 top: -30,
                 right: -20,
@@ -228,11 +244,9 @@ class TickPayDashboardPage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Row: chip + TickPay branding ──
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Chip
                       Container(
                         width: 36,
                         height: 26,
@@ -247,13 +261,18 @@ class TickPayDashboardPage extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
-                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
-                            Container(height: 1, color: Colors.black.withValues(alpha: 0.2)),
+                            Container(
+                                height: 1,
+                                color: Colors.black.withValues(alpha: 0.2)),
+                            Container(
+                                height: 1,
+                                color: Colors.black.withValues(alpha: 0.2)),
+                            Container(
+                                height: 1,
+                                color: Colors.black.withValues(alpha: 0.2)),
                           ],
                         ),
                       ),
-                      // TickPay branding
                       ShaderMask(
                         shaderCallback: (bounds) => const LinearGradient(
                           colors: [Color(0xFFFF2D87), Color(0xFFFF6EB4)],
@@ -271,7 +290,6 @@ class TickPayDashboardPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 18),
-                  // ── Available Credit label ──
                   Text(
                     'Available Credit',
                     style: TextStyle(
@@ -281,7 +299,6 @@ class TickPayDashboardPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // ── Amount ──
                   Text(
                     account == null ? '—' : '\$${fmt.format(available)}',
                     style: const TextStyle(
@@ -292,7 +309,6 @@ class TickPayDashboardPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // ── Card number row ──
                   Row(
                     children: [
                       Text(
@@ -306,7 +322,8 @@ class TickPayDashboardPage extends StatelessWidget {
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -324,7 +341,6 @@ class TickPayDashboardPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  // ── Valid until ──
                   Row(
                     children: [
                       Text(
@@ -387,9 +403,11 @@ class TickPayDashboardPage extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2), width: 0.8),
+                        color: Colors.white.withValues(alpha: 0.2),
+                        width: 0.8),
                   ),
-                  child: Icon(actions[i].$1, color: Colors.white, size: 22),
+                  child:
+                      Icon(actions[i].$1, color: Colors.white, size: 22),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -409,14 +427,28 @@ class TickPayDashboardPage extends StatelessWidget {
 
   static (IconData, Color) _brandInfo(String merchant) {
     final m = merchant.toLowerCase();
-    if (m.contains('amazon')) return (Icons.shopping_cart, const Color(0xFFFF9900));
-    if (m.contains('nike')) return (Icons.check_circle_outline, const Color(0xFFE53935));
-    if (m.contains('apple')) return (Icons.apple, const Color(0xFF555555));
-    if (m.contains('ikea')) return (Icons.home_outlined, const Color(0xFF0058A3));
-    if (m.contains('samsung')) return (Icons.devices_outlined, const Color(0xFF1428A0));
-    if (m.contains('best buy')) return (Icons.stars_outlined, const Color(0xFF0046BE));
-    if (m.contains('adidas')) return (Icons.directions_run, const Color(0xFF000000));
-    return (Icons.shopping_bag_outlined, const Color(0xFF7C3AED));
+    if (m.contains('amazon')) {
+      return (Icons.shopping_cart, const Color(0xFFFF9900));
+    }
+    if (m.contains('nike')) {
+      return (Icons.check_circle_outline, const Color(0xFFE53935));
+    }
+    if (m.contains('apple')) {
+      return (Icons.apple, const Color(0xFF888888));
+    }
+    if (m.contains('ikea')) {
+      return (Icons.home_outlined, const Color(0xFF0058A3));
+    }
+    if (m.contains('samsung')) {
+      return (Icons.devices_outlined, const Color(0xFF1428A0));
+    }
+    if (m.contains('best buy')) {
+      return (Icons.stars_outlined, const Color(0xFF0046BE));
+    }
+    if (m.contains('adidas')) {
+      return (Icons.directions_run, const Color(0xFFAAAAAA));
+    }
+    return (Icons.shopping_bag_outlined, const Color(0xFF8B5CF6));
   }
 
   static String _installmentInfo(double amount, String id) {
@@ -426,14 +458,16 @@ class TickPayDashboardPage extends StatelessWidget {
     return '$remaining of $total payments left';
   }
 
-  Widget _buildActivePlans(BuildContext context, TickpayAccountLoaded? account) {
+  Widget _buildActivePlans(
+      BuildContext context, TickpayAccountLoaded? account) {
     final fmt = NumberFormat('#,##0.00');
     final purchases = account?.purchases ?? [];
 
-    // Fallback mock plans when no API data yet
     final mockPlans = [
-      (Icons.shopping_cart, const Color(0xFFFF9900), 'Amazon', '#9012', '3 of 4 payments left', '\$599'),
-      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#8234', '2 of 3 payments left', '\$450'),
+      (Icons.shopping_cart, const Color(0xFFFF9900), 'Amazon', '#9012',
+          '3 of 4 payments left', '\$599'),
+      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#8234',
+          '2 of 3 payments left', '\$450'),
     ];
 
     return Padding(
@@ -446,7 +480,7 @@ class TickPayDashboardPage extends StatelessWidget {
               const Text(
                 'Active Plans',
                 style: TextStyle(
-                  color: Color(0xFF1A1A1A),
+                  color: Colors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -454,10 +488,10 @@ class TickPayDashboardPage extends StatelessWidget {
               GestureDetector(
                 onTap: () =>
                     context.push(RouteConstants.tickpayActivePlans.toPath),
-                child: const Text(
+                child: Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFF7C3AED),
+                    color: Colors.white.withValues(alpha: 0.55),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -486,7 +520,8 @@ class TickPayDashboardPage extends StatelessWidget {
                 child: _buildPlanItem(
                   logo: icon,
                   brand: tx.merchant ?? 'Purchase',
-                  orderRef: '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
+                  orderRef:
+                      '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
                   info: _installmentInfo(tx.amount, tx.id),
                   amount: '\$${fmt.format(tx.amount)}',
                   color: color,
@@ -506,7 +541,6 @@ class TickPayDashboardPage extends StatelessWidget {
     required String amount,
     required Color color,
   }) {
-    // Parse progress from info string e.g. "3 of 4 payments left"
     double progress = 0.5;
     final match = RegExp(r'(\d+) of (\d+)').firstMatch(info);
     if (match != null) {
@@ -518,16 +552,9 @@ class TickPayDashboardPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _kCard,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: _kBorder, width: 1),
       ),
       child: Column(
         children: [
@@ -537,7 +564,7 @@ class TickPayDashboardPage extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.13),
+                  color: color.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(logo, color: color, size: 22),
@@ -552,7 +579,7 @@ class TickPayDashboardPage extends StatelessWidget {
                         Text(
                           brand,
                           style: const TextStyle(
-                            color: Color(0xFF1A1A1A),
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -560,8 +587,8 @@ class TickPayDashboardPage extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           orderRef,
-                          style: const TextStyle(
-                            color: Color(0xFFBBBBBB),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.35),
                             fontSize: 11,
                           ),
                         ),
@@ -570,8 +597,8 @@ class TickPayDashboardPage extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       info,
-                      style: const TextStyle(
-                        color: Color(0xFF999999),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
                         fontSize: 11,
                       ),
                     ),
@@ -593,7 +620,7 @@ class TickPayDashboardPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(3),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: const Color(0xFFF0F0F0),
+              backgroundColor: Colors.white.withValues(alpha: 0.08),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 4,
             ),
@@ -623,17 +650,17 @@ class TickPayDashboardPage extends StatelessWidget {
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.18),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.auto_awesome,
-                        color: Color(0xFF7C3AED), size: 13),
+                        color: Color(0xFF8B5CF6), size: 13),
                   ),
                   const SizedBox(width: 8),
                   const Text(
                     'AI Picks for You',
                     style: TextStyle(
-                      color: Color(0xFF1A1A1A),
+                      color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
@@ -641,11 +668,12 @@ class TickPayDashboardPage extends StatelessWidget {
                 ],
               ),
               GestureDetector(
-                onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
-                child: const Text(
+                onTap: () =>
+                    context.push(RouteConstants.tickpayAiPicks.toPath),
+                child: Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFFF59E0B),
+                    color: Colors.white.withValues(alpha: 0.55),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -667,21 +695,18 @@ class TickPayDashboardPage extends StatelessWidget {
               return GestureDetector(
                 onTap: () => context.push(
                   RouteConstants.tickpayProductDetail.toPath,
-                  extra: {'name': pick.$1, 'price': pick.$2, 'asset': pick.$3},
+                  extra: {
+                    'name': pick.$1,
+                    'price': pick.$2,
+                    'asset': pick.$3
+                  },
                 ),
                 child: Container(
                   width: 150,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: _kCard,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFEEEEEE)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                    border: Border.all(color: _kBorder, width: 1),
                   ),
                   child: Stack(
                     children: [
@@ -705,7 +730,7 @@ class TickPayDashboardPage extends StatelessWidget {
                                 Text(
                                   pick.$1,
                                   style: const TextStyle(
-                                    color: Color(0xFF1A1A1A),
+                                    color: Colors.white,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -714,12 +739,13 @@ class TickPayDashboardPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       pick.$2,
                                       style: const TextStyle(
-                                        color: Color(0xFF1A1A1A),
+                                        color: Colors.white,
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -728,13 +754,15 @@ class TickPayDashboardPage extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 5, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(5),
+                                        color: const Color(0xFF3B82F6)
+                                            .withValues(alpha: 0.15),
+                                        borderRadius:
+                                            BorderRadius.circular(5),
                                       ),
                                       child: Text(
                                         '${pick.$4}%',
                                         style: const TextStyle(
-                                          color: Color(0xFF3B82F6),
+                                          color: Color(0xFF60A5FA),
                                           fontSize: 9,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -755,7 +783,7 @@ class TickPayDashboardPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF7C3AED),
+                            color: const Color(0xFF8B5CF6),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text('AI',
@@ -773,11 +801,11 @@ class TickPayDashboardPage extends StatelessWidget {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.black.withValues(alpha: 0.35),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.favorite_border,
-                              color: Color(0xFF444444), size: 14),
+                              color: Colors.white70, size: 14),
                         ),
                       ),
                     ],

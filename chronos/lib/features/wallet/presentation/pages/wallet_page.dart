@@ -10,7 +10,6 @@ import '../bloc/wallet_state.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/card_carousel.dart';
 import '../widgets/card_actions.dart';
-import '../widgets/panther_ai_banner.dart';
 import '../widgets/recent_transactions.dart';
 import '../widgets/features_section.dart';
 
@@ -131,8 +130,6 @@ class _WalletView extends StatelessWidget {
                                   child: Column(
                                     children: [
                                       const CardActions(),
-                                      const SizedBox(height: 24),
-                                      const PantherAiBanner(),
                                       const SizedBox(height: 24),
                                       RecentTransactions(
                                           transactions: transactions),
