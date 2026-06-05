@@ -29,7 +29,9 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   String _amount = '0';
   bool _isRateLocked = false;
   final double _exchangeRate = 0.9234;
+  // ignore: unused_field
   final double _fee = 0.00;
+  // ignore: unused_field
   final double _balance = 2100.75;
 
   String get _convertedAmount {

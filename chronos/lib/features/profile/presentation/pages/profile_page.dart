@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_event.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_state.dart';
@@ -573,6 +574,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _tile(Icons.palette_outlined, 'Appearance',
               _appearanceLabel(),
               onTap: () => _showAppearancePicker(context)),
+          _themeTile(context),
           _tile(Icons.language_rounded, 'Language', 'English',
               onTap: () => _comingSoon(context, 'Language')),
           _tile(Icons.currency_exchange_rounded, 'Display Currency',
@@ -965,6 +967,66 @@ class _ProfilePageState extends State<ProfilePage> {
                 fontSize: 11,
                 fontWeight: FontWeight.w600)),
       );
+
+  // ── Theme tile ────────────────────────────────────────────────────────────────
+  Widget _themeTile(BuildContext context) {
+    final currentTheme = context.watch<ThemeCubit>().state;
+    return GestureDetector(
+      onTap: () => context.push('/theme-settings'),
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: _kPurple.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.palette_outlined,
+                  color: _kPurple, size: 18),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Theme',
+                      style: TextStyle(
+                          color: _kText,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 2),
+                  Text(currentTheme.name,
+                      style:
+                          const TextStyle(color: _kSub, fontSize: 12)),
+                ],
+              ),
+            ),
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: currentTheme.accentColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: currentTheme.accentColor.withValues(alpha: 0.5),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 6),
+            Icon(Icons.chevron_right_rounded,
+                color: _kSub.withValues(alpha: 0.5), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
 
   // ── Sheets ────────────────────────────────────────────────────────────────────
   void _showEditSheet(BuildContext context, UserProfileModel user) {

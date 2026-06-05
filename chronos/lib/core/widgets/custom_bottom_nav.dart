@@ -17,13 +17,13 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             decoration: BoxDecoration(
               // Apple-style frosted glass — dark tinted
               gradient: LinearGradient(
@@ -91,8 +91,8 @@ class CustomBottomNav extends StatelessWidget {
                 ),
               )
             else
-              const SizedBox(height: 8),
-            Icon(icon, color: color, size: 22),
+              const SizedBox(height: 5),
+            Icon(icon, color: color, size: 20),
             const SizedBox(height: 3),
             Text(
               label,
@@ -130,16 +130,16 @@ class CustomBottomNav extends StatelessWidget {
                 ),
               )
             else
-              const SizedBox(height: 8),
+              const SizedBox(height: 5),
             ColorFiltered(
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               child: Image.asset(
                 path,
-                width: 22,
-                height: 22,
+                width: 20,
+                height: 20,
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) =>
-                    Icon(Icons.psychology, color: color, size: 22),
+                    Icon(Icons.psychology, color: color, size: 20),
               ),
             ),
             const SizedBox(height: 3),

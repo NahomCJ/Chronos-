@@ -129,7 +129,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                 style: TextStyles.bodyMedium.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 14 : 16,
+                                  fontSize: isSmallScreen ? 13 : 14,
                                 ),
                               ),
                               Text(
@@ -436,7 +436,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                 style: TextStyles.bodyMedium.copyWith(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 14 : 16,
+                                  fontSize: isSmallScreen ? 13 : 14,
                                 ),
                               ),
                               SizedBox(height: isSmallScreen ? 6 : 8),
@@ -495,7 +495,7 @@ class _ExchangePageState extends State<ExchangePage> {
                             style: TextStyles.bodyLarge.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
-                              fontSize: isSmallScreen ? 15 : 16,
+                              fontSize: isSmallScreen ? 14 : 14,
                             ),
                           ),
                           SizedBox(width: isSmallScreen ? 6 : 8),
@@ -623,7 +623,7 @@ class _ExchangePageState extends State<ExchangePage> {
                       style: TextStyles.titleLarge.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: isSmallScreen ? 20 : 24,
+                        fontSize: isSmallScreen ? 16 : 18,
                       ),
                     ),
                     const SizedBox(height: 2),

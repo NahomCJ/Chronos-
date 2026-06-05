@@ -220,7 +220,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                           style: TextStyles.titleMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
-                            fontSize: isSmallScreen ? 16 : 18,
+                            fontSize: isSmallScreen ? 13 : 14,
                           ),
                         ),
                         SizedBox(height: isSmallScreen ? 12 : 16),
@@ -347,7 +347,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                                   style: TextStyles.bodyLarge.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: isSmallScreen ? 15 : 16,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ],
@@ -396,7 +396,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                   style: TextStyles.bodyLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: isSmallScreen ? 16 : 18,
+                    fontSize: 14,
                   ),
                 ),
               ],
