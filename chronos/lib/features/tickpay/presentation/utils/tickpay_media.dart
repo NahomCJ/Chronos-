@@ -81,17 +81,22 @@ class TickPayMedia {
 
   // ── Background videos ─────────────────────────────────────────────────────
 
-  /// Woman shopping in boutique — TickPay welcome bg (Pexels #7680438)
+  /// Woman with shopping bags, colourful fashion — TickPay welcome bg (Pexels #6984060)
   static const String welcomeVideo =
-      'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
+      'https://videos.pexels.com/video-files/6984060/6984060-hd_1080_1920_30fps.mp4';
 
   /// Woman using smartphone for e-payment (Pexels video #4109600)
   static const String paymentVideo =
       'https://videos.pexels.com/video-files/4109600/4109600-hd_1080_1920_30fps.mp4';
 
-  /// Woman shopping for clothes in boutique — TickPay welcome bg (Pexels #7680438)
+  /// Energetic woman with shopping bags — fallback portrait (Pexels #7680438)
   static const String shoppingVideo =
       'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
+
+  /// Welcome page static photo fallback — happy woman with colorful bags (Pexels #5632400)
+  static const String welcomePhoto =
+      'https://images.pexels.com/photos/5632400/pexels-photo-5632400.jpeg'
+      '?auto=compress&cs=tinysrgb&w=1080';
 
   /// Cinematic city bokeh night drive — kept as fallback (Pexels #20407079)
   static const String onboardingVideo =

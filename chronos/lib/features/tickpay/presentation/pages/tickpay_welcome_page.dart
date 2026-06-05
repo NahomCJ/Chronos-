@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
@@ -53,20 +54,28 @@ class _TickPayWelcomePageState extends State<TickPayWelcomePage> {
               ),
             )
           else
-            Image.asset('assets/background.png', fit: BoxFit.cover),
+            CachedNetworkImage(
+              imageUrl: TickPayMedia.welcomePhoto,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              placeholder: (_, __) => Container(color: const Color(0xFF1A0A2E)),
+              errorWidget: (_, __, ___) =>
+                  Container(color: const Color(0xFF1A0A2E)),
+            ),
 
-          // ── Gradient overlay — light at top, readable at bottom ───────────
+          // ── Gradient overlay — subtle top, solid readable bottom ──────────
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0x331A0A2E),
-                  Color(0x11000000),
-                  Color(0xBB000000),
+                  Color(0x221A0A2E),
+                  Color(0x00000000),
+                  Color(0xCC000000),
                 ],
-                stops: [0.0, 0.5, 1.0],
+                stops: [0.0, 0.45, 1.0],
               ),
             ),
           ),
