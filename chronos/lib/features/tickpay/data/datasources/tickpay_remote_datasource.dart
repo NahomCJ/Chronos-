@@ -5,10 +5,16 @@ class TickpayRemoteDataSource {
   const TickpayRemoteDataSource(this._api);
 
   /// Fetch the user's TickPay account including transactions and fee installments.
+  /// Returns null if no account exists; rethrows auth errors so callers can
+  /// distinguish "not authenticated" from "no account yet".
   Future<Map<String, dynamic>?> getAccount() async {
     try {
       return await _api.get('/api/tickpay/accounts');
-    } catch (_) {
+    } on Exception catch (e) {
+      final msg = e.toString().toLowerCase();
+      if (msg.contains('unauthorized') || msg.contains('401')) {
+        rethrow; // caller will show "please log in" instead of "no account"
+      }
       return null;
     }
   }

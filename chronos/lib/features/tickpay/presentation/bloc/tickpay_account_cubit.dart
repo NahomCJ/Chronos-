@@ -13,7 +13,7 @@ class TickpayAccountCubit extends Cubit<TickpayAccountState> {
       final data = await _remote.getAccount();
       if (data == null) {
         emit(const TickpayAccountError(
-            'No TickPay account found. Complete onboarding first.'));
+            'No TickPay account found.\nComplete the TickPay onboarding to get started.'));
         return;
       }
       final txList = (data['transactions'] as List<dynamic>? ?? [])
@@ -27,7 +27,13 @@ class TickpayAccountCubit extends Cubit<TickpayAccountState> {
         transactions: txList,
       ));
     } catch (e) {
-      emit(TickpayAccountError(e.toString()));
+      final msg = e.toString().toLowerCase();
+      if (msg.contains('unauthorized') || msg.contains('401')) {
+        emit(const TickpayAccountError(
+            'Please log in to access your TickPay account.'));
+      } else {
+        emit(TickpayAccountError(e.toString()));
+      }
     }
   }
 
