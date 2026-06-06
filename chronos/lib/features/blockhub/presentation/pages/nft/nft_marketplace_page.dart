@@ -70,8 +70,6 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                     if (_selectedFilter == 'Collectibles') ...[
                       _buildTrendingCollectibles(),
                       const SizedBox(height: 22),
-                      _buildPantherInsightCard(),
-                      const SizedBox(height: 22),
                       _buildNewDropsCollectibles(),
                     ] else ...[
                       _buildTrendingCollections(),
@@ -587,7 +585,6 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                   ],
                 );
               }),
-              _buildPantherInsightCard(),
             ],
           ),
         ),
@@ -1117,54 +1114,6 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildPantherInsightCard() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
-            size: 18,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Panther Insight',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'The Geometric Visions collection shows higher than average wash-trade activity. Exercise caution.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 11,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _NftCollection {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/theme_cubit.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -54,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
           bool isLoading = false;
           String? errorMsg;
 
-          if (state is ProfileLoading) {
+          if (state is ProfileInitial || state is ProfileLoading) {
             isLoading = true;
           } else if (state is ProfileLoaded) {
             user = state.user;
@@ -65,6 +66,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
           return Scaffold(
             backgroundColor: _kBg,
+            floatingActionButton: Container(
+              margin: const EdgeInsets.only(bottom: 90),
+              child: const ChrisHomeFab(),
+            ),
             body: Column(
               children: [
                 _buildHeader(context, user),
@@ -766,9 +771,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // ── Referral card ───────────────────────────────────────────────────────────
   Widget _referralCard(BuildContext context, UserProfileModel? user) {
-    final code = user != null
-        ? 'CHR-${user.id.substring(0, 6).toUpperCase()}'
-        : 'CHR-XXXXXX';
+    final rawId = user?.id ?? '';
+    final shortId = rawId.length >= 6 ? rawId.substring(0, 6) : rawId.padRight(6, 'X');
+    final code = 'CHR-${shortId.toUpperCase()}';
 
     return Padding(
       padding: const EdgeInsets.all(16),

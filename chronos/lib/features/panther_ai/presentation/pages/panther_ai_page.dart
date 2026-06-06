@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/router/route_constants.dart';
 import '../bloc/alerts_bloc.dart';
 import '../bloc/alerts_event.dart';
@@ -44,21 +45,10 @@ class _PantherAiPageState extends State<PantherAiPage> {
       value: _alertsBloc,
       child: Scaffold(
       backgroundColor: Colors.black,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 90),
-        child: FloatingActionButton(
-          onPressed: () => context.push(RouteConstants.pantherAiChat.toPath),
-          backgroundColor: Colors.white,
-          elevation: 4,
-          shape: const CircleBorder(),
-          child: const Icon(
-            Icons.chat_bubble_outline_rounded,
-            color: Colors.black,
-            size: 24,
-          ),
-        ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SingleChildScrollView(
         child: Stack(
           children: [

@@ -402,9 +402,6 @@ class _HomeViewState extends State<_HomeView> {
                               amount:
                                   '${tx.isCredit ? '+' : '-'}\$${tx.amount.abs().toStringAsFixed(2)}',
                               isNegative: !tx.isCredit,
-                              iconBg: tx.isCredit
-                                  ? const Color(0xFF2E7D32)
-                                  : const Color(0xFF7C3AED),
                               scale: scale,
                               textScale: textScale,
                             ))
@@ -418,12 +415,9 @@ class _HomeViewState extends State<_HomeView> {
 
   Widget _buildFallbackTransactions(double scale, double textScale) {
     final items = [
-      ('Apple Store', 'Today, 2:34 PM', '-\$299.00', true,
-          Icons.apple, const Color(0xFF7C3AED)),
-      ('Salary Deposit', 'Today, 9:00 AM', '+\$5,200.00', false,
-          Icons.south_west, const Color(0xFF2E7D32)),
-      ('Uber Eats', 'Yesterday, 8:12 PM', '-\$32.50', true,
-          Icons.restaurant, const Color(0xFFDC8F4A)),
+      ('Apple Store', 'Today, 2:34 PM', '-\$299.00', true, Icons.apple),
+      ('Salary Deposit', 'Today, 9:00 AM', '+\$5,200.00', false, Icons.south_west),
+      ('Uber Eats', 'Yesterday, 8:12 PM', '-\$32.50', true, Icons.restaurant),
     ];
     return Column(
       children: items
@@ -433,7 +427,6 @@ class _HomeViewState extends State<_HomeView> {
                 subtitle: i.$2,
                 amount: i.$3,
                 isNegative: i.$4,
-                iconBg: i.$6,
                 scale: scale,
                 textScale: textScale,
               ))
@@ -482,7 +475,6 @@ class _HomeViewState extends State<_HomeView> {
     required String subtitle,
     required String amount,
     required bool isNegative,
-    required Color iconBg,
     required double scale,
     required double textScale,
   }) {
@@ -492,8 +484,8 @@ class _HomeViewState extends State<_HomeView> {
         children: [
           Container(
             padding: EdgeInsets.all(12 * scale),
-            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.white, size: 24 * scale),
+            decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+            child: Icon(icon, color: Colors.grey, size: 24 * scale),
           ),
           const SizedBox(width: 16),
           Expanded(

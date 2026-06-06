@@ -2,11 +2,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 import 'buy/buy_btc_page.dart';
 import 'bitcoin_detail_page.dart';
 import '../widgets/more_options_modal.dart';
 import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
+import 'markets_page.dart';
+import 'trade_page.dart';
+import 'portfolio_page.dart';
+import 'panther_ai_insights_page.dart';
+import 'nft/nft_marketplace_page.dart';
 
 // ── Coin data model ────────────────────────────────────────────────────────────
 class _CoinData {
@@ -161,6 +167,10 @@ class _BlockHubPageState extends State<BlockHubPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: false,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
+      ),
       body: Stack(
         children: [
           // Background Image (only visible in dark sections)
@@ -366,7 +376,29 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           ),
                         ),
 
-                        SizedBox(height: isSmallScreen ? 28 : 32),
+                        SizedBox(height: isSmallScreen ? 20 : 24),
+
+                        // Section navigation
+                        SizedBox(
+                          height: 44,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                            children: [
+                              _sectionPill(context, Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
+                              const SizedBox(width: 10),
+                              _sectionPill(context, Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                              const SizedBox(width: 10),
+                              _sectionPill(context, Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
+                              const SizedBox(width: 10),
+                              _sectionPill(context, Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
+                              const SizedBox(width: 10),
+                              _sectionPill(context, Icons.collections_rounded, 'NFT', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage()))),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: isSmallScreen ? 20 : 24),
                       ],
                     ),
                   ),
@@ -463,6 +495,40 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _sectionPill(
+    BuildContext context,
+    IconData icon,
+    String label,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 15, color: Colors.grey[700]),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

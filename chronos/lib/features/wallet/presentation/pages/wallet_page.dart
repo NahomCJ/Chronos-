@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/router/route_constants.dart';
 import '../bloc/wallet_bloc.dart';
 import '../bloc/wallet_event.dart';
@@ -39,6 +40,10 @@ class _WalletView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.white,
+          floatingActionButton: Container(
+            margin: const EdgeInsets.only(bottom: 90),
+            child: const ChrisHomeFab(),
+          ),
           body: Stack(
             children: [
               Positioned.fill(
