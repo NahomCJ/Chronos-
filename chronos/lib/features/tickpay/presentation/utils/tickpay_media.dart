@@ -81,9 +81,9 @@ class TickPayMedia {
 
   // ── Background videos ─────────────────────────────────────────────────────
 
-  /// Woman with shopping bags, portrait — TickPay welcome bg (Pexels #6565836)
+  /// Woman checking shopping bags, portrait — TickPay welcome bg (Pexels #6565434)
   static const String welcomeVideo =
-      'https://videos.pexels.com/video-files/6565836/6565836-hd_1080_1920_24fps.mp4';
+      'https://videos.pexels.com/video-files/6565434/6565434-hd_1080_1920_24fps.mp4';
 
   /// Woman using smartphone for e-payment (Pexels video #4109600)
   static const String paymentVideo =
@@ -92,6 +92,51 @@ class TickPayMedia {
   /// Energetic woman with shopping bags — fallback portrait (Pexels #7680438)
   static const String shoppingVideo =
       'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4';
+
+  /// Fashion dress — (Pexels #1536619)
+  static const String fashionDress =
+      'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Handbag — (Pexels #1152077)
+  static const String handbag =
+      'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Gym bag / sports — (Pexels #1280064)
+  static const String gymBag =
+      'https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Yoga mat — (Pexels #3822906)
+  static const String yogaMat =
+      'https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Coffee maker — (Pexels #2080590)
+  static const String coffeeMaker =
+      'https://images.pexels.com/photos/2080590/pexels-photo-2080590.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Table lamp — (Pexels #1112598)
+  static const String tableLamp =
+      'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Perfume bottle — (Pexels #965989)
+  static const String perfume =
+      'https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Skincare set — (Pexels #3373736)
+  static const String skincare =
+      'https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
+
+  /// Gaming controller — (Pexels #3945683)
+  static const String gameController =
+      'https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg'
+      '?auto=compress&cs=tinysrgb&w=600';
 
   /// Welcome page static photo fallback — happy woman with colorful bags (Pexels #5632400)
   static const String welcomePhoto =

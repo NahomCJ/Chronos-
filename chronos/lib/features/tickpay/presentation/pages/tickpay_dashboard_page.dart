@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,10 +12,8 @@ import '../utils/tickpay_media.dart';
 // ---------------------------------------------------------------------------
 // Design constants
 // ---------------------------------------------------------------------------
-const _kBg = Color(0xFF0A0A14);
 const _kCard = Color(0xFF1A1A2E);
 const _kBorder = Color(0x1AFFFFFF); // white 10%
-const _kDarkHero = Color(0xFF1A0A2E);
 
 class TickPayDashboardPage extends StatelessWidget {
   const TickPayDashboardPage({super.key});
@@ -25,67 +24,76 @@ class TickPayDashboardPage extends StatelessWidget {
       builder: (context, state) {
         final loaded = state is TickpayAccountLoaded ? state : null;
         return Scaffold(
-          backgroundColor: _kBg,
+          backgroundColor: Colors.transparent,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 80),
             child: const ChrisFab(),
           ),
-          body: Column(
+          body: Stack(
             children: [
-              // ── Dark hero header ──────────────────────────────────────────
-              Container(
-                color: _kDarkHero,
-                child: SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      _buildTopBar(context),
-                      _buildCreditCard(context, loaded),
-                      const SizedBox(height: 24),
-                      _buildQuickActions(context),
-                      const SizedBox(height: 28),
-                    ],
-                  ),
+              // ── Full-screen background ────────────────────────────────────
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/tickpay/background.png',
+                  fit: BoxFit.cover,
                 ),
               ),
-              // ── Dark scrollable body ──────────────────────────────────────
-              Expanded(
-                child: state is TickpayAccountLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(color: Colors.white54))
-                    : state is TickpayAccountError
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.credit_card_off,
-                                      size: 48,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.4)),
-                                  const SizedBox(height: 12),
-                                  Text(state.message,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.55))),
-                                ],
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.35),
+                ),
+              ),
+              // ── Content ───────────────────────────────────────────────────
+              Column(
+                children: [
+                  SafeArea(
+                    bottom: false,
+                    child: Column(
+                      children: [
+                        _buildTopBar(context),
+                        _buildCreditCard(context, loaded),
+                        const SizedBox(height: 24),
+                        _buildQuickActions(context),
+                        const SizedBox(height: 28),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: state is TickpayAccountLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(color: Colors.white54))
+                        : state is TickpayAccountError
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.credit_card_off,
+                                          size: 48,
+                                          color: Colors.white.withValues(alpha: 0.4)),
+                                      const SizedBox(height: 12),
+                                      Text(state.message,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.white.withValues(alpha: 0.55))),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : SingleChildScrollView(
+                                padding: const EdgeInsets.only(top: 28, bottom: 100),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildActivePlans(context, loaded),
+                                    const SizedBox(height: 28),
+                                    _buildAiPicks(context),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        : SingleChildScrollView(
-                            padding:
-                                const EdgeInsets.only(top: 28, bottom: 100),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildActivePlans(context, loaded),
-                                const SizedBox(height: 28),
-                                _buildAiPicks(context),
-                              ],
-                            ),
-                          ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -188,56 +196,51 @@ class TickPayDashboardPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
         onTap: () => context.push(RouteConstants.tickpayCreditOverview.toPath),
-        child: Container(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
           width: double.infinity,
           clipBehavior: Clip.hardEdge,
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF2D1B4E),
-                Color(0xFF4A2C72),
-                Color(0xFF3D2B5E)
-              ],
-              stops: [0.0, 0.5, 1.0],
-            ),
-            borderRadius: BorderRadius.circular(20),
+            color: Colors.white.withValues(alpha: 0.11),
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
-                color: Colors.white.withValues(alpha: 0.12), width: 0.8),
+                color: Colors.white.withValues(alpha: 0.25), width: 1.2),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF1A0A2E).withValues(alpha: 0.5),
-                blurRadius: 20,
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Stack(
             children: [
-              // Decorative circles
+              // Decorative glass circles
               Positioned(
-                top: -30,
-                right: -20,
+                top: -35,
+                right: -25,
                 child: Container(
-                  width: 120,
-                  height: 120,
+                  width: 140,
+                  height: 140,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.04),
+                    color: Colors.white.withValues(alpha: 0.07),
                   ),
                 ),
               ),
               Positioned(
-                top: 20,
-                right: 40,
+                bottom: -20,
+                left: -15,
                 child: Container(
-                  width: 70,
-                  height: 70,
+                  width: 90,
+                  height: 90,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.03),
+                    color: Colors.white.withValues(alpha: 0.05),
                   ),
                 ),
               ),
@@ -366,6 +369,8 @@ class TickPayDashboardPage extends StatelessWidget {
                 ],
               ),
             ],
+          ),
+        ),
           ),
         ),
       ),
