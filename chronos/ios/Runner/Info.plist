@@ -45,5 +45,29 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- local_auth: Face ID -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Chronos Bank uses Face ID to securely authenticate you.</string>
+
+	<!-- speech_to_text: microphone + speech recognition -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Chronos Bank uses the microphone so you can speak commands to the AI assistant.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Chronos Bank uses speech recognition to convert your voice into text for the AI assistant.</string>
+
+	<!-- google_sign_in: OAuth redirect URL scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Reversed iOS client ID from Firebase (google_sign_in) -->
+				<string>com.googleusercontent.apps.845161492880-7gnqidnt820qntrk4mt53iq2e3ttn3jq</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
