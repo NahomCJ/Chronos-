@@ -12,7 +12,7 @@ class CustomBottomNav extends StatelessWidget {
     required this.onItemSelected,
   });
 
-  static const _amber = Color(0xFFDC8F4A);
+  static const _amber = Color(0xFF0F766E); // active teal on light bg
 
   @override
   Widget build(BuildContext context) {
@@ -25,31 +25,24 @@ class CustomBottomNav extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             decoration: BoxDecoration(
-              // Apple-style frosted glass — dark tinted
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0xFF2A2A3E).withValues(alpha: 0.82),
-                  const Color(0xFF1A1A2E).withValues(alpha: 0.92),
+                  Colors.white.withValues(alpha: 0.96),
+                  const Color(0xFFF0F2F5).withValues(alpha: 0.98),
                 ],
               ),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.18),
+                color: Colors.black.withValues(alpha: 0.07),
                 width: 0.8,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.40),
-                  blurRadius: 32,
-                  offset: const Offset(0, 10),
-                ),
-                // Inner top highlight — key to Apple glass look
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.06),
-                  blurRadius: 1,
-                  offset: const Offset(0, -1),
+                  color: Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
@@ -71,7 +64,7 @@ class CustomBottomNav extends StatelessWidget {
 
   Widget _item(IconData icon, String label, int index) {
     final active = selectedIndex == index;
-    final color = active ? _amber : Colors.white.withValues(alpha: 0.55);
+    final color = active ? _amber : Colors.black.withValues(alpha: 0.45);
     return GestureDetector(
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,
@@ -110,7 +103,7 @@ class CustomBottomNav extends StatelessWidget {
 
   Widget _itemImage(String path, String label, int index) {
     final active = selectedIndex == index;
-    final color = active ? _amber : Colors.white.withValues(alpha: 0.55);
+    final color = active ? _amber : Colors.black.withValues(alpha: 0.45);
     return GestureDetector(
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,

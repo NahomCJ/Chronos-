@@ -1,10 +1,12 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
-import '../../../../core/widgets/chris_fab.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
@@ -15,9 +17,14 @@ import '../utils/tickpay_media.dart';
 const _kCard = Color(0xFF1A1A2E);
 const _kBorder = Color(0x1AFFFFFF); // white 10%
 
-class TickPayDashboardPage extends StatelessWidget {
+class TickPayDashboardPage extends StatefulWidget {
   const TickPayDashboardPage({super.key});
 
+  @override
+  State<TickPayDashboardPage> createState() => _TickPayDashboardPageState();
+}
+
+class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TickpayAccountCubit, TickpayAccountState>(
@@ -26,24 +33,29 @@ class TickPayDashboardPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.transparent,
           floatingActionButton: Container(
-            margin: const EdgeInsets.only(bottom: 80),
-            child: const ChrisFab(),
+            margin: const EdgeInsets.only(bottom: 90),
+            child: const ChrisHomeFab(),
+          ),
+          bottomNavigationBar: CustomBottomNav(
+            selectedIndex: 0,
+            onItemSelected: (i) {
+              switch (i) {
+                case 0: context.go(RouteConstants.home.toPath); break;
+                case 1: context.go(RouteConstants.pantherAi.toPath); break;
+                case 2: context.go(RouteConstants.blockHub.toPath); break;
+              }
+            },
           ),
           body: Stack(
             children: [
-              // ── Full-screen background ────────────────────────────────────
+              // ── Full background ───────────────────────────────────────────
               Positioned.fill(
-                child: Image.asset(
-                  'assets/tickpay/background.png',
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset('assets/tickpay/background.png', fit: BoxFit.cover),
               ),
               Positioned.fill(
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.35),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.35)),
               ),
-              // ── Content ───────────────────────────────────────────────────
+              // ── Content ──────────────────────────────────────────────────
               Column(
                 children: [
                   SafeArea(
@@ -52,46 +64,31 @@ class TickPayDashboardPage extends StatelessWidget {
                       children: [
                         _buildTopBar(context),
                         _buildCreditCard(context, loaded),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                         _buildQuickActions(context),
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
+                  // White section starts here — below the quick actions
                   Expanded(
-                    child: state is TickpayAccountLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(color: Colors.white54))
-                        : state is TickpayAccountError
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(24),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.credit_card_off,
-                                          size: 48,
-                                          color: Colors.white.withValues(alpha: 0.4)),
-                                      const SizedBox(height: 12),
-                                      Text(state.message,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: Colors.white.withValues(alpha: 0.55))),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : SingleChildScrollView(
-                                padding: const EdgeInsets.only(top: 28, bottom: 100),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildActivePlans(context, loaded),
-                                    const SizedBox(height: 28),
-                                    _buildAiPicks(context),
-                                  ],
-                                ),
-                              ),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildProductsSection(context),
+                            const SizedBox(height: 20),
+                            _buildActivePlans(context, loaded),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -99,6 +96,92 @@ class TickPayDashboardPage extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildProductsSection(BuildContext context) {
+    final products = [
+      ('Nike Air Max', '\$299', TickPayMedia.nikeShoes, '4 payments of \$74'),
+      ('Wireless Headphones', '\$189', TickPayMedia.headphonesBlack, '3 payments of \$63'),
+      ('Smart Watch', '\$349', TickPayMedia.appleWatch, '4 payments of \$87'),
+      ('Fashion Dress', '\$129', TickPayMedia.fashionDress, '2 payments of \$64'),
+      ('Coffee Maker', '\$219', TickPayMedia.coffeeMaker, '3 payments of \$73'),
+      ('Gaming Controller', '\$79', TickPayMedia.gameController, '2 payments of \$39'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Shop Now, Pay Later',
+                  style: TextStyle(color: Colors.black87, fontSize: 17, fontWeight: FontWeight.w700)),
+              GestureDetector(
+                onTap: () => context.push(RouteConstants.tickpayDiscover.toPath),
+                child: const Text('Browse All',
+                    style: TextStyle(color: Color(0xFFFF2D87), fontSize: 13, fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 190,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: products.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, i) {
+              final p = products[i];
+              return GestureDetector(
+                onTap: () => context.push(RouteConstants.tickpayDiscover.toPath),
+                child: Container(
+                  width: 130,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFEEEEEE)),
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        child: CachedNetworkImage(
+                          imageUrl: p.$3,
+                          height: 100, width: double.infinity, fit: BoxFit.cover,
+                          placeholder: (_, __) => Container(height: 100, color: Colors.grey.shade100),
+                          errorWidget: (_, __, ___) => Container(height: 100, color: Colors.grey.shade100,
+                              child: const Icon(Icons.image_outlined, color: Colors.grey)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(p.$1, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black87)),
+                            const SizedBox(height: 2),
+                            Text(p.$2, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.black)),
+                            const SizedBox(height: 2),
+                            Text(p.$4, maxLines: 1, overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 9, color: Color(0xFFFF2D87), fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -635,192 +718,4 @@ class TickPayDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAiPicks(BuildContext context) {
-    final picks = [
-      ('Samsung Galaxy Buds', '\$149', TickPayMedia.wirelessEarbuds, 88),
-      ('Adidas Ultraboost', '\$180', TickPayMedia.adidasShoes, 84),
-      ('Sony WH-1000XM4', '\$350', TickPayMedia.headphonesBlack, 82),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.18),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.auto_awesome,
-                        color: Color(0xFF8B5CF6), size: 13),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'AI Picks for You',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () =>
-                    context.push(RouteConstants.tickpayAiPicks.toPath),
-                child: Text(
-                  'View All',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.55),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 14),
-        SizedBox(
-          height: 200,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: picks.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, i) {
-              final pick = picks[i];
-              return GestureDetector(
-                onTap: () => context.push(
-                  RouteConstants.tickpayProductDetail.toPath,
-                  extra: {
-                    'name': pick.$1,
-                    'price': pick.$2,
-                    'asset': pick.$3
-                  },
-                ),
-                child: Container(
-                  width: 150,
-                  decoration: BoxDecoration(
-                    color: _kCard,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: _kBorder, width: 1),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16)),
-                            child: TickPayImage(
-                              pick.$3,
-                              height: 115,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  pick.$1,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      pick.$2,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF3B82F6)
-                                            .withValues(alpha: 0.15),
-                                        borderRadius:
-                                            BorderRadius.circular(5),
-                                      ),
-                                      child: Text(
-                                        '${pick.$4}%',
-                                        style: const TextStyle(
-                                          color: Color(0xFF60A5FA),
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      // AI badge
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF8B5CF6),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Text('AI',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      // Heart button
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.35),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.favorite_border,
-                              color: Colors.white70, size: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
 }
