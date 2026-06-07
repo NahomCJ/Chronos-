@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
-import 'blockhub_risk_analysis_page.dart';
 
 class BlockHubPortfolioPage extends StatefulWidget {
   const BlockHubPortfolioPage({super.key});
@@ -39,8 +38,6 @@ class _BlockHubPortfolioPageState extends State<BlockHubPortfolioPage> {
                         _buildAssetAllocation(),
                         const SizedBox(height: 16),
                         _buildYourHoldings(),
-                        const SizedBox(height: 16),
-                        _buildPantherRiskCard(context),
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -614,138 +611,6 @@ class _BlockHubPortfolioPageState extends State<BlockHubPortfolioPage> {
     );
   }
 
-  Widget _buildPantherRiskCard(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1B4B).withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.auto_awesome,
-                color: Color(0xFFDC8F4A),
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Panther Risk Analysis',
-                style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                'Risk Score',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.55),
-                  fontSize: 12,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '68/',
-                style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                '100',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.45),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: LinearProgressIndicator(
-              value: 0.68,
-              minHeight: 6,
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFFDC8F4A),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Balanced',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.4),
-              fontSize: 11,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Your portfolio shows moderate concentration risk. Consider diversifying across more assets to reduce volatility exposure.',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.65),
-              fontSize: 12,
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: 14),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BlockHubRiskAnalysisPage(),
-                    ),
-                  ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.1),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 11),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                ),
-              ),
-              child: Text(
-                'View Detailed Analysis',
-                style: TextStyles.labelMedium.copyWith(
-                  fontSize: 13,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Insights are informational, not financial advice.',
-            textAlign: TextAlign.center,
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.3),
-              fontSize: 10,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _Asset {

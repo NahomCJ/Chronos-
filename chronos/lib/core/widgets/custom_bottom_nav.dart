@@ -29,13 +29,13 @@ class CustomBottomNav extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withValues(alpha: 0.96),
-                  const Color(0xFFF0F2F5).withValues(alpha: 0.98),
+                  const Color(0xFFE8EAF0).withValues(alpha: 0.97),
+                  const Color(0xFFD8DCE8).withValues(alpha: 0.99),
                 ],
               ),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
-                color: Colors.black.withValues(alpha: 0.07),
+                color: Colors.black.withValues(alpha: 0.12),
                 width: 0.8,
               ),
               boxShadow: [

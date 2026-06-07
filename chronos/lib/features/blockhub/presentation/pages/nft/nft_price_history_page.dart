@@ -40,8 +40,6 @@ class _NftPriceHistoryPageState extends State<NftPriceHistoryPage> {
                         _buildMarketAnalytics(),
                         const SizedBox(height: 16),
                         _buildRecentSales(),
-                        const SizedBox(height: 16),
-                        _buildPantherInsight(),
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -418,53 +416,6 @@ class _NftPriceHistoryPageState extends State<NftPriceHistoryPage> {
     );
   }
 
-  Widget _buildPantherInsight() {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
-            size: 18,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Panther Insight',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  'This NFT has shown high price volatility. Liquidity may be limited during market downturns.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _PriceChartPainter extends CustomPainter {

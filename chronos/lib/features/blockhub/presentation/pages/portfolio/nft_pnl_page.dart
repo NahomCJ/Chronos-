@@ -38,8 +38,6 @@ class _NftPnlPageState extends State<NftPnlPage> {
                         const SizedBox(height: 14),
                         _buildFilterTabs(),
                         const SizedBox(height: 14),
-                        _buildPantherInsight(),
-                        const SizedBox(height: 14),
                         _buildNftPnlList(),
                         const SizedBox(height: 20),
                         _buildIndividualPerformance(),
@@ -210,54 +208,6 @@ class _NftPnlPageState extends State<NftPnlPage> {
                 ),
               );
             }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildPantherInsight() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Panther Insight',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '1 NFT is currently below acquisition price. Consider holding or averaging down.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 11,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

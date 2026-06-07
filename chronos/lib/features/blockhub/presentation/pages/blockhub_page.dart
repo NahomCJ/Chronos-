@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
@@ -570,7 +569,38 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  // ── 3-D coin card ──────────────────────────────────────────────────────────
+  // ── 2-D flat coin icon ────────────────────────────────────────────────────
+  Widget _buildFlatCoinIcon(_CoinData coin, double size) {
+    final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: coin.primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: coin.primaryColor.withValues(alpha: 0.35),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+            fontSize: size * (label.length <= 2 ? 0.38 : 0.28),
+            letterSpacing: -0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Coin card (2D flat) ────────────────────────────────────────────────────
   Widget _buildCoinCard(_CoinData coin) {
     final priceStr = coin.price >= 1000
         ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
@@ -585,8 +615,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: coin.primaryColor.withValues(alpha: 0.25),
-            blurRadius: 18,
+            color: coin.primaryColor.withValues(alpha: 0.18),
+            blurRadius: 16,
             offset: const Offset(0, 6),
           ),
         ],
@@ -596,13 +626,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 3-D coin
-            CustomPaint(
-              size: const Size(90, 90),
-              painter: _CoinPainter(coin: coin),
-            ),
+            _buildFlatCoinIcon(coin, 72),
             const SizedBox(height: 10),
-            // Symbol
             Text(
               coin.symbol,
               style: const TextStyle(
@@ -620,7 +645,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
               ),
             ),
             const SizedBox(height: 8),
-            // Price row
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -690,10 +714,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
             // Coin icon + name row
             Row(
               children: [
-                CustomPaint(
-                  size: const Size(56, 56),
-                  painter: _CoinPainter(coin: coin),
-                ),
+                _buildFlatCoinIcon(coin, 56),
                 const SizedBox(width: 14),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -766,16 +787,14 @@ class _BlockHubPageState extends State<BlockHubPage> {
                     child: Container(
                       height: 52,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [coin.primaryColor, coin.secondaryColor],
-                        ),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       alignment: Alignment.center,
                       child: const Text(
                         'Buy',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF0D0D1A),
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                         ),
@@ -1017,104 +1036,3 @@ class MiniChartPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// ── 3-D coin painter ──────────────────────────────────────────────────────────
-class _CoinPainter extends CustomPainter {
-  final _CoinData coin;
-  const _CoinPainter({required this.coin});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final r = math.min(cx, cy) - 4;
-
-    // Drop shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.45)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + r * 0.15), width: r * 1.6, height: r * 0.45),
-      shadowPaint,
-    );
-
-    // Base fill — radial gradient: primary center → secondary → dark edge
-    final basePaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.3, -0.35),
-        radius: 1.1,
-        colors: [
-          Color.lerp(coin.primaryColor, Colors.white, 0.25)!,
-          coin.primaryColor,
-          coin.secondaryColor,
-          Color.lerp(coin.secondaryColor, Colors.black, 0.55)!,
-        ],
-        stops: const [0.0, 0.35, 0.72, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r));
-    canvas.drawCircle(Offset(cx, cy), r, basePaint);
-
-    // Depth ring — dark border gradient
-    final ringPaint = Paint()
-      ..shader = SweepGradient(
-        colors: [
-          Colors.white.withValues(alpha: 0.35),
-          Colors.black.withValues(alpha: 0.50),
-          Colors.white.withValues(alpha: 0.15),
-          Colors.black.withValues(alpha: 0.50),
-          Colors.white.withValues(alpha: 0.35),
-        ],
-        stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = r * 0.08;
-    canvas.drawCircle(Offset(cx, cy), r - r * 0.04, ringPaint);
-
-    // Metallic shine — upper-left oval highlight
-    final shinePath = Path()
-      ..addOval(
-        Rect.fromCenter(
-          center: Offset(cx - r * 0.22, cy - r * 0.28),
-          width: r * 0.85,
-          height: r * 0.42,
-        ),
-      );
-    canvas.save();
-    canvas.clipPath(Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)));
-    final shinePaint = Paint()
-      ..shader = RadialGradient(
-        center: Alignment.center,
-        radius: 0.5,
-        colors: [
-          Colors.white.withValues(alpha: 0.62),
-          Colors.white.withValues(alpha: 0.0),
-        ],
-      ).createShader(
-        Rect.fromCenter(
-          center: Offset(cx - r * 0.22, cy - r * 0.28),
-          width: r * 0.85,
-          height: r * 0.42,
-        ),
-      );
-    canvas.drawPath(shinePath, shinePaint);
-    canvas.restore();
-
-    // Symbol text
-    final tp = TextPainter(
-      text: TextSpan(
-        text: coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w900,
-          fontSize: r * (coin.symbol.length <= 2 ? 0.48 : 0.36),
-          shadows: [
-            Shadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 4),
-          ],
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, Offset(cx - tp.width / 2, cy - tp.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(covariant _CoinPainter old) => old.coin != coin;
-}

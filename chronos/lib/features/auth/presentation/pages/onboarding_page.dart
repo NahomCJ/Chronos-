@@ -36,7 +36,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingSlideModel(
       title: 'Powered by\nPanther AI',
       subtitle: 'Real-time insights, predictions\nand guidance built around you.',
-      videoUrl: 'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
+      videoUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Buy now.\nPay intelligently.',
@@ -46,7 +46,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingSlideModel(
       title: 'Trade beyond\nthe basics',
       subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
-      videoUrl: 'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
+      videoUrl: 'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Your Life,\nOrganized',

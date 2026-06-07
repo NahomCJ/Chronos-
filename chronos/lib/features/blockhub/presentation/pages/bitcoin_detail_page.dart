@@ -390,66 +390,6 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           ),
         ),
 
-        const SizedBox(height: 32),
-
-        // Panther AI Analysis
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.psychology, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Panther AI Analysis',
-                    style: TextStyles.titleSmall.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Bitcoin volatility increased by 8% today. Consider smaller position sizes and dollar-cost averaging for entry.',
-                style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withOpacity(0.9),
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Text(
-                    'View Full Analysis',
-                    style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
         const SizedBox(height: 100),
       ],
     );

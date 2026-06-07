@@ -96,49 +96,39 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF1C2A28).withValues(alpha: 0.88),
-                    const Color(0xFF091412).withValues(alpha: 0.94),
-                  ],
+                  colors: [Color(0xFF232330), Color(0xFF0E0E18)],
                 ),
                 border: Border.all(
-                  color: const Color(0xFF14B8A6).withValues(alpha: 0.60),
+                  color: Colors.white.withValues(alpha: 0.22),
                   width: 1.5,
                 ),
               ),
               child: Center(
                 child: Container(
-                  width: 33,
-                  height: 33,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFF14B8A6).withValues(alpha: 0.28),
+                      color: Colors.white.withValues(alpha: 0.10),
                       width: 1,
                     ),
                   ),
-                  child: Center(
-                    child: _wakeActive
-                        ? Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF14B8A6),
+                  child: _wakeActive
+                      ? Center(
+                          child: Container(
+                            width: 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.8),
                               shape: BoxShape.circle,
                             ),
-                          )
-                        : const Text(
-                            'C',
-                            style: TextStyle(
-                              color: Color(0xFF14B8A6),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
                           ),
-                  ),
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -164,8 +154,8 @@ class _ChrisSheetState extends State<_ChrisSheet> {
   final _speech = stt.SpeechToText();
   bool _voiceActive = false;
 
-  static const _teal = Color(0xFF14B8A6);
   static const _bg = Color(0xFF0D0D1A);
+  static const _teal = Color(0xFF14B8A6);
 
   @override
   void dispose() {
@@ -245,25 +235,19 @@ class _ChrisSheetState extends State<_ChrisSheet> {
                     width: 42, height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF1C2A28).withValues(alpha: 0.9),
-                          const Color(0xFF091412).withValues(alpha: 0.95),
-                        ],
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF232330), Color(0xFF0E0E18)],
                       ),
-                      border: Border.all(color: _teal.withValues(alpha: 0.55), width: 1.5),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.22), width: 1.5),
                     ),
                     child: Center(
                       child: Container(
-                        width: 28, height: 28,
+                        width: 27, height: 27,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: _teal.withValues(alpha: 0.28), width: 1),
-                        ),
-                        child: const Center(
-                          child: Text('C',
-                              style: TextStyle(
-                                  color: _teal, fontSize: 13, fontWeight: FontWeight.w700)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
                         ),
                       ),
                     ),
