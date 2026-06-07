@@ -41,7 +41,7 @@ class TradePage extends StatelessWidget {
                           icon: Icons.trending_up,
                           title: 'Trending Assets',
                           subtitle: 'Most searched today',
-                          color: const Color(0xFFEC4899),
+                          iconColor: Colors.white,
                           onTap:
                               () => Navigator.push(
                                 context,
@@ -60,7 +60,7 @@ class TradePage extends StatelessWidget {
                           icon: Icons.trending_up,
                           title: 'Top Gainers',
                           subtitle: '24h performance leaders',
-                          color: const Color(0xFF10B981),
+                          iconColor: Colors.white,
                           onTap:
                               () => Navigator.push(
                                 context,
@@ -78,7 +78,7 @@ class TradePage extends StatelessWidget {
                           icon: Icons.trending_down,
                           title: 'Top Losers',
                           subtitle: '24h performance decliners',
-                          color: Colors.red,
+                          iconColor: Colors.white,
                           onTap:
                               () => Navigator.push(
                                 context,
@@ -139,7 +139,7 @@ class TradePage extends StatelessWidget {
     required IconData icon,
     required String title,
     required String subtitle,
-    required Color color,
+    Color iconColor = Colors.white,
     required VoidCallback onTap,
     required bool isSmallScreen,
   }) {
@@ -148,19 +148,20 @@ class TradePage extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color,
+                color: Colors.white.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
               ),
-              child: Icon(icon, color: Colors.white, size: 24),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(

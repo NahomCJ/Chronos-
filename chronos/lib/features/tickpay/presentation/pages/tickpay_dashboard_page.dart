@@ -10,6 +10,7 @@ import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
+import 'chris_shopping_page.dart';
 
 // ---------------------------------------------------------------------------
 // Design constants
@@ -34,7 +35,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
           backgroundColor: Colors.transparent,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 90),
-            child: const ChrisHomeFab(),
+            child: ChrisHomeFab(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ChrisShoppingPage()),
+              ),
+            ),
           ),
           bottomNavigationBar: CustomBottomNav(
             selectedIndex: 0,
@@ -55,30 +60,28 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               Positioned.fill(
                 child: Container(color: Colors.black.withValues(alpha: 0.35)),
               ),
-              // ── Content ──────────────────────────────────────────────────
-              Column(
-                children: [
-                  SafeArea(
-                    bottom: false,
-                    child: Column(
-                      children: [
-                        _buildTopBar(context),
-                        _buildCreditCard(context, loaded),
-                        const SizedBox(height: 20),
-                        _buildQuickActions(context),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                  // White section starts here — below the quick actions
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-                      ),
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.only(bottom: 100),
+              // ── Content (fully scrollable) ────────────────────────────
+              SafeArea(
+                bottom: false,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _buildTopBar(context),
+                      _buildCreditCard(context, loaded),
+                      const SizedBox(height: 20),
+                      _buildQuickActions(context),
+                      const SizedBox(height: 16),
+                      // White section — rounds top, then extends to end
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                        ),
+                        constraints: BoxConstraints(
+                          minHeight: MediaQuery.of(context).size.height * 0.6,
+                        ),
+                        padding: const EdgeInsets.only(bottom: 120),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -88,9 +91,9 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                           ],
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ],
           ),

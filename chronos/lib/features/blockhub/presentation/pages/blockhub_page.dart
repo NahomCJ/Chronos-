@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
@@ -569,33 +570,64 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  // ── 2-D flat coin icon ────────────────────────────────────────────────────
+  // ── Coin logo URLs (CoinGecko CDN) ───────────────────────────────────────
+  static const _coinLogos = {
+    'BTC':  'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
+    'ETH':  'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+    'SOL':  'https://assets.coingecko.com/coins/images/4128/large/solana.png',
+    'BNB':  'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',
+    'ADA':  'https://assets.coingecko.com/coins/images/975/large/cardano.png',
+    'DOT':  'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
+    'MATIC':'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
+    'LINK': 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
+    'AVAX': 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
+  };
+
+  // ── 2-D coin icon with real logo ─────────────────────────────────────────
   Widget _buildFlatCoinIcon(_CoinData coin, double size) {
-    final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
+    final url = _coinLogos[coin.symbol];
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: coin.primaryColor,
+        color: coin.primaryColor.withValues(alpha: 0.15),
         boxShadow: [
           BoxShadow(
-            color: coin.primaryColor.withValues(alpha: 0.35),
+            color: coin.primaryColor.withValues(alpha: 0.30),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(color: coin.primaryColor.withValues(alpha: 0.4), width: 1.5),
       ),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: size * (label.length <= 2 ? 0.38 : 0.28),
-            letterSpacing: -0.5,
-          ),
-        ),
+      child: ClipOval(
+        child: url != null
+            ? CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Center(
+                  child: Text(
+                    coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
+                        fontSize: size * 0.3),
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Center(
+                  child: Text(
+                    coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
+                        fontSize: size * 0.3),
+                  ),
+                ),
+              )
+            : Center(
+                child: Text(
+                  coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
+                      fontSize: size * 0.3),
+                ),
+              ),
       ),
     );
   }

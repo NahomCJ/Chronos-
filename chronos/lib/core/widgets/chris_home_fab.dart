@@ -5,7 +5,8 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../router/route_constants.dart';
 
 class ChrisHomeFab extends StatefulWidget {
-  const ChrisHomeFab({super.key});
+  final VoidCallback? onTap;
+  const ChrisHomeFab({super.key, this.onTap});
 
   @override
   State<ChrisHomeFab> createState() => _ChrisHomeFabState();
@@ -86,23 +87,26 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: _openSheet,
+        onTap: widget.onTap ?? _openSheet,
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: ClipOval(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
             child: Container(
               width: 50,
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF232330), Color(0xFF0E0E18)],
+                  colors: [
+                    Colors.white.withValues(alpha: 0.22),
+                    Colors.white.withValues(alpha: 0.10),
+                  ],
                 ),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.22),
+                  color: Colors.white.withValues(alpha: 0.45),
                   width: 1.5,
                 ),
               ),
@@ -113,7 +117,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.10),
+                      color: Colors.white.withValues(alpha: 0.25),
                       width: 1,
                     ),
                   ),
@@ -123,7 +127,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
                             width: 7,
                             height: 7,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: Colors.white.withValues(alpha: 0.9),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -282,78 +286,73 @@ class _ChrisSheetState extends State<_ChrisSheet> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-              // Voice button — centered, large
-              GestureDetector(
-                onTap: _toggleVoice,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _voiceActive
-                        ? _teal.withValues(alpha: 0.18)
-                        : Colors.white.withValues(alpha: 0.05),
-                    border: Border.all(
-                      color: _voiceActive
-                          ? _teal.withValues(alpha: 0.8)
-                          : Colors.white.withValues(alpha: 0.15),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    _voiceActive ? Icons.mic_rounded : Icons.mic_none_rounded,
-                    color: _voiceActive ? _teal : Colors.white.withValues(alpha: 0.5),
-                    size: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _voiceActive ? 'Listening...' : 'Tap mic or type below',
-                style: TextStyle(
-                  color: _voiceActive ? _teal : Colors.white.withValues(alpha: 0.35),
-                  fontSize: 12,
-                ),
-              ),
               const SizedBox(height: 20),
-              // Text input
+              // ChatGPT-style input bar
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withValues(alpha: 0.07),
+                  borderRadius: BorderRadius.circular(28),
                   border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
                 ),
                 child: Row(
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _ctrl,
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        style: const TextStyle(color: Colors.white, fontSize: 15),
                         decoration: InputDecoration(
-                          hintText: 'Ask Chris anything...',
+                          hintText: _voiceActive
+                              ? 'Listening...'
+                              : 'Order anything in Chronos — I\'ll get it done',
                           hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.3),
-                              fontSize: 14),
+                              color: _voiceActive
+                                  ? _teal.withValues(alpha: 0.7)
+                                  : Colors.white.withValues(alpha: 0.28),
+                              fontSize: 13),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                              horizontal: 18, vertical: 14),
                         ),
                         onSubmitted: (_) => _send(),
                       ),
                     ),
+                    // Mic button
+                    GestureDetector(
+                      onTap: _toggleVoice,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        margin: const EdgeInsets.only(right: 6, top: 6, bottom: 6),
+                        width: 36, height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _voiceActive
+                              ? _teal.withValues(alpha: 0.22)
+                              : Colors.white.withValues(alpha: 0.06),
+                          border: Border.all(
+                            color: _voiceActive
+                                ? _teal.withValues(alpha: 0.7)
+                                : Colors.white.withValues(alpha: 0.15),
+                          ),
+                        ),
+                        child: Icon(
+                          _voiceActive ? Icons.mic_rounded : Icons.mic_none_rounded,
+                          color: _voiceActive ? _teal : Colors.white.withValues(alpha: 0.5),
+                          size: 17,
+                        ),
+                      ),
+                    ),
+                    // Send button
                     GestureDetector(
                       onTap: _send,
                       child: Container(
-                        margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+                        margin: const EdgeInsets.only(right: 8, top: 6, bottom: 6),
                         width: 36, height: 36,
                         decoration: const BoxDecoration(
                           color: _teal,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.arrow_forward_rounded,
+                        child: const Icon(Icons.arrow_upward_rounded,
                             color: Colors.white, size: 17),
                       ),
                     ),

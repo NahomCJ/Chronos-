@@ -643,134 +643,45 @@ class _HomeViewState extends State<_HomeView> {
   Widget _buildSpendingAnalysisSection(double scale, double textScale,
       HomeSummary? summary) {
     final List<double> values;
-    final List<Color> colors = [
-      const Color(0xFFB8860B),
-      const Color(0xFFD4A373),
-      const Color(0xFFF4A460),
-      const Color(0xFFDEB887),
-      const Color(0xFFCD853F),
-    ];
     final List<String> labels;
+    final List<IconData> icons = [
+      Icons.restaurant_outlined,
+      Icons.directions_car_outlined,
+      Icons.shopping_bag_outlined,
+      Icons.receipt_long_outlined,
+      Icons.more_horiz,
+    ];
 
     if (summary != null && summary.spendingByCategory.isNotEmpty) {
       values = summary.spendingByCategory.map((c) => c.amount).toList();
       labels = summary.spendingByCategory.map((c) => c.category).toList();
     } else {
-      values = [420, 285, 180, 340, 540];
-      labels = ['Food', 'Transport', 'Shopping', 'Bills', 'Other'];
+      values = [540, 420, 340, 285, 180];
+      labels = ['Other', 'Food', 'Bills', 'Transport', 'Shopping'];
     }
 
     final total = values.fold(0.0, (a, b) => a + b);
+    final maxVal = values.reduce((a, b) => a > b ? a : b);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text('Spending Analysis',
-              style: TextStyles.titleMedium.copyWith(
-                  color: const Color(0xFF1A1A1A),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16 * textScale)),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
-            padding: EdgeInsets.all(20 * scale),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 100 * scale,
-                  height: 100 * scale,
-                  child: CustomPaint(
-                    painter:
-                        DonutChartPainter(values: values, colors: colors),
-                    child: Center(
-                      child: Text(
-                        'Total\n\$${total.toStringAsFixed(0)}',
-                        textAlign: TextAlign.center,
-                        style: TextStyles.labelSmall.copyWith(
-                            color: const Color(0xFF1A1A1A),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10 * textScale),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: Column(
-                    children: List.generate(
-                      math.min(values.length, 3),
-                      (i) => _buildSpendingLegend(
-                          labels[i],
-                          '\$${values[i].toStringAsFixed(0)}',
-                          colors[i % colors.length],
-                          textScale),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSpendingLegend(String label, String value, Color color,
-      double textScale) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+          child: Row(
             children: [
-              Container(
-                  width: 8, height: 8,
-                  decoration:
-                      BoxDecoration(color: color, shape: BoxShape.circle)),
-              const SizedBox(width: 8),
-              Text(label,
+              Text('Spending Analysis',
+                  style: TextStyles.titleMedium.copyWith(
+                      color: const Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 * textScale)),
+              const Spacer(),
+              Text('This month',
                   style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF555555), fontSize: 11 * textScale)),
+                      color: const Color(0xFF999999),
+                      fontSize: 11 * textScale)),
             ],
           ),
-          Text(value,
-              style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF1A1A1A),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11 * textScale)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNetWorthSection(double scale, double textScale, double balance) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text('Net Worth Summary',
-              style: TextStyles.titleMedium.copyWith(
-                  color: const Color(0xFF1A1A1A),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16 * textScale)),
         ),
         const SizedBox(height: 16),
         Padding(
@@ -779,62 +690,89 @@ class _HomeViewState extends State<_HomeView> {
             padding: EdgeInsets.all(20 * scale),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Total row
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFCD853F),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(Icons.account_balance_wallet,
-                          color: Colors.white, size: 20 * scale),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Total Net Worth',
-                            style: TextStyles.labelSmall.copyWith(
-                                color: const Color(0xFF888888),
-                                fontSize: 11 * textScale)),
-                        Text('\$${balance.toStringAsFixed(0)}',
-                            style: TextStyles.titleMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1A1A1A),
-                                fontSize: 16 * textScale)),
-                      ],
-                    ),
+                    Text('Total Spent',
+                        style: TextStyles.bodySmall.copyWith(
+                            color: const Color(0xFF888888),
+                            fontSize: 12 * textScale)),
+                    Text('\$${total.toStringAsFixed(0)}',
+                        style: TextStyles.titleMedium.copyWith(
+                            color: const Color(0xFF1A1A1A),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15 * textScale)),
                   ],
                 ),
-                SizedBox(height: 20 * scale),
-                SizedBox(
-                  height: 120 * scale,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildBar('Cash', 0.85, const Color(0xFFCD853F), scale),
-                      _buildBar('AI Portfolio', 0.45,
-                          const Color(0xFF8B4513), scale),
-                      _buildBar('Investments', 0.18,
-                          const Color(0xFFB8860B), scale),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 16),
+                // Category bars
+                ...List.generate(math.min(values.length, 5), (i) {
+                  final pct = values[i] / maxVal;
+                  final hue = (i * 40.0) % 360;
+                  final barColor = HSLColor.fromAHSL(1, hue, 0.55, 0.52).toColor();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: barColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(icons[i % icons.length], size: 15, color: barColor),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(labels[i],
+                                      style: TextStyles.bodySmall.copyWith(
+                                          color: const Color(0xFF333333),
+                                          fontSize: 12 * textScale,
+                                          fontWeight: FontWeight.w500)),
+                                  Text('\$${values[i].toStringAsFixed(0)}',
+                                      style: TextStyles.bodySmall.copyWith(
+                                          color: const Color(0xFF1A1A1A),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12 * textScale)),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: pct,
+                                  minHeight: 5,
+                                  backgroundColor: const Color(0xFFF0F0F0),
+                                  valueColor: AlwaysStoppedAnimation(barColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -843,26 +781,108 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
-  Widget _buildBar(String label, double heightFactor, Color color,
-      double scale) {
+  Widget _buildNetWorthSection(double scale, double textScale, double balance) {
+    final assets = [
+      _AssetTile('Cash & Bank', '\$${(balance * 0.62).toStringAsFixed(0)}',
+          '+2.1%', true, Icons.account_balance_outlined, const Color(0xFF0EA5E9)),
+      _AssetTile('Crypto', '\$${(balance * 0.25).toStringAsFixed(0)}',
+          '+8.4%', true, Icons.currency_bitcoin, const Color(0xFFF59E0B)),
+      _AssetTile('Investments', '\$${(balance * 0.13).toStringAsFixed(0)}',
+          '-0.3%', false, Icons.trending_up_outlined, const Color(0xFF8B5CF6)),
+    ];
+
     return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 32 * scale,
-          height: 80 * scale * heightFactor,
-          decoration: BoxDecoration(
-              color: color, borderRadius: BorderRadius.circular(2)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Text('Net Worth',
+                  style: TextStyles.titleMedium.copyWith(
+                      color: const Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16 * textScale)),
+              const Spacer(),
+              Text('\$${balance.toStringAsFixed(0)}',
+                  style: TextStyles.titleMedium.copyWith(
+                      color: const Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15 * textScale)),
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        Text(label,
-            style: TextStyle(
-                fontSize: 9 * scale,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF555555))),
+        const SizedBox(height: 14),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: assets.map((a) {
+              return Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(right: a == assets.last ? 0 : 10),
+                  padding: EdgeInsets.all(14 * scale),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: a.color.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(a.icon, color: a.color, size: 16),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(a.value,
+                          style: TextStyles.titleMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF1A1A1A),
+                              fontSize: 13 * textScale)),
+                      const SizedBox(height: 3),
+                      Text(a.label,
+                          style: TextStyles.bodySmall.copyWith(
+                              color: const Color(0xFF888888),
+                              fontSize: 10 * textScale)),
+                      const SizedBox(height: 4),
+                      Text(a.change,
+                          style: TextStyles.bodySmall.copyWith(
+                              color: a.isPositive
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFEF4444),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10 * textScale)),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
+}
+
+class _AssetTile {
+  final String label, value, change;
+  final bool isPositive;
+  final IconData icon;
+  final Color color;
+  const _AssetTile(this.label, this.value, this.change, this.isPositive,
+      this.icon, this.color);
 }
 
 class DonutChartPainter extends CustomPainter {
@@ -871,21 +891,7 @@ class DonutChartPainter extends CustomPainter {
   DonutChartPainter({required this.values, required this.colors});
 
   @override
-  void paint(Canvas canvas, Size size) {
-    double total = values.fold(0, (sum, item) => sum + item);
-    double startAngle = -math.pi / 2;
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 14
-      ..strokeCap = StrokeCap.butt;
-    for (int i = 0; i < values.length; i++) {
-      final sweepAngle = (values[i] / total) * 2 * math.pi;
-      paint.color = colors[i % colors.length];
-      canvas.drawArc(rect, startAngle, sweepAngle, false, paint);
-      startAngle += sweepAngle;
-    }
-  }
+  void paint(Canvas canvas, Size size) {}
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
