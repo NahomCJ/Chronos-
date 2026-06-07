@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDgi5j7fT5z7q9qn11gDWTeDEgmHNwXNr4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>845161492880</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.nahomcj.chronosbank</string>
+	<key>PROJECT_ID</key>
+	<string>chronos-bank</string>
+	<key>STORAGE_BUCKET</key>
+	<string>chronos-bank.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:845161492880:ios:75709f6caa66511755c315</string>
+	<key>CLIENT_ID</key>
+	<string>845161492880-7gnqidnt820qntrk4mt53iq2e3ttn3jq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.845161492880-7gnqidnt820qntrk4mt53iq2e3ttn3jq</string>
+</dict>
+</plist>

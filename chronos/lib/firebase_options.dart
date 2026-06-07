@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
     projectId: 'chronos-bank',
     storageBucket: 'chronos-bank.firebasestorage.app',
     iosClientId: '845161492880-7gnqidnt820qntrk4mt53iq2e3ttn3jq.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chronosBank',
+    iosBundleId: 'com.nahomcj.chronosbank',
   );
 
 }
