@@ -257,13 +257,6 @@ class RebalanceConfirmationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Divider(
-      color: Colors.white.withValues(alpha: 0.07),
-      height: 1,
-      thickness: 0.5,
-    );
-  }
 
   Widget _buildImpactRow(String label, String value, Color valueColor) {
     return Padding(

@@ -157,9 +157,12 @@ class _ReplaceCardReasonModalState extends State<ReplaceCardReasonModal> {
         });
 
         // Navigate to address modal after selection
+        final nav = Navigator.of(context);
+        final rootNav = Navigator.of(context, rootNavigator: true);
         Future.delayed(const Duration(milliseconds: 300), () {
-          Navigator.of(context).pop();
-          ReplaceCardAddressModal.show(context, value);
+          nav.pop();
+          // ignore: use_build_context_synchronously
+          ReplaceCardAddressModal.show(rootNav.context, value);
         });
       },
       child: Container(

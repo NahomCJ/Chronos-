@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -116,7 +116,7 @@ class _AddRecipientPageState extends State<AddRecipientPage>
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.5)),
+            child: Container(color: Colors.black.withValues(alpha: 0.5)),
           ),
           SafeArea(
             child: Column(
@@ -231,7 +231,7 @@ class _AddRecipientPageState extends State<AddRecipientPage>
     return Container(
       height: 60 * scale,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12 * scale),
         border: Border.all(color: Colors.white24),
       ),
@@ -253,7 +253,7 @@ class _AddRecipientPageState extends State<AddRecipientPage>
             child: Row(
               children: [
                 Text(
-                  _selectedCountry?.flagEmoji ?? '🇺🇸',
+                  _selectedCountry?.flagEmoji ?? 'ðŸ‡ºðŸ‡¸',
                   style: TextStyle(fontSize: 24 * scale),
                 ),
                 Icon(
@@ -324,8 +324,8 @@ class _AddRecipientPageState extends State<AddRecipientPage>
             ),
             color:
                 isSelected
-                    ? CColor.primaryButton.withOpacity(0.1)
-                    : Colors.white.withOpacity(0.05),
+                    ? CColor.primaryButton.withValues(alpha: 0.1)
+                    : Colors.white.withValues(alpha: 0.05),
           ),
           child: Row(
             children: [
@@ -335,7 +335,7 @@ class _AddRecipientPageState extends State<AddRecipientPage>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white38),
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -418,9 +418,9 @@ class _AddRecipientPageState extends State<AddRecipientPage>
           backgroundColor:
               _isButtonEnabled
                   ? CColor.primaryButton
-                  : Colors.white.withOpacity(0.1),
+                  : Colors.white.withValues(alpha: 0.1),
           foregroundColor: _isButtonEnabled ? Colors.white : Colors.white38,
-          disabledBackgroundColor: Colors.white.withOpacity(0.3),
+          disabledBackgroundColor: Colors.white.withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12 * scale),
           ),

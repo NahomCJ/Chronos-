@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -123,7 +123,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.6)),
+            child: Container(color: Colors.black.withValues(alpha: 0.6)),
           ),
           SafeArea(
             child: Column(
@@ -215,7 +215,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     return Container(
       padding: EdgeInsets.all(12 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white12),
       ),
@@ -240,7 +240,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -281,7 +281,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
     return Container(
       padding: EdgeInsets.all(12 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white12),
       ),
@@ -292,7 +292,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
             height: 32 * scale,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               border: Border.all(color: Colors.white24),
             ),
             alignment: Alignment.center,
@@ -347,7 +347,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         vertical: 8 * scale,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white12),
       ),
@@ -436,9 +436,9 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         onPressed: isEnabled ? _onContinue : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isEnabled ? CColor.primaryButton : Colors.white.withOpacity(0.1),
+              isEnabled ? CColor.primaryButton : Colors.white.withValues(alpha: 0.1),
           foregroundColor: isEnabled ? Colors.white : Colors.white38,
-          disabledBackgroundColor: Colors.white.withOpacity(0.15),
+          disabledBackgroundColor: Colors.white.withValues(alpha: 0.15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12 * scale),
           ),

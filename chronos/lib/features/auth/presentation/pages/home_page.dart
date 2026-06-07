@@ -306,48 +306,6 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
-  Widget _currencyBadge(String flag, String code, String amount, bool active) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: active
-            ? Colors.white.withValues(alpha: 0.22)
-            : Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: active
-              ? Colors.white.withValues(alpha: 0.45)
-              : Colors.white.withValues(alpha: 0.15),
-          width: 0.8,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(flag, style: const TextStyle(fontSize: 13)),
-          const SizedBox(width: 5),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(code,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.55),
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
-                      height: 1.1)),
-              Text(amount,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      height: 1.1)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildCurrencyPicker(double scale, double textScale) {
     return PopupMenuButton<String>(

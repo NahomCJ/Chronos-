@@ -345,14 +345,12 @@ class PantherAiInsightsPage extends StatelessWidget {
   }
 
   Widget _buildAboutCard(bool isSmallScreen) {
-    return Container(
-      child: Text(
-        'The first decentralized cryptocurrency, created by Satoshi Nakamoto.',
-        style: TextStyles.bodyMedium.copyWith(
-          color: Colors.white.withValues(alpha: 0.8),
-          height: 1.5,
-          fontSize: isSmallScreen ? 12 : 13,
-        ),
+    return Text(
+      'The first decentralized cryptocurrency, created by Satoshi Nakamoto.',
+      style: TextStyles.bodyMedium.copyWith(
+        color: Colors.white.withValues(alpha: 0.8),
+        height: 1.5,
+        fontSize: isSmallScreen ? 12 : 13,
       ),
     );
   }
@@ -466,43 +464,6 @@ class PantherAiInsightsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRiskAlertsSection(bool isSmallScreen) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: const Color(0xFFF59E0B),
-              size: isSmallScreen ? 16 : 18,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Risk Alerts',
-              style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: isSmallScreen ? 15 : 16,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        _buildRiskAlertCard(
-          'High Volatility Period',
-          'Consider limit orders instead of market orders to avoid slippage.',
-          isSmallScreen,
-        ),
-        const SizedBox(height: 12),
-        _buildRiskAlertCard(
-          'Weekend Trading',
-          'Liquidity typically decreases on weekends, which can increase price volatility.',
-          isSmallScreen,
-        ),
-      ],
-    );
-  }
 
   Widget _buildRiskAlertCard(
     String title,

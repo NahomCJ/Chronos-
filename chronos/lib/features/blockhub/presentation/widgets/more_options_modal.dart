@@ -26,11 +26,9 @@ class MoreOptionsModal {
           icon: Icons.show_chart,
           label: 'Markets',
           onTap: () {
-            // Navigate after menu closes automatically
+            final nav = Navigator.of(context, rootNavigator: true);
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(builder: (context) => const MarketsPage()),
-              );
+              nav.push(MaterialPageRoute(builder: (_) => const MarketsPage()));
             });
           },
         ),
@@ -39,11 +37,9 @@ class MoreOptionsModal {
           icon: Icons.trending_up,
           label: 'Trade',
           onTap: () {
-            // Navigate after menu closes automatically
+            final nav = Navigator.of(context, rootNavigator: true);
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(builder: (context) => const TradePage()),
-              );
+              nav.push(MaterialPageRoute(builder: (_) => const TradePage()));
             });
           },
         ),
@@ -52,12 +48,9 @@ class MoreOptionsModal {
           icon: Icons.pie_chart_outline,
           label: 'Portfolio',
           onTap: () {
+            final nav = Navigator.of(context, rootNavigator: true);
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (context) => const BlockHubPortfolioPage(),
-                ),
-              );
+              nav.push(MaterialPageRoute(builder: (_) => const BlockHubPortfolioPage()));
             });
           },
         ),
@@ -66,12 +59,9 @@ class MoreOptionsModal {
           icon: Icons.account_balance_wallet_outlined,
           label: 'Wallets',
           onTap: () {
+            final nav = Navigator.of(context, rootNavigator: true);
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (context) => const WalletsFundsPage(),
-                ),
-              );
+              nav.push(MaterialPageRoute(builder: (_) => const WalletsFundsPage()));
             });
           },
         ),
@@ -80,13 +70,9 @@ class MoreOptionsModal {
           icon: Icons.hexagon_outlined,
           label: 'NFTs',
           onTap: () {
+            final nav = Navigator.of(context, rootNavigator: true);
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NftMarketplacePage(),
-                ),
-              );
+              nav.push(MaterialPageRoute(builder: (_) => const NftMarketplacePage()));
             });
           },
         ),

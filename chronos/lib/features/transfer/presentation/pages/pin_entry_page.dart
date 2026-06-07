@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/preset_colors.dart';
 import '../../../../core/utils/error_toast.dart';
@@ -56,7 +56,7 @@ class _PinEntryPageState extends State<PinEntryPage> {
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha: 0.7)),
           ),
           SafeArea(
             child: Column(

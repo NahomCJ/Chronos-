@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'enter_new_pin_modal.dart';
 
@@ -17,7 +17,7 @@ class ChangePinAuthModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6, // ⬅ reduced
+      height: MediaQuery.of(context).size.height * 0.6, // â¬… reduced
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -33,7 +33,7 @@ class ChangePinAuthModal extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            /// ───────── Header ─────────
+            /// â”€â”€â”€â”€â”€â”€â”€â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -59,10 +59,10 @@ class ChangePinAuthModal extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
@@ -88,7 +88,7 @@ class ChangePinAuthModal extends StatelessWidget {
                       Text(
                         '****4849',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -99,15 +99,15 @@ class ChangePinAuthModal extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            /// ───────── Fingerprint Section ─────────
+            /// â”€â”€â”€â”€â”€â”€â”€â”€â”€ Fingerprint Section â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Container(
               width: 110,
               height: 110,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
               child: const Icon(
@@ -132,13 +132,13 @@ class ChangePinAuthModal extends StatelessWidget {
             Text(
               'Use biometrics to continue',
               style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
 
              const SizedBox(height: 8),
 
-            /// ───────── CTA Button ─────────
+            /// â”€â”€â”€â”€â”€â”€â”€â”€â”€ CTA Button â”€â”€â”€â”€â”€â”€â”€â”€â”€
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pop();
@@ -162,7 +162,7 @@ class ChangePinAuthModal extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20), // ⬅ reduced
+            const SizedBox(height: 20), // â¬… reduced
           ],
         ),
       ),

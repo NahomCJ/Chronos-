@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
@@ -71,17 +71,17 @@ class BankTransferPage extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '💡',
+                                'ðŸ’¡',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 16 : 18,
                                 ),
@@ -91,7 +91,7 @@ class BankTransferPage extends StatelessWidget {
                                 child: Text(
                                   'Transfer from your bank using these details. Funds typically arrive within 1-2 business days.',
                                   style: TextStyles.bodySmall.copyWith(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     height: 1.5,
                                     fontSize: isSmallScreen ? 11 : 12,
                                   ),
@@ -104,10 +104,10 @@ class BankTransferPage extends StatelessWidget {
                         // Details Card
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1B2431).withOpacity(0.8),
+                            color: const Color(0xFF1B2431).withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Column(
@@ -220,7 +220,7 @@ class BankTransferPage extends StatelessWidget {
                     Text(
                       label,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontSize: isSmallScreen ? 11 : 12,
                       ),
                     ),
@@ -242,7 +242,7 @@ class BankTransferPage extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.copy,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                   size: isSmallScreen ? 18 : 20,
                 ),
                 padding: EdgeInsets.zero,
@@ -253,7 +253,7 @@ class BankTransferPage extends StatelessWidget {
           if (!isLast)
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: Divider(color: Colors.white.withOpacity(0.05), height: 1),
+              child: Divider(color: Colors.white.withValues(alpha: 0.05), height: 1),
             ),
           if (isLast) const SizedBox(height: 20),
         ],

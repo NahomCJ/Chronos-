@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'card_details_view_modal.dart';
@@ -10,7 +10,7 @@ class AuthenticationModal extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => const AuthenticationModal(),
     );
   }
@@ -27,12 +27,12 @@ class AuthenticationModal extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.5,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
+              color: Colors.white.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.25)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.35),
+                  color: Colors.black.withValues(alpha: 0.35),
                   blurRadius: 30,
                   offset: const Offset(0, 16),
                 ),
@@ -100,7 +100,7 @@ class AuthenticationModal extends StatelessWidget {
                   'Verify your identity to view card details',
                   textAlign: TextAlign.center,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
 

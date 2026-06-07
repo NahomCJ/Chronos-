@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class OtpInput extends StatefulWidget {
@@ -79,7 +79,7 @@ class _OtpInputState extends State<OtpInput> {
                 borderSide: const BorderSide(color: Colors.white),
               ),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
             ),
             onChanged: (value) => _onChanged(value, index),
           ),

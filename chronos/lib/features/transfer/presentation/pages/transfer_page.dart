@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
@@ -18,8 +18,6 @@ class TransferPage extends StatelessWidget {
       scale,
       1.1,
     ); // Cap scaling for large screens
-    final bool isSmallScreen = size.width < 360;
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -185,9 +183,9 @@ class TransferPage extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12 * scale),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16 * scale),
-          border: Border.all(color: Colors.white.withOpacity(0.15)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
         ),
         child: Stack(
           children: [
@@ -197,7 +195,7 @@ class TransferPage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8 * scale),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8 * scale),
                   ),
                   child: Icon(
@@ -237,10 +235,10 @@ class TransferPage extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB8860B).withOpacity(0.3),
+                    color: const Color(0xFFB8860B).withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: const Color(0xFFB8860B).withOpacity(0.5),
+                      color: const Color(0xFFB8860B).withValues(alpha: 0.5),
                     ),
                   ),
                   child: Text(
@@ -266,8 +264,8 @@ class TransferPage extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.05),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        color: Colors.white.withValues(alpha: 0.05),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       alignment: Alignment.center,
       child: Text(

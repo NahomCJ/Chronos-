@@ -59,11 +59,14 @@ class _ConfirmNewPinModalState extends State<ConfirmNewPinModal> {
     });
 
     if (value.length == 4) {
+      final nav = Navigator.of(context);
+      final rootNav = Navigator.of(context, rootNavigator: true);
       Future.delayed(const Duration(milliseconds: 300), () {
         final enteredPin = value;
         if (enteredPin == widget.originalPin) {
-          Navigator.of(context).pop();
-          PinSuccessModal.show(context);
+          nav.pop();
+          // ignore: use_build_context_synchronously
+          PinSuccessModal.show(rootNav.context);
         } else {
           setState(() {
             _hasError = true;

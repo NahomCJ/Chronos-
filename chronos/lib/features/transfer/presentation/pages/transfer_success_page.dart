@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +29,7 @@ class TransferSuccessPage extends StatelessWidget {
 
     final String transactionId = "TXN52749822";
     final String timestamp = DateFormat(
-      'MMM dd, yyyy • HH:mm',
+      'MMM dd, yyyy â€¢ HH:mm',
     ).format(DateTime.now());
 
     return Scaffold(
@@ -40,7 +40,7 @@ class TransferSuccessPage extends StatelessWidget {
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha: 0.7)),
           ),
           SafeArea(
             child: Column(
@@ -116,7 +116,7 @@ class TransferSuccessPage extends StatelessWidget {
                                         border: Border.all(
                                           color: Colors.white24,
                                         ),
-                                        color: Colors.white.withOpacity(0.1),
+                                        color: Colors.white.withValues(alpha: 0.1),
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(

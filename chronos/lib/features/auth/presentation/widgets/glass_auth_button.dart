@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -30,15 +30,15 @@ class GlassAuthButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: Constants.borderRadiusFull,
             border: Border.all(
-              color: Colors.white.withOpacity(0.18),
+              color: Colors.white.withValues(alpha: 0.18),
               width: 1,
             ),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(disabled ? 0.10 : 0.16),
-                Colors.white.withOpacity(disabled ? 0.06 : 0.10),
+                Colors.white.withValues(alpha: disabled ? 0.10 : 0.16),
+                Colors.white.withValues(alpha: disabled ? 0.06 : 0.10),
               ],
             ),
           ),
@@ -66,7 +66,7 @@ class GlassAuthButton extends StatelessWidget {
                           label,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(disabled ? 0.75 : 1),
+                            color: Colors.white.withValues(alpha: disabled ? 0.75 : 1),
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

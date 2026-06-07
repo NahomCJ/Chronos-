@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 
 class BuyBtcSuccessPage extends StatelessWidget {
@@ -45,7 +45,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: const Color(0xFF10B981).withOpacity(0.2),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.2),
                       border: Border.all(
                         color: const Color(0xFF10B981),
                         width: 2,
@@ -77,7 +77,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                     'Your transaction has been completed\nsuccessfully',
                     textAlign: TextAlign.center,
                     style: TextStyles.bodyLarge.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: isSmallScreen ? 16 : 18,
                       height: 1.4,
                     ),
@@ -90,9 +90,9 @@ class BuyBtcSuccessPage extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [
@@ -112,7 +112,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                             Text(
                               'Status',
                               style: TextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -122,7 +122,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withOpacity(0.2),
+                                color: const Color(0xFF10B981).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color: const Color(0xFF10B981),
@@ -162,7 +162,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.9),
+                            backgroundColor: Colors.white.withValues(alpha: 0.9),
                             foregroundColor: Colors.black,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -196,7 +196,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             side: BorderSide(
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                               width: 1,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -223,7 +223,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
                     'Your updated balance will be reflected in your portfolio',
                     textAlign: TextAlign.center,
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                   ),
@@ -245,7 +245,7 @@ class BuyBtcSuccessPage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodyMedium.copyWith(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 14,
           ),
         ),

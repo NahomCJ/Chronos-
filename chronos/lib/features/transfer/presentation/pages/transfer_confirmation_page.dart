@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -152,7 +152,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.6)),
+            child: Container(color: Colors.black.withValues(alpha: 0.6)),
           ),
           SafeArea(
             child: LayoutBuilder(
@@ -261,7 +261,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
       width: double.infinity,
       padding: EdgeInsets.all(20 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -308,7 +308,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
     return Container(
       padding: EdgeInsets.all(16 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -395,7 +395,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
           height: 32 * scale,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             border: Border.all(color: Colors.white24),
           ),
           alignment: Alignment.center,
@@ -416,7 +416,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
     return Container(
       padding: EdgeInsets.all(16 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -493,7 +493,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
             width: double.infinity,
             height: 54 * scale,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12 * scale),
               border: Border.all(color: Colors.white24),
             ),
@@ -503,7 +503,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
                   widthFactor: _progressController.value,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: CColor.primaryButton.withOpacity(0.4),
+                      color: CColor.primaryButton.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(12 * scale),
                     ),
                   ),

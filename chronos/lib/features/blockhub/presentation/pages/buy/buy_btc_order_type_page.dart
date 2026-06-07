@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'buy_btc_review_page.dart';
 
@@ -157,7 +157,7 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
                           Text(
                             'Limit Price (USD)',
                             style: TextStyles.bodyMedium.copyWith(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontSize: isSmallScreen ? 14 : 16,
                             ),
                           ),
@@ -170,10 +170,10 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
                               vertical: 16,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Row(
@@ -257,7 +257,7 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color:
-            isActive ? const Color(0xFF10B981) : Colors.white.withOpacity(0.3),
+            isActive ? const Color(0xFF10B981) : Colors.white.withValues(alpha: 0.3),
       ),
     );
   }
@@ -271,7 +271,7 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
           color:
               isActive
                   ? const Color(0xFF10B981)
-                  : Colors.white.withOpacity(0.3),
+                  : Colors.white.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(1),
         ),
       ),
@@ -291,13 +291,13 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color:
                 isSelected
                     ? const Color(0xFF10B981)
-                    : Colors.white.withOpacity(0.2),
+                    : Colors.white.withValues(alpha: 0.2),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -313,7 +313,7 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
                   color:
                       isSelected
                           ? const Color(0xFF10B981)
-                          : Colors.white.withOpacity(0.5),
+                          : Colors.white.withValues(alpha: 0.5),
                   width: 2,
                 ),
               ),
@@ -351,7 +351,7 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
                   Text(
                     description,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                       height: 1.3,
                     ),
@@ -365,32 +365,6 @@ class _BuyBtcOrderTypePageState extends State<BuyBtcOrderTypePage> {
     );
   }
 
-  void _handleContinue() {
-    // Navigate to the next step (confirmation/review page)
-    // You can pass the selected order type and limit price if needed
-
-    final orderData = {
-      'amount': widget.amount,
-      'btcAmount': widget.btcAmount,
-      'orderType': _selectedOrderType,
-      'limitPrice':
-          _selectedOrderType == OrderType.limit
-              ? double.tryParse(_limitPriceController.text) ??
-                  _currentMarketPrice
-              : _currentMarketPrice,
-    };
-
-    // For now, just show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Order Type: ${_selectedOrderType == OrderType.market ? 'Market' : 'Limit'}'
-          '${_selectedOrderType == OrderType.limit ? ' at \$${_limitPriceController.text}' : ''}',
-        ),
-        backgroundColor: const Color(0xFF10B981),
-      ),
-    );
-  }
 
   void _handleContinueToReview() {
     // Navigate to review page
