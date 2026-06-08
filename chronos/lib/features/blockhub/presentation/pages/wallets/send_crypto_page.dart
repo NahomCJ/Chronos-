@@ -1,21 +1,44 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 
+class _Coin {
+  final String symbol;
+  final String name;
+  final double balance;
+  final double price;
+  final String logoUrl;
+  final Color color;
+  const _Coin(this.symbol, this.name, this.balance, this.price, this.logoUrl, this.color);
+}
+
+const _kCoins = [
+  _Coin('ETH', 'Ethereum', 2.45, 3512.0, 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', Color(0xFF627EEA)),
+  _Coin('BTC', 'Bitcoin', 0.062, 64250.0, 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png', Color(0xFFF7931A)),
+  _Coin('SOL', 'Solana', 8.5, 178.5, 'https://assets.coingecko.com/coins/images/4128/large/solana.png', Color(0xFF9945FF)),
+  _Coin('BNB', 'BNB', 0.8, 608.0, 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', Color(0xFFF3BA2F)),
+  _Coin('MATIC', 'Polygon', 1200.0, 1.05, 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png', Color(0xFF8247E5)),
+];
+
 class SendCryptoPage extends StatefulWidget {
   const SendCryptoPage({super.key});
+
   @override
   State<SendCryptoPage> createState() => _SendCryptoPageState();
 }
 
 class _SendCryptoPageState extends State<SendCryptoPage> {
+  int _coinIndex = 0;
   final _addressController = TextEditingController();
   final _amountController = TextEditingController();
   final _memoController = TextEditingController();
 
-  final _contacts = [
-    _Contact('Alice', '0x742d...3'),
-    _Contact('Bob', '0x123e...7'),
-    _Contact('Charlie', '0x987f...2'),
+  _Coin get _coin => _kCoins[_coinIndex];
+
+  static const _contacts = [
+    ('Alice', '0x742d...3'),
+    ('Bob', '0x123e...7'),
+    ('Charlie', '0x987f...2'),
   ];
 
   @override
@@ -26,19 +49,22 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     super.dispose();
   }
 
+  void _setPct(double pct) {
+    _amountController.text = (_coin.balance * pct).toStringAsFixed(6);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
           SafeArea(
             child: Column(
               children: [
-                _header(context),
+                _buildHeader(context),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -46,6 +72,8 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 8),
+                        _coinSelector(),
+                        const SizedBox(height: 14),
                         _balanceCard(),
                         const SizedBox(height: 14),
                         _recipientCard(),
@@ -58,7 +86,7 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
                         const SizedBox(height: 14),
                         _feeRow(),
                         const SizedBox(height: 16),
-                        _continueButton(),
+                        _sendButton(),
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -72,7 +100,7 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Stack(
@@ -85,15 +113,60 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
               icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
             ),
           ),
-          Text(
-            'Send ETH',
-            style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
-          ),
+          Text('Send ${_coin.symbol}', style: TextStyles.titleMedium.copyWith(
+            color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20,
+          )),
         ],
+      ),
+    );
+  }
+
+  Widget _coinSelector() {
+    return SizedBox(
+      height: 52,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _kCoins.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, i) {
+          final c = _kCoins[i];
+          final sel = i == _coinIndex;
+          return GestureDetector(
+            onTap: () => setState(() {
+              _coinIndex = i;
+              _amountController.clear();
+            }),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: sel ? c.color.withValues(alpha: 0.22) : Colors.white.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: sel ? c.color.withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.1)),
+              ),
+              child: Row(
+                children: [
+                  ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: c.logoUrl, width: 22, height: 22, fit: BoxFit.cover,
+                      errorWidget: (_, __, ___) => Container(
+                        width: 22, height: 22,
+                        decoration: BoxDecoration(color: c.color, shape: BoxShape.circle),
+                        child: Center(child: Text(c.symbol[0], style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(c.symbol, style: TextStyle(
+                    color: sel ? Colors.white : Colors.white.withValues(alpha: 0.55),
+                    fontWeight: sel ? FontWeight.w700 : FontWeight.w400,
+                    fontSize: 13,
+                  )),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -109,43 +182,25 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       ),
       child: Column(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFF627EEA).withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.currency_exchange,
-              color: Color(0xFF627EEA),
-              size: 20,
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: _coin.logoUrl, width: 40, height: 40, fit: BoxFit.cover,
+              errorWidget: (_, __, ___) => Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(color: _coin.color, shape: BoxShape.circle),
+                child: Center(child: Text(_coin.symbol[0], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
+              ),
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Available Balance',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 12,
-            ),
-          ),
+          Text('Available Balance', style: TextStyles.bodySmall.copyWith(
+            color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+          )),
           const SizedBox(height: 4),
-          Text(
-            '2.45 ETH',
-            style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Text(
-            '\$4,536.75',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 13,
-            ),
-          ),
+          Text('${_coin.balance.toStringAsFixed(6)} ${_coin.symbol}',
+              style: TextStyles.titleLarge.copyWith(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+          Text('\$${(_coin.balance * _coin.price).toStringAsFixed(2)}',
+              style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
         ],
       ),
     );
@@ -164,46 +219,31 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              'Recipient Address',
-              style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 12,
-              ),
-            ),
+            child: Text('Recipient Address', style: TextStyles.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+            )),
           ),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _addressController,
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: '0x... or ENS name',
-                    hintStyle: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
               Container(
-                width: 36,
-                height: 36,
+                width: 36, height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.qr_code_scanner,
-                  color: Color(0xFFAB7FF8),
-                  size: 18,
-                ),
+                child: const Icon(Icons.qr_code_scanner, color: Color(0xFFAB7FF8), size: 18),
               ),
             ],
           ),
@@ -223,71 +263,36 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.person_outline,
-                color: Colors.white.withValues(alpha: 0.5),
-                size: 16,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'Recent Contacts',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+          Row(children: [
+            Icon(Icons.person_outline, color: Colors.white.withValues(alpha: 0.5), size: 16),
+            const SizedBox(width: 6),
+            Text('Recent Contacts', style: TextStyles.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+            )),
+          ]),
           const SizedBox(height: 12),
           Row(
-            children:
-                _contacts
-                    .map(
-                      (c) => Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: GestureDetector(
-                          onTap: () => _addressController.text = c.address,
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF627EEA,
-                                  ).withValues(alpha: 0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  color: Color(0xFF627EEA),
-                                  size: 22,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                c.name,
-                                style: TextStyles.bodySmall.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                c.address,
-                                style: TextStyles.bodySmall.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.4),
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+            children: _contacts.map((c) => Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: GestureDetector(
+                onTap: () => setState(() => _addressController.text = c.$2),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 44, height: 44,
+                      decoration: BoxDecoration(
+                        color: _coin.color.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
                       ),
-                    )
-                    .toList(),
+                      child: Icon(Icons.person, color: _coin.color, size: 22),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(c.$1, style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                    Text(c.$2, style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+                  ],
+                ),
+              ),
+            )).toList(),
           ),
         ],
       ),
@@ -305,80 +310,38 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Amount',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 12,
-            ),
-          ),
+          Text('Amount', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
           const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  style: TextStyles.titleMedium.copyWith(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     hintText: '0.00',
-                    hintStyle: TextStyles.titleMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      fontSize: 20,
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                    hintStyle: TextStyles.titleMedium.copyWith(color: Colors.white.withValues(alpha: 0.25), fontSize: 20),
+                    border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero,
                   ),
                 ),
               ),
-              Text(
-                'ETH',
-                style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text(_coin.symbol, style: TextStyles.bodyMedium.copyWith(
+                color: Colors.white.withValues(alpha: 0.5), fontSize: 14, fontWeight: FontWeight.w600,
+              )),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: _pctBtn('25%', () {
-                  _amountController.text = '0.61';
-                  setState(() {});
-                }),
-              ),
+              Expanded(child: _pctBtn('25%', () => _setPct(0.25))),
               const SizedBox(width: 8),
-              Expanded(
-                child: _pctBtn('50%', () {
-                  _amountController.text = '1.22';
-                  setState(() {});
-                }),
-              ),
+              Expanded(child: _pctBtn('50%', () => _setPct(0.50))),
               const SizedBox(width: 8),
-              Expanded(
-                child: _pctBtn('75%', () {
-                  _amountController.text = '1.84';
-                  setState(() {});
-                }),
-              ),
+              Expanded(child: _pctBtn('75%', () => _setPct(0.75))),
               const SizedBox(width: 8),
-              Expanded(
-                child: _pctBtn('MAX', () {
-                  _amountController.text = '2.45';
-                  setState(() {});
-                }),
-              ),
+              Expanded(child: _pctBtn('MAX', () => _setPct(1.0))),
             ],
           ),
         ],
@@ -395,15 +358,8 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
           color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyles.bodySmall.copyWith(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: Text(label, textAlign: TextAlign.center,
+            style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
       ),
     );
   }
@@ -421,26 +377,16 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              'Memo (Optional)',
-              style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 12,
-              ),
-            ),
+            child: Text('Memo (Optional)', style: TextStyles.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+            )),
           ),
           TextField(
             controller: _memoController,
-            style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
-              fontSize: 14,
-            ),
+            style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Add a note...',
-              hintStyle: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.3),
-                fontSize: 14,
-              ),
+              hintStyle: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
             ),
@@ -463,50 +409,21 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Network Fee',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.55),
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                '0.0015 ETH (\$2.78)',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white,
-                  fontSize: 13,
-                ),
-              ),
+              Text('Network Fee', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.55), fontSize: 13)),
+              Text('0.0015 ${_coin.symbol} (\$${(0.0015 * _coin.price).toStringAsFixed(2)})',
+                  style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Processing Time',
-                style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.55),
-                  fontSize: 13,
-                ),
-              ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    color: Colors.white.withValues(alpha: 0.5),
-                    size: 14,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '~2-5 min',
-                    style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
+              Text('Processing Time', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.55), fontSize: 13)),
+              Row(children: [
+                Icon(Icons.access_time, color: Colors.white.withValues(alpha: 0.5), size: 14),
+                const SizedBox(width: 4),
+                Text('~2-5 min', style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 13)),
+              ]),
             ],
           ),
         ],
@@ -514,34 +431,48 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     );
   }
 
-  Widget _continueButton() {
+  Widget _sendButton() {
+    final hasInput = _amountController.text.isNotEmpty && _addressController.text.isNotEmpty;
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withValues(alpha: 0.15),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
+      child: GestureDetector(
+        onTap: hasInput
+            ? () => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Sending ${_amountController.text} ${_coin.symbol}...'),
+                    backgroundColor: const Color(0xFF8B5CF6),
+                  ),
+                )
+            : null,
+        child: Container(
+          height: 54,
+          decoration: BoxDecoration(
+            gradient: hasInput
+                ? const LinearGradient(
+                    colors: [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
+                    begin: Alignment.centerLeft, end: Alignment.centerRight,
+                  )
+                : null,
+            color: hasInput ? null : Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(50),
           ),
-          elevation: 0,
-        ),
-        child: Text(
-          'Continue',
-          style: TextStyles.labelLarge.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                hasInput ? 'Send ${_coin.symbol}' : 'Enter address & amount',
+                style: TextStyle(
+                  color: hasInput ? Colors.white : Colors.white.withValues(alpha: 0.4),
+                  fontSize: 15, fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-}
-
-class _Contact {
-  final String name, address;
-  const _Contact(this.name, this.address);
 }

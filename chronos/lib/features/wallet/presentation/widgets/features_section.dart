@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../pages/wallet_analytics_page.dart';
 
 class FeaturesSection extends StatelessWidget {
   const FeaturesSection({super.key});
@@ -35,6 +36,15 @@ class FeaturesSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
+        _buildFeatureItem(
+          icon: Icons.bar_chart_rounded,
+          title: 'Spending Analytics',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const WalletAnalyticsPage()),
+          ),
+        ),
+        const SizedBox(height: 12),
         _buildFeatureItem(
           icon: Icons.swap_horiz,
           title: 'Exchange Currency',

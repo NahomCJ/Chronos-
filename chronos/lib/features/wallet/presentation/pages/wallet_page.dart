@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../../../../core/router/route_constants.dart';
 import '../bloc/wallet_bloc.dart';
 import '../bloc/wallet_event.dart';
@@ -40,9 +41,20 @@ class _WalletView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: Colors.white,
+          extendBody: true,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 90),
             child: const ChrisHomeFab(),
+          ),
+          bottomNavigationBar: CustomBottomNav(
+            selectedIndex: 4,
+            onItemSelected: (i) {
+              switch (i) {
+                case 0: context.go(RouteConstants.home.toPath);
+                case 1: context.go(RouteConstants.pantherAi.toPath);
+                case 2: context.go(RouteConstants.blockHub.toPath);
+              }
+            },
           ),
           body: Stack(
             children: [

@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import 'buy/buy_btc_page.dart';
-import 'bitcoin_detail_page.dart';
+import 'sell/sell_btc_page.dart';
+import 'wallets/send_crypto_page.dart';
 import '../widgets/more_options_modal.dart';
 import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
@@ -347,9 +348,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const BitcoinDetailPage(),
+                                      builder: (_) => const SellBtcPage(),
                                     ),
                                   );
                                 },
@@ -358,11 +357,27 @@ class _BlockHubPageState extends State<BlockHubPage> {
                                 Icons.swap_horiz,
                                 'Swap',
                                 isSmallScreen,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const TradePage(),
+                                    ),
+                                  );
+                                },
                               ),
                               _buildActionButton(
                                 Icons.send,
                                 'Send',
                                 isSmallScreen,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const SendCryptoPage(),
+                                    ),
+                                  );
+                                },
                               ),
                               _buildActionButton(
                                 Icons.more_horiz,
@@ -841,7 +856,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                       Navigator.pop(context);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const BitcoinDetailPage()),
+                        MaterialPageRoute(builder: (_) => const SellBtcPage()),
                       );
                     },
                     child: Container(

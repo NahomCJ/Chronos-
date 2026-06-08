@@ -57,7 +57,10 @@ class MarketsPage extends StatelessWidget {
                           subtitle: 'Stocks, ETFs & Commodities',
                           badge: 'Tokenized · Backed 1:1',
                           badgeColor: const Color(0xFF3B82F6),
-                          onTap: () {},
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const _AmcPage()),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         _buildNavCard(
@@ -318,13 +321,13 @@ class MarketsPage extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.trending_up,
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: Color(0xFF10B981),
                       size: 20,
                     ),
                   ),
@@ -379,13 +382,13 @@ class MarketsPage extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.trending_down,
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: Color(0xFFEF4444),
                       size: 20,
                     ),
                   ),
@@ -415,4 +418,144 @@ class MarketsPage extends StatelessWidget {
     );
   }
 
+}
+
+// ── AMC / Tokenized Assets page ───────────────────────────────────────────────
+class _AmcPage extends StatelessWidget {
+  const _AmcPage();
+
+  static const _assets = [
+    ('AAPL', 'Apple Inc.', '\$189.42', '+1.24%', true, Color(0xFF3B82F6)),
+    ('TSLA', 'Tesla', '\$248.87', '+3.56%', true, Color(0xFF8B5CF6)),
+    ('GOLD', 'Gold', '\$2,341.10', '+0.38%', true, Color(0xFFF59E0B)),
+    ('SPY', 'S&P 500 ETF', '\$521.73', '+0.89%', true, Color(0xFF10B981)),
+    ('AMZN', 'Amazon', '\$184.12', '-0.71%', false, Color(0xFFEC4899)),
+    ('NVDA', 'NVIDIA', '\$875.40', '+5.12%', true, Color(0xFF06B6D4)),
+    ('OIL', 'Crude Oil', '\$82.34', '-1.20%', false, Color(0xFFEF4444)),
+    ('BRK', 'Berkshire', '\$398.50', '+0.45%', true, Color(0xFF6366F1)),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            width: 36, height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                          ),
+                        ),
+                      ),
+                      Text('Tokenized Assets', style: TextStyles.titleLarge.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18,
+                      )),
+                    ],
+                  ),
+                ),
+                // Badge
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.3)),
+                    ),
+                    child: Row(children: [
+                      const Icon(Icons.verified_outlined, color: Color(0xFF3B82F6), size: 16),
+                      const SizedBox(width: 8),
+                      Text('All assets are tokenized and backed 1:1',
+                          style: TextStyles.bodySmall.copyWith(color: const Color(0xFF93C5FD), fontSize: 12)),
+                    ]),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
+                    itemCount: _assets.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, i) {
+                      final a = _assets[i];
+                      return Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44, height: 44,
+                              decoration: BoxDecoration(
+                                color: a.$6.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: a.$6.withValues(alpha: 0.35)),
+                              ),
+                              child: Center(
+                                child: Text(a.$1.substring(0, a.$1.length > 3 ? 3 : a.$1.length),
+                                    style: TextStyle(color: a.$6, fontWeight: FontWeight.w800, fontSize: 11)),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(a.$1, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+                                  Text(a.$2, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(a.$3, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
+                                const SizedBox(height: 3),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: (a.$5 ? const Color(0xFF10B981) : const Color(0xFFEF4444)).withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(a.$4, style: TextStyle(
+                                    color: a.$5 ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                                    fontSize: 11, fontWeight: FontWeight.w600,
+                                  )),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
