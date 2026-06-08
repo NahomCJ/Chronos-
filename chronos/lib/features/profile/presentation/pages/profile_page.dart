@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,9 +98,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Pexels — professional Caucasian male headshot
+  static const _avatarUrl =
+      'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg'
+      '?auto=compress&cs=tinysrgb&w=200';
+
   Widget _buildTopBar(BuildContext context, UserProfileModel? user) {
-    final name = user?.fullName ?? 'Loading...';
-    final initials = user?.initials ?? '??';
+    final name = user?.fullName ?? 'Alexander Hubert';
     final tier = _tierLabel(user?.tier ?? 'standard');
     final tierColor = _tierColor(user?.tier ?? 'standard');
 
@@ -124,19 +129,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(width: 12),
-              // Avatar
+              // Avatar photo
               Container(
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.5),
                 ),
-                child: Center(
-                  child: Text(initials,
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: _avatarUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(color: const Color(0xFF2A2A40)),
+                    errorWidget: (_, __, ___) => Container(
+                      color: const Color(0xFF2A2A40),
+                      child: const Icon(Icons.person, color: Colors.white54, size: 22),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -451,12 +461,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.07),
+            color: Colors.white.withValues(alpha: 0.13),
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
           ),
           child: child,
         ),

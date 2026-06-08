@@ -159,32 +159,32 @@ class _HomeViewState extends State<_HomeView> {
                         child: GestureDetector(
                           onTap: () => context.push('/search'),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(50),
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                               child: Container(
-                                height: 40 * scale,
+                                height: 34 * scale,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(50),
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.18),
+                                    color: Colors.white.withValues(alpha: 0.14),
                                     width: 0.8,
                                   ),
                                 ),
                                 child: Row(
                                   children: [
-                                    const SizedBox(width: 12),
-                                    Icon(Icons.search, color: Colors.white,
-                                        size: 18 * scale),
-                                    const SizedBox(width: 8),
+                                    const SizedBox(width: 10),
+                                    Icon(Icons.search_rounded,
+                                        color: Colors.white.withValues(alpha: 0.5),
+                                        size: 14 * scale),
+                                    const SizedBox(width: 6),
                                     Expanded(
                                       child: Text(
-                                        'Search services, transactions...',
+                                        'Search...',
                                         style: TextStyles.bodySmall.copyWith(
-                                          color: Colors.white.withValues(
-                                              alpha: 0.85),
-                                          fontSize: 12 * textScale,
+                                          color: Colors.white.withValues(alpha: 0.35),
+                                          fontSize: 11 * textScale,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),

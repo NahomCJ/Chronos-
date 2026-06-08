@@ -17,13 +17,13 @@ class CustomBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -69,22 +69,22 @@ class CustomBottomNav extends StatelessWidget {
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (active)
               Container(
-                width: 4,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 4),
+                width: 3,
+                height: 3,
+                margin: const EdgeInsets.only(bottom: 3),
                 decoration: const BoxDecoration(
                   color: _amber,
                   shape: BoxShape.circle,
                 ),
               )
             else
-              const SizedBox(height: 5),
+              const SizedBox(height: 4),
             Icon(icon, color: color, size: 20),
             const SizedBox(height: 3),
             Text(
@@ -108,22 +108,22 @@ class CustomBottomNav extends StatelessWidget {
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (active)
               Container(
-                width: 4,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 4),
+                width: 3,
+                height: 3,
+                margin: const EdgeInsets.only(bottom: 3),
                 decoration: const BoxDecoration(
                   color: _amber,
                   shape: BoxShape.circle,
                 ),
               )
             else
-              const SizedBox(height: 5),
+              const SizedBox(height: 4),
             ColorFiltered(
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               child: Image.asset(
