@@ -36,7 +36,19 @@ class NftDetailPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(
                 children: [
-                  Icon(Icons.menu, color: Colors.grey[700], size: 24),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back,
+                          color: Colors.black87, size: 20),
+                    ),
+                  ),
                   Expanded(
                     child: Column(
                       children: [

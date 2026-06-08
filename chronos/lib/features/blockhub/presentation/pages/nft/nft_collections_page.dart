@@ -44,6 +44,21 @@ class _NftCollectionsPageState extends State<NftCollectionsPage> {
             Positioned.fill(
               child: Image.asset('assets/background.png', fit: BoxFit.cover),
             ),
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF6D28D9).withValues(alpha: 0.18),
+                      Colors.transparent,
+                      const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             SafeArea(
               child: Column(
                 children: [

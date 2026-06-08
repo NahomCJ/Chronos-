@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 
-class TickPayUpcomingPaymentsPage extends StatelessWidget {
+class TickPayUpcomingPaymentsPage extends StatefulWidget {
   const TickPayUpcomingPaymentsPage({super.key});
 
+  @override
+  State<TickPayUpcomingPaymentsPage> createState() =>
+      _TickPayUpcomingPaymentsPageState();
+}
+
+class _TickPayUpcomingPaymentsPageState
+    extends State<TickPayUpcomingPaymentsPage> {
+  int _selectedDay = 24;
+
   static const _payments = [
-    _Payment('iPhone 15 Pro', 'Apple Store', '\$249.75', '1 of 4', 'Due Today', true),
-    _Payment('Sony WH-1000XM5', 'Best Buy', '\$87.25', '2 of 4', 'Due Soon', true),
+    _Payment('iPhone 15 Pro', 'Apple Store', '\$249.75', '1 of 4',
+        'Due Today', true),
+    _Payment('Sony WH-1000XM5', 'Best Buy', '\$87.25', '2 of 4', 'Due Soon',
+        true),
     _Payment('Air Max Plus', 'Nike', '\$45.00', '3 of 4', 'Due Soon', false),
-    _Payment('MacBook Air M3', 'Apple Store', '\$274.75', '2 of 5', 'Scheduled', true),
-    _Payment('55" 4K TV', 'Samsung', '\$149.75', '1 of 4', 'Scheduled', true),
+    _Payment('MacBook Air M3', 'Apple Store', '\$274.75', '2 of 5',
+        'Scheduled', true),
+    _Payment(
+        '55" 4K TV', 'Samsung', '\$149.75', '1 of 4', 'Scheduled', true),
   ];
 
   Color _statusColor(String status) {
@@ -24,35 +39,95 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            _buildDueTodayCard(),
-            _buildCalendarCard(),
-            Expanded(child: _buildPaymentList(context)),
-          ],
-        ),
+      backgroundColor: Colors.transparent,
+      extendBody: true,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
+      ),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 4,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/tickpay/background.png',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: const Color(0xFF1A0A2E)),
+            ),
+          ),
+          Positioned.fill(
+            child: Container(color: Colors.black.withValues(alpha: 0.35)),
+          ),
+          SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Dark header area (sits on background image)
+                  _buildHeader(context),
+                  _buildDueTodayCard(),
+                  const SizedBox(height: 14),
+                  // White content section
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF8F9FB),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(24)),
+                    ),
+                    padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCalendarCard(),
+                        const SizedBox(height: 18),
+                        const Text('All Payments',
+                            style: TextStyle(
+                                color: Color(0xFF1A1A2E),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 12),
+                        ..._payments.map(
+                            (p) => _buildRow(context, p)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(16, 14, 20, 0),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => context.pop(),
             child: Container(
-              width: 38, height: 38,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.white.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 8)],
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.2)),
               ),
-              child: const Icon(Icons.arrow_back, color: Color(0xFF1A1A2E), size: 18),
+              child: const Icon(Icons.arrow_back,
+                  color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 14),
@@ -60,16 +135,24 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Upcoming Payments',
-                  style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
               Text('Manage your payment schedule',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 12)),
             ],
           ),
           const Spacer(),
           Container(
-            width: 36, height: 36,
-            decoration: const BoxDecoration(color: Color(0xFFDC8F4A), shape: BoxShape.circle),
-            child: const Icon(Icons.person, color: Colors.white, size: 20),
+            width: 36,
+            height: 36,
+            decoration: const BoxDecoration(
+                color: Color(0xFFDC8F4A), shape: BoxShape.circle),
+            child:
+                const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
       ),
@@ -78,18 +161,23 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
 
   Widget _buildDueTodayCard() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF7C3AED), Color(0xFF9F67FF)],
-            begin: Alignment.topLeft, end: Alignment.bottomRight,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(
-            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
-            blurRadius: 16, offset: const Offset(0, 6))],
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            )
+          ],
         ),
         child: Row(
           children: [
@@ -98,20 +186,27 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Due Today',
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13)),
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 13)),
                   const SizedBox(height: 4),
                   const Text('\$249.75',
-                      style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
             Container(
-              width: 52, height: 52,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.calendar_today, color: Colors.white, size: 24),
+              child: const Icon(Icons.calendar_today,
+                  color: Colors.white, size: 24),
             ),
           ],
         ),
@@ -121,67 +216,113 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
 
   Widget _buildCalendarCard() {
     final days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12)],
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('May 2026',
-                    style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 15, fontWeight: FontWeight.w700)),
-                Row(children: [
-                  Icon(Icons.chevron_left, color: Colors.grey.shade400, size: 22),
-                  Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 22),
-                ]),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: days.map((d) => Text(d,
-                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11,
-                      fontWeight: FontWeight.w600))).toList(),
-            ),
-            const SizedBox(height: 6),
-            _calRow([1,2,3,4,5,6,7], []),
-            _calRow([8,9,10,11,12,13,14], []),
-            _calRow([15,16,17,18,19,20,21], []),
-            _calRow([22,23,24,25,26,27,28], [24, 28]),
-            _calRow([29,30,null,null,null,null,null], []),
-          ],
-        ),
+    final paymentDays = [24, 28];
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 12)
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('May 2026',
+                  style: TextStyle(
+                      color: Color(0xFF1A1A2E),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700)),
+              Row(children: [
+                Icon(Icons.chevron_left,
+                    color: Colors.grey.shade400, size: 22),
+                Icon(Icons.chevron_right,
+                    color: Colors.grey.shade400, size: 22),
+              ]),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: days
+                .map((d) => Text(d,
+                    style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600)))
+                .toList(),
+          ),
+          const SizedBox(height: 6),
+          _calRow([1, 2, 3, 4, 5, 6, 7], paymentDays),
+          _calRow([8, 9, 10, 11, 12, 13, 14], paymentDays),
+          _calRow([15, 16, 17, 18, 19, 20, 21], paymentDays),
+          _calRow([22, 23, 24, 25, 26, 27, 28], paymentDays),
+          _calRow([29, 30, null, null, null, null, null], paymentDays),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                    color: Color(0xFF7C3AED), shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 6),
+              Text('Payment due',
+                  style: TextStyle(
+                      color: Colors.grey.shade500, fontSize: 11)),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _calRow(List<int?> days, List<int> marked) {
+  Widget _calRow(List<int?> days, List<int> paymentDays) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: days.map((d) {
-          if (d == null) return const SizedBox(width: 30, height: 30);
-          final isMarked = marked.contains(d);
-          return Container(
-            width: 30, height: 30,
-            decoration: BoxDecoration(
-              color: isMarked ? const Color(0xFF7C3AED) : Colors.transparent,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text('$d', style: TextStyle(
-                color: isMarked ? Colors.white : const Color(0xFF1A1A2E),
-                fontSize: 13,
-                fontWeight: isMarked ? FontWeight.bold : FontWeight.normal,
-              )),
+          if (d == null) return const SizedBox(width: 32, height: 32);
+          final isPayment = paymentDays.contains(d);
+          final isSelected = _selectedDay == d;
+          return GestureDetector(
+            onTap: () => setState(() => _selectedDay = d),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: isPayment
+                    ? const Color(0xFF7C3AED)
+                    : isSelected
+                        ? const Color(0xFF7C3AED).withValues(alpha: 0.1)
+                        : Colors.transparent,
+                shape: BoxShape.circle,
+                border: isSelected && !isPayment
+                    ? Border.all(
+                        color: const Color(0xFF7C3AED).withValues(alpha: 0.4))
+                    : null,
+              ),
+              child: Center(
+                child: Text('$d',
+                    style: TextStyle(
+                      color: isPayment
+                          ? Colors.white
+                          : isSelected
+                              ? const Color(0xFF7C3AED)
+                              : const Color(0xFF1A1A2E),
+                      fontSize: 13,
+                      fontWeight: isPayment
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    )),
+              ),
             ),
           );
         }).toList(),
@@ -189,43 +330,31 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentList(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 10),
-          child: Text('All Payments',
-              style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.bold)),
-        ),
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: _payments.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (context, i) => _buildRow(context, _payments[i]),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildRow(BuildContext context, _Payment p) {
     final sc = _statusColor(p.status);
     return GestureDetector(
-      onTap: () => context.push(RouteConstants.tickpayRepayNow.toPath),
+      onTap: () =>
+          context.push(RouteConstants.tickpayRepayNow.toPath),
       child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8)
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 42, height: 42,
-              decoration: BoxDecoration(color: sc.withValues(alpha: 0.1), shape: BoxShape.circle),
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                  color: sc.withValues(alpha: 0.1),
+                  shape: BoxShape.circle),
               child: Icon(Icons.shopping_bag_outlined, color: sc, size: 20),
             ),
             const SizedBox(width: 12),
@@ -234,9 +363,13 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(p.name,
-                      style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
+                      style: const TextStyle(
+                          color: Color(0xFF1A1A2E),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
                   Text(p.store,
-                      style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                      style: TextStyle(
+                          color: Colors.grey.shade500, fontSize: 12)),
                 ],
               ),
             ),
@@ -244,29 +377,41 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(p.amount,
-                    style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        color: Color(0xFF1A1A2E),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
                         color: sc.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(p.status,
-                          style: TextStyle(color: sc, fontSize: 10, fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: sc,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold)),
                     ),
                     if (p.autoPay) ...[
                       const SizedBox(width: 5),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00C853).withValues(alpha: 0.1),
+                          color: const Color(0xFF00C853)
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text('Auto-pay',
-                            style: TextStyle(color: Color(0xFF00C853), fontSize: 10, fontWeight: FontWeight.w500)),
+                            style: TextStyle(
+                                color: Color(0xFF00C853),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500)),
                       ),
                     ],
                   ],
@@ -283,5 +428,6 @@ class TickPayUpcomingPaymentsPage extends StatelessWidget {
 class _Payment {
   final String name, store, amount, installment, status;
   final bool autoPay;
-  const _Payment(this.name, this.store, this.amount, this.installment, this.status, this.autoPay);
+  const _Payment(this.name, this.store, this.amount, this.installment,
+      this.status, this.autoPay);
 }

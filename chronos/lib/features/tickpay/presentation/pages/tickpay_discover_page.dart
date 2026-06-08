@@ -73,15 +73,77 @@ class TickPayDiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      bottomNavigationBar: CustomBottomNav(
-        selectedIndex: 4,
-        onItemSelected: (i) {
-          switch (i) {
-            case 0: context.go(RouteConstants.home.toPath);
-            case 1: context.go(RouteConstants.pantherAi.toPath);
-            case 2: context.go(RouteConstants.blockHub.toPath);
-          }
-        },
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D0D1A),
+                borderRadius: BorderRadius.circular(14),
+                border:
+                    Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.auto_awesome,
+                        color: Color(0xFF8B5CF6), size: 14),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Ask AI to find anything...',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 13),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5CF6),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text('Ask',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          CustomBottomNav(
+            selectedIndex: 4,
+            onItemSelected: (i) {
+              switch (i) {
+                case 0: context.go(RouteConstants.home.toPath);
+                case 1: context.go(RouteConstants.pantherAi.toPath);
+                case 2: context.go(RouteConstants.blockHub.toPath);
+              }
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

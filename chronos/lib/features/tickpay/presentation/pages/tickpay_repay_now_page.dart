@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
@@ -19,43 +22,81 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
+      backgroundColor: Colors.transparent,
+      extendBody: true,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
+      ),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 4,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
+      body: Stack(
         children: [
-          Container(
-            color: const Color(0xFF1A0A2E),
-            child: SafeArea(
-              bottom: false,
-              child: _buildHeader(context),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/tickpay/background.png',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: const Color(0xFF1A0A2E)),
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  _buildProductCard(),
-                  const SizedBox(height: 24),
-                  _buildAmountSection(),
-                  const SizedBox(height: 24),
-                  _buildPaymentMethod(),
-                  const SizedBox(height: 20),
-                  _buildTotalRow(),
-                  const SizedBox(height: 24),
-                  _buildConfirmButton(context),
-                  const SizedBox(height: 12),
-                  const Center(
-                    child: Text(
-                      'Payment will be processed immediately',
-                      style: TextStyle(color: Color(0xFFBBBBBB), fontSize: 11),
+          Positioned.fill(
+            child: Container(color: Colors.black.withValues(alpha: 0.35)),
+          ),
+          Column(
+            children: [
+              SafeArea(
+                bottom: false,
+                child: _buildHeader(context),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8F9FA),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(24)),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProductCard(),
+                          const SizedBox(height: 24),
+                          _buildAmountSection(),
+                          const SizedBox(height: 24),
+                          _buildPaymentMethod(),
+                          const SizedBox(height: 20),
+                          _buildTotalRow(),
+                          const SizedBox(height: 24),
+                          _buildConfirmButton(context),
+                          const SizedBox(height: 12),
+                          const Center(
+                            child: Text(
+                              'Payment will be processed immediately',
+                              style: TextStyle(
+                                  color: Color(0xFFBBBBBB), fontSize: 11),
+                            ),
+                          ),
+                          const SizedBox(height: 120),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -64,7 +105,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 20, 16),
+      padding: const EdgeInsets.fromLTRB(16, 14, 20, 14),
       child: Row(
         children: [
           GestureDetector(
@@ -73,9 +114,13 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  shape: BoxShape.circle),
-              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                color: Colors.white.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.2)),
+              ),
+              child: const Icon(Icons.arrow_back,
+                  color: Colors.white, size: 18),
             ),
           ),
           const SizedBox(width: 12),
@@ -89,7 +134,8 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                       fontWeight: FontWeight.bold)),
               Text('Make a payment on your plan',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 12)),
             ],
           ),
         ],
@@ -101,12 +147,16 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF2D1B4E), Color(0xFF3D2B5E)],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFEEEEEE)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -125,13 +175,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                   children: [
                     const Text('iPhone 15 Pro',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A2E),
                             fontSize: 15,
                             fontWeight: FontWeight.w600)),
                     Text('Apple Store',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            fontSize: 12)),
+                            color: Colors.grey.shade500, fontSize: 12)),
                   ],
                 ),
               ),
@@ -141,7 +190,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFDC8F4A).withValues(alpha: 0.15),
+              color: const Color(0xFFFFF8F0),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                   color: const Color(0xFFDC8F4A).withValues(alpha: 0.3)),
@@ -151,8 +200,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
               children: [
                 Text('Payment 1 of 4',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 12)),
+                        color: Colors.grey.shade600, fontSize: 12)),
                 const Text('Due',
                     style: TextStyle(
                         color: Color(0xFFDC8F4A),
@@ -180,11 +228,13 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       children: [
         Text(label,
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
+                color: Colors.grey.shade500, fontSize: 11)),
         const SizedBox(height: 2),
         Text(value,
             style: const TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                color: Color(0xFF1A1A2E),
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -202,12 +252,14 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
         _amountOption(0, 'Pay Full Balance',
             'Clear your entire balance today', '\$749.25'),
         const SizedBox(height: 10),
-        _amountOption(1, 'Pay Due Amount', "Pay only what's due today", '\$249.75'),
+        _amountOption(1, 'Pay Due Amount',
+            "Pay only what's due today", '\$249.75'),
       ],
     );
   }
 
-  Widget _amountOption(int index, String title, String subtitle, String amount) {
+  Widget _amountOption(
+      int index, String title, String subtitle, String amount) {
     final isSelected = _amountChoice == index;
     return GestureDetector(
       onTap: () => setState(() => _amountChoice = index),
@@ -241,10 +293,13 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                         ? const Color(0xFF7C3AED)
                         : const Color(0xFFCCCCCC),
                     width: 1.5),
-                color: isSelected ? const Color(0xFF7C3AED) : Colors.transparent,
+                color: isSelected
+                    ? const Color(0xFF7C3AED)
+                    : Colors.transparent,
               ),
               child: isSelected
-                  ? const Icon(Icons.check, color: Colors.white, size: 12)
+                  ? const Icon(Icons.check,
+                      color: Colors.white, size: 12)
                   : null,
             ),
             const SizedBox(width: 12),
@@ -287,7 +342,8 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             const Text('View All',
-                style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13)),
+                style: TextStyle(
+                    color: Color(0xFF7C3AED), fontSize: 13)),
           ],
         ),
         const SizedBox(height: 12),
@@ -299,7 +355,8 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
     );
   }
 
-  Widget _methodRow(int index, IconData icon, String title, String subtitle) {
+  Widget _methodRow(
+      int index, IconData icon, String title, String subtitle) {
     final isSelected = _selectedMethod == index;
     return GestureDetector(
       onTap: () => setState(() => _selectedMethod = index),
@@ -330,7 +387,8 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: const Color(0xFF7C3AED), size: 18),
+              child:
+                  Icon(icon, color: const Color(0xFF7C3AED), size: 18),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -353,8 +411,10 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 width: 22,
                 height: 22,
                 decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED), shape: BoxShape.circle),
-                child: const Icon(Icons.check, color: Colors.white, size: 14),
+                    color: Color(0xFF7C3AED),
+                    shape: BoxShape.circle),
+                child: const Icon(Icons.check,
+                    color: Colors.white, size: 14),
               ),
           ],
         ),
@@ -363,7 +423,8 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
   }
 
   Widget _buildTotalRow() {
-    final total = _amountChoice == 0 ? '\$749.25' : '\$249.75';
+    final total =
+        _amountChoice == 0 ? '\$749.25' : '\$249.75';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -404,11 +465,10 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       builder: (context, state) {
         final loaded = state is TickpayAccountLoaded ? state : null;
         final isLoading = state is TickpayActionLoading;
-
-        // Compute repayment amount from real account data or fallback to defaults
         final balance = loaded?.balance ?? 0.0;
-        final dueNow = balance * 0.25; // 25% minimum payment
-        final fullAmount = _amountChoice == 0 ? balance : dueNow;
+        final dueNow = balance * 0.25;
+        final fullAmount =
+            _amountChoice == 0 ? balance : dueNow;
 
         return SizedBox(
           width: double.infinity,
@@ -416,8 +476,14 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
             onPressed: isLoading
                 ? null
                 : () {
-                    context.read<TickpayAccountCubit>().createRepayment(
-                          amount: fullAmount > 0 ? fullAmount : (_amountChoice == 0 ? 749.25 : 249.75),
+                    context
+                        .read<TickpayAccountCubit>()
+                        .createRepayment(
+                          amount: fullAmount > 0
+                              ? fullAmount
+                              : (_amountChoice == 0
+                                  ? 749.25
+                                  : 249.75),
                         );
                   },
             style: ElevatedButton.styleFrom(
@@ -436,8 +502,9 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                         strokeWidth: 2, color: Colors.white),
                   )
                 : const Text('Confirm Payment',
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600)),
           ),
         );
       },
