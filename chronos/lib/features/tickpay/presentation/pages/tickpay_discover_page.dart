@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayDiscoverPage extends StatelessWidget {
@@ -72,6 +73,16 @@ class TickPayDiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 4,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
       body: Stack(
         children: [
           // Background image
@@ -102,26 +113,35 @@ class TickPayDiscoverPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 24),
-                      _buildFeaturedDeals(context),
-                      const SizedBox(height: 28),
-                      _buildSection(context, 'Fashion Picks', _fashionProducts, const Color(0xFFFF2D87)),
-                      const SizedBox(height: 28),
-                      _buildSection(context, 'Sports & Fitness', _sportsProducts, const Color(0xFF00D4B8)),
-                      const SizedBox(height: 28),
-                      _buildSection(context, 'Home & Living', _homeProducts, const Color(0xFFDC8F4A)),
-                      const SizedBox(height: 28),
-                      _buildSection(context, 'Beauty & Care', _beautyProducts, const Color(0xFFFF6EB4)),
-                      const SizedBox(height: 28),
-                      _buildSection(context, 'Gaming', _gamingProducts, const Color(0xFF8B5CF6)),
-                      const SizedBox(height: 28),
-                      _buildRecommended(context),
-                      const SizedBox(height: 100),
-                    ],
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8F9FB),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 24),
+                          _buildFeaturedDeals(context),
+                          const SizedBox(height: 28),
+                          _buildSection(context, 'Fashion Picks', _fashionProducts, const Color(0xFFFF2D87)),
+                          const SizedBox(height: 28),
+                          _buildSection(context, 'Sports & Fitness', _sportsProducts, const Color(0xFF00A693)),
+                          const SizedBox(height: 28),
+                          _buildSection(context, 'Home & Living', _homeProducts, const Color(0xFFDC8F4A)),
+                          const SizedBox(height: 28),
+                          _buildSection(context, 'Beauty & Care', _beautyProducts, const Color(0xFFFF6EB4)),
+                          const SizedBox(height: 28),
+                          _buildSection(context, 'Gaming', _gamingProducts, const Color(0xFF8B5CF6)),
+                          const SizedBox(height: 28),
+                          _buildRecommended(context),
+                          const SizedBox(height: 40),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -287,7 +307,7 @@ class TickPayDiscoverPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Featured Deals',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
                 child: const Row(children: [
@@ -308,7 +328,7 @@ class TickPayDiscoverPage extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
               final p = _electronicsProducts[i];
-              return _productCard(context, p.$1, p.$2, p.$3, p.$4, isDark: true);
+              return _productCard(context, p.$1, p.$2, p.$3, p.$4);
             },
           ),
         ),
@@ -328,7 +348,7 @@ class TickPayDiscoverPage extends StatelessWidget {
             children: [
               Text(title,
                   style: const TextStyle(
-                      color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
                 child: Row(children: [
@@ -349,7 +369,7 @@ class TickPayDiscoverPage extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
               final p = products[i];
-              return _productCard(context, p.$1, p.$2, p.$3, p.$4, isDark: true);
+              return _productCard(context, p.$1, p.$2, p.$3, p.$4);
             },
           ),
         ),
@@ -378,14 +398,14 @@ class TickPayDiscoverPage extends StatelessWidget {
                   width: 22,
                   height: 22,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 13),
                 ),
                 const SizedBox(width: 6),
                 const Text('Recommended for You',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
               ]),
               GestureDetector(
                 onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
@@ -413,80 +433,80 @@ class TickPayDiscoverPage extends StatelessWidget {
   }
 
   Widget _productCard(BuildContext context, String name, String price,
-      String asset, double discount, {bool isDark = false}) {
+      String asset, double discount) {
     return GestureDetector(
       onTap: () => context.push(RouteConstants.tickpayProductDetail.toPath,
           extra: {'name': name, 'price': price, 'asset': asset}),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            width: 152,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.9),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
+      child: Container(
+        width: 152,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: Stack(
+          ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TickPayImage(asset,
-                        height: 115,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: isDark ? Colors.white : const Color(0xFF1A1A1A),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 2),
-                          Text(price,
-                              style: TextStyle(
-                                  color: isDark ? Colors.white : const Color(0xFF1A1A1A),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85), shape: BoxShape.circle),
-                    child: const Icon(Icons.favorite_border, color: Color(0xFF444444), size: 14),
-                  ),
-                ),
-                if (discount > 0)
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                          color: const Color(0xFFFF2D87),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Text('-${(discount * 100).toInt()}%',
+                TickPayImage(asset,
+                    height: 115,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-                    ),
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 2),
+                      Text(price,
+                          style: const TextStyle(
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold)),
+                    ],
                   ),
+                ),
               ],
             ),
-          ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9), shape: BoxShape.circle),
+                child: const Icon(Icons.favorite_border, color: Color(0xFF888888), size: 14),
+              ),
+            ),
+            if (discount > 0)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFFF2D87),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Text('-${(discount * 100).toInt()}%',
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -496,71 +516,75 @@ class TickPayDiscoverPage extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.push(RouteConstants.tickpayProductDetail.toPath,
           extra: {'name': name, 'price': price, 'asset': asset}),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            width: 152,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
+      child: Container(
+        width: 152,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: Stack(
+          ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TickPayImage(asset,
-                        height: 115,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 2),
-                          Text(price,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFF8B5CF6),
-                        borderRadius: BorderRadius.circular(6)),
-                    child: const Text('AI',
-                        style: TextStyle(
-                            color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.85), shape: BoxShape.circle),
-                    child: const Icon(Icons.favorite_border, color: Color(0xFF444444), size: 14),
+                TickPayImage(asset,
+                    height: 115,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 2),
+                      Text(price,
+                          style: const TextStyle(
+                              color: Color(0xFF1A1A1A),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                    color: const Color(0xFF8B5CF6),
+                    borderRadius: BorderRadius.circular(6)),
+                child: const Text('AI',
+                    style: TextStyle(
+                        color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9), shape: BoxShape.circle),
+                child: const Icon(Icons.favorite_border, color: Color(0xFF888888), size: 14),
+              ),
+            ),
+          ],
         ),
       ),
     );

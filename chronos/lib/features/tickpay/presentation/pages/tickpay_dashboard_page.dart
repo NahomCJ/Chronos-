@@ -15,8 +15,21 @@ import 'chris_shopping_page.dart';
 // ---------------------------------------------------------------------------
 // Design constants
 // ---------------------------------------------------------------------------
-const _kCard = Color(0xFF1A1A2E);
 const _kBorder = Color(0x1AFFFFFF); // white 10%
+
+Widget _brandBadge(String asset, Color tint, Color bg) => Container(
+      width: 44,
+      height: 44,
+      padding: const EdgeInsets.all(9),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2)),
+        ],
+      ),
+      child: Image.asset(asset, color: tint, fit: BoxFit.contain),
+    );
 
 class TickPayDashboardPage extends StatefulWidget {
   const TickPayDashboardPage({super.key});
@@ -465,15 +478,12 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
 
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
-      (Icons.shopping_bag_outlined, 'Shop',
-          RouteConstants.tickpayDiscover.toPath),
-      (Icons.payment_outlined, 'Pay', RouteConstants.tickpayRepayNow.toPath),
-      (Icons.receipt_long_outlined, 'Purchases',
-          RouteConstants.tickpayOrderHistory.toPath),
-      (Icons.replay_outlined, 'Repayments',
-          RouteConstants.tickpayUpcomingPayments.toPath),
-      (Icons.savings_outlined, 'Rewards',
-          RouteConstants.tickpayRewards.toPath),
+      (Icons.shopping_bag_outlined, 'Shop', RouteConstants.tickpayDiscover.toPath, false),
+      (Icons.auto_awesome_rounded, 'AI Shop', RouteConstants.tickpayAiShop.toPath, true),
+      (Icons.payment_outlined, 'Pay', RouteConstants.tickpayRepayNow.toPath, false),
+      (Icons.receipt_long_outlined, 'Purchases', RouteConstants.tickpayOrderHistory.toPath, false),
+      (Icons.replay_outlined, 'Repayments', RouteConstants.tickpayUpcomingPayments.toPath, false),
+      (Icons.savings_outlined, 'Rewards', RouteConstants.tickpayRewards.toPath, false),
     ];
     return SizedBox(
       height: 80,
@@ -483,6 +493,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
         itemCount: actions.length,
         separatorBuilder: (_, __) => const SizedBox(width: 20),
         itemBuilder: (context, i) {
+          final isAi = actions[i].$4;
           return GestureDetector(
             onTap: () => context.push(actions[i].$3),
             child: Column(
@@ -491,21 +502,30 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: isAi
+                        ? const Color(0xFF14B8A6).withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                     border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        width: 0.8),
+                      color: isAi
+                          ? const Color(0xFF14B8A6).withValues(alpha: 0.5)
+                          : Colors.white.withValues(alpha: 0.2),
+                      width: isAi ? 1.2 : 0.8,
+                    ),
                   ),
-                  child:
-                      Icon(actions[i].$1, color: Colors.white, size: 22),
+                  child: Icon(actions[i].$1,
+                      color: isAi ? const Color(0xFF14B8A6) : Colors.white,
+                      size: 22),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   actions[i].$2,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: isAi
+                        ? const Color(0xFF14B8A6)
+                        : Colors.white.withValues(alpha: 0.75),
                     fontSize: 11,
+                    fontWeight: isAi ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
               ],
@@ -555,10 +575,14 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
     final purchases = account?.purchases ?? [];
 
     final mockPlans = [
-      (Icons.shopping_cart, const Color(0xFFFF9900), 'Amazon', '#9012',
-          '3 of 4 payments left', '\$599'),
-      (Icons.check_circle_outline, const Color(0xFFE53935), 'Nike', '#8234',
-          '2 of 3 payments left', '\$450'),
+      (
+        _brandBadge('assets/tickpay/amazon.png', Colors.white, const Color(0xFF0F0F0F)),
+        'Amazon', '#9012', '3 of 4 payments left', '\$599',
+      ),
+      (
+        _brandBadge('assets/tickpay/nike.png', Colors.white, Colors.black),
+        'Nike', '#8234', '2 of 3 payments left', '\$450',
+      ),
     ];
 
     return Padding(
@@ -595,12 +619,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             ...mockPlans.map((p) => Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: _buildPlanItem(
-                    logo: p.$1,
-                    brand: p.$3,
-                    orderRef: p.$4,
-                    info: p.$5,
-                    amount: p.$6,
-                    color: p.$2,
+                    logoWidget: p.$1,
+                    brand: p.$2,
+                    orderRef: p.$3,
+                    info: p.$4,
+                    amount: p.$5,
                   ),
                 ))
           else
@@ -609,13 +632,20 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: _buildPlanItem(
-                  logo: icon,
+                  logoWidget: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: color, size: 22),
+                  ),
                   brand: tx.merchant ?? 'Purchase',
                   orderRef:
                       '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
                   info: _installmentInfo(tx.amount, tx.id),
                   amount: '\$${fmt.format(tx.amount)}',
-                  color: color,
                 ),
               );
             }),
@@ -625,12 +655,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
   }
 
   Widget _buildPlanItem({
-    required IconData logo,
+    required Widget logoWidget,
     required String brand,
     required String orderRef,
     required String info,
     required String amount,
-    required Color color,
   }) {
     double progress = 0.5;
     final match = RegExp(r'(\d+) of (\d+)').firstMatch(info);
@@ -643,7 +672,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _kCard,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1E2240), Color(0xFF0D0D1A)],
+        ),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: _kBorder, width: 1),
       ),
@@ -651,15 +684,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
         children: [
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(logo, color: color, size: 22),
-              ),
+              logoWidget,
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -699,7 +724,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               Text(
                 amount,
                 style: const TextStyle(
-                  color: Color(0xFFFF9900),
+                  color: Color(0xFF14B8A6),
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
@@ -712,7 +737,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             child: LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.white.withValues(alpha: 0.08),
-              valueColor: AlwaysStoppedAnimation(color),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF14B8A6)),
               minHeight: 4,
             ),
           ),

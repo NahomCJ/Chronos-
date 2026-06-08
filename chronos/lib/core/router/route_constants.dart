@@ -66,6 +66,7 @@ enum RouteConstants {
   tickpayPaymentHistory,
   tickpayAlerts,
   tickpayAutoPay,
+  tickpayAiShop,
   fullPortfolioAnalysis,
   paymentPlan,
   productDiscovery,
@@ -212,6 +213,8 @@ extension RouteConstantsX on RouteConstants {
         return '/tickpay/alerts';
       case RouteConstants.tickpayAutoPay:
         return '/tickpay/auto-pay';
+      case RouteConstants.tickpayAiShop:
+        return '/tickpay/ai-shop';
       case RouteConstants.fullPortfolioAnalysis:
         return '/full-portfolio-analysis';
       case RouteConstants.paymentPlan:
@@ -368,6 +371,8 @@ extension RouteConstantsX on RouteConstants {
         return 'tickpay-alerts';
       case RouteConstants.tickpayAutoPay:
         return 'tickpay-auto-pay';
+      case RouteConstants.tickpayAiShop:
+        return 'tickpay-ai-shop';
       case RouteConstants.fullPortfolioAnalysis:
         return 'full-portfolio-analysis';
       case RouteConstants.paymentPlan:

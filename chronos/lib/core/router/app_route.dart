@@ -77,6 +77,7 @@ import '../../features/tickpay/presentation/pages/tickpay_repay_now_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_payment_history_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_alerts_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_auto_pay_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_ai_shop_page.dart';
 import '../../features/tickpay/presentation/utils/tickpay_media.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'route_constants.dart';
@@ -582,6 +583,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.tickpayAutoPay.toPath,
       name: RouteConstants.tickpayAutoPay.name,
       builder: (context, state) => const TickPayAutoPayPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAiShop.toPath,
+      name: RouteConstants.tickpayAiShop.name,
+      builder: (context, state) => const TickPayAiShopPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

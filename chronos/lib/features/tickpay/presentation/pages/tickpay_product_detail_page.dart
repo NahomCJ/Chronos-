@@ -515,20 +515,27 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
   }
 
   Widget _buildDescription() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        title: const Text('Description',
+            style: TextStyle(
+                color: Color(0xFF1A1A2E),
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
+        iconColor: const Color(0xFF1A1A2E),
+        collapsedIconColor: const Color(0xFF1A1A2E),
         children: [
-          const Text('Description',
-              style: TextStyle(
-                  color: Color(0xFF1A1A2E),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(
-            'The ${widget.name} features a titanium design with a 48MP main camera, A17 Pro chip, and Action button. Experience ProMotion display technology and all-day battery life.',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.5),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Text(
+              '${widget.name} delivers an outstanding combination of performance and design. '
+              'Featuring advanced processing, premium build quality, and long-lasting battery life, '
+              "it's engineered for those who demand the best.",
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.5),
+            ),
           ),
         ],
       ),
@@ -537,39 +544,50 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
 
   Widget _buildKeyFeatures() {
     final features = [
-      'A17 chip with 6-core GPU',
-      '48MP Main camera with Super Retina XDR',
-      'Titanium design with Ceramic Shield',
-      'Action button for quick shortcuts',
+      'High-performance processor',
+      'Pro-grade camera system',
+      'Premium build materials',
+      'Customizable quick-action controls',
       'All-day battery life',
-      'Emergency SOS via satellite',
+      'Advanced connectivity & safety features',
     ];
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: false,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        title: const Text('Key Features',
+            style: TextStyle(
+                color: Color(0xFF1A1A2E),
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
+        iconColor: const Color(0xFF1A1A2E),
+        collapsedIconColor: const Color(0xFF1A1A2E),
         children: [
-          const Text('Key Features',
-              style: TextStyle(
-                  color: Color(0xFF1A1A2E),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          ...features.map((f) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.check_circle,
-                        color: Color(0xFF00C853), size: 16),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(f,
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                    ),
-                  ],
-                ),
-              )),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Column(
+              children: features
+                  .map((f) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.check_circle,
+                                color: Color(0xFF00C853), size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(f,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 13)),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ),
         ],
       ),
     );
