@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 
 class ExchangePage extends StatefulWidget {
   const ExchangePage({super.key});
@@ -36,6 +37,16 @@ class _ExchangePageState extends State<ExchangePage> {
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
+      ),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 0,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -277,7 +288,7 @@ class _ExchangePageState extends State<ExchangePage> {
                           ),
                         ),
 
-                        const SizedBox(height: 100),
+                        const SizedBox(height: 32),
                       ],
                     ),
                   ),

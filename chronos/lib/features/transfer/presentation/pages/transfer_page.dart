@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/chris_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 
 class TransferPage extends StatelessWidget {
   const TransferPage({super.key});
@@ -20,6 +21,16 @@ class TransferPage extends StatelessWidget {
     ); // Cap scaling for large screens
     return Scaffold(
       backgroundColor: Colors.black,
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 0,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
       body: Stack(
         children: [
           // Background Image
@@ -158,7 +169,7 @@ class TransferPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 120), // Space for the global nav bar
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

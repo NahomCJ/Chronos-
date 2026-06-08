@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 
 // ---------------------------------------------------------------------------
 // Constants — unified dark-glass design language
@@ -151,6 +153,16 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _kBg,
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 0,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
