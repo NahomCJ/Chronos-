@@ -22,24 +22,26 @@ class _TransferPageState extends State<TransferPage>
   late AnimationController _ctrl;
   late List<Animation<double>> _anims;
 
+  // Each method: icon, title, subtitle, light gradient, dark gradient
   static const _methods = [
     _Method(Icons.people_alt_rounded, 'Contacts', 'Send to a contact',
-        Color(0xFF3B82F6), Color(0xFF1D4ED8)),
+        Color(0xFF60A5FA), Color(0xFF1D4ED8)),
     _Method(Icons.manage_accounts_rounded, 'Chronos User',
-        'Username or QR code', Color(0xFF8B5CF6), Color(0xFF6D28D9)),
+        'Username or QR', Color(0xFFA78BFA), Color(0xFF5B21B6)),
     _Method(Icons.account_balance_rounded, 'Bank Account',
-        'External bank transfer', Color(0xFF10B981), Color(0xFF059669)),
+        'Wire transfer', Color(0xFF34D399), Color(0xFF065F46)),
     _Method(Icons.public_rounded, 'International', 'Send abroad',
-        Color(0xFFF59E0B), Color(0xFFD97706)),
+        Color(0xFFFBBF24), Color(0xFF92400E)),
   ];
 
+  // Real person feel — distinct icons per slot
   static const _recents = [
-    _Recent('A', 'Alex', Color(0xFF3B82F6)),
-    _Recent('S', 'Sarah', Color(0xFF8B5CF6)),
-    _Recent('M', 'Mike', Color(0xFF10B981)),
-    _Recent('E', 'Emma', Color(0xFFF59E0B)),
-    _Recent('B', 'Ben', Color(0xFFEF4444)),
-    _Recent('J', 'Julia', Color(0xFFEC4899)),
+    _Recent(Icons.face_rounded, 'Alex', Color(0xFF3B82F6)),
+    _Recent(Icons.face_3_rounded, 'Sarah', Color(0xFF8B5CF6)),
+    _Recent(Icons.face_2_rounded, 'Mike', Color(0xFF10B981)),
+    _Recent(Icons.face_4_rounded, 'Emma', Color(0xFFF59E0B)),
+    _Recent(Icons.face_5_rounded, 'Ben', Color(0xFFEF4444)),
+    _Recent(Icons.face_6_rounded, 'Julia', Color(0xFFEC4899)),
   ];
 
   @override
@@ -104,6 +106,7 @@ class _TransferPageState extends State<TransferPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A14),
+      extendBody: true,
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
@@ -134,12 +137,22 @@ class _TransferPageState extends State<TransferPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 20),
-                _buildBalanceCard(),
-                const SizedBox(height: 28),
-                _buildGrid(),
-                const SizedBox(height: 28),
-                _buildRecentSection(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 120),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 14),
+                        _buildBalanceCard(),
+                        const SizedBox(height: 18),
+                        _buildGrid(),
+                        const SizedBox(height: 18),
+                        _buildRecentSection(),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -150,7 +163,7 @@ class _TransferPageState extends State<TransferPage>
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
       child: Row(
         children: [
           GestureDetector(
@@ -163,7 +176,7 @@ class _TransferPageState extends State<TransferPage>
           const Text('Send Money',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3)),
           const Spacer(),
@@ -181,29 +194,29 @@ class _TransferPageState extends State<TransferPage>
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            width: 38,
-            height: 38,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.10),
               shape: BoxShape.circle,
               border:
                   Border.all(color: Colors.white.withValues(alpha: 0.18)),
             ),
-            child: Icon(icon, color: Colors.white, size: 18),
+            child: Icon(icon, color: Colors.white, size: 16),
           ),
         ),
       );
 
   Widget _buildBalanceCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
             padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -213,7 +226,7 @@ class _TransferPageState extends State<TransferPage>
                   Colors.white.withValues(alpha: 0.06),
                 ],
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border:
                   Border.all(color: Colors.white.withValues(alpha: 0.15)),
             ),
@@ -225,12 +238,12 @@ class _TransferPageState extends State<TransferPage>
                     Text('Available Balance',
                         style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.55),
-                            fontSize: 12)),
-                    const SizedBox(height: 4),
+                            fontSize: 10)),
+                    const SizedBox(height: 3),
                     const Text('\$12,430.50',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.5)),
                   ],
@@ -238,10 +251,10 @@ class _TransferPageState extends State<TransferPage>
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
+                      horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFF14B8A6).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                         color: const Color(0xFF14B8A6)
                             .withValues(alpha: 0.4)),
@@ -249,7 +262,7 @@ class _TransferPageState extends State<TransferPage>
                   child: const Text('USD',
                       style: TextStyle(
                           color: Color(0xFF14B8A6),
-                          fontSize: 13,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600)),
                 ),
               ],
@@ -262,14 +275,14 @@ class _TransferPageState extends State<TransferPage>
 
   Widget _buildGrid() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView.count(
         crossAxisCount: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 1.45,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1.6,
         children: List.generate(_methods.length, (i) {
           final m = _methods[i];
           return FadeTransition(
@@ -290,30 +303,30 @@ class _TransferPageState extends State<TransferPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Recent Recipients',
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600)),
               Text('See All',
                   style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 13)),
+                      fontSize: 11)),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         SizedBox(
-          height: 78,
+          height: 64,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: _recents.length + 1,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (_, __) => const SizedBox(width: 14),
             itemBuilder: (_, i) {
               if (i == _recents.length) return _addNewBtn();
               return _RecentAvatar(recent: _recents[i]);
@@ -329,8 +342,8 @@ class _TransferPageState extends State<TransferPage>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 48,
-          height: 48,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
@@ -338,13 +351,13 @@ class _TransferPageState extends State<TransferPage>
             color: Colors.white.withValues(alpha: 0.06),
           ),
           child: Icon(Icons.add_rounded,
-              color: Colors.white.withValues(alpha: 0.55), size: 20),
+              color: Colors.white.withValues(alpha: 0.55), size: 16),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text('Add',
             style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.45),
-                fontSize: 11)),
+                fontSize: 9)),
       ],
     );
   }
@@ -365,14 +378,14 @@ class _Method {
 }
 
 class _Recent {
-  const _Recent(this.initial, this.name, this.color);
-  final String initial;
+  const _Recent(this.icon, this.name, this.color);
+  final IconData icon;
   final String name;
   final Color color;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Method card
+// Method card — distinct gradient tint per card
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _MethodCard extends StatefulWidget {
@@ -400,52 +413,56 @@ class _MethodCardState extends State<_MethodCard> {
         scale: _pressed ? 0.95 : 1.0,
         duration: const Duration(milliseconds: 120),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withValues(alpha: 0.11),
-                    Colors.white.withValues(alpha: 0.05),
+                    widget.method.color.withValues(alpha: 0.18),
+                    widget.method.dark.withValues(alpha: 0.10),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.14)),
+                    color: widget.method.color.withValues(alpha: 0.28)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                        widget.method.color,
-                        widget.method.dark,
-                      ]),
-                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          widget.method.color,
+                          widget.method.dark,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(widget.method.icon,
-                        color: Colors.white, size: 18),
+                        color: Colors.white, size: 14),
                   ),
                   const Spacer(),
                   Text(widget.method.title,
                       style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 13,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2)),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Text(widget.method.subtitle,
                       style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.45),
-                          fontSize: 10),
+                          fontSize: 9),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
                 ],
@@ -459,7 +476,7 @@ class _MethodCardState extends State<_MethodCard> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Recent avatar
+// Recent avatar — person icon instead of letter
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _RecentAvatar extends StatelessWidget {
@@ -472,8 +489,8 @@ class _RecentAvatar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 48,
-          height: 48,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -482,19 +499,13 @@ class _RecentAvatar extends StatelessWidget {
               colors: [recent.color, recent.color.withValues(alpha: 0.6)],
             ),
           ),
-          child: Center(
-            child: Text(recent.initial,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600)),
-          ),
+          child: Icon(recent.icon, color: Colors.white, size: 18),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(recent.name,
             style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.65),
-                fontSize: 11)),
+                fontSize: 9)),
       ],
     );
   }
@@ -532,19 +543,19 @@ class _QrOptionsSheet extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(2)),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           const Text('QR Code',
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600)),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text('Show your code to receive or scan to send',
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 13),
+                  fontSize: 12),
               textAlign: TextAlign.center),
-          const SizedBox(height: 28),
+          const SizedBox(height: 22),
           Row(
             children: [
               Expanded(
@@ -556,7 +567,7 @@ class _QrOptionsSheet extends StatelessWidget {
                   onTap: onReceive,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: _QrTile(
                   icon: Icons.qr_code_scanner_rounded,
@@ -592,26 +603,26 @@ class _QrTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.10),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 34),
-            const SizedBox(height: 10),
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 8),
             Text(label,
                 style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
+            const SizedBox(height: 2),
             Text(subtitle,
                 style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.45),
-                    fontSize: 11),
+                    fontSize: 10),
                 textAlign: TextAlign.center),
           ],
         ),

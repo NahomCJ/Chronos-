@@ -1,6 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 import 'transfer_qr_page.dart';
 
 class TransferChronosUserPage extends StatefulWidget {
@@ -81,6 +85,21 @@ class _TransferChronosUserPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A14),
+      extendBody: true,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
+      ),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 0,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath);
+            case 1: context.go(RouteConstants.pantherAi.toPath);
+            case 2: context.go(RouteConstants.blockHub.toPath);
+          }
+        },
+      ),
       body: Stack(
         children: [
           Positioned.fill(

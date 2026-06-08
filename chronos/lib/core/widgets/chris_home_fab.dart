@@ -101,12 +101,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withValues(alpha: 0.22),
-                    Colors.white.withValues(alpha: 0.10),
+                    const Color(0xFFDDDDDD).withValues(alpha: 0.22),
+                    const Color(0xFFBBBBBB).withValues(alpha: 0.12),
                   ],
                 ),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: Colors.white.withValues(alpha: 0.38),
                   width: 1.5,
                 ),
               ),
@@ -291,7 +291,7 @@ class _ChrisSheetState extends State<_ChrisSheet> {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.07),
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                       color: Colors.white.withValues(alpha: 0.14), width: 0.8),
                 ),
@@ -359,7 +359,7 @@ class _ChrisSheetState extends State<_ChrisSheet> {
                   ],
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
+              SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 80),
             ],
           ),
         ),
