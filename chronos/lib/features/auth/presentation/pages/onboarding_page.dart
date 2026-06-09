@@ -5,10 +5,24 @@ import 'package:video_player/video_player.dart';
 
 import '../../../../core/di/app_di.dart';
 import '../../../../core/router/route_constants.dart';
-import '../ui_models/onboarding_slide_ui_model.dart';
+import '../../../../core/services/pexels_service.dart';
+import '../../../tickpay/presentation/utils/tickpay_media.dart';
 import '../bloc/onboarding/onboarding_bloc.dart';
 import '../bloc/onboarding/onboarding_event.dart';
 import '../bloc/onboarding/onboarding_state.dart';
+
+class _SlideConfig {
+  final String title;
+  final String subtitle;
+  final String pexelsQuery;
+  final String fallbackUrl;
+  const _SlideConfig({
+    required this.title,
+    required this.subtitle,
+    required this.pexelsQuery,
+    required this.fallbackUrl,
+  });
+}
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -27,47 +41,96 @@ class _OnboardingPageState extends State<OnboardingPage> {
   bool _videoReady = false;
   bool _isSwitching = false;
 
-  static const _slides = [
-    OnboardingSlideModel(
+  // Mutable list — starts with verified fallbacks, gets replaced by live Pexels results
+  late final List<String> _videoUrls;
+
+  static const _configs = [
+    _SlideConfig(
       title: 'All your money.\nOne system.',
       subtitle: 'Banking, crypto, payments and\nlife tools — all connected.',
-      videoUrl: 'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
+      pexelsQuery: 'contactless payment finance mobile',
+      fallbackUrl: TickPayMedia.onboardingFinance,
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Powered by\nPanther AI',
       subtitle: 'Real-time insights, predictions\nand guidance built around you.',
-      videoUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
+      pexelsQuery: 'artificial intelligence technology neon purple',
+      fallbackUrl: TickPayMedia.onboardingAi,
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Buy now.\nPay intelligently.',
       subtitle: 'Flexible payments, smart limits\nand responsible spending.',
-      videoUrl: 'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
+      pexelsQuery: 'woman shopping boutique fashion bags',
+      fallbackUrl: TickPayMedia.onboardingShopping,
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Trade beyond\nthe basics',
       subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
-      videoUrl: 'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4',
+      pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
+      fallbackUrl: TickPayMedia.onboardingCrypto,
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Your Life,\nOrganized',
       subtitle: 'Learning, growth, vision and\nwellbeing in one place.',
-      videoUrl: 'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
+      pexelsQuery: 'yoga meditation wellness park nature',
+      fallbackUrl: TickPayMedia.onboardingLifestyle,
     ),
   ];
 
   @override
   void initState() {
     super.initState();
+    _videoUrls = _configs.map((c) => c.fallbackUrl).toList();
     _controller = PageController();
     _initVideo(0);
+    _fetchPexelsVideos();
+  }
+
+  /// Background fetch: tries to replace each fallback URL with a fresh
+  /// portrait HD video from Pexels. Silently no-ops on any failure.
+  Future<void> _fetchPexelsVideos() async {
+    for (int i = 0; i < _configs.length; i++) {
+      final videos = await PexelsService.searchVideos(
+        _configs[i].pexelsQuery,
+        perPage: 5,
+        orientation: 'portrait',
+      );
+      if (!mounted || videos.isEmpty) continue;
+
+      String? url;
+      for (final v in videos) {
+        final hd = v.videoFiles
+            .where((f) => f.quality == 'hd' && f.fileType.contains('mp4'))
+            .toList();
+        if (hd.isNotEmpty) {
+          url = hd.first.link;
+          break;
+        }
+        final sd = v.videoFiles
+            .where((f) => f.fileType.contains('mp4'))
+            .toList();
+        if (sd.isNotEmpty) {
+          url = sd.first.link;
+          break;
+        }
+      }
+
+      if (url == null || !mounted) continue;
+      _videoUrls[i] = url;
+      // Reload only if this is the slide currently on screen
+      if (i == _index) _initVideo(i);
+    }
   }
 
   Future<void> _initVideo(int index) async {
     final ctrl = VideoPlayerController.networkUrl(
-      Uri.parse(_slides[index].videoUrl),
+      Uri.parse(_videoUrls[index]),
     );
     await ctrl.initialize();
-    if (!mounted) { ctrl.dispose(); return; }
+    if (!mounted) {
+      ctrl.dispose();
+      return;
+    }
     ctrl.setLooping(true);
     ctrl.setVolume(0);
     ctrl.play();
@@ -83,10 +146,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _isSwitching = true;
 
     final next = VideoPlayerController.networkUrl(
-      Uri.parse(_slides[nextIndex].videoUrl),
+      Uri.parse(_videoUrls[nextIndex]),
     );
     await next.initialize();
-    if (!mounted) { next.dispose(); _isSwitching = false; return; }
+    if (!mounted) {
+      next.dispose();
+      _isSwitching = false;
+      return;
+    }
     next.setLooping(true);
     next.setVolume(0);
 
@@ -97,10 +164,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     next.play();
 
-    // Brief crossfade: mark videoReady false then re-true
     setState(() => _videoReady = false);
     await Future.delayed(const Duration(milliseconds: 150));
-    if (!mounted) { _isSwitching = false; return; }
+    if (!mounted) {
+      _isSwitching = false;
+      return;
+    }
 
     setState(() {
       _currentCtrl?.dispose();
@@ -119,13 +188,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  bool get _isLast => _index == _slides.length - 1;
+  bool get _isLast => _index == _configs.length - 1;
 
   void _finish() =>
       context.read<OnboardingBloc>().add(const OnboardingCompleted());
 
   void _next() {
-    if (_isLast) { _finish(); return; }
+    if (_isLast) {
+      _finish();
+      return;
+    }
     _controller.nextPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
@@ -166,8 +238,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   : const SizedBox.shrink(),
             ),
 
-            if (!_videoReady)
-              Container(color: const Color(0xFF0D0A1E)),
+            if (!_videoReady) Container(color: const Color(0xFF0D0A1E)),
 
             // ── Gradient overlay ──────────────────────────────────────────
             Container(
@@ -195,7 +266,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: (_index + 1) / _slides.length,
+                        value: (_index + 1) / _configs.length,
                         backgroundColor:
                             Colors.white.withValues(alpha: 0.2),
                         valueColor: const AlwaysStoppedAnimation(
@@ -209,11 +280,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Expanded(
                     child: PageView.builder(
                       controller: _controller,
-                      itemCount: _slides.length,
+                      itemCount: _configs.length,
                       onPageChanged: _onPageChanged,
                       itemBuilder: (context, i) => _SlideContent(
-                        title: _slides[i].title,
-                        subtitle: _slides[i].subtitle,
+                        title: _configs[i].title,
+                        subtitle: _configs[i].subtitle,
                       ),
                     ),
                   ),
@@ -226,7 +297,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         // Dots
                         Row(
                           children: List.generate(
-                            _slides.length,
+                            _configs.length,
                             (i) => AnimatedContainer(
                               duration: const Duration(milliseconds: 250),
                               margin: const EdgeInsets.only(right: 6),
@@ -235,8 +306,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               decoration: BoxDecoration(
                                 color: i == _index
                                     ? Colors.white
-                                    : Colors.white
-                                        .withValues(alpha: 0.35),
+                                    : Colors.white.withValues(alpha: 0.35),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
