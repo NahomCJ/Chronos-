@@ -14,7 +14,7 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage> {
   late final VideoPlayerController _videoCtrl;
   bool _videoReady = false;
 
-  // Crypto trading on smartphone — vertical portrait (Pexels #34453413)
+  // Crypto trading on smartphone  vertical portrait (Pexels #34453413)
   static const _videoUrl =
       'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4';
 

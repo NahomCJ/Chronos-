@@ -155,7 +155,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Widget _buildTotalValueSection(bool isSmallScreen, double? totalValue) {
     final displayValue = totalValue != null
         ? '\$${totalValue.toStringAsFixed(2)}'
-        : '\$—';
+        : '\$-';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(

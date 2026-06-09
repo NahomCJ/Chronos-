@@ -15,11 +15,11 @@ Future<void> main() async {
 
   // Firebase init is platform-dependent. On native, we have generated
   // FirebaseOptions; on web they need a separate setup. We never let a Firebase
-  // failure crash the whole app — we surface a debug log and continue so the UI
+  // failure crash the whole app  we surface a debug log and continue so the UI
   // still renders (and platform-specific features simply degrade gracefully).
   try {
     if (kIsWeb) {
-      // Firebase web config not set — skipped gracefully, app still loads.
+      // Firebase web config not set  skipped gracefully, app still loads.
       // Add your web Firebase config here when ready.
     } else {
       await Firebase.initializeApp(

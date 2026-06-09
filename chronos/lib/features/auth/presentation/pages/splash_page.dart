@@ -109,7 +109,7 @@ class _SplashPageState extends State<SplashPage>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // C logo — scales + fades in
+                  // C logo  scales + fades in
                   ScaleTransition(
                     scale: _logoScale,
                     child: FadeTransition(

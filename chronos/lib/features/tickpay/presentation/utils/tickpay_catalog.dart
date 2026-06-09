@@ -17,7 +17,7 @@ class TProduct {
   });
 }
 
-// Pexels image URLs — all pre-validated
+// Pexels image URLs  all pre-validated
 const String _e1  = 'https://images.pexels.com/photos/19060954/pexels-photo-19060954.jpeg?auto=compress&cs=tinysrgb&w=600'; // iPhone 15 Pro
 const String _e2  = 'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg?auto=compress&cs=tinysrgb&w=600'; // headphones black
 const String _e3  = 'https://images.pexels.com/photos/437038/pexels-photo-437038.jpeg?auto=compress&cs=tinysrgb&w=600'; // apple watch
