@@ -401,7 +401,7 @@ class _ExchangePageState extends State<ExchangePage> {
               )
             else
               Text(
-                '—',
+                '-',
                 style: TextStyles.bodyLarge.copyWith(
                   color: Colors.white.withValues(alpha: 0.35),
                   fontSize: 15,

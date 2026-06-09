@@ -34,7 +34,7 @@ class _TransferPageState extends State<TransferPage>
         Color(0xFFFBBF24), Color(0xFF92400E)),
   ];
 
-  // Real person feel — distinct icons per slot
+  // Real person feel  distinct icons per slot
   static const _recents = [
     _Recent(Icons.face_rounded, 'Alex', Color(0xFF3B82F6)),
     _Recent(Icons.face_3_rounded, 'Sarah', Color(0xFF8B5CF6)),
@@ -385,7 +385,7 @@ class _Recent {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Method card — distinct gradient tint per card
+// Method card  distinct gradient tint per card
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _MethodCard extends StatefulWidget {
@@ -476,7 +476,7 @@ class _MethodCardState extends State<_MethodCard> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Recent avatar — person icon instead of letter
+// Recent avatar  person icon instead of letter
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _RecentAvatar extends StatelessWidget {

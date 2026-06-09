@@ -304,7 +304,7 @@ class _ChrisSheetState extends State<_ChrisSheet> {
                         decoration: InputDecoration(
                           hintText: _voiceActive
                               ? 'Listening...'
-                              : 'Order anything in Chronos — I\'ll get it done',
+                              : 'Order anything in Chronos, I\'ll get it done',
                           hintStyle: TextStyle(
                               color: _voiceActive
                                   ? _teal.withValues(alpha: 0.7)

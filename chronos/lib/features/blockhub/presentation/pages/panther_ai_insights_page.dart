@@ -182,7 +182,7 @@ class _PantherAiInsightsPageState extends State<PantherAiInsightsPage> {
           const Divider(color: Colors.white12, height: 20),
           _vibeRow('Liquidity', 'All good 💧', const Color(0xFF10B981)),
           const Divider(color: Colors.white12, height: 20),
-          _vibeRow('Fear & Greed', '62 — Greedy 😏', const Color(0xFFF59E0B)),
+          _vibeRow('Fear & Greed', '62 Greedy 😏', const Color(0xFFF59E0B)),
         ],
       ),
     );
@@ -349,7 +349,7 @@ class _PantherAiInsightsPageState extends State<PantherAiInsightsPage> {
       children: [
         _riskAlert('Crazy volatility rn', 'Use limit orders so you don\'t get rekt on slippage 😬'),
         const SizedBox(height: 10),
-        _riskAlert('Weekend liquidity dip', 'Markets thin on weekends — prices move wild. Stay sharp 👀'),
+        _riskAlert('Weekend liquidity dip', 'Markets thin on weekends, prices move wild. Stay sharp 👀'),
       ],
     );
   }
@@ -391,7 +391,7 @@ class _PantherAiInsightsPageState extends State<PantherAiInsightsPage> {
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Text(
-        'Not financial advice. Do your own research. Panther AI is for info only — don\'t bet what you can\'t lose.',
+        'Not financial advice. Do your own research. Panther AI is for info only, don\'t bet what you can\'t lose.',
         style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10, height: 1.4),
       ),
     );

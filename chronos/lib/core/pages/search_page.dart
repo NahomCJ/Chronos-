@@ -32,7 +32,7 @@ const _allItems = [
   _SearchItem('Profile & Settings', 'Account', Icons.person, RouteConstants.profile),
 ];
 
-// Routes that use push (overlay) — everything else uses go (tab swap)
+// Routes that use push (overlay)  everything else uses go (tab swap)
 const _pushRoutes = {
   RouteConstants.addMoney,
   RouteConstants.profile,

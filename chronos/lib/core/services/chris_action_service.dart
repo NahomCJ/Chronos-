@@ -213,7 +213,7 @@ class ChrisActionService {
         execute: () async => ChrisActionResult(
             success: false,
             message: 'Rate unavailable: ${_clean(e.toString())}'),
-        warning: 'Live rate unavailable — check connection and retry.',
+        warning: 'Live rate unavailable. Check connection and retry.',
       );
     }
   }
@@ -241,7 +241,7 @@ class ChrisActionService {
       String? destWalletId;
       String? destLabel;
       if (recipient != null) {
-        // Attempt lookup — backend may support ?search param
+        // Attempt lookup backend may support ?search param
         try {
           final found = await _api.getList(
               '/api/core/accounts?search=${Uri.encodeComponent(recipient)}');
@@ -278,13 +278,13 @@ class ChrisActionService {
           ('From', '$sourceName  ·  balance: ${balance.toStringAsFixed(2)} $currency'),
           if (destLabel != null) ('To', destLabel),
           if (recipient != null && destLabel == null)
-            ('Recipient', '$recipient — wallet not found'),
+            ('Recipient', '$recipient: wallet not found'),
           if (!hasEnough) ('⚠ Warning', 'Insufficient balance'),
         ],
         warning: !hasEnough
             ? 'Your balance (${balance.toStringAsFixed(2)} $currency) is less than the transfer amount.'
             : (recipient != null && destWalletId == null)
-                ? 'Recipient\'s wallet not found. Chris cannot auto-complete this transfer — open the Transfer page to search manually.'
+                ? 'Recipient\'s wallet not found. Chris cannot auto-complete this transfer. Open the Transfer page to search manually.'
                 : null,
         execute: () async {
           if (!canAutoExecute) {
@@ -384,7 +384,7 @@ class ChrisActionService {
           final msg = res['message']?.toString() ?? '';
           return ChrisActionResult(
             success: approved,
-            message: approved ? '✓ Approved — $msg' : '✗ Not approved — $msg',
+            message: approved ? '✓ Approved: $msg' : '✗ Not approved: $msg',
             details: {
               'Decision': approved ? 'Approved ✓' : 'Declined ✗',
               'Risk Score': '${(riskScore * 100).toStringAsFixed(0)}%',
@@ -418,7 +418,7 @@ class ChrisActionService {
       ],
       execute: () async => const ChrisActionResult(
         success: false,
-        message: 'Opening the deposit flow — you\'ll need to confirm your linked bank account.',
+        message: 'Opening the deposit flow. You\'ll need to confirm your linked bank account.',
       ),
       warning: 'ACH deposits require bank account verification.',
     );

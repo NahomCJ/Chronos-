@@ -64,7 +64,7 @@ class _TickPayWelcomePageState extends State<TickPayWelcomePage> {
                   Container(color: const Color(0xFF1A0A2E)),
             ),
 
-          // ── Gradient overlay — transparent top, black bottom fade ────────
+          // ── Gradient overlay  transparent top, black bottom fade ────────
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

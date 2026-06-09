@@ -98,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Pexels — professional Caucasian male headshot
+  // Pexels  professional Caucasian male headshot
   static const _avatarUrl =
       'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg'
       '?auto=compress&cs=tinysrgb&w=200';
@@ -1268,7 +1268,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         content: Text(
-          'This permanently removes all your data — transactions, wallets, and TickPay history. This cannot be undone.',
+          'This permanently removes all your data: transactions, wallets, and TickPay history. This cannot be undone.',
           style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 13),
         ),
         actions: [
@@ -1457,7 +1457,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // ── Utilities ───────────────────────────────────────────────────────────────
   void _comingSoon(BuildContext context, String feature) =>
-      _snack(context, '$feature — coming soon', const Color(0xFF2A2A3E));
+      _snack(context, '$feature coming soon', const Color(0xFF2A2A3E));
 
   void _snack(BuildContext context, String msg, Color bg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

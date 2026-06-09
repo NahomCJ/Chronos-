@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../router/route_constants.dart';
 import '../../features/panther_ai/presentation/widgets/chris_voice_orb.dart';
 
-/// Persistent "Ask Chris" floating button — placed in floatingActionButton
+/// Persistent "Ask Chris" floating button  placed in floatingActionButton
 /// or manually as a Positioned widget in a Stack.
 /// Opens the PantherAI chat so Chris can handle voice/text commands
 /// (transfer, exchange, check balance, etc.) with final user confirmation.

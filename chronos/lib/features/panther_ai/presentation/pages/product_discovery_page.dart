@@ -317,7 +317,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Using sample products — $errorMessage',
+                'Using sample products: $errorMessage',
                 style: TextStyles.bodySmall.copyWith(
                     color: Colors.orange, fontSize: 11),
               ),

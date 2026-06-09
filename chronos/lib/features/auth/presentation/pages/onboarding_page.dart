@@ -6,7 +6,6 @@ import 'package:video_player/video_player.dart';
 import '../../../../core/di/app_di.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/services/pexels_service.dart';
-import '../../../tickpay/presentation/utils/tickpay_media.dart';
 import '../bloc/onboarding/onboarding_bloc.dart';
 import '../bloc/onboarding/onboarding_event.dart';
 import '../bloc/onboarding/onboarding_state.dart';
@@ -41,39 +40,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
   bool _videoReady = false;
   bool _isSwitching = false;
 
-  // Mutable list — starts with verified fallbacks, gets replaced by live Pexels results
+  // Mutable list: starts with verified fallbacks, gets replaced by live Pexels results
   late final List<String> _videoUrls;
 
   static const _configs = [
     _SlideConfig(
       title: 'All your money.\nOne system.',
-      subtitle: 'Banking, crypto, payments and\nlife tools — all connected.',
+      subtitle: 'Banking, crypto, payments and\nlife tools, all connected.',
       pexelsQuery: 'contactless payment finance mobile',
-      fallbackUrl: TickPayMedia.onboardingFinance,
+      fallbackUrl: 'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
     ),
     _SlideConfig(
       title: 'Powered by\nPanther AI',
       subtitle: 'Real-time insights, predictions\nand guidance built around you.',
       pexelsQuery: 'artificial intelligence technology neon purple',
-      fallbackUrl: TickPayMedia.onboardingAi,
+      fallbackUrl: 'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
     ),
     _SlideConfig(
       title: 'Buy now.\nPay intelligently.',
       subtitle: 'Flexible payments, smart limits\nand responsible spending.',
-      pexelsQuery: 'woman shopping boutique fashion bags',
-      fallbackUrl: TickPayMedia.onboardingShopping,
+      pexelsQuery: 'smartphone mobile payment e-commerce',
+      fallbackUrl: 'https://videos.pexels.com/video-files/4109600/4109600-hd_1080_1920_30fps.mp4',
     ),
     _SlideConfig(
       title: 'Trade beyond\nthe basics',
       subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
       pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
-      fallbackUrl: TickPayMedia.onboardingCrypto,
+      fallbackUrl: 'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
     ),
     _SlideConfig(
       title: 'Your Life,\nOrganized',
       subtitle: 'Learning, growth, vision and\nwellbeing in one place.',
       pexelsQuery: 'yoga meditation wellness park nature',
-      fallbackUrl: TickPayMedia.onboardingLifestyle,
+      fallbackUrl: 'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
     ),
   ];
 

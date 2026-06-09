@@ -85,7 +85,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                       const SizedBox(height: 20),
                       _buildQuickActions(context),
                       const SizedBox(height: 16),
-                      // White section — rounds top, then extends to end
+                      // White section, rounds top, then extends to end
                       Container(
                         decoration: const BoxDecoration(
                           color: Colors.white,
@@ -402,7 +402,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    account == null ? '—' : '\$${fmt.format(available)}',
+                    account == null ? '-' : '\$${fmt.format(available)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 34,
@@ -432,7 +432,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                         ),
                         child: Text(
                           account == null
-                              ? 'Used  —'
+                              ? 'Used  -'
                               : 'Used  \$${fmt.format(creditUsed)}',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.75),
