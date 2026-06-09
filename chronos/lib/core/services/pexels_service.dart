@@ -47,6 +47,14 @@ class PexelsVideo {
     return videoFiles.isNotEmpty ? videoFiles.first.link : null;
   }
 
+  /// Best portrait (height > width) HD mp4, falling back to any mp4.
+  String? get portraitHdUrl {
+    final portrait = videoFiles.where((f) => f.isPortrait && f.quality == 'hd' && f.fileType.contains('mp4')).toList();
+    if (portrait.isNotEmpty) return portrait.first.link;
+    final anyMp4 = videoFiles.where((f) => f.fileType.contains('mp4')).toList();
+    return anyMp4.isNotEmpty ? anyMp4.first.link : null;
+  }
+
   factory PexelsVideo.fromJson(Map<String, dynamic> j) => PexelsVideo(
         id: j['id'] as int,
         url: j['url'] as String? ?? '',
@@ -62,17 +70,25 @@ class PexelsVideoFile {
   final String link;
   final String quality;
   final String fileType;
+  final int width;
+  final int height;
 
   const PexelsVideoFile({
     required this.link,
     required this.quality,
     required this.fileType,
+    required this.width,
+    required this.height,
   });
+
+  bool get isPortrait => height > width;
 
   factory PexelsVideoFile.fromJson(Map<String, dynamic> j) => PexelsVideoFile(
         link: j['link'] as String? ?? '',
         quality: j['quality'] as String? ?? '',
         fileType: j['file_type'] as String? ?? '',
+        width: (j['width'] as num?)?.toInt() ?? 0,
+        height: (j['height'] as num?)?.toInt() ?? 0,
       );
 }
 
