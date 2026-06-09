@@ -96,27 +96,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       );
       if (!mounted || videos.isEmpty) continue;
 
-      String? url;
-      for (final v in videos) {
-        final hd = v.videoFiles
-            .where((f) => f.quality == 'hd' && f.fileType.contains('mp4'))
-            .toList();
-        if (hd.isNotEmpty) {
-          url = hd.first.link;
-          break;
-        }
-        final sd = v.videoFiles
-            .where((f) => f.fileType.contains('mp4'))
-            .toList();
-        if (sd.isNotEmpty) {
-          url = sd.first.link;
-          break;
-        }
-      }
+      final url = videos
+          .map((v) => v.portraitHdUrl)
+          .firstWhere((u) => u != null, orElse: () => null);
 
       if (url == null || !mounted) continue;
       _videoUrls[i] = url;
-      // Reload only if this is the slide currently on screen
       if (i == _index) _initVideo(i);
     }
   }
