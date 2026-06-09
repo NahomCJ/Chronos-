@@ -112,10 +112,12 @@ class PexelsService {
   static Future<List<PexelsVideo>> searchVideos(
     String query, {
     int perPage = 5,
+    String orientation = '',
   }) async {
     try {
-      final uri = Uri.parse(
-          '$_baseUrl/videos/search?query=${Uri.encodeComponent(query)}&per_page=$perPage');
+      var url = '$_baseUrl/videos/search?query=${Uri.encodeComponent(query)}&per_page=$perPage';
+      if (orientation.isNotEmpty) url += '&orientation=${Uri.encodeComponent(orientation)}';
+      final uri = Uri.parse(url);
       final res = await http.get(uri, headers: _headers);
       if (res.statusCode != 200) return [];
       final data = jsonDecode(res.body) as Map<String, dynamic>;
