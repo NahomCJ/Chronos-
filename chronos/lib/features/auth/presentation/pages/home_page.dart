@@ -114,24 +114,6 @@ class _HomeViewState extends State<_HomeView> {
             ),
           ),
         ),
-        Container(
-          height: heroHeight,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.2),
-                Colors.transparent,
-                Colors.black.withValues(alpha: 0.35),
-              ],
-            ),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
-            ),
-          ),
-        ),
         SizedBox(
           height: heroHeight,
           child: SafeArea(
