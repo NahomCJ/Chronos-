@@ -89,6 +89,8 @@ enum RouteConstants {
   lifexFamily,
   lifexSocial,
   lifexFeed,
+  lifexAiInsights,
+  lifexExport,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -269,6 +271,10 @@ extension RouteConstantsX on RouteConstants {
         return '/lifex/social';
       case RouteConstants.lifexFeed:
         return '/lifex/feed';
+      case RouteConstants.lifexAiInsights:
+        return '/lifex/ai-insights';
+      case RouteConstants.lifexExport:
+        return '/lifex/export';
     }
   }
 
@@ -449,6 +455,10 @@ extension RouteConstantsX on RouteConstants {
         return 'lifex-social';
       case RouteConstants.lifexFeed:
         return 'lifex-feed';
+      case RouteConstants.lifexAiInsights:
+        return 'lifex-ai-insights';
+      case RouteConstants.lifexExport:
+        return 'lifex-export';
     }
   }
 }
