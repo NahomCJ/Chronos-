@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -160,37 +159,34 @@ class _HomeViewState extends State<_HomeView> {
                           onTap: () => context.push('/search'),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(50),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                              child: Container(
-                                height: 34 * scale,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.14),
-                                    width: 0.8,
-                                  ),
+                            child: Container(
+                              height: 34 * scale,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.14),
+                                  width: 0.8,
                                 ),
-                                child: Row(
-                                  children: [
-                                    const SizedBox(width: 10),
-                                    Icon(Icons.search_rounded,
-                                        color: Colors.white.withValues(alpha: 0.5),
-                                        size: 14 * scale),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        'Search...',
-                                        style: TextStyles.bodySmall.copyWith(
-                                          color: Colors.white.withValues(alpha: 0.35),
-                                          fontSize: 11 * textScale,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
+                              ),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  Icon(Icons.search_rounded,
+                                      color: Colors.white.withValues(alpha: 0.5),
+                                      size: 14 * scale),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      'Search...',
+                                      style: TextStyles.bodySmall.copyWith(
+                                        color: Colors.white.withValues(alpha: 0.35),
+                                        fontSize: 11 * textScale,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -198,21 +194,18 @@ class _HomeViewState extends State<_HomeView> {
                       ),
                       const SizedBox(width: 12),
                       ClipOval(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Container(
-                            padding: EdgeInsets.all(8 * scale),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.15),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                width: 0.8,
-                              ),
+                        child: Container(
+                          padding: EdgeInsets.all(8 * scale),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              width: 0.8,
                             ),
-                            child: Icon(Icons.notifications_none,
-                                color: Colors.white, size: 22 * scale),
                           ),
+                          child: Icon(Icons.notifications_none,
+                              color: Colors.white, size: 22 * scale),
                         ),
                       ),
                     ],
