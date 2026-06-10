@@ -104,6 +104,8 @@ import '../../features/lifex/presentation/pages/lifex_vision_page.dart';
 import '../../features/lifex/presentation/pages/lifex_family_page.dart';
 import '../../features/lifex/presentation/pages/lifex_social_page.dart';
 import '../../features/lifex/presentation/pages/lifex_feed_page.dart';
+import '../../features/lifex/presentation/pages/lifex_ai_insights_page.dart';
+import '../../features/lifex/presentation/pages/lifex_export_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -732,6 +734,18 @@ final GoRouter router = GoRouter(
       path: RouteConstants.lifexFeed.toPath,
       name: RouteConstants.lifexFeed.name,
       builder: (context, state) => const LifeXFeedPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexAiInsights.toPath,
+      name: RouteConstants.lifexAiInsights.name,
+      builder: (context, state) => const LifeXAiInsightsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexExport.toPath,
+      name: RouteConstants.lifexExport.name,
+      builder: (context, state) => const LifeXExportPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

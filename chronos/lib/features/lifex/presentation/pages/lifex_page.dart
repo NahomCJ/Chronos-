@@ -102,6 +102,12 @@ class _LifeXPageState extends State<LifeXPage>
       case 'Social Feed':
         context.push(RouteConstants.lifexFeed.toPath);
         break;
+      case 'AI Insights':
+        context.push(RouteConstants.lifexAiInsights.toPath);
+        break;
+      case 'Export':
+        context.push(RouteConstants.lifexExport.toPath);
+        break;
       default:
         break;
     }
