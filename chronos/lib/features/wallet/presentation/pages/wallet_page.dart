@@ -10,13 +10,35 @@ import '../bloc/wallet_bloc.dart';
 import '../bloc/wallet_event.dart';
 import '../bloc/wallet_state.dart';
 import '../widgets/balance_card.dart';
-import '../widgets/card_carousel.dart';
+import '../widgets/interactive_wallet_carousel.dart';
 import '../widgets/card_actions.dart';
 import '../widgets/recent_transactions.dart';
 import '../widgets/features_section.dart';
 
-class WalletPage extends StatelessWidget {
+// Session-level flag: resets to false on every app launch (every-session behavior).
+// Set to true once onboarding has been shown this session.
+bool _walletOnboardingShownThisSession = false;
+
+class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
+
+  @override
+  State<WalletPage> createState() => _WalletPageState();
+}
+
+class _WalletPageState extends State<WalletPage> {
+  @override
+  void initState() {
+    super.initState();
+    if (!_walletOnboardingShownThisSession) {
+      _walletOnboardingShownThisSession = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.go(RouteConstants.walletOnboarding.toPath);
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +159,7 @@ class _WalletView extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-                                      const CardCarousel(),
+                                      const InteractiveWalletCarousel(),
                                     ],
                                   ),
                                 ),

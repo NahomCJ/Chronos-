@@ -17,6 +17,7 @@ enum RouteConstants {
   addMoney,
   bankTransfer,
   wallet,
+  walletOnboarding,
   findAtm,
   exchange,
   selectCurrency,
@@ -130,6 +131,8 @@ extension RouteConstantsX on RouteConstants {
         return '/bank-transfer';
       case RouteConstants.wallet:
         return '/wallet';
+      case RouteConstants.walletOnboarding:
+        return '/wallet-onboarding';
       case RouteConstants.findAtm:
         return '/find-atm';
       case RouteConstants.exchange:
@@ -310,6 +313,8 @@ extension RouteConstantsX on RouteConstants {
         return 'bank-transfer';
       case RouteConstants.wallet:
         return 'wallet';
+      case RouteConstants.walletOnboarding:
+        return 'wallet-onboarding';
       case RouteConstants.findAtm:
         return 'find-atm';
       case RouteConstants.exchange:

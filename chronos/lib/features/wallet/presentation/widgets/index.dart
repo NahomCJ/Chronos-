@@ -1,6 +1,7 @@
 // Core wallet components
 export 'balance_card.dart';
 export 'card_carousel.dart';
+export 'interactive_wallet_carousel.dart';
 export 'card_actions.dart';
 export 'recent_transactions.dart';
 export 'panther_ai_banner.dart';
