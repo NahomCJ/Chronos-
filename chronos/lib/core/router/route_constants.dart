@@ -77,6 +77,18 @@ enum RouteConstants {
   profile,
   changePassword,
   notificationSettings,
+  // LifeX routes
+  lifex,
+  lifexOnboarding,
+  lifexHealth,
+  lifexEducation,
+  lifexSpiritual,
+  lifexFinance,
+  lifexActivity,
+  lifexVision,
+  lifexFamily,
+  lifexSocial,
+  lifexFeed,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -235,6 +247,28 @@ extension RouteConstantsX on RouteConstants {
         return '/profile/change-password';
       case RouteConstants.notificationSettings:
         return '/profile/notifications';
+      case RouteConstants.lifex:
+        return '/lifex';
+      case RouteConstants.lifexOnboarding:
+        return '/lifex/onboarding';
+      case RouteConstants.lifexHealth:
+        return '/lifex/health';
+      case RouteConstants.lifexEducation:
+        return '/lifex/education';
+      case RouteConstants.lifexSpiritual:
+        return '/lifex/spiritual';
+      case RouteConstants.lifexFinance:
+        return '/lifex/finance';
+      case RouteConstants.lifexActivity:
+        return '/lifex/activity';
+      case RouteConstants.lifexVision:
+        return '/lifex/vision';
+      case RouteConstants.lifexFamily:
+        return '/lifex/family';
+      case RouteConstants.lifexSocial:
+        return '/lifex/social';
+      case RouteConstants.lifexFeed:
+        return '/lifex/feed';
     }
   }
 
@@ -393,6 +427,28 @@ extension RouteConstantsX on RouteConstants {
         return 'change-password';
       case RouteConstants.notificationSettings:
         return 'notification-settings';
+      case RouteConstants.lifex:
+        return 'lifex';
+      case RouteConstants.lifexOnboarding:
+        return 'lifex-onboarding';
+      case RouteConstants.lifexHealth:
+        return 'lifex-health';
+      case RouteConstants.lifexEducation:
+        return 'lifex-education';
+      case RouteConstants.lifexSpiritual:
+        return 'lifex-spiritual';
+      case RouteConstants.lifexFinance:
+        return 'lifex-finance';
+      case RouteConstants.lifexActivity:
+        return 'lifex-activity';
+      case RouteConstants.lifexVision:
+        return 'lifex-vision';
+      case RouteConstants.lifexFamily:
+        return 'lifex-family';
+      case RouteConstants.lifexSocial:
+        return 'lifex-social';
+      case RouteConstants.lifexFeed:
+        return 'lifex-feed';
     }
   }
 }

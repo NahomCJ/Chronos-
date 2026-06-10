@@ -93,6 +93,17 @@ import '../../features/profile/presentation/pages/change_password_page.dart';
 import '../../features/profile/presentation/pages/notification_settings_page.dart';
 import '../theme/theme_cubit.dart';
 import '../pages/search_page.dart';
+import '../../features/lifex/presentation/pages/lifex_page.dart';
+import '../../features/lifex/presentation/pages/lifex_onboarding_page.dart';
+import '../../features/lifex/presentation/pages/lifex_health_page.dart';
+import '../../features/lifex/presentation/pages/lifex_education_page.dart';
+import '../../features/lifex/presentation/pages/lifex_spiritual_page.dart';
+import '../../features/lifex/presentation/pages/lifex_finance_page.dart';
+import '../../features/lifex/presentation/pages/lifex_activity_page.dart';
+import '../../features/lifex/presentation/pages/lifex_vision_page.dart';
+import '../../features/lifex/presentation/pages/lifex_family_page.dart';
+import '../../features/lifex/presentation/pages/lifex_social_page.dart';
+import '../../features/lifex/presentation/pages/lifex_feed_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -661,6 +672,67 @@ final GoRouter router = GoRouter(
       path: '/search',
       builder: (context, state) => const SearchPage(),
     ),
+    // ── LifeX detail pages (no bottom nav) ───────────────────────────────────
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexOnboarding.toPath,
+      name: RouteConstants.lifexOnboarding.name,
+      builder: (context, state) => const LifeXOnboardingPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexHealth.toPath,
+      name: RouteConstants.lifexHealth.name,
+      builder: (context, state) => const LifeXHealthPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexEducation.toPath,
+      name: RouteConstants.lifexEducation.name,
+      builder: (context, state) => const LifeXEducationPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexSpiritual.toPath,
+      name: RouteConstants.lifexSpiritual.name,
+      builder: (context, state) => const LifeXSpiritualPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexFinance.toPath,
+      name: RouteConstants.lifexFinance.name,
+      builder: (context, state) => const LifeXFinancePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexActivity.toPath,
+      name: RouteConstants.lifexActivity.name,
+      builder: (context, state) => const LifeXActivityPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexVision.toPath,
+      name: RouteConstants.lifexVision.name,
+      builder: (context, state) => const LifeXVisionPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexFamily.toPath,
+      name: RouteConstants.lifexFamily.name,
+      builder: (context, state) => const LifeXFamilyPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexSocial.toPath,
+      name: RouteConstants.lifexSocial.name,
+      builder: (context, state) => const LifeXSocialPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexFeed.toPath,
+      name: RouteConstants.lifexFeed.name,
+      builder: (context, state) => const LifeXFeedPage(),
+    ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/theme-settings',
@@ -691,6 +763,9 @@ final GoRouter router = GoRouter(
                 case 2:
                   context.go(RouteConstants.blockHub.toPath);
                   break;
+                case 3:
+                  context.go(RouteConstants.lifex.toPath);
+                  break;
               }
             },
           ),
@@ -712,6 +787,11 @@ final GoRouter router = GoRouter(
           name: RouteConstants.blockHub.name,
           builder: (context, state) => const BlockHubPage(),
         ),
+        GoRoute(
+          path: RouteConstants.lifex.toPath,
+          name: RouteConstants.lifex.name,
+          builder: (context, state) => const LifeXPage(),
+        ),
       ],
     ),
   ],
@@ -720,5 +800,6 @@ final GoRouter router = GoRouter(
 int _calculateSelectedIndex(String location) {
   if (location.startsWith(RouteConstants.pantherAi.toPath)) return 1;
   if (location.startsWith(RouteConstants.blockHub.toPath)) return 2;
+  if (location.startsWith(RouteConstants.lifex.toPath)) return 3;
   return 0;
 }

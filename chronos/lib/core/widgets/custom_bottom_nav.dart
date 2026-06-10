@@ -52,7 +52,7 @@ class CustomBottomNav extends StatelessWidget {
                 _item(Icons.home_filled, 'Home', 0),
                 _itemImage('assets/lioness 1.png', 'Panther', 1),
                 _item(Icons.hub_outlined, 'BlockHub', 2),
-                _item(Icons.close, 'LifeX', 3),
+                _item(Icons.spa_rounded, 'LifeX', 3),
                 _item(Icons.menu, 'More', 4),
               ],
             ),
