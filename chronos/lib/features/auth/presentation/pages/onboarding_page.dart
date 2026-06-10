@@ -37,9 +37,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   int _index = 0;
   bool _videoReady = false;
-  int _loadingForIndex = -1; // tracks the most recently requested load
+  int _loadingForIndex = -1;
 
-  // Mutable list: starts with verified fallbacks, gets replaced by live Pexels results
+  // Starts with verified fallback URLs; background-replaced by live Pexels results
   late final List<String> _videoUrls;
 
   static const _configs = [
@@ -49,27 +49,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
       pexelsQuery: 'contactless payment finance mobile',
       fallbackUrl: 'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Buy now.\nPay intelligently.',
       subtitle: 'Flexible payments, smart limits\nand responsible spending.',
       pexelsQuery: 'smartphone mobile payment e-commerce',
-      fallbackUrl: 'https://videos.pexels.com/video-files/4109600/4109600-hd_1080_1920_30fps.mp4',
+      fallbackUrl: 'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Powered by\nPanther AI',
       subtitle: 'Real-time insights, predictions\nand guidance built around you.',
-      videoUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
+      pexelsQuery: 'artificial intelligence technology neon',
+      fallbackUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
     ),
-    OnboardingSlideModel(
+    _SlideConfig(
       title: 'Trade beyond\nthe basics',
       subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
       pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
-      fallbackUrl: 'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
+      fallbackUrl: 'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4',
     ),
     _SlideConfig(
       title: 'Your Life,\nOrganized',
       subtitle: 'Learning, growth, vision and\nwellbeing in one place.',
-      pexelsQuery: 'yoga meditation wellness park nature',
+      pexelsQuery: 'yoga wellness lifestyle nature park',
       fallbackUrl: 'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
     ),
   ];
@@ -80,17 +81,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
     _videoUrls = _configs.map((c) => c.fallbackUrl).toList();
     _controller = PageController();
     _loadVideo(0);
+    _fetchPexelsVideos();
   }
 
-  /// Load the video for [index]. If a newer call arrives while loading,
-  /// the old result is silently discarded — no locking, no dropped swipes.
+  /// Background: replace each fallback with a fresh portrait video from Pexels.
+  Future<void> _fetchPexelsVideos() async {
+    for (int i = 0; i < _configs.length; i++) {
+      final videos = await PexelsService.searchVideos(
+        _configs[i].pexelsQuery,
+        perPage: 5,
+        orientation: 'portrait',
+      );
+      if (!mounted || videos.isEmpty) continue;
+
+      final url = videos
+          .map((v) => v.portraitHdUrl)
+          .firstWhere((u) => u != null, orElse: () => null);
+
+      if (url == null || !mounted) continue;
+      _videoUrls[i] = url;
+      // Reload the current slide's video if it was just updated
+      if (i == _index) _loadVideo(i);
+    }
+  }
+
+  /// Load video for [index]. Newer calls cancel older in-flight loads.
   Future<void> _loadVideo(int index) async {
     _loadingForIndex = index;
 
     VideoPlayerController? ctrl;
     try {
       ctrl = VideoPlayerController.networkUrl(
-        Uri.parse(_slides[index].videoUrl),
+        Uri.parse(_videoUrls[index]),
       );
       await ctrl.initialize();
     } catch (_) {
@@ -98,7 +120,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
 
-    // A newer swipe came in while we were loading — throw this away.
     if (!mounted || _loadingForIndex != index) {
       ctrl.dispose();
       return;
@@ -128,10 +149,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       context.read<OnboardingBloc>().add(const OnboardingCompleted());
 
   void _next() {
-    if (_isLast) {
-      _finish();
-      return;
-    }
+    if (_isLast) { _finish(); return; }
     _controller.nextPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
@@ -141,7 +159,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _onPageChanged(int v) {
     setState(() {
       _index = v;
-      _videoReady = false; // show dark while the next video loads
+      _videoReady = false;
     });
     _loadVideo(v);
   }
@@ -175,7 +193,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   : const SizedBox.shrink(),
             ),
 
-            if (!_videoReady) Container(color: const Color(0xFF0D0A1E)),
+            if (!_videoReady)
+              Container(color: const Color(0xFF0D0A1E)),
 
             // ── Gradient overlay ──────────────────────────────────────────
             Container(
@@ -204,10 +223,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: (_index + 1) / _configs.length,
-                        backgroundColor:
-                            Colors.white.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation(
-                            Color(0xFFF5B400)),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation(Color(0xFFF5B400)),
                         minHeight: 3,
                       ),
                     ),
