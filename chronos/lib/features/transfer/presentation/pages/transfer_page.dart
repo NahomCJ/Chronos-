@@ -34,14 +34,13 @@ class _TransferPageState extends State<TransferPage>
         Color(0xFFFBBF24), Color(0xFF92400E)),
   ];
 
-  // Real person feel — distinct icons per slot
   static const _recents = [
-    _Recent(Icons.face_rounded, 'Alex', Color(0xFF3B82F6)),
-    _Recent(Icons.face_3_rounded, 'Sarah', Color(0xFF8B5CF6)),
-    _Recent(Icons.face_2_rounded, 'Mike', Color(0xFF10B981)),
-    _Recent(Icons.face_4_rounded, 'Emma', Color(0xFFF59E0B)),
-    _Recent(Icons.face_5_rounded, 'Ben', Color(0xFFEF4444)),
-    _Recent(Icons.face_6_rounded, 'Julia', Color(0xFFEC4899)),
+    _Recent('Alex',  'https://randomuser.me/api/portraits/men/32.jpg'),
+    _Recent('Sarah', 'https://randomuser.me/api/portraits/women/44.jpg'),
+    _Recent('Mike',  'https://randomuser.me/api/portraits/men/55.jpg'),
+    _Recent('Emma',  'https://randomuser.me/api/portraits/women/68.jpg'),
+    _Recent('Ben',   'https://randomuser.me/api/portraits/men/76.jpg'),
+    _Recent('Julia', 'https://randomuser.me/api/portraits/women/12.jpg'),
   ];
 
   @override
@@ -321,7 +320,7 @@ class _TransferPageState extends State<TransferPage>
         ),
         const SizedBox(height: 10),
         SizedBox(
-          height: 64,
+          height: 82,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -378,10 +377,9 @@ class _Method {
 }
 
 class _Recent {
-  const _Recent(this.icon, this.name, this.color);
-  final IconData icon;
+  const _Recent(this.name, this.photoUrl);
   final String name;
-  final Color color;
+  final String photoUrl;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -438,18 +436,11 @@ class _MethodCardState extends State<_MethodCard> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          widget.method.color,
-                          widget.method.dark,
-                        ],
-                      ),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(widget.method.icon,
-                        color: Colors.white, size: 14),
+                        color: const Color(0xFF0A0A14), size: 14),
                   ),
                   const Spacer(),
                   Text(widget.method.title,
@@ -488,18 +479,23 @@ class _RecentAvatar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [recent.color, recent.color.withValues(alpha: 0.6)],
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            recent.photoUrl,
+            width: 42,
+            height: 54,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              width: 42,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.person, color: Colors.white, size: 22),
             ),
           ),
-          child: Icon(recent.icon, color: Colors.white, size: 18),
         ),
         const SizedBox(height: 4),
         Text(recent.name,

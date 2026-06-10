@@ -21,11 +21,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
   late final PageController _controller;
 
   VideoPlayerController? _currentCtrl;
-  VideoPlayerController? _nextCtrl;
 
   int _index = 0;
   bool _videoReady = false;
-  bool _isSwitching = false;
+  int _loadingForIndex = -1; // tracks the most recently requested load
 
   static const _slides = [
     OnboardingSlideModel(
@@ -34,14 +33,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
       videoUrl: 'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
     ),
     OnboardingSlideModel(
-      title: 'Powered by\nPanther AI',
-      subtitle: 'Real-time insights, predictions\nand guidance built around you.',
-      videoUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
-    ),
-    OnboardingSlideModel(
       title: 'Buy now.\nPay intelligently.',
       subtitle: 'Flexible payments, smart limits\nand responsible spending.',
       videoUrl: 'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
+    ),
+    OnboardingSlideModel(
+      title: 'Powered by\nPanther AI',
+      subtitle: 'Real-time insights, predictions\nand guidance built around you.',
+      videoUrl: 'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
     ),
     OnboardingSlideModel(
       title: 'Trade beyond\nthe basics',
@@ -59,18 +58,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void initState() {
     super.initState();
     _controller = PageController();
-    _initVideo(0);
+    _loadVideo(0);
   }
 
-  Future<void> _initVideo(int index) async {
-    final ctrl = VideoPlayerController.networkUrl(
-      Uri.parse(_slides[index].videoUrl),
-    );
-    await ctrl.initialize();
-    if (!mounted) { ctrl.dispose(); return; }
+  /// Load the video for [index]. If a newer call arrives while loading,
+  /// the old result is silently discarded — no locking, no dropped swipes.
+  Future<void> _loadVideo(int index) async {
+    _loadingForIndex = index;
+
+    VideoPlayerController? ctrl;
+    try {
+      ctrl = VideoPlayerController.networkUrl(
+        Uri.parse(_slides[index].videoUrl),
+      );
+      await ctrl.initialize();
+    } catch (_) {
+      ctrl?.dispose();
+      return;
+    }
+
+    // A newer swipe came in while we were loading — throw this away.
+    if (!mounted || _loadingForIndex != index) {
+      ctrl.dispose();
+      return;
+    }
+
     ctrl.setLooping(true);
     ctrl.setVolume(0);
     ctrl.play();
+
     setState(() {
       _currentCtrl?.dispose();
       _currentCtrl = ctrl;
@@ -78,44 +94,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
-  Future<void> _preloadAndSwitch(int nextIndex) async {
-    if (_isSwitching) return;
-    _isSwitching = true;
-
-    final next = VideoPlayerController.networkUrl(
-      Uri.parse(_slides[nextIndex].videoUrl),
-    );
-    await next.initialize();
-    if (!mounted) { next.dispose(); _isSwitching = false; return; }
-    next.setLooping(true);
-    next.setVolume(0);
-
-    setState(() {
-      _nextCtrl?.dispose();
-      _nextCtrl = next;
-    });
-
-    next.play();
-
-    // Brief crossfade: mark videoReady false then re-true
-    setState(() => _videoReady = false);
-    await Future.delayed(const Duration(milliseconds: 150));
-    if (!mounted) { _isSwitching = false; return; }
-
-    setState(() {
-      _currentCtrl?.dispose();
-      _currentCtrl = next;
-      _nextCtrl = null;
-      _videoReady = true;
-    });
-    _isSwitching = false;
-  }
-
   @override
   void dispose() {
     _controller.dispose();
     _currentCtrl?.dispose();
-    _nextCtrl?.dispose();
     super.dispose();
   }
 
@@ -133,8 +115,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   void _onPageChanged(int v) {
-    setState(() => _index = v);
-    _preloadAndSwitch(v);
+    setState(() {
+      _index = v;
+      _videoReady = false; // show dark while the next video loads
+    });
+    _loadVideo(v);
   }
 
   @override
@@ -153,7 +138,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             // ── Video background ──────────────────────────────────────────
             AnimatedOpacity(
               opacity: _videoReady ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 400),
               child: _videoReady && _currentCtrl != null
                   ? FittedBox(
                       fit: BoxFit.cover,
@@ -222,9 +207,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Dots
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: List.generate(
                             _slides.length,
                             (i) => AnimatedContainer(
@@ -242,36 +229,40 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             ),
                           ),
                         ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: _finish,
-                          child: Text(
-                            'Skip',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: _next,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 22, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(28),
-                            ),
-                            child: Text(
-                              _isLast ? 'Get Started' : 'Next →',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton(
+                              onPressed: _finish,
+                              child: Text(
+                                'Skip',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 14,
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: _next,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 22, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(28),
+                                ),
+                                child: Text(
+                                  _isLast ? 'Get Started' : 'Next →',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
