@@ -19,6 +19,7 @@ import '../../features/transfer/presentation/pages/pin_entry_page.dart';
 import '../../features/transfer/presentation/pages/add_money_page.dart';
 import '../../features/transfer/presentation/pages/bank_transfer_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
+import '../../features/wallet/presentation/pages/wallet_onboarding_page.dart';
 import '../../features/wallet/presentation/pages/find_atm_page.dart';
 import '../../features/exchange/presentation/pages/exchange_page.dart';
 import '../../features/exchange/presentation/pages/select_currency_page.dart';
@@ -253,6 +254,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.wallet.toPath,
       name: RouteConstants.wallet.name,
       builder: (context, state) => const WalletPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.walletOnboarding.toPath,
+      name: RouteConstants.walletOnboarding.name,
+      builder: (context, state) => const WalletOnboardingPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
