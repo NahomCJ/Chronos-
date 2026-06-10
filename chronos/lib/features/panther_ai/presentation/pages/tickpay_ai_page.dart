@@ -470,7 +470,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
                     const Text("Chris's Take", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
                     const SizedBox(height: 4),
                     Text(
-                      "You spent $totalSpent this month. You have 3 active plans — stacking more could hurt your score. Consider paying off the Zara plan first.",
+                      "You spent $totalSpent this month. You have 3 active plans. Stacking more could hurt your score. Consider paying off the Zara plan first.",
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12, height: 1.5),
                     ),
                     const SizedBox(height: 10),

@@ -78,10 +78,10 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
     final quote = state is ExchangeQuoteLoaded ? state.quote : null;
     final convertedAmount = quote != null
         ? quote.convertedAmount.toStringAsFixed(2)
-        : '—';
+        : '-';
     final exchangeRate = quote != null
         ? quote.rate.toStringAsFixed(4)
-        : '—';
+        : '-';
     final fee = quote?.fee ?? 0.0;
     final isLoading = state is ExchangeLoading;
 
@@ -287,7 +287,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
 
                   SizedBox(height: isSmallScreen ? 32 : 40),
 
-                  // Confirm Button — white pill
+                  // Confirm Button white pill
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: horizontalPadding),
                     width: double.infinity,

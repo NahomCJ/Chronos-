@@ -10,7 +10,7 @@ import '../entities/tickpay_notification.dart';
 ///
 /// The current implementation is backed by curated demo data that mirrors the
 /// Figma designs. Swapping in a network/database source later only requires a
-/// new implementation of this interface — no UI changes.
+/// new implementation of this interface  no UI changes.
 abstract class TickpayRepository {
   // Onboarding.
   List<WalletOption> getWalletOptions();

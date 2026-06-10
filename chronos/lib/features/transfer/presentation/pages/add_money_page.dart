@@ -5,7 +5,7 @@ import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 
 // ---------------------------------------------------------------------------
-// Constants — unified dark-glass design language
+// Constants  unified dark-glass design language
 // ---------------------------------------------------------------------------
 const _kBg = Color(0xFF0A0A14);
 const _kCard = Color(0xFF1A1A2E);
@@ -20,7 +20,7 @@ class _BankOption {
   const _BankOption(this.name, this.location, this.asset);
   final String name;
   final String location;
-  final String asset; // asset path — may not exist, fallback icon used
+  final String asset; // asset path, may not exist, fallback icon used
 }
 
 // ---------------------------------------------------------------------------
@@ -238,7 +238,7 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
             ),
           ),
           const SizedBox(height: 4),
-          // White/light underline bar — no purple gradient
+          // White/light underline bar  no purple gradient
           Container(
             height: 1,
             width: 120,
@@ -396,7 +396,7 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
     );
   }
 
-  // ── Continue button — white pill ──────────────────────────────────────────
+  // ── Continue button  white pill ──────────────────────────────────────────
 
   Widget _buildContinueButton() {
     final enabled = _parsedAmount > 0;
@@ -788,7 +788,7 @@ class _BankPickerSheetState extends State<_BankPickerSheet> {
                       ),
                       child: Row(
                         children: [
-                          // Bank icon — fallback since assets won't exist
+                          // Bank icon  fallback since assets won't exist
                           Container(
                             width: 40,
                             height: 40,
@@ -890,7 +890,7 @@ class _ConfirmSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Icon circle — white bg, dark icon (no purple gradient)
+          // Icon circle  white bg, dark icon (no purple gradient)
           Container(
             width: 72,
             height: 72,
@@ -948,7 +948,7 @@ class _ConfirmSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          // Confirm button — white pill
+          // Confirm button  white pill
           GestureDetector(
             onTap: onConfirm,
             child: Container(

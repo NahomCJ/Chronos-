@@ -7,7 +7,7 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
-/// Panther AI FastAPI service — uses user_id in request bodies (no JWT required).
+/// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
 class PantherAiRemoteDataSource {
   final ApiClient _client;

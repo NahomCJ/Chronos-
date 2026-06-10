@@ -48,7 +48,7 @@ class ExchangeSuccessPage extends StatelessWidget {
 
                   const SizedBox(height: 60),
 
-                  // Success Icon — white circle, green checkmark
+                  // Success Icon  white circle, green checkmark
                   Container(
                     width: 80,
                     height: 80,
@@ -245,7 +245,7 @@ class ExchangeSuccessPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        // View Wallet Button — white pill
+                        // View Wallet Button  white pill
                         SizedBox(
                           width: double.infinity,
                           height: 52,
@@ -274,7 +274,7 @@ class ExchangeSuccessPage extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        // Make Another Exchange — ghost pill
+                        // Make Another Exchange  ghost pill
                         SizedBox(
                           width: double.infinity,
                           height: 52,

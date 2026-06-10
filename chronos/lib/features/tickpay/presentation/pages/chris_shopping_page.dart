@@ -75,7 +75,7 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
     super.initState();
     // Initial greeting after short delay
     Future.delayed(const Duration(milliseconds: 400), () {
-      _addChris('Hey! I\'m Chris 👋\nWhat would you like to buy today? Just tell me — I\'ll find the best deals for you.');
+      _addChris('Hey! I\'m Chris 👋\nWhat would you like to buy today? Just tell me and I\'ll find the best deals for you.');
       setState(() => _state = _ChatState.waitingProduct);
     });
   }

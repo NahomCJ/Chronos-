@@ -383,7 +383,7 @@ class _Recent {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Method card — distinct gradient tint per card
+// Method card  distinct gradient tint per card
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _MethodCard extends StatefulWidget {
@@ -467,7 +467,7 @@ class _MethodCardState extends State<_MethodCard> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Recent avatar — person icon instead of letter
+// Recent avatar  person icon instead of letter
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _RecentAvatar extends StatelessWidget {
