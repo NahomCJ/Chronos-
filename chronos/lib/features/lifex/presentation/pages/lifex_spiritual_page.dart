@@ -27,16 +27,16 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
 
   static const _meditations = [
     _Meditation('Morning Calm', '10 min', 'Guided',
-        'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600',
+        'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=600',
         Color(0xFF8B5CF6)),
     _Meditation('Stress Relief', '15 min', 'Breathing',
-        'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=600',
+        'https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&w=600',
         Color(0xFF6366F1)),
     _Meditation('Sleep Well', '20 min', 'Body Scan',
-        'https://images.pexels.com/photos/3759089/pexels-photo-3759089.jpeg?auto=compress&cs=tinysrgb&w=600',
+        'https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&cs=tinysrgb&w=600',
         Color(0xFF3B82F6)),
     _Meditation('Focus Flow', '8 min', 'Breath Work',
-        'https://images.pexels.com/photos/775201/pexels-photo-775201.jpeg?auto=compress&cs=tinysrgb&w=600',
+        'https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?auto=compress&cs=tinysrgb&w=600',
         Color(0xFFEC4899)),
   ];
 
@@ -166,7 +166,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
       children: [
         CachedNetworkImage(
           imageUrl:
-              'https://images.pexels.com/photos/3759089/pexels-photo-3759089.jpeg?auto=compress&cs=tinysrgb&w=900',
+              'https://images.pexels.com/photos/994605/pexels-photo-994605.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
           placeholder: (_, __) =>
               Container(color: _purple.withValues(alpha: 0.15)),
@@ -204,7 +204,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.self_improvement_rounded,
+                    Icon(Icons.spa_rounded,
                         color: _purpleLight, size: 12),
                     const SizedBox(width: 6),
                     Text('MIND, BODY & SPIRIT',

@@ -18,30 +18,30 @@ class _LifeXPageState extends State<LifeXPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseCtrl;
 
-  static const _bg = Color(0xFF08080F);
+  static const _bg = Color(0xFF0D0D22);
   static const _teal = Color(0xFF0F766E);
   static const _tealLight = Color(0xFF14B8A6);
 
   static const _modules = [
-    _Module('Financial', Icons.trending_up_rounded, Color(0xFF10B981),
+    _Module('Financial', Icons.account_balance_wallet_rounded, Color(0xFF10B981),
         'Wealth, budgets & debt',
         'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Health', Icons.favorite_rounded, Color(0xFF14B8A6),
+    _Module('Health', Icons.monitor_heart_rounded, Color(0xFF14B8A6),
         'Fitness, vitals & wellness',
         'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Social', Icons.group_rounded, Color(0xFFEF4444),
+    _Module('Social', Icons.people_rounded, Color(0xFFEF4444),
         'Groups, events & planning',
         'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Educational', Icons.school_rounded, Color(0xFF6366F1),
+    _Module('Educational', Icons.menu_book_rounded, Color(0xFF6366F1),
         'Loans, learning & growth',
         'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Relationship', Icons.favorite_border_rounded, Color(0xFFEC4899),
+    _Module('Relationship', Icons.handshake_rounded, Color(0xFFEC4899),
         'Couples, family & bonds',
         'https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Vision', Icons.remove_red_eye_rounded, Color(0xFF3B82F6),
+    _Module('Vision', Icons.rocket_launch_rounded, Color(0xFF3B82F6),
         'Goals, milestones & future',
         'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Spiritual', Icons.self_improvement_rounded, Color(0xFF8B5CF6),
+    _Module('Spiritual', Icons.spa_rounded, Color(0xFF8B5CF6),
         'Values, purpose & routine',
         'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600'),
   ];
@@ -107,7 +107,6 @@ class _LifeXPageState extends State<LifeXPage>
           SliverToBoxAdapter(child: _buildHero(context)),
           SliverToBoxAdapter(child: _buildRingSection(context)),
           SliverToBoxAdapter(child: _buildLifeScore()),
-          SliverToBoxAdapter(child: _buildChrisInsight()),
           const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
@@ -465,70 +464,6 @@ class _LifeXPageState extends State<LifeXPage>
     );
   }
 
-  // ── Chris Insight ─────────────────────────────────────────────────────────────
-
-  Widget _buildChrisInsight() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F0F1C),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-              color: Colors.white.withValues(alpha: 0.06), width: 1),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _teal.withValues(alpha: 0.15),
-                border:
-                    Border.all(color: _tealLight.withValues(alpha: 0.4), width: 1),
-              ),
-              child: const Icon(Icons.auto_awesome_rounded,
-                  color: _tealLight, size: 16),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Chris says',
-                      style: TextStyle(
-                          color: _tealLight,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Your Financial and Health scores are strong. Focus energy on Vision this week — one concrete goal with a dollar amount attached makes it real.',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 13,
-                        height: 1.5),
-                  ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () =>
-                        context.push(RouteConstants.lifexOnboarding.toPath),
-                    child: Text('Update my profile →',
-                        style: TextStyle(
-                            color: _tealLight,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 // ── Ring decoration ───────────────────────────────────────────────────────────

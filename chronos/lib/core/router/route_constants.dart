@@ -75,6 +75,11 @@ enum RouteConstants {
   marketIntelligence,
   pantherAiSettings,
   pantherAiChat,
+  taxIntelligence,
+  billsManagement,
+  liabilitiesIntelligence,
+  budgetIntelligence,
+  netWorthIntelligence,
   profile,
   changePassword,
   notificationSettings,
@@ -281,6 +286,16 @@ extension RouteConstantsX on RouteConstants {
         return '/lifex/ai-insights';
       case RouteConstants.lifexExport:
         return '/lifex/export';
+      case RouteConstants.taxIntelligence:
+        return '/panther/tax';
+      case RouteConstants.billsManagement:
+        return '/panther/bills';
+      case RouteConstants.liabilitiesIntelligence:
+        return '/panther/liabilities';
+      case RouteConstants.budgetIntelligence:
+        return '/panther/budget';
+      case RouteConstants.netWorthIntelligence:
+        return '/panther/net-worth';
     }
   }
 
@@ -469,6 +484,16 @@ extension RouteConstantsX on RouteConstants {
         return 'lifex-ai-insights';
       case RouteConstants.lifexExport:
         return 'lifex-export';
+      case RouteConstants.taxIntelligence:
+        return 'tax-intelligence';
+      case RouteConstants.billsManagement:
+        return 'bills-management';
+      case RouteConstants.liabilitiesIntelligence:
+        return 'liabilities-intelligence';
+      case RouteConstants.budgetIntelligence:
+        return 'budget-intelligence';
+      case RouteConstants.netWorthIntelligence:
+        return 'net-worth-intelligence';
     }
   }
 }

@@ -108,6 +108,11 @@ import '../../features/lifex/presentation/pages/lifex_social_page.dart';
 import '../../features/lifex/presentation/pages/lifex_feed_page.dart';
 import '../../features/lifex/presentation/pages/lifex_ai_insights_page.dart';
 import '../../features/lifex/presentation/pages/lifex_export_page.dart';
+import '../../features/panther_ai/presentation/pages/tax_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/bills_management_page.dart';
+import '../../features/panther_ai/presentation/pages/liabilities_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/budget_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/net_worth_intelligence_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -643,6 +648,36 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.taxIntelligence.toPath,
+      name: RouteConstants.taxIntelligence.name,
+      builder: (context, state) => const TaxIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.billsManagement.toPath,
+      name: RouteConstants.billsManagement.name,
+      builder: (context, state) => const BillsManagementPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.liabilitiesIntelligence.toPath,
+      name: RouteConstants.liabilitiesIntelligence.name,
+      builder: (context, state) => const LiabilitiesIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.budgetIntelligence.toPath,
+      name: RouteConstants.budgetIntelligence.name,
+      builder: (context, state) => const BudgetIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.netWorthIntelligence.toPath,
+      name: RouteConstants.netWorthIntelligence.name,
+      builder: (context, state) => const NetWorthIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.pantherAiSettings.toPath,
       name: RouteConstants.pantherAiSettings.name,
       builder: (context, state) => const PantherAiSettingsPage(),
@@ -684,85 +719,71 @@ final GoRouter router = GoRouter(
     ),
     // ── LifeX detail pages (no bottom nav) ───────────────────────────────────
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexOnboarding.toPath,
       name: RouteConstants.lifexOnboarding.name,
       builder: (context, state) => const LifeXOnboardingPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexHealth.toPath,
       name: RouteConstants.lifexHealth.name,
       builder: (context, state) => const LifeXHealthPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexEducation.toPath,
       name: RouteConstants.lifexEducation.name,
       builder: (context, state) => const LifeXEducationPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexSpiritual.toPath,
       name: RouteConstants.lifexSpiritual.name,
       builder: (context, state) => const LifeXSpiritualPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexFinance.toPath,
       name: RouteConstants.lifexFinance.name,
       builder: (context, state) => const LifeXFinancePage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexActivity.toPath,
       name: RouteConstants.lifexActivity.name,
       builder: (context, state) => const LifeXActivityPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexVision.toPath,
       name: RouteConstants.lifexVision.name,
       builder: (context, state) => const LifeXVisionPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexFamily.toPath,
       name: RouteConstants.lifexFamily.name,
       builder: (context, state) => const LifeXFamilyPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexRelationship.toPath,
       name: RouteConstants.lifexRelationship.name,
       builder: (context, state) => const LifeXRelationshipPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexSocial.toPath,
       name: RouteConstants.lifexSocial.name,
       builder: (context, state) => const LifeXSocialPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexFeed.toPath,
       name: RouteConstants.lifexFeed.name,
       builder: (context, state) => const LifeXFeedPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexAiInsights.toPath,
       name: RouteConstants.lifexAiInsights.name,
       builder: (context, state) => const LifeXAiInsightsPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.lifexExport.toPath,
       name: RouteConstants.lifexExport.name,
       builder: (context, state) => const LifeXExportPage(),
     ),
     GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       path: '/theme-settings',
       builder: (context, state) => BlocProvider.value(
         value: sl<ThemeCubit>(),

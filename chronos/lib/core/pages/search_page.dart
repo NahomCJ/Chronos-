@@ -114,7 +114,7 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A14),
+      backgroundColor: const Color(0xFF08080F),
       body: SafeArea(
         child: Column(
           children: [
@@ -132,10 +132,10 @@ class _SearchPageState extends State<SearchPage> {
                     child: Container(
                       height: 46,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A1A2E),
+                        color: const Color(0xFF141420),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF6C5CE7).withValues(alpha: 0.4),
+                          color: Colors.white.withValues(alpha: 0.12),
                           width: 1,
                         ),
                       ),
@@ -147,10 +147,10 @@ class _SearchPageState extends State<SearchPage> {
                         decoration: InputDecoration(
                           hintText: 'Search services, features...',
                           hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: Colors.white.withValues(alpha: 0.35),
                               fontSize: 15),
-                          prefixIcon: const Icon(Icons.search,
-                              color: Color(0xFF6C5CE7), size: 20),
+                          prefixIcon: Icon(Icons.search,
+                              color: Colors.white.withValues(alpha: 0.45), size: 20),
                           suffixIcon: _controller.text.isNotEmpty
                               ? IconButton(
                                   icon: Icon(Icons.close,
@@ -198,7 +198,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Text(
         category.toUpperCase(),
         style: TextStyle(
-          color: const Color(0xFF6C5CE7).withValues(alpha: 0.9),
+          color: Colors.white.withValues(alpha: 0.35),
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
@@ -217,10 +217,10 @@ class _SearchPageState extends State<SearchPage> {
           margin: const EdgeInsets.only(bottom: 6),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           decoration: BoxDecoration(
-            color: const Color(0xFF13132A),
+            color: const Color(0xFF111118),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.06),
+              color: Colors.white.withValues(alpha: 0.07),
               width: 0.8,
             ),
           ),
@@ -229,11 +229,11 @@ class _SearchPageState extends State<SearchPage> {
               Container(
                 padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6C5CE7).withValues(alpha: 0.15),
+                  color: Colors.white.withValues(alpha: 0.07),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(item.icon,
-                    color: const Color(0xFF6C5CE7), size: 20),
+                    color: Colors.white.withValues(alpha: 0.7), size: 20),
               ),
               const SizedBox(width: 14),
               Expanded(

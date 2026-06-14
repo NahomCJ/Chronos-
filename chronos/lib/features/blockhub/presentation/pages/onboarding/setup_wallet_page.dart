@@ -1,6 +1,4 @@
-import 'package:chronos_bank/features/blockhub/presentation/pages/onboarding/choose_experience_page.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/text_theme.dart';
 import '../../widgets/wallet_connected_modal.dart';
 
 class SetupWalletPage extends StatefulWidget {
@@ -12,238 +10,130 @@ class SetupWalletPage extends StatefulWidget {
 
 class _SetupWalletPageState extends State<SetupWalletPage> {
   String? _selectedNetwork;
-  final List<String> _networks = ['Ethereum', 'Polygon', 'Arbitrum', 'Base'];
+  String? _selectedWalletType;
 
-  void _showWalletConnectedModal() => WalletConnectedModal.show(context);
+  static const _bg = Color(0xFF06060E);
+  static const _card = Color(0xFF0F0F1C);
+  static const _amber = Color(0xFFF59E0B);
+
+  static const _networks = [
+    _Network('ethereum', 'Ethereum', 'ETH', Color(0xFF627EEA),
+        Icons.currency_exchange_rounded, 'Largest DeFi ecosystem'),
+    _Network('polygon', 'Polygon', 'MATIC', Color(0xFF8247E5),
+        Icons.hexagon_rounded, 'Low fees, fast transactions'),
+    _Network('arbitrum', 'Arbitrum', 'ARB', Color(0xFF12AAFF),
+        Icons.bolt_rounded, 'Ethereum Layer 2 scaling'),
+    _Network('base', 'Base', 'BASE', Color(0xFF0052FF),
+        Icons.layers_rounded, 'Coinbase\'s L2 network'),
+  ];
+
+  static const _walletTypes = [
+    _WalletType('create', Icons.add_circle_outline_rounded, 'Create New Wallet',
+        'Generate a fresh wallet with a seed phrase you control',
+        Color(0xFF22C55E)),
+    _WalletType('import', Icons.download_rounded, 'Import Existing Wallet',
+        'Connect using your seed phrase or private key',
+        Color(0xFF3B82F6)),
+    _WalletType('connect', Icons.link_rounded, 'Connect External Wallet',
+        'Link MetaMask, Trust Wallet or WalletConnect',
+        Color(0xFFF59E0B)),
+  ];
+
+  void _proceed() {
+    if (_selectedNetwork == null || _selectedWalletType == null) return;
+    WalletConnectedModal.show(context);
+  }
+
+  bool get _canProceed =>
+      _selectedNetwork != null && _selectedWalletType != null;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
-        children: [
-          // ── Dark header ──────────────────────────────────────────────
-          Container(
-            color: const Color(0xFF0D0A1E),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
+      backgroundColor: _bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const ChooseExperiencePage())),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text('BlockHub',
-                          textAlign: TextAlign.center,
-                          style: TextStyles.titleLarge.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                    ),
-                    const SizedBox(width: 34),
+                    _buildIntro(),
+                    const SizedBox(height: 28),
+                    _sectionLabel('Select Network'),
+                    const SizedBox(height: 12),
+                    _buildNetworkGrid(),
+                    const SizedBox(height: 28),
+                    _sectionLabel('Wallet Setup'),
+                    const SizedBox(height: 12),
+                    ..._walletTypes.map((w) => _buildWalletOption(w)),
+                    const SizedBox(height: 24),
+                    _buildSecurityNote(),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
-          ),
+            _buildBottomBar(context),
+          ],
+        ),
+      ),
+    );
+  }
 
-          // ── White scrollable body ────────────────────────────────────
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text('Set Up Wallet',
-                      style: TextStyles.headlineMedium.copyWith(
-                          color: const Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24)),
-                  const SizedBox(height: 6),
-                  Text('Choose how to manage your assets',
-                      style: TextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF888888), fontSize: 14)),
-                  const SizedBox(height: 24),
-
-                  _buildWalletOption(
-                    icon: Icons.add,
-                    title: 'Create BlockHub Wallet',
-                    subtitle: 'Secure, non-custodial wallet managed by BlockHub',
-                    isPrimary: true,
-                    onTap: _showWalletConnectedModal,
-                  ),
-                  const SizedBox(height: 20),
-                  const Center(
-                    child: Text('Or connect external',
-                        style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 13)),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildWalletOption(
-                    icon: Icons.account_balance_wallet,
-                    title: 'Connect MetaMask',
-                    subtitle: '',
-                    isPrimary: false,
-                    onTap: _showWalletConnectedModal,
-                  ),
-                  const SizedBox(height: 10),
-                  _buildWalletOption(
-                    icon: Icons.link,
-                    title: 'Connect WalletConnect',
-                    subtitle: '',
-                    isPrimary: false,
-                    onTap: _showWalletConnectedModal,
-                  ),
-                  const SizedBox(height: 10),
-                  _buildWalletOption(
-                    icon: Icons.account_balance,
-                    title: 'Connect Coinbase Wallet',
-                    subtitle: '',
-                    isPrimary: false,
-                    onTap: _showWalletConnectedModal,
-                  ),
-                  const SizedBox(height: 24),
-
-                  Text('Preferred Network',
-                      style: TextStyles.titleMedium.copyWith(
-                          color: const Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16)),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _networks.map((network) {
-                      final isSelected = _selectedNetwork == network;
-                      return GestureDetector(
-                        onTap: () => setState(() => _selectedNetwork = network),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? const Color(0xFF0D0A1E)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isSelected
-                                  ? const Color(0xFF0D0A1E)
-                                  : const Color(0xFFDDDDDD),
-                            ),
-                          ),
-                          child: Text(network,
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.white
-                                    : const Color(0xFF444444),
-                                fontSize: 13,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
-                              )),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Security note
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF8ED),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: const Color(0xFFDC8F4A).withValues(alpha: 0.3)),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.shield_outlined,
-                            color: Color(0xFFDC8F4A), size: 20),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                              'Your keys, your crypto. We never store your private keys.',
-                              style: TextStyles.bodySmall.copyWith(
-                                  color: const Color(0xFF555555),
-                                  fontSize: 12,
-                                  height: 1.5)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
               ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white, size: 16),
             ),
           ),
-
-          // ── Bottom buttons ───────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+          const SizedBox(width: 14),
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF1A1A1A),
-                      side: const BorderSide(color: Color(0xFFDDDDDD)),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.close, size: 18),
-                        SizedBox(width: 8),
-                        Text('Exit BlockHub',
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _selectedNetwork != null
-                        ? _showWalletConnectedModal
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0D0A1E),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFFDDDDDD),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text('Continue',
-                        style: TextStyle(
-                          color: _selectedNetwork != null
-                              ? Colors.white
-                              : const Color(0xFF999999),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        )),
-                  ),
-                ),
+                const Text('Setup Wallet',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700)),
+                Text('Step 3 of 3',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        fontSize: 11)),
               ],
+            ),
+          ),
+          Row(
+            children: List.generate(
+              3,
+              (i) => Container(
+                margin: const EdgeInsets.only(left: 5),
+                width: i == 2 ? 18 : 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: i == 2
+                      ? _amber
+                      : Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
             ),
           ),
         ],
@@ -251,68 +141,253 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
     );
   }
 
-  Widget _buildWalletOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool isPrimary,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildIntro() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Set up your\nwallet.',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 32,
+                fontWeight: FontWeight.w800,
+                height: 1.1)),
+        const SizedBox(height: 10),
+        Text(
+          'Choose the blockchain network and how you\'d like to manage your wallet.',
+          style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.5),
+              fontSize: 14,
+              height: 1.5),
+        ),
+      ],
+    );
+  }
+
+  Widget _sectionLabel(String text) {
+    return Text(text,
+        style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.5),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8));
+  }
+
+  Widget _buildNetworkGrid() {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 1.6,
+      children: _networks.map((n) => _buildNetworkTile(n)).toList(),
+    );
+  }
+
+  Widget _buildNetworkTile(_Network n) {
+    final isSelected = _selectedNetwork == n.id;
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
+      onTap: () => setState(() => _selectedNetwork = n.id),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected ? n.color.withValues(alpha: 0.1) : _card,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isPrimary
-                ? const Color(0xFFF59E0B).withValues(alpha: 0.5)
-                : const Color(0xFFEEEEEE),
-            width: isPrimary ? 1.5 : 1,
+            color: isSelected
+                ? n.color.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.07),
+            width: isSelected ? 1.5 : 0.8,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(n.icon, color: n.color, size: 18),
+                const Spacer(),
+                if (isSelected)
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: n.color),
+                    child: const Icon(Icons.check_rounded,
+                        color: Colors.white, size: 10),
+                  ),
+              ],
             ),
+            const Spacer(),
+            Text(n.name,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
+            Text(n.tagline,
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.35),
+                    fontSize: 9,
+                    height: 1.3)),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWalletOption(_WalletType w) {
+    final isSelected = _selectedWalletType == w.id;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedWalletType = w.id),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? w.color.withValues(alpha: 0.08) : _card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected
+                ? w.color.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.07),
+            width: isSelected ? 1.5 : 0.8,
+          ),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                shape: BoxShape.circle,
+                color: w.color.withValues(alpha: 0.12),
               ),
-              child: Icon(icon, color: const Color(0xFFF59E0B), size: 20),
+              child: Icon(w.icon, color: w.color, size: 18),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: TextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF1A1A1A),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14)),
-                  if (subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 3),
-                    Text(subtitle,
-                        style: TextStyles.bodySmall.copyWith(
-                            color: const Color(0xFF888888), fontSize: 12)),
-                  ],
+                  Text(w.title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 3),
+                  Text(w.subtitle,
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 11,
+                          height: 1.3)),
                 ],
               ),
             ),
-            const Icon(Icons.open_in_new,
-                color: Color(0xFFCCCCCC), size: 18),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color:
+                    isSelected ? w.color : Colors.white.withValues(alpha: 0.05),
+                border: Border.all(
+                    color: isSelected
+                        ? w.color
+                        : Colors.white.withValues(alpha: 0.15),
+                    width: 1.5),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check_rounded,
+                      color: Colors.white, size: 11)
+                  : null,
+            ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildSecurityNote() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF22C55E).withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: const Color(0xFF22C55E).withValues(alpha: 0.15), width: 0.8),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline_rounded,
+              color: Color(0xFF22C55E), size: 16),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Your keys, your crypto. Chronos never stores your seed phrase or private keys.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  fontSize: 11,
+                  height: 1.45),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      child: GestureDetector(
+        onTap: _canProceed ? _proceed : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: _canProceed ? _amber : Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: _canProceed
+                ? [
+                    BoxShadow(
+                        color: _amber.withValues(alpha: 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4))
+                  ]
+                : [],
+          ),
+          child: Text('Connect Wallet',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: _canProceed
+                      ? Colors.black
+                      : Colors.white.withValues(alpha: 0.3),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800)),
+        ),
+      ),
+    );
+  }
+}
+
+class _Network {
+  final String id;
+  final String name;
+  final String symbol;
+  final Color color;
+  final IconData icon;
+  final String tagline;
+  const _Network(
+      this.id, this.name, this.symbol, this.color, this.icon, this.tagline);
+}
+
+class _WalletType {
+  final String id;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  const _WalletType(
+      this.id, this.icon, this.title, this.subtitle, this.color);
 }

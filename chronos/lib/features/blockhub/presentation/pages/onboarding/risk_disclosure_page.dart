@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/text_theme.dart';
 import 'choose_experience_page.dart';
 
 class RiskDisclosurePage extends StatefulWidget {
@@ -10,293 +9,326 @@ class RiskDisclosurePage extends StatefulWidget {
 }
 
 class _RiskDisclosurePageState extends State<RiskDisclosurePage> {
-  bool _isAgreed = false;
-  final Set<int> _expanded = {};
+  bool _agreed = false;
+  int? _expanded;
+
+  static const _bg = Color(0xFF06060E);
+  static const _card = Color(0xFF0F0F1C);
+  static const _amber = Color(0xFFF59E0B);
+  static const _red = Color(0xFFEF4444);
 
   final _risks = [
-    _Risk('Market Volatility',
-        'Cryptocurrency markets are highly volatile. Prices can fluctuate significantly and you may lose some or all of your investment.'),
-    _Risk('No Guaranteed Returns',
-        'Past performance is not indicative of future results. Only invest what you can afford to lose.'),
-    _Risk('Regulatory Risks',
-        'The regulatory environment for digital assets varies by jurisdiction and is subject to change.'),
-    _Risk('Technology Risks',
-        'Blockchain and smart contracts may contain vulnerabilities. We implement security measures but cannot guarantee complete protection.'),
-    _Risk('AI Advisory Limitations',
-        'Panther AI provides market insights for informational purposes only. Not financial advice.'),
-    _Risk('Liquidity Risks',
-        'Some digital assets may have limited liquidity, making it difficult to buy or sell at desired prices.'),
+    _Risk(Icons.show_chart_rounded, 'Market Volatility',
+        'Cryptocurrency markets are highly volatile. Prices can fluctuate significantly within short periods. You may lose some or all of your investment.',
+        _red),
+    _Risk(Icons.cancel_outlined, 'No Guaranteed Returns',
+        'Past performance is not indicative of future results. Only invest what you can afford to lose entirely.',
+        Color(0xFFF59E0B)),
+    _Risk(Icons.gavel_rounded, 'Regulatory Risks',
+        'The regulatory environment for digital assets varies by jurisdiction and is subject to rapid change, which may affect trading availability.',
+        Color(0xFF8B5CF6)),
+    _Risk(Icons.shield_outlined, 'Technology Risks',
+        'Blockchain networks and smart contracts may contain vulnerabilities. We implement security measures but cannot guarantee complete protection.',
+        Color(0xFF3B82F6)),
+    _Risk(Icons.psychology_outlined, 'AI Advisory Limitations',
+        'Panther AI provides market insights for informational purposes only. Nothing herein constitutes financial, investment, or legal advice.',
+        Color(0xFF14B8A6)),
+    _Risk(Icons.water_drop_outlined, 'Liquidity Risks',
+        'Some digital assets may have limited liquidity, making it difficult to buy or sell at desired prices or quantities.',
+        Color(0xFF10B981)),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
-        children: [
-          // ── Dark header ────────────────────────────────────────────────
-          Container(
-            color: const Color(0xFF0D0A1E),
-            child: SafeArea(
-              bottom: false,
-              child: _buildHeader(context),
-            ),
-          ),
-          // ── White scrollable body ──────────────────────────────────────
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Risk Disclosure',
-                    style: TextStyles.titleLarge.copyWith(
-                      color: const Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Please read carefully before proceeding',
-                    style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF888888),
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Accordion items
-                  ..._risks.asMap().entries.map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: _accordionItem(e.key, e.value),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Agreement checkbox
-                  GestureDetector(
-                    onTap: () => setState(() => _isAgreed = !_isAgreed),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: _isAgreed
-                            ? const Color(0xFFFFF8ED)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _isAgreed
-                              ? const Color(0xFFDC8F4A)
-                              : const Color(0xFFEEEEEE),
+      backgroundColor: _bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildIntro(),
+                    const SizedBox(height: 24),
+                    ..._risks.asMap().entries.map(
+                          (e) => _buildRiskCard(e.key, e.value),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: _isAgreed
-                                  ? const Color(0xFFDC8F4A)
-                                  : Colors.transparent,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: _isAgreed
-                                    ? const Color(0xFFDC8F4A)
-                                    : const Color(0xFFCCCCCC),
-                                width: 2,
-                              ),
-                            ),
-                            child: _isAgreed
-                                ? const Icon(Icons.check,
-                                    color: Colors.white, size: 12)
-                                : null,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'I confirm I have read and understand the risks. AI-generated insights are informational only and do not constitute financial advice.',
-                              style: TextStyles.bodySmall.copyWith(
-                                color: const Color(0xFF555555),
-                                fontSize: 12,
-                                height: 1.5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF1A1A1A),
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        side: const BorderSide(color: Color(0xFFDDDDDD)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: const Text('Exit BlockHub',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isAgreed
-                          ? () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ChooseExperiencePage(),
-                                ),
-                              )
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0D0A1E),
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFDDDDDD),
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                          color: _isAgreed
-                              ? Colors.white
-                              : const Color(0xFF999999),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                ],
+                    const SizedBox(height: 24),
+                    _buildAgreeRow(),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            _buildBottomBar(context),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(
-              width: 34,
-              height: 34,
+              padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
               ),
-              child: const Icon(Icons.arrow_back,
-                  color: Colors.white, size: 17),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white, size: 16),
             ),
           ),
+          const SizedBox(width: 14),
           Expanded(
-            child: Text(
-              'BlockHub',
-              textAlign: TextAlign.center,
-              style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 17,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Risk Disclosure',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700)),
+                Text('Step 1 of 3',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        fontSize: 11)),
+              ],
             ),
           ),
-          const SizedBox(width: 34),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: _red.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: _red.withValues(alpha: 0.3), width: 0.8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.warning_amber_rounded, color: _red, size: 12),
+                const SizedBox(width: 5),
+                Text('Required',
+                    style: TextStyle(
+                        color: _red, fontSize: 10, fontWeight: FontWeight.w700)),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _accordionItem(int index, _Risk risk) {
-    final isOpen = _expanded.contains(index);
-    return GestureDetector(
-      onTap: () => setState(() {
-        if (isOpen) {
-          _expanded.remove(index);
-        } else {
-          _expanded.add(index);
-        }
-      }),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isOpen
-                ? const Color(0xFFDC8F4A).withValues(alpha: 0.4)
-                : const Color(0xFFEEEEEE),
+  Widget _buildIntro() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _amber.withValues(alpha: 0.12),
+            Colors.white.withValues(alpha: 0.02),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _amber.withValues(alpha: 0.25), width: 0.8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline_rounded, color: _amber, size: 18),
+              const SizedBox(width: 8),
+              const Text('Before you begin',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700)),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
+          const SizedBox(height: 10),
+          Text(
+            'Digital asset trading involves significant risk. Please read and understand each risk category below before proceeding.',
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 13,
+                height: 1.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRiskCard(int index, _Risk risk) {
+    final isExpanded = _expanded == index;
+    return GestureDetector(
+      onTap: () => setState(() => _expanded = isExpanded ? null : index),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: _card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isExpanded
+                ? risk.color.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.06),
+            width: 0.8,
+          ),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: risk.color.withValues(alpha: 0.12)),
+                    child: Icon(risk.icon, color: risk.color, size: 16),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(risk.title,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  Icon(
+                      isExpanded
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      color: Colors.white.withValues(alpha: 0.3),
+                      size: 20),
+                ],
+              ),
+            ),
+            if (isExpanded)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(
+                          color: risk.color.withValues(alpha: 0.15),
+                          width: 0.8)),
+                ),
+                child: Text(risk.detail,
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.55),
+                        fontSize: 12,
+                        height: 1.55)),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAgreeRow() {
+    return GestureDetector(
+      onTap: () => setState(() => _agreed = !_agreed),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _agreed
+              ? const Color(0xFF22C55E).withValues(alpha: 0.08)
+              : _card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: _agreed
+                ? const Color(0xFF22C55E).withValues(alpha: 0.35)
+                : Colors.white.withValues(alpha: 0.08),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _agreed
+                    ? const Color(0xFF22C55E)
+                    : Colors.white.withValues(alpha: 0.06),
+                border: Border.all(
+                    color: _agreed
+                        ? const Color(0xFF22C55E)
+                        : Colors.white.withValues(alpha: 0.2),
+                    width: 1.5),
+              ),
+              child: _agreed
+                  ? const Icon(Icons.check_rounded,
+                      color: Colors.white, size: 13)
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'I understand the risks involved in trading digital assets and have read all disclosures above.',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: _agreed ? 0.85 : 0.55),
+                    fontSize: 13,
+                    height: 1.4),
+              ),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    risk.title,
-                    style: TextStyles.bodyMedium.copyWith(
-                      color: const Color(0xFF1A1A1A),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Icon(
-                  isOpen
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: const Color(0xFF999999),
-                  size: 20,
-                ),
-              ],
-            ),
-            if (isOpen) ...[
-              const SizedBox(height: 8),
-              Text(
-                risk.description,
-                style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF666666),
-                  fontSize: 12.5,
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      child: GestureDetector(
+        onTap: _agreed
+            ? () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const ChooseExperiencePage()),
+                )
+            : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: _agreed ? _amber : Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: _agreed
+                ? [
+                    BoxShadow(
+                        color: _amber.withValues(alpha: 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4))
+                  ]
+                : [],
+          ),
+          child: Text('Continue',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: _agreed
+                      ? Colors.black
+                      : Colors.white.withValues(alpha: 0.3),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800)),
         ),
       ),
     );
@@ -304,6 +336,9 @@ class _RiskDisclosurePageState extends State<RiskDisclosurePage> {
 }
 
 class _Risk {
-  final String title, description;
-  const _Risk(this.title, this.description);
+  final IconData icon;
+  final String title;
+  final String detail;
+  final Color color;
+  const _Risk(this.icon, this.title, this.detail, this.color);
 }

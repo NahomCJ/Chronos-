@@ -602,6 +602,56 @@ class _PantherAiPageState extends State<PantherAiPage>
                 changeColor: const Color(0xFF22C55E),
                 onTap: () => context.push(RouteConstants.tickPayAi.toPath),
               ),
+              const SizedBox(width: 12),
+              _IntelTile(
+                icon: Icons.receipt_long_rounded,
+                title: 'Taxes',
+                value: '\$4,200',
+                change: 'Apr 15 due',
+                changeColor: const Color(0xFFF59E0B),
+                onTap: () =>
+                    context.push(RouteConstants.taxIntelligence.toPath),
+              ),
+              const SizedBox(width: 12),
+              _IntelTile(
+                icon: Icons.receipt_rounded,
+                title: 'Bills',
+                value: '5 upcoming',
+                change: '\$840/mo',
+                changeColor: const Color(0xFF3B82F6),
+                onTap: () =>
+                    context.push(RouteConstants.billsManagement.toPath),
+              ),
+              const SizedBox(width: 12),
+              _IntelTile(
+                icon: Icons.credit_card_off_rounded,
+                title: 'Liabilities',
+                value: '\$318.8k',
+                change: '-\$8.4k paid',
+                changeColor: const Color(0xFF22C55E),
+                onTap: () => context
+                    .push(RouteConstants.liabilitiesIntelligence.toPath),
+              ),
+              const SizedBox(width: 12),
+              _IntelTile(
+                icon: Icons.bar_chart_rounded,
+                title: 'Budget',
+                value: '67% used',
+                change: '\$1,240 left',
+                changeColor: const Color(0xFF22C55E),
+                onTap: () =>
+                    context.push(RouteConstants.budgetIntelligence.toPath),
+              ),
+              const SizedBox(width: 12),
+              _IntelTile(
+                icon: Icons.trending_up_rounded,
+                title: 'Net Worth',
+                value: '\$47.2k',
+                change: '+8.2% YTD',
+                changeColor: const Color(0xFF22C55E),
+                onTap: () =>
+                    context.push(RouteConstants.netWorthIntelligence.toPath),
+              ),
             ],
           ),
         ),
