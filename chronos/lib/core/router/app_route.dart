@@ -103,6 +103,7 @@ import '../../features/lifex/presentation/pages/lifex_finance_page.dart';
 import '../../features/lifex/presentation/pages/lifex_activity_page.dart';
 import '../../features/lifex/presentation/pages/lifex_vision_page.dart';
 import '../../features/lifex/presentation/pages/lifex_family_page.dart';
+import '../../features/lifex/presentation/pages/lifex_relationship_page.dart';
 import '../../features/lifex/presentation/pages/lifex_social_page.dart';
 import '../../features/lifex/presentation/pages/lifex_feed_page.dart';
 import '../../features/lifex/presentation/pages/lifex_ai_insights_page.dart';
@@ -729,6 +730,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.lifexFamily.toPath,
       name: RouteConstants.lifexFamily.name,
       builder: (context, state) => const LifeXFamilyPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.lifexRelationship.toPath,
+      name: RouteConstants.lifexRelationship.name,
+      builder: (context, state) => const LifeXRelationshipPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

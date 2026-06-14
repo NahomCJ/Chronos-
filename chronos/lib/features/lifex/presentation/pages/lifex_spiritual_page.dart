@@ -12,10 +12,13 @@ class LifeXSpiritualPage extends StatefulWidget {
 }
 
 class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
+  late TabController _tabs;
   late AnimationController _breathCtrl;
   bool _isBreathing = false;
   int _selectedMeditation = 0;
+  bool _dailyReminderOn = true;
+  bool _reflectionExpanded = false;
 
   static const _bg = Color(0xFF06040E);
   static const _card = Color(0xFF0E0B1A);
@@ -49,9 +52,36 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
     _SpiritualGoal('Read spiritual text weekly', 3, 4, Color(0xFFF59E0B)),
   ];
 
+  static const _givingHistory = [
+    _GivingRecord('May 2025', '\$200', 'Tithes & Offerings', '4 donations'),
+    _GivingRecord('April 2025', '\$185', 'Tithes & Offerings', '3 donations'),
+    _GivingRecord('March 2025', '\$210', 'Tithes & Offerings', '4 donations'),
+  ];
+
+  static const _charities = [
+    _Charity('Local Food Bank', 'Community', '\$25/mo',
+        Icons.restaurant_rounded, Color(0xFF10B981)),
+    _Charity('Child Education Fund', 'Education', '\$30/mo',
+        Icons.school_rounded, Color(0xFF3B82F6)),
+    _Charity('Disaster Relief', 'Emergency Aid', '\$15/mo',
+        Icons.volunteer_activism_rounded, Color(0xFFEF4444)),
+  ];
+
+  static const _mindfulnessApps = [
+    _MindApp('Calm', 'Sleep & meditation', '\$14.99/mo',
+        Icons.nightlight_rounded, Color(0xFF3B82F6)),
+    _MindApp('Headspace', 'Guided meditation', '\$12.99/mo',
+        Icons.self_improvement_rounded, Color(0xFFEF4444)),
+    _MindApp('Insight Timer', 'Free meditation library', 'Free',
+        Icons.timer_rounded, Color(0xFF10B981)),
+    _MindApp('Balance', 'Personalized plans', 'Free (1yr)',
+        Icons.balance_rounded, Color(0xFF8B5CF6)),
+  ];
+
   @override
   void initState() {
     super.initState();
+    _tabs = TabController(length: 3, vsync: this);
     _breathCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
@@ -60,6 +90,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
 
   @override
   void dispose() {
+    _tabs.dispose();
     _breathCtrl.dispose();
     super.dispose();
   }
@@ -82,227 +113,195 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
         margin: const EdgeInsets.only(bottom: 30),
         child: const ChrisHomeFab(),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: _buildHero(context)),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: _buildStreakCard(),
-          )),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _sectionTitle('Breath & Meditation'),
-                const SizedBox(height: 14),
-              ],
-            ),
-          )),
-          SliverToBoxAdapter(child: _buildBreathingExercise()),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: _sectionTitle('Meditation Library'),
-          )),
-          SliverToBoxAdapter(
-              child: SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-              itemCount: _meditations.length,
-              itemBuilder: (_, i) => _MeditationCard(
-                  meditation: _meditations[i],
-                  isSelected: _selectedMeditation == i,
-                  onTap: () => setState(() => _selectedMeditation = i)),
-            ),
-          )),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _sectionTitle('Featured Video'),
-                const SizedBox(height: 14),
-                _VideoCard(
-                  title: 'Introduction to Mindfulness',
-                  duration: '18 min',
-                  imageUrl:
-                      'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600',
+      body: NestedScrollView(
+        headerSliverBuilder: (_, __) => [
+          SliverAppBar(
+            expandedHeight: 260,
+            pinned: true,
+            backgroundColor: _bg,
+            leading: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.12),
                 ),
-                const SizedBox(height: 14),
-                _VideoCard(
-                  title: 'Gratitude Meditation',
-                  duration: '12 min',
-                  imageUrl:
-                      'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=600',
-                ),
-              ],
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white, size: 16),
+              ),
             ),
-          )),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    _sectionTitle('Gratitude Journal'),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () => _showAddGratitudeSheet(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: _purple.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: _purple.withValues(alpha: 0.4),
-                              width: 1),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add_rounded,
-                                color: _purpleLight, size: 14),
-                            const SizedBox(width: 4),
-                            Text('Add',
-                                style: TextStyle(
-                                    color: _purpleLight,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                ..._gratitudes.map((g) => _GratitudeCard(text: g)),
+            flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
+            bottom: TabBar(
+              controller: _tabs,
+              tabs: const [
+                Tab(text: 'Practice'),
+                Tab(text: 'Giving'),
+                Tab(text: 'Anchor'),
               ],
+              labelColor: _purple,
+              unselectedLabelColor: Colors.white54,
+              indicatorColor: _purple,
+              indicatorSize: TabBarIndicatorSize.label,
+              labelStyle:
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             ),
-          )),
-          SliverToBoxAdapter(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _sectionTitle('Spiritual Goals'),
-                const SizedBox(height: 14),
-                ..._goals.map((g) => _GoalCard(goal: g)),
-              ],
-            ),
-          )),
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          ),
         ],
+        body: TabBarView(
+          controller: _tabs,
+          children: [
+            _buildPracticeTab(),
+            _buildGivingTab(),
+            _buildAnchorTab(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHero(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: Stack(
-        fit: StackFit.expand,
+  Widget _buildHero() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        CachedNetworkImage(
+          imageUrl:
+              'https://images.pexels.com/photos/3759089/pexels-photo-3759089.jpeg?auto=compress&cs=tinysrgb&w=900',
+          fit: BoxFit.cover,
+          placeholder: (_, __) =>
+              Container(color: _purple.withValues(alpha: 0.15)),
+          errorWidget: (_, __, ___) =>
+              Container(color: _purple.withValues(alpha: 0.15)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.15),
+                _bg.withValues(alpha: 0.97),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 56,
+          left: 20,
+          right: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: _purple.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: _purple.withValues(alpha: 0.5), width: 1),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.self_improvement_rounded,
+                        color: _purpleLight, size: 12),
+                    const SizedBox(width: 6),
+                    Text('MIND, BODY & SPIRIT',
+                        style: TextStyle(
+                            color: _purpleLight,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.2)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text('Your Inner\nSanctuary',
+                  style: TextStyles.displaySmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 30,
+                      height: 1.1)),
+              const SizedBox(height: 6),
+              Text('Silence is the loudest form of clarity.',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.55),
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Practice Tab ──────────────────────────────────────────────
+
+  Widget _buildPracticeTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedNetworkImage(
-            imageUrl:
-                'https://images.pexels.com/photos/3759089/pexels-photo-3759089.jpeg?auto=compress&cs=tinysrgb&w=900',
-            fit: BoxFit.cover,
-            placeholder: (_, __) =>
-                Container(color: _purple.withValues(alpha: 0.15)),
-            errorWidget: (_, __, ___) =>
-                Container(color: _purple.withValues(alpha: 0.15)),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.15),
-                  _bg.withValues(alpha: 0.97),
-                ],
+          _buildStreakCard(),
+          const SizedBox(height: 22),
+          _sectionTitle('Breath & Meditation'),
+          const SizedBox(height: 14),
+          _buildBreathingExercise(),
+          const SizedBox(height: 22),
+          _sectionTitle('Meditation Library'),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _meditations.length,
+              itemBuilder: (_, i) => _MeditationCard(
+                meditation: _meditations[i],
+                isSelected: _selectedMeditation == i,
+                onTap: () => setState(() => _selectedMeditation = i),
               ),
             ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.12),
-                      ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white, size: 16),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 30,
-            left: 20,
-            right: 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+          const SizedBox(height: 22),
+          Row(
+            children: [
+              _sectionTitle('Gratitude Journal'),
+              const Spacer(),
+              GestureDetector(
+                onTap: () => _showAddGratitudeSheet(context),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _purple.withValues(alpha: 0.2),
+                    color: _purple.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border:
-                        Border.all(color: _purple.withValues(alpha: 0.5), width: 1),
+                    border: Border.all(
+                        color: _purple.withValues(alpha: 0.4), width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.self_improvement_rounded,
-                          color: _purpleLight, size: 12),
-                      const SizedBox(width: 6),
-                      Text('MIND, BODY & SPIRIT',
+                      Icon(Icons.add_rounded, color: _purpleLight, size: 14),
+                      const SizedBox(width: 4),
+                      Text('Add',
                           style: TextStyle(
                               color: _purpleLight,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.2)),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                Text('Your Inner\nSanctuary',
-                    style: TextStyles.displaySmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 30,
-                        height: 1.1)),
-                const SizedBox(height: 6),
-                Text('Silence is the loudest form of clarity.',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 13,
-                        fontStyle: FontStyle.italic)),
-              ],
-            ),
+              ),
+            ],
           ),
+          const SizedBox(height: 14),
+          ..._gratitudes.map((g) => _GratitudeCard(text: g)),
+          const SizedBox(height: 22),
+          _sectionTitle('Spiritual Goals'),
+          const SizedBox(height: 14),
+          ..._goals.map((g) => _GoalCard(goal: g)),
         ],
       ),
     );
@@ -325,16 +324,18 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               ],
             ),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _purple.withValues(alpha: 0.3), width: 1),
+            border:
+                Border.all(color: _purple.withValues(alpha: 0.3), width: 1),
           ),
           child: Row(
             children: [
               Column(
                 children: [
-                  Text('🕊️', style: const TextStyle(fontSize: 30)),
+                  const Text('🕊️',
+                      style: TextStyle(fontSize: 30)),
                   const SizedBox(height: 4),
-                  Text('21',
-                      style: const TextStyle(
+                  const Text('21',
+                      style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
@@ -349,14 +350,14 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Profound Peace',
-                        style: const TextStyle(
+                    const Text('Profound Peace',
+                        style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 4),
                     Text(
-                        'You\'ve completed 3 weeks of consecutive spiritual practice. Your consistency is building real inner strength.',
+                        '3 weeks of consecutive spiritual practice. Consistency is building real inner strength.',
                         style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.55),
                             fontSize: 12,
@@ -393,125 +394,122 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   }
 
   Widget _buildBreathingExercise() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: _card,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: _purple.withValues(alpha: 0.2), width: 1),
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(20),
+        border:
+            Border.all(color: _purple.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('4-7-8 Breathing',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700)),
+                    Text('Inhale 4 · Hold 7 · Exhale 8',
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.45),
+                            fontSize: 12)),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: _toggleBreathing,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: _isBreathing
+                        ? _purple.withValues(alpha: 0.3)
+                        : _purple,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('4-7-8 Breathing',
+                      Icon(
+                          _isBreathing
+                              ? Icons.stop_rounded
+                              : Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 16),
+                      const SizedBox(width: 4),
+                      Text(_isBreathing ? 'Stop' : 'Start',
                           style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700)),
-                      Text('Inhale 4 · Hold 7 · Exhale 8',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.45),
-                              fontSize: 12)),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
-                GestureDetector(
-                  onTap: _toggleBreathing,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 9),
-                    decoration: BoxDecoration(
-                      color: _isBreathing
-                          ? _purple.withValues(alpha: 0.3)
-                          : _purple,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                            _isBreathing
-                                ? Icons.stop_rounded
-                                : Icons.play_arrow_rounded,
-                            color: Colors.white,
-                            size: 16),
-                        const SizedBox(width: 4),
-                        Text(_isBreathing ? 'Stop' : 'Start',
+              ),
+            ],
+          ),
+          if (_isBreathing) ...[
+            const SizedBox(height: 24),
+            AnimatedBuilder(
+              animation: _breathCtrl,
+              builder: (_, __) {
+                final val = _breathCtrl.value;
+                final size = 80.0 + val * 40;
+                final opacity = 0.3 + val * 0.4;
+                return Center(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: size + 30,
+                        height: size + 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _purple.withValues(alpha: opacity * 0.3),
+                        ),
+                      ),
+                      Container(
+                        width: size,
+                        height: size,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _purple.withValues(alpha: opacity),
+                          boxShadow: [
+                            BoxShadow(
+                                color: _purple.withValues(alpha: 0.4),
+                                blurRadius: 30,
+                                spreadRadius: 5),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            val < 0.21
+                                ? 'Inhale'
+                                : val < 0.58
+                                    ? 'Hold'
+                                    : 'Exhale',
                             style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600)),
-                      ],
-                    ),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
-            if (_isBreathing) ...[
-              const SizedBox(height: 24),
-              AnimatedBuilder(
-                animation: _breathCtrl,
-                builder: (_, __) {
-                  final val = _breathCtrl.value;
-                  final size = 80.0 + val * 40;
-                  final opacity = 0.3 + val * 0.4;
-                  return Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: size + 30,
-                          height: size + 30,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _purple.withValues(alpha: opacity * 0.3),
-                          ),
-                        ),
-                        Container(
-                          width: size,
-                          height: size,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _purple.withValues(alpha: opacity),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: _purple.withValues(alpha: 0.4),
-                                  blurRadius: 30,
-                                  spreadRadius: 5),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              val < 0.21
-                                  ? 'Inhale'
-                                  : val < 0.58
-                                      ? 'Hold'
-                                      : 'Exhale',
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
+            const SizedBox(height: 16),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -525,21 +523,515 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
     );
   }
 
-  Widget _sectionTitle(String title) => Text(title,
-      style: const TextStyle(
-          color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+  // ── Giving Tab ────────────────────────────────────────────────
+
+  Widget _buildGivingTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildGivingSummary(),
+          const SizedBox(height: 24),
+          _sectionTitle('Organizations'),
+          const SizedBox(height: 6),
+          Text('Recurring giving set up through your Chronos wallet.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          ..._charities.map((c) => _CharityTile(charity: c)),
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color: _purple.withValues(alpha: 0.3), width: 1),
+                borderRadius: BorderRadius.circular(16),
+                color: _purple.withValues(alpha: 0.05),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_rounded, color: _purpleLight, size: 18),
+                  const SizedBox(width: 8),
+                  Text('Add Organization',
+                      style: TextStyle(
+                          color: _purpleLight,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          _sectionTitle('Giving History'),
+          const SizedBox(height: 14),
+          ..._givingHistory.map((g) => _GivingHistoryCard(record: g)),
+          const SizedBox(height: 24),
+          _buildAutoTitheCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGivingSummary() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _purple.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.03),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: _purple.withValues(alpha: 0.25), width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text('Giving This Year',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700)),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text('Tax Deductible',
+                        style: TextStyle(
+                            color: Color(0xFF10B981),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _givingStat('\$1,195', 'Total Given', const Color(0xFF10B981)),
+                  _givingDivider(),
+                  _givingStat('\$70/mo', 'Recurring', _purple),
+                  _givingDivider(),
+                  _givingStat('6.3%', 'of Income', const Color(0xFF3B82F6)),
+                ],
+              ),
+              const SizedBox(height: 14),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: 0.63,
+                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                      Color(0xFF10B981)),
+                  minHeight: 6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text('Goal: 10% of income — \$433/mo needed, \$70/mo current',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.45),
+                      fontSize: 11)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _givingStat(String val, String label, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(val,
+              style: TextStyle(
+                  color: color, fontSize: 16, fontWeight: FontWeight.w800),
+              textAlign: TextAlign.center),
+          Text(label,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _givingDivider() {
+    return Container(
+        width: 1, height: 28, color: Colors.white.withValues(alpha: 0.1));
+  }
+
+  Widget _buildAutoTitheCard() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(18),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_mode_rounded, color: _purple, size: 18),
+              const SizedBox(width: 8),
+              const Text('Auto-Tithe',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700)),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: _purple,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text('Set Up',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+              'Set a percentage of every deposit to auto-give to your chosen organizations the moment money arrives. No friction, no forgetting.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.55),
+                  fontSize: 12,
+                  height: 1.5)),
+        ],
+      ),
+    );
+  }
+
+  // ── Anchor Tab ────────────────────────────────────────────────
+
+  Widget _buildAnchorTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDailyAnchorCard(),
+          const SizedBox(height: 22),
+          _buildWeeklyReflection(),
+          const SizedBox(height: 24),
+          _sectionTitle('Mindfulness Apps'),
+          const SizedBox(height: 6),
+          Text(
+              'Curated. Chris tracks your usage to see what helps your recovery score.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          ..._mindfulnessApps.map((a) => _MindAppTile(app: a)),
+          const SizedBox(height: 22),
+          _buildDailyReminderToggle(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyAnchorCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _purple.withValues(alpha: 0.2),
+            const Color(0xFF4F46E5).withValues(alpha: 0.06),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _purple.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _purple.withValues(alpha: 0.2),
+                  border: Border.all(
+                      color: _purple.withValues(alpha: 0.5), width: 1),
+                ),
+                child: const Icon(Icons.auto_awesome_rounded,
+                    color: _purple, size: 16),
+              ),
+              const SizedBox(width: 12),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Today\'s Anchor',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700)),
+                  Text('Chris · Sunday, June 14',
+                      style: TextStyle(
+                          color: _purpleLight,
+                          fontSize: 11)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                  color: _purple.withValues(alpha: 0.15), width: 1),
+            ),
+            child: Text(
+                '"The secret of getting ahead is getting started." — Mark Twain\n\nToday: Before you open your first app, spend 5 minutes in silence. No phone. Just you.',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 13,
+                    height: 1.6,
+                    fontStyle: FontStyle.italic)),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _purple,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Center(
+                      child: Text('Done for today',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.07),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Text('Refresh',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeeklyReflection() {
+    return GestureDetector(
+      onTap: () => setState(() => _reflectionExpanded = !_reflectionExpanded),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _card,
+          borderRadius: BorderRadius.circular(16),
+          border:
+              Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.edit_note_rounded, color: _purpleLight, size: 18),
+                const SizedBox(width: 10),
+                const Text('Weekly Reflection',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700)),
+                const Spacer(),
+                Icon(
+                    _reflectionExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: Colors.white38,
+                    size: 20),
+              ],
+            ),
+            if (_reflectionExpanded) ...[
+              const SizedBox(height: 14),
+              Text('What went well this week? What would you do differently?',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 12)),
+              const SizedBox(height: 12),
+              TextField(
+                maxLines: 4,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Write your reflection...',
+                  hintStyle: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      fontSize: 13),
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () => setState(() => _reflectionExpanded = false),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _purple,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text('Save Reflection',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDailyReminderToggle() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.notifications_none_rounded,
+              color: _purpleLight, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Daily Anchor Reminder',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600)),
+                Text('7:00 AM every morning',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        fontSize: 12)),
+              ],
+            ),
+          ),
+          Switch(
+            value: _dailyReminderOn,
+            onChanged: (v) => setState(() => _dailyReminderOn = v),
+            activeColor: _purple,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Text(title,
+        style: const TextStyle(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+  }
 }
 
-class _Meditation {
-  final String title;
-  final String duration;
-  final String type;
-  final String imageUrl;
-  final Color color;
+// ── Data models ───────────────────────────────────────────────────────────────
 
+class _Meditation {
+  final String title, duration, type, imageUrl;
+  final Color color;
   const _Meditation(
       this.title, this.duration, this.type, this.imageUrl, this.color);
 }
+
+class _SpiritualGoal {
+  final String name;
+  final int progress, total;
+  final Color color;
+  const _SpiritualGoal(this.name, this.progress, this.total, this.color);
+}
+
+class _Charity {
+  final String name, category, amount;
+  final IconData icon;
+  final Color color;
+  const _Charity(this.name, this.category, this.amount, this.icon, this.color);
+}
+
+class _GivingRecord {
+  final String month, total, description, count;
+  const _GivingRecord(this.month, this.total, this.description, this.count);
+}
+
+class _MindApp {
+  final String name, description, price;
+  final IconData icon;
+  final Color color;
+  const _MindApp(
+      this.name, this.description, this.price, this.icon, this.color);
+}
+
+// ── Widgets ───────────────────────────────────────────────────────────────────
 
 class _MeditationCard extends StatelessWidget {
   final _Meditation meditation;
@@ -616,8 +1108,7 @@ class _MeditationCard extends StatelessWidget {
                       children: [
                         Text(meditation.type,
                             style: TextStyle(
-                                color:
-                                    Colors.white.withValues(alpha: 0.55),
+                                color: Colors.white.withValues(alpha: 0.55),
                                 fontSize: 10)),
                         const Text(' · ',
                             style: TextStyle(color: Colors.white38)),
@@ -650,15 +1141,6 @@ class _MeditationCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SpiritualGoal {
-  final String name;
-  final int progress;
-  final int total;
-  final Color color;
-
-  const _SpiritualGoal(this.name, this.progress, this.total, this.color);
 }
 
 class _GoalCard extends StatelessWidget {
@@ -733,7 +1215,7 @@ class _GratitudeCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text('🙏', style: const TextStyle(fontSize: 18)),
+          const Text('🙏', style: TextStyle(fontSize: 18)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(text,
@@ -748,94 +1230,212 @@ class _GratitudeCard extends StatelessWidget {
   }
 }
 
-class _VideoCard extends StatelessWidget {
-  final String title;
-  final String duration;
-  final String imageUrl;
+class _CharityTile extends StatefulWidget {
+  final _Charity charity;
+  const _CharityTile({required this.charity});
 
-  const _VideoCard({
-    required this.title,
-    required this.duration,
-    required this.imageUrl,
-  });
+  @override
+  State<_CharityTile> createState() => _CharityTileState();
+}
+
+class _CharityTileState extends State<_CharityTile> {
+  bool _giving = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E0B1A),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: _giving
+                ? widget.charity.color.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.06),
+            width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: widget.charity.color.withValues(alpha: 0.12),
+            ),
+            child: Icon(widget.charity.icon,
+                color: widget.charity.color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.charity.name,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600)),
+                Text(
+                    '${widget.charity.category}  ·  ${widget.charity.amount}',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        fontSize: 11)),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () => setState(() => _giving = !_giving),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _giving
+                    ? widget.charity.color.withValues(alpha: 0.15)
+                    : Colors.white.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: _giving
+                        ? widget.charity.color.withValues(alpha: 0.4)
+                        : Colors.white.withValues(alpha: 0.1),
+                    width: 1),
+              ),
+              child: Text(_giving ? 'Active' : 'Paused',
+                  style: TextStyle(
+                      color: _giving
+                          ? widget.charity.color
+                          : Colors.white.withValues(alpha: 0.35),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GivingHistoryCard extends StatelessWidget {
+  final _GivingRecord record;
+  const _GivingHistoryCard({required this.record});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0E0B1A),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: Colors.white.withValues(alpha: 0.06), width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+            ),
+            child: const Icon(Icons.volunteer_activism_rounded,
+                color: Color(0xFF8B5CF6), size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(record.month,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600)),
+                Text('${record.description}  ·  ${record.count}',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        fontSize: 11)),
+              ],
+            ),
+          ),
+          Text(record.total,
+              style: const TextStyle(
+                  color: Color(0xFF10B981),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800)),
+        ],
+      ),
+    );
+  }
+}
+
+class _MindAppTile extends StatelessWidget {
+  final _MindApp app;
+  const _MindAppTile({required this.app});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        height: 160,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (_, __) =>
-                    Container(color: const Color(0xFF0E0B1A)),
-                errorWidget: (_, __, ___) =>
-                    Container(color: const Color(0xFF0E0B1A)),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0E0B1A),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+              color: Colors.white.withValues(alpha: 0.06), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: app.color.withValues(alpha: 0.12),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
-                    ],
-                  ),
-                ),
+              child: Icon(app.icon, color: app.color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(app.name,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600)),
+                  Text(app.description,
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 11)),
+                ],
               ),
-              Center(
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        width: 1.5),
-                  ),
-                  child: const Icon(Icons.play_arrow_rounded,
-                      color: Colors.white, size: 26),
-                ),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: app.price == 'Free' || app.price.contains('Free')
+                    ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                    : app.color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
               ),
-              Positioned(
-                bottom: 14,
-                left: 16,
-                right: 16,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(title,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700)),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(duration,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+              child: Text(app.price,
+                  style: TextStyle(
+                      color: app.price == 'Free' ||
+                              app.price.contains('Free')
+                          ? const Color(0xFF10B981)
+                          : app.color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700)),
+            ),
+          ],
         ),
       ),
     );

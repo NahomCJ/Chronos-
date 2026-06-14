@@ -14,58 +14,34 @@ class LifeXEducationPage extends StatefulWidget {
 class _LifeXEducationPageState extends State<LifeXEducationPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
-  int _selectedCategory = 0;
+  bool _useAvalanche = true;
+  int _selectedRefi = 0;
 
   static const _bg = Color(0xFF08080F);
   static const _card = Color(0xFF0F0F1C);
   static const _indigo = Color(0xFF6366F1);
   static const _indigoLight = Color(0xFF818CF8);
 
-  static const _categories = [
-    'All', 'Tech', 'Finance', 'Health', 'Business', 'Arts'
+  static const _idrPlans = [
+    _IDRPlan('SAVE', '\$186/mo', '\$0 remaining — income-based forgiveness', true, Color(0xFF10B981)),
+    _IDRPlan('IBR', '\$248/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF6366F1)),
+    _IDRPlan('PAYE', '\$215/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF3B82F6)),
+    _IDRPlan('Standard', '\$312/mo', 'Paid off by June 2034. Lowest total cost.', false, Color(0xFFF59E0B)),
   ];
 
-  static const _courses = [
-    _Course(
-      'Python for Data Science',
-      'Dr. Sarah Chen',
-      'Tech',
-      '4.8',
-      '12 modules',
-      'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=600',
-      Color(0xFF6366F1),
-      0.35,
-    ),
-    _Course(
-      'Personal Finance Mastery',
-      'James Rivera',
-      'Finance',
-      '4.9',
-      '8 modules',
-      'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600',
-      Color(0xFF10B981),
-      0.68,
-    ),
-    _Course(
-      'Leadership & Communication',
-      'Dr. Maya Patel',
-      'Business',
-      '4.7',
-      '10 modules',
-      'https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=600',
-      Color(0xFFF59E0B),
-      0.15,
-    ),
-    _Course(
-      'Mindful Productivity',
-      'Alex Thompson',
-      'Health',
-      '4.6',
-      '6 modules',
-      'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600',
-      Color(0xFF14B8A6),
-      0.0,
-    ),
+  static const _refiOffers = [
+    _RefiOffer('Earnest', '5.18%', '\$264/mo', '\$4,820 saved'),
+    _RefiOffer('SoFi', '5.43%', '\$271/mo', '\$3,950 saved'),
+    _RefiOffer('Splash', '4.99%', '\$259/mo', '\$5,410 saved'),
+  ];
+
+  static const _skillApps = [
+    _SkillApp('Coursera', 'University courses', Icons.school_rounded, Color(0xFF3B82F6)),
+    _SkillApp('LinkedIn Learning', 'Career skills', Icons.work_rounded, Color(0xFF0288D1)),
+    _SkillApp('Udemy', 'Practical skills', Icons.laptop_rounded, Color(0xFFA435F0)),
+    _SkillApp('Khan Academy', 'Math & science', Icons.calculate_rounded, Color(0xFF14B8A6)),
+    _SkillApp('Duolingo', 'Languages', Icons.translate_rounded, Color(0xFF58CC02)),
+    _SkillApp('Blinkist', 'Book summaries', Icons.menu_book_rounded, Color(0xFFF59E0B)),
   ];
 
   @override
@@ -110,24 +86,25 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
             bottom: TabBar(
               controller: _tabs,
               tabs: const [
-                Tab(text: 'Courses'),
-                Tab(text: 'Scholarships'),
-                Tab(text: 'Tutors'),
+                Tab(text: 'Loans'),
+                Tab(text: 'Tuition ROI'),
+                Tab(text: 'Skills'),
               ],
               labelColor: _indigo,
               unselectedLabelColor: Colors.white54,
               indicatorColor: _indigo,
               indicatorSize: TabBarIndicatorSize.label,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
         ],
         body: TabBarView(
           controller: _tabs,
           children: [
-            _buildCoursesTab(),
-            _buildScholarshipsTab(),
-            _buildTutorsTab(),
+            _buildLoansTab(),
+            _buildROITab(),
+            _buildSkillsTab(),
           ],
         ),
       ),
@@ -172,8 +149,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 decoration: BoxDecoration(
                   color: _indigo.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
-                  border:
-                      Border.all(color: _indigo.withValues(alpha: 0.5), width: 1),
+                  border: Border.all(
+                      color: _indigo.withValues(alpha: 0.5), width: 1),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -190,7 +167,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 ),
               ),
               const SizedBox(height: 10),
-              Text('Learn Every\nDay',
+              Text('Your Education\nFinances',
                   style: TextStyles.displaySmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
@@ -203,192 +180,441 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
     );
   }
 
-  Widget _buildCoursesTab() {
+  // ── Loans Tab ─────────────────────────────────────────────────
+
+  Widget _buildLoansTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildLearningStreak(),
-          const SizedBox(height: 22),
-          _sectionTitle('Browse Categories'),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
-              itemBuilder: (_, i) {
-                final active = _selectedCategory == i;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedCategory = i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? _indigo
-                          : Colors.white.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: active
-                              ? _indigo
-                              : Colors.white.withValues(alpha: 0.12),
-                          width: 1),
-                    ),
-                    child: Text(_categories[i],
-                        style: TextStyle(
-                            color: active
-                                ? Colors.white
-                                : Colors.white.withValues(alpha: 0.6),
-                            fontSize: 13,
-                            fontWeight: active
-                                ? FontWeight.w600
-                                : FontWeight.w400)),
-                  ),
-                );
-              },
+          _buildLoanDashboard(),
+          const SizedBox(height: 24),
+          _buildIDRSection(),
+          const SizedBox(height: 24),
+          _buildForgivenessCard(),
+          const SizedBox(height: 24),
+          _buildRefiSection(),
+          const SizedBox(height: 24),
+          _buildChrisLoanNudge(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoanDashboard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _indigo.withValues(alpha: 0.2),
+                Colors.white.withValues(alpha: 0.03),
+              ],
             ),
+            borderRadius: BorderRadius.circular(20),
+            border:
+                Border.all(color: _indigo.withValues(alpha: 0.3), width: 1),
           ),
-          const SizedBox(height: 20),
-          _sectionTitle('Continue Learning'),
-          const SizedBox(height: 14),
-          ...[_courses[0], _courses[1]].map((c) => _CourseCard(course: c)),
-          const SizedBox(height: 22),
-          _sectionTitle('Recommended for You'),
-          const SizedBox(height: 14),
-          _buildChrisRec(),
-          const SizedBox(height: 14),
-          ...[_courses[2], _courses[3]].map((c) => _CourseCard(course: c)),
-          const SizedBox(height: 22),
-          _sectionTitle('Featured Lecture'),
-          const SizedBox(height: 14),
-          _VideoCard(
-            title: 'The Science of Learning',
-            duration: '48 min',
-            instructor: 'Dr. Barbara Oakley',
-            imageUrl:
-                'https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=600',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Total Balance',
+                          style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              fontSize: 12)),
+                      const Text('\$28,500',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800)),
+                    ],
+                  ),
+                  const Spacer(),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          value: 0.38,
+                          strokeWidth: 6,
+                          backgroundColor:
+                              Colors.white.withValues(alpha: 0.08),
+                          valueColor:
+                              const AlwaysStoppedAnimation<Color>(_indigo),
+                          strokeCap: StrokeCap.round,
+                        ),
+                      ),
+                      Text('38%',
+                          style: TextStyle(
+                              color: _indigoLight,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _loanStat('\$312/mo', 'Monthly'),
+                  _divider(),
+                  _loanStat('6.8%', 'Avg APR'),
+                  _divider(),
+                  _loanStat('Jun 2034', 'Payoff'),
+                  _divider(),
+                  _loanStat('\$42,180', 'Total Cost'),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: 0.38,
+                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(_indigo),
+                  minHeight: 8,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Text('\$17,500 paid',
+                      style: TextStyle(
+                          color: _indigoLight,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600)),
+                  const Spacer(),
+                  Text('\$28,500 remaining',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 11)),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
-          _VideoCard(
-            title: 'Building a Reading Habit',
-            duration: '22 min',
-            instructor: 'James Clear',
-            imageUrl:
-                'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600',
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildScholarshipsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+  Widget _loanStat(String val, String label) {
+    return Expanded(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle('Active Scholarships'),
-          const SizedBox(height: 14),
-          ...[
-            _ScholarshipCard(
-                'STEM Excellence Award', '\$5,000', 'Mar 30, 2025', 'Open',
-                const Color(0xFF6366F1)),
-            _ScholarshipCard(
-                'Community Leaders Fund', '\$2,500', 'Apr 15, 2025', 'Open',
-                const Color(0xFF10B981)),
-            _ScholarshipCard(
-                'Entrepreneurship Grant', '\$10,000', 'Feb 28, 2025',
-                'Closed', Colors.grey),
-          ].toList(),
-          const SizedBox(height: 22),
-          _buildChrisRec(
-              text:
-                  'Based on your profile, you match 3 scholarships. I\'ve ranked them by your likelihood of success.'),
+          Text(val,
+              style: TextStyle(
+                  color: _indigoLight,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700),
+              textAlign: TextAlign.center),
+          Text(label,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
-  Widget _buildTutorsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionTitle('Top-Rated Tutors'),
-          const SizedBox(height: 14),
-          ...[
-            _TutorCard('Dr. Lisa Park', 'Data Science & AI', '4.9', '\$85/hr',
-                'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=200'),
-            _TutorCard('Marcus Wells', 'Finance & Investing', '4.8', '\$65/hr',
-                'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=200'),
-            _TutorCard('Elena Sousa', 'Business Strategy', '4.7', '\$70/hr',
-                'https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=200'),
-          ].toList(),
-        ],
-      ),
+  Widget _divider() {
+    return Container(
+        width: 1, height: 28, color: Colors.white.withValues(alpha: 0.1));
+  }
+
+  Widget _buildIDRSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Repayment Plans'),
+        const SizedBox(height: 6),
+        Text('Compare options based on your income of \$52,000/yr.',
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+        const SizedBox(height: 14),
+        ..._idrPlans.map((p) => _IDRPlanCard(plan: p)),
+      ],
     );
   }
 
-  Widget _buildLearningStreak() {
+  Widget _buildForgivenessCard() {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _indigo.withValues(alpha: 0.22),
-            const Color(0xFF4F46E5).withValues(alpha: 0.08),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _indigo.withValues(alpha: 0.3), width: 1),
+        color: _card,
+        borderRadius: BorderRadius.circular(18),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
+          Row(
             children: [
-              Text('🔥',
-                  style: const TextStyle(fontSize: 32)),
-              const SizedBox(height: 2),
-              Text('14',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800)),
-              Text('day streak',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 11)),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                ),
+                child: const Icon(Icons.verified_rounded,
+                    color: Color(0xFF10B981), size: 18),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Forgiveness Tracker',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700)),
+                  Text('Public Service Loan Forgiveness (PSLF)',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.45),
+                          fontSize: 11)),
+                ],
+              ),
             ],
           ),
-          const SizedBox(width: 20),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              _forgivenessItem('32', 'Payments Made', const Color(0xFF10B981)),
+              _forgivenessItem('88', 'Remaining', const Color(0xFF6366F1)),
+              _forgivenessItem('7yr 4mo', 'Until Forgiven', const Color(0xFFF59E0B)),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: 32 / 120,
+              backgroundColor: Colors.white.withValues(alpha: 0.07),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
+              minHeight: 8,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text('Must work at a qualifying employer. Your current employer qualifies.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.45),
+                  fontSize: 11,
+                  height: 1.4)),
+        ],
+      ),
+    );
+  }
+
+  Widget _forgivenessItem(String val, String label, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(val,
+              style: TextStyle(
+                  color: color, fontSize: 18, fontWeight: FontWeight.w800),
+              textAlign: TextAlign.center),
+          Text(label,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRefiSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            _sectionTitle('Refinancing Offers'),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text('Current: 6.8%',
+                  style: TextStyle(
+                      color: Color(0xFFF59E0B),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text('Refi saves money but eliminates PSLF eligibility. Choose wisely.',
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+        const SizedBox(height: 14),
+        ...List.generate(
+          _refiOffers.length,
+          (i) => GestureDetector(
+            onTap: () => setState(() => _selectedRefi = i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _selectedRefi == i
+                    ? _indigo.withValues(alpha: 0.12)
+                    : _card,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color: _selectedRefi == i
+                        ? _indigo.withValues(alpha: 0.5)
+                        : Colors.white.withValues(alpha: 0.07),
+                    width: _selectedRefi == i ? 1.5 : 1),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_refiOffers[i].lender,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700)),
+                        Text('${_refiOffers[i].monthlyPayment}/mo',
+                            style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.45),
+                                fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(_refiOffers[i].rate,
+                          style: const TextStyle(
+                              color: _indigo,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800)),
+                      Text(_refiOffers[i].savings,
+                          style: const TextStyle(
+                              color: Color(0xFF10B981),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                  if (_selectedRefi == i) ...[
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: _indigo),
+                      child: const Icon(Icons.check_rounded,
+                          color: Colors.white, size: 13),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChrisLoanNudge() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _indigo.withValues(alpha: 0.15),
+              border:
+                  Border.all(color: _indigo.withValues(alpha: 0.4), width: 1),
+            ),
+            child:
+                const Icon(Icons.auto_awesome_rounded, color: _indigo, size: 16),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Keep it up!',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                const Text('Chris says',
+                    style: TextStyle(
+                        color: _indigo,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
-                Text('You\'re in the top 12% of learners this month.',
+                Text(
+                    'You\'re 7 years from PSLF forgiveness on \$28,500. Switching to SAVE drops your payment to \$186/mo — that\'s \$126/mo freed up to put toward your emergency fund, which is still at \$0.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 12,
-                        height: 1.4)),
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 13,
+                        height: 1.5)),
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _statChip('3h 20m', 'this week', _indigo),
-                    const SizedBox(width: 8),
-                    _statChip('4 courses', 'active', const Color(0xFF10B981)),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: _indigo,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text('Switch to SAVE',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.07),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text('Ask Chris',
+                            style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -399,67 +625,349 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
     );
   }
 
-  Widget _statChip(String val, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
+  // ── Tuition ROI Tab ───────────────────────────────────────────
+
+  Widget _buildROITab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(val,
-              style: TextStyle(
-                  color: color, fontSize: 12, fontWeight: FontWeight.w700)),
-          Text(label,
-              style: TextStyle(
-                  color: color.withValues(alpha: 0.7),
-                  fontSize: 9)),
+          _buildDegreeROICard(),
+          const SizedBox(height: 24),
+          _buildEmployerBenefitSection(),
+          const SizedBox(height: 24),
+          _buildCareerTrajectory(),
         ],
       ),
     );
   }
 
-  Widget _buildChrisRec({String? text}) {
+  Widget _buildDegreeROICard() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _indigo.withValues(alpha: 0.18),
+            Colors.white.withValues(alpha: 0.02),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _indigo.withValues(alpha: 0.25), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _indigo.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text('Computer Science BS',
+                    style: TextStyle(
+                        color: _indigoLight,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _roiStat('\$95K', 'Avg Starting Salary', const Color(0xFF10B981)),
+              _roiDivider(),
+              _roiStat('340%', '10yr ROI', const Color(0xFF6366F1)),
+              _roiDivider(),
+              _roiStat('2027', 'Break-even Year', const Color(0xFFF59E0B)),
+            ],
+          ),
+          const SizedBox(height: 18),
+          _sectionTitle('Total Investment vs Earnings'),
+          const SizedBox(height: 12),
+          _roiBar('Total Tuition Cost', '\$46,000', 0.42, const Color(0xFFEF4444)),
+          const SizedBox(height: 8),
+          _roiBar('10yr Cumulative Earnings', '\$980,000', 1.0, const Color(0xFF10B981)),
+          const SizedBox(height: 8),
+          _roiBar('Without Degree (median)', '\$610,000', 0.62, Colors.white38),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                  width: 1),
+            ),
+            child: Text(
+                'Your degree generates \$370K more in 10 years than the no-degree median. At \$46K total cost, that\'s \$8.04 earned per \$1 spent.',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    height: 1.4)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _roiStat(String val, String label, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(val,
+              style: TextStyle(
+                  color: color, fontSize: 18, fontWeight: FontWeight.w800),
+              textAlign: TextAlign.center),
+          Text(label,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _roiDivider() {
+    return Container(
+        width: 1, height: 32, color: Colors.white.withValues(alpha: 0.1));
+  }
+
+  Widget _roiBar(String label, String amount, double val, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(label,
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.55),
+                    fontSize: 11)),
+            const Spacer(),
+            Text(amount,
+                style: TextStyle(
+                    color: color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700)),
+          ],
+        ),
+        const SizedBox(height: 4),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: val,
+            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+            minHeight: 6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmployerBenefitSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Employer Tuition Benefits'),
+        const SizedBox(height: 6),
+        Text('Many employers offer up to \$5,250/yr tax-free for education.',
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+        const SizedBox(height: 14),
+        ...[
+          _EmployerBenefit('Your Employer', '\$5,250/yr', true,
+              'You qualify — apply through HR portal'),
+          _EmployerBenefit('Amazon Career Choice', '\$5,250/yr', false,
+              'Not your employer — shown for reference'),
+          _EmployerBenefit('Starbucks Edu Program', 'Full tuition', false,
+              'ASU online — not applicable here'),
+        ].map((e) => _EmployerBenefitTile(benefit: e)),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+                color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                width: 1),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.savings_rounded,
+                  color: Color(0xFF10B981), size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                    '\$5,250/yr in employer benefits not claimed yet. That\'s real money left on the table.',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 12,
+                        height: 1.4)),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCareerTrajectory() {
+    return Container(
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: _card,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        borderRadius: BorderRadius.circular(18),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Career Salary Trajectory',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          Text('Median for Computer Science graduates.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+          const SizedBox(height: 16),
+          ...[
+            _CareerLevel('Entry Level (Now)', '\$72,000', 0.40, const Color(0xFF6366F1)),
+            _CareerLevel('Mid-Level (3-5 yrs)', '\$95,000', 0.55, const Color(0xFF3B82F6)),
+            _CareerLevel('Senior (6-10 yrs)', '\$130,000', 0.74, const Color(0xFF14B8A6)),
+            _CareerLevel('Staff / Lead (10+ yrs)', '\$175,000', 1.0, const Color(0xFF10B981)),
+          ].map((c) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(c.level,
+                            style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontSize: 12)),
+                        const Spacer(),
+                        Text(c.salary,
+                            style: TextStyle(
+                                color: c.color,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700)),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: c.progress,
+                        backgroundColor: Colors.white.withValues(alpha: 0.06),
+                        valueColor: AlwaysStoppedAnimation<Color>(c.color),
+                        minHeight: 5,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // ── Skills Tab ─────────────────────────────────────────────────
+
+  Widget _buildSkillsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildChrisSkillRec(),
+          const SizedBox(height: 24),
+          _sectionTitle('Learning Apps'),
+          const SizedBox(height: 6),
+          Text(
+              'Free to start. Chris picks based on your career path and learning style.',
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 2.0,
+            ),
+            itemCount: _skillApps.length,
+            itemBuilder: (_, i) => _SkillAppCard(app: _skillApps[i]),
+          ),
+          const SizedBox(height: 24),
+          _sectionTitle('Top Free Courses Right Now'),
+          const SizedBox(height: 14),
+          ...[
+            _FreeCourse('Financial Modeling in Excel', 'Coursera', '4.8', '6hr',
+                const Color(0xFF3B82F6)),
+            _FreeCourse('Python for Everybody', 'Coursera', '4.9', '8hr',
+                const Color(0xFF6366F1)),
+            _FreeCourse('Public Speaking Fundamentals', 'Udemy', '4.7', '3hr',
+                const Color(0xFFA435F0)),
+          ].map((c) => _FreeCourseCard(course: c)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChrisSkillRec() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 34,
-            height: 34,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _indigo.withValues(alpha: 0.15),
-              border:
-                  Border.all(color: _indigo.withValues(alpha: 0.4), width: 1),
+              border: Border.all(
+                  color: _indigo.withValues(alpha: 0.4), width: 1),
             ),
             child: const Icon(Icons.auto_awesome_rounded,
-                color: _indigo, size: 15),
+                color: _indigo, size: 16),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Chris recommends',
-                    style: const TextStyle(
+                const Text('Chris recommends',
+                    style: TextStyle(
                         color: _indigo,
                         fontSize: 11,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
                 Text(
-                    text ??
-                        'You spend 2.3hrs per week on learning. Adding just 30 more minutes could help you finish Python for Data Science in 3 weeks.',
+                    'Adding financial modeling to your CS background puts you in the top 8% of candidates for FinTech roles — which pay 22% more than typical CS roles at your level.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 12.5,
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 13,
                         height: 1.5)),
               ],
             ),
@@ -476,224 +984,125 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
   }
 }
 
-class _Course {
-  final String title;
-  final String instructor;
-  final String category;
-  final String rating;
-  final String modules;
-  final String imageUrl;
+// ── Data models ───────────────────────────────────────────────────────────────
+
+class _IDRPlan {
+  final String name, payment, note;
+  final bool recommended;
   final Color color;
+  const _IDRPlan(
+      this.name, this.payment, this.note, this.recommended, this.color);
+}
+
+class _RefiOffer {
+  final String lender, rate, monthlyPayment, savings;
+  const _RefiOffer(this.lender, this.rate, this.monthlyPayment, this.savings);
+}
+
+class _SkillApp {
+  final String name, description;
+  final IconData icon;
+  final Color color;
+  const _SkillApp(this.name, this.description, this.icon, this.color);
+}
+
+class _EmployerBenefit {
+  final String employer, amount, note;
+  final bool eligible;
+  const _EmployerBenefit(this.employer, this.amount, this.eligible, this.note);
+}
+
+class _CareerLevel {
+  final String level, salary;
   final double progress;
-
-  const _Course(this.title, this.instructor, this.category, this.rating,
-      this.modules, this.imageUrl, this.color, this.progress);
-}
-
-class _CourseCard extends StatelessWidget {
-  final _Course course;
-  const _CourseCard({required this.course});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-            color: course.color.withValues(alpha: 0.2), width: 1),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius:
-                const BorderRadius.only(
-                    topLeft: Radius.circular(18),
-                    bottomLeft: Radius.circular(18)),
-            child: CachedNetworkImage(
-              imageUrl: course.imageUrl,
-              width: 90,
-              height: 110,
-              fit: BoxFit.cover,
-              placeholder: (_, __) =>
-                  Container(color: course.color.withValues(alpha: 0.2)),
-              errorWidget: (_, __, ___) =>
-                  Container(color: course.color.withValues(alpha: 0.2)),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: course.color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(course.category,
-                        style: TextStyle(
-                            color: course.color,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(course.title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          height: 1.3)),
-                  Text(course.instructor,
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
-                          fontSize: 11)),
-                  const SizedBox(height: 8),
-                  if (course.progress > 0) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(2),
-                      child: LinearProgressIndicator(
-                        value: course.progress,
-                        backgroundColor:
-                            course.color.withValues(alpha: 0.12),
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(course.color),
-                        minHeight: 3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                        '${(course.progress * 100).round()}% complete',
-                        style: TextStyle(
-                            color: course.color, fontSize: 10)),
-                  ] else
-                    Text(course.modules,
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            fontSize: 10)),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 14),
-            child: Row(
-              children: [
-                const Icon(Icons.star_rounded,
-                    color: Color(0xFFF59E0B), size: 13),
-                const SizedBox(width: 2),
-                Text(course.rating,
-                    style: const TextStyle(
-                        color: Color(0xFFF59E0B),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScholarshipCard extends StatelessWidget {
-  final String name;
-  final String amount;
-  final String deadline;
-  final String status;
   final Color color;
+  const _CareerLevel(this.level, this.salary, this.progress, this.color);
+}
 
-  const _ScholarshipCard(
-      this.name, this.amount, this.deadline, this.status, this.color);
+class _FreeCourse {
+  final String title, platform, rating, duration;
+  final Color color;
+  const _FreeCourse(
+      this.title, this.platform, this.rating, this.duration, this.color);
+}
+
+// ── Widgets ───────────────────────────────────────────────────────────────────
+
+class _IDRPlanCard extends StatelessWidget {
+  final _IDRPlan plan;
+  const _IDRPlanCard({required this.plan});
 
   @override
   Widget build(BuildContext context) {
-    final isOpen = status == 'Open';
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(16),
+        color: plan.recommended
+            ? plan.color.withValues(alpha: 0.1)
+            : const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: color.withValues(alpha: 0.2), width: 1),
+            color: plan.recommended
+                ? plan.color.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.07),
+            width: plan.recommended ? 1.5 : 1),
       ),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color.withValues(alpha: 0.12),
-            ),
-            child: Icon(Icons.emoji_events_rounded, color: color, size: 20),
-          ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600)),
-                const SizedBox(height: 3),
-                Text('Deadline: $deadline',
+                Row(
+                  children: [
+                    Text(plan.name,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700)),
+                    if (plan.recommended) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: plan.color.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('Recommended',
+                            style: TextStyle(
+                                color: plan.color,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(plan.note,
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        fontSize: 11)),
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 11,
+                        height: 1.3)),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(amount,
-                  style: TextStyle(
-                      color: color,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800)),
-              const SizedBox(height: 4),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: isOpen
-                      ? color.withValues(alpha: 0.15)
-                      : Colors.grey.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(status,
-                    style: TextStyle(
-                        color: isOpen ? color : Colors.grey,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600)),
-              ),
-            ],
-          ),
+          const SizedBox(width: 12),
+          Text(plan.payment,
+              style: TextStyle(
+                  color: plan.color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800)),
         ],
       ),
     );
   }
 }
 
-class _TutorCard extends StatelessWidget {
-  final String name;
-  final String subject;
-  final String rating;
-  final String rate;
-  final String imageUrl;
-
-  const _TutorCard(
-      this.name, this.subject, this.rating, this.rate, this.imageUrl);
+class _EmployerBenefitTile extends StatelessWidget {
+  final _EmployerBenefit benefit;
+  const _EmployerBenefitTile({required this.benefit});
 
   @override
   Widget build(BuildContext context) {
@@ -702,40 +1111,138 @@ class _TutorCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: benefit.eligible
+                ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.06),
+            width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(benefit.employer,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600)),
+              const Spacer(),
+              Text(benefit.amount,
+                  style: TextStyle(
+                      color: benefit.eligible
+                          ? const Color(0xFF10B981)
+                          : Colors.white.withValues(alpha: 0.35),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(benefit.note,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
+
+class _SkillAppCard extends StatelessWidget {
+  final _SkillApp app;
+  const _SkillAppCard({required this.app});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: app.color.withValues(alpha: 0.2), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: app.color.withValues(alpha: 0.12),
+              ),
+              child: Icon(app.icon, color: app.color, size: 18),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(app.name,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  Text(app.description,
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FreeCourseCard extends StatelessWidget {
+  final _FreeCourse course;
+  const _FreeCourseCard({required this.course});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: course.color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         children: [
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              width: 48,
-              height: 48,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => Container(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
-              errorWidget: (_, __, ___) => Container(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2),
-                  child: const Icon(Icons.person_rounded,
-                      color: Colors.white54, size: 24)),
-            ),
-          ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
+                Text(course.title,
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w600)),
-                Text(subject,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
-                        fontSize: 12)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(course.platform,
+                        style: TextStyle(
+                            color: course.color,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600)),
+                    Text('  ·  ${course.duration}',
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.35),
+                            fontSize: 11)),
+                  ],
+                ),
               ],
             ),
           ),
@@ -745,111 +1252,32 @@ class _TutorCard extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.star_rounded,
-                      color: Color(0xFFF59E0B), size: 13),
+                      color: Color(0xFFF59E0B), size: 12),
                   const SizedBox(width: 2),
-                  Text(rating,
+                  Text(course.rating,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFF59E0B),
                           fontSize: 12,
                           fontWeight: FontWeight.w600)),
                 ],
               ),
-              const SizedBox(height: 4),
-              Text(rate,
-                  style: const TextStyle(
-                      color: Color(0xFF6366F1),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700)),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text('Free',
+                    style: TextStyle(
+                        color: Color(0xFF10B981),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700)),
+              ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _VideoCard extends StatelessWidget {
-  final String title;
-  final String duration;
-  final String instructor;
-  final String imageUrl;
-
-  const _VideoCard({
-    required this.title,
-    required this.duration,
-    required this.instructor,
-    required this.imageUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        height: 170,
-        margin: const EdgeInsets.only(bottom: 4),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (_, __) =>
-                    Container(color: const Color(0xFF111130)),
-                errorWidget: (_, __, ___) =>
-                    Container(color: const Color(0xFF111130)),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
-                    ],
-                  ),
-                ),
-              ),
-              Center(
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.2),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        width: 1.5),
-                  ),
-                  child: const Icon(Icons.play_arrow_rounded,
-                      color: Colors.white, size: 26),
-                ),
-              ),
-              Positioned(
-                bottom: 14,
-                left: 16,
-                right: 16,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700)),
-                    Text('$instructor  ·  $duration',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.65),
-                            fontSize: 11)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

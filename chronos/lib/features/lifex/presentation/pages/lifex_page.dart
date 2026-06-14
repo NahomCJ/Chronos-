@@ -18,45 +18,63 @@ class _LifeXPageState extends State<LifeXPage>
   late AnimationController _pulseCtrl;
 
   static const _bg = Color(0xFF08080F);
-  static const _card = Color(0xFF0F0F1C);
   static const _teal = Color(0xFF0F766E);
   static const _tealLight = Color(0xFF14B8A6);
 
   static const _modules = [
-    _Module('Health', Icons.favorite_rounded, Color(0xFF14B8A6),
-        'Track vitals & wellness',
-        'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Education', Icons.school_rounded, Color(0xFF6366F1),
-        'Learn & grow daily',
-        'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Spiritual', Icons.self_improvement_rounded, Color(0xFF8B5CF6),
-        'Mind, body & spirit',
-        'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Finance', Icons.trending_up_rounded, Color(0xFF10B981),
-        'Wealth & money goals',
-        'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Activity', Icons.directions_run_rounded, Color(0xFFF59E0B),
-        'Fitness & movement',
-        'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Vision', Icons.remove_red_eye_rounded, Color(0xFF3B82F6),
-        'Goals & milestones',
-        'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Family', Icons.people_rounded, Color(0xFFEC4899),
-        'Relationships & bonds',
-        'https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Social', Icons.public_rounded, Color(0xFFEF4444),
-        'Community & impact',
-        'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('AI Insights', Icons.auto_awesome_rounded, Color(0xFF06B6D4),
-        'Personalised guidance',
-        'https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Social Feed', Icons.feed_rounded, Color(0xFFF97316),
-        'Lifestyle & stories',
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Export', Icons.download_rounded, Color(0xFF84CC16),
-        'Reports & data export',
-        'https://images.pexels.com/photos/669619/pexels-photo-669619.jpeg?auto=compress&cs=tinysrgb&w=600'),
+    _Module(
+      'Financial',
+      Icons.trending_up_rounded,
+      Color(0xFF10B981),
+      'Wealth, budgets & debt',
+      'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Health',
+      Icons.favorite_rounded,
+      Color(0xFF14B8A6),
+      'Fitness, vitals & wellness',
+      'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Social',
+      Icons.group_rounded,
+      Color(0xFFEF4444),
+      'Groups, events & planning',
+      'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Educational',
+      Icons.school_rounded,
+      Color(0xFF6366F1),
+      'Loans, learning & growth',
+      'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Relationship',
+      Icons.favorite_border_rounded,
+      Color(0xFFEC4899),
+      'Couples, family & bonds',
+      'https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Vision',
+      Icons.remove_red_eye_rounded,
+      Color(0xFF3B82F6),
+      'Goals, milestones & future',
+      'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
+    _Module(
+      'Spiritual',
+      Icons.self_improvement_rounded,
+      Color(0xFF8B5CF6),
+      'Values, purpose & routine',
+      'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600',
+    ),
   ];
+
+  // Domain scores — will come from backend once Life Profile is built
+  static const _domainScores = [0.79, 0.84, 0.60, 0.70, 0.64, 0.50, 0.50];
 
   @override
   void initState() {
@@ -75,42 +93,33 @@ class _LifeXPageState extends State<LifeXPage>
 
   void _onModuleTap(_Module module) {
     switch (module.title) {
-      case 'Health':
-        context.push(RouteConstants.lifexHealth.toPath);
-        break;
-      case 'Education':
-        context.push(RouteConstants.lifexEducation.toPath);
-        break;
-      case 'Spiritual':
-        context.push(RouteConstants.lifexSpiritual.toPath);
-        break;
-      case 'Finance':
+      case 'Financial':
         context.push(RouteConstants.lifexFinance.toPath);
         break;
-      case 'Activity':
-        context.push(RouteConstants.lifexActivity.toPath);
-        break;
-      case 'Vision':
-        context.push(RouteConstants.lifexVision.toPath);
-        break;
-      case 'Family':
-        context.push(RouteConstants.lifexFamily.toPath);
+      case 'Health':
+        context.push(RouteConstants.lifexHealth.toPath);
         break;
       case 'Social':
         context.push(RouteConstants.lifexSocial.toPath);
         break;
-      case 'Social Feed':
-        context.push(RouteConstants.lifexFeed.toPath);
+      case 'Educational':
+        context.push(RouteConstants.lifexEducation.toPath);
         break;
-      case 'AI Insights':
-        context.push(RouteConstants.lifexAiInsights.toPath);
+      case 'Relationship':
+        context.push(RouteConstants.lifexRelationship.toPath);
         break;
-      case 'Export':
-        context.push(RouteConstants.lifexExport.toPath);
+      case 'Vision':
+        context.push(RouteConstants.lifexVision.toPath);
         break;
-      default:
+      case 'Spiritual':
+        context.push(RouteConstants.lifexSpiritual.toPath);
         break;
     }
+  }
+
+  double get _overallScore {
+    final sum = _domainScores.fold<double>(0, (a, b) => a + b);
+    return sum / _domainScores.length;
   }
 
   @override
@@ -130,12 +139,14 @@ class _LifeXPageState extends State<LifeXPage>
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
               child: Row(
                 children: [
-                  Text('Your Life Modules',
-                      style: TextStyles.headlineSmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                      )),
+                  Text(
+                    'Your 7 Life Domains',
+                    style: TextStyles.headlineSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                    ),
+                  ),
                   const Spacer(),
                   GestureDetector(
                     onTap: () =>
@@ -149,10 +160,13 @@ class _LifeXPageState extends State<LifeXPage>
                         border: Border.all(
                             color: _teal.withValues(alpha: 0.4), width: 1),
                       ),
-                      child: Text('Tour',
-                          style: TextStyle(
-                              color: _tealLight, fontSize: 12,
-                              fontWeight: FontWeight.w600)),
+                      child: Text(
+                        'Retake Survey',
+                        style: TextStyle(
+                            color: _tealLight,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                 ],
@@ -165,6 +179,7 @@ class _LifeXPageState extends State<LifeXPage>
               delegate: SliverChildBuilderDelegate(
                 (ctx, i) => _ModuleCard(
                   module: _modules[i],
+                  score: _domainScores[i],
                   onTap: () => _onModuleTap(_modules[i]),
                 ),
                 childCount: _modules.length,
@@ -192,7 +207,8 @@ class _LifeXPageState extends State<LifeXPage>
             imageUrl:
                 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800',
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: const Color(0xFF111130)),
+            placeholder: (_, __) =>
+                Container(color: const Color(0xFF111130)),
             errorWidget: (_, __, ___) =>
                 Container(color: const Color(0xFF111130)),
           ),
@@ -242,18 +258,20 @@ class _LifeXPageState extends State<LifeXPage>
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Text('LifeX Active',
-                                style: TextStyle(
-                                    color: _tealLight,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600)),
+                            Text(
+                              'LifeX Active',
+                              style: TextStyle(
+                                  color: _tealLight,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600),
+                            ),
                           ],
                         ),
                       ),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () =>
-                            context.push(RouteConstants.lifexOnboarding.toPath),
+                        onTap: () => context
+                            .push(RouteConstants.lifexOnboarding.toPath),
                         child: Container(
                           width: 34,
                           height: 34,
@@ -264,28 +282,31 @@ class _LifeXPageState extends State<LifeXPage>
                                 color: Colors.white.withValues(alpha: 0.3),
                                 width: 1),
                           ),
-                          child: const Icon(Icons.play_arrow_rounded,
-                              color: Colors.white, size: 18),
+                          child: const Icon(Icons.person_outline_rounded,
+                              color: Colors.white, size: 17),
                         ),
                       ),
                     ],
                   ),
                   const Spacer(),
-                  Text('Your LifeX',
-                      style: TextStyles.displaySmall.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 32,
-                        height: 1.1,
-                      )),
+                  Text(
+                    'Your LifeX',
+                    style: TextStyles.displaySmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 32,
+                      height: 1.1,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   Text(
-                      'Everything that makes you — health, mind,\nwealth and soul — in one place.',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.65),
-                        fontSize: 13.5,
-                        height: 1.5,
-                      )),
+                    'Seven domains. One life. Chris guides you\nacross all of them — at your pace.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.65),
+                      fontSize: 13.5,
+                      height: 1.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -296,6 +317,7 @@ class _LifeXPageState extends State<LifeXPage>
   }
 
   Widget _buildLifeScore() {
+    final overall = (_overallScore * 100).round();
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: ClipRRect(
@@ -314,75 +336,88 @@ class _LifeXPageState extends State<LifeXPage>
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: _teal.withValues(alpha: 0.3), width: 1),
+              border:
+                  Border.all(color: _teal.withValues(alpha: 0.3), width: 1),
             ),
-            child: Row(
+            child: Column(
               children: [
-                Stack(
-                  alignment: Alignment.center,
+                Row(
                   children: [
-                    SizedBox(
-                      width: 72,
-                      height: 72,
-                      child: CircularProgressIndicator(
-                        value: 0.74,
-                        strokeWidth: 6,
-                        backgroundColor: Colors.white.withValues(alpha: 0.1),
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(_tealLight),
-                        strokeCap: StrokeCap.round,
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
+                    Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Text('74',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800)),
-                        Text('%',
-                            style: TextStyle(
-                                color: _tealLight,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600)),
+                        SizedBox(
+                          width: 72,
+                          height: 72,
+                          child: CircularProgressIndicator(
+                            value: _overallScore,
+                            strokeWidth: 6,
+                            backgroundColor:
+                                Colors.white.withValues(alpha: 0.1),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                _tealLight),
+                            strokeCap: StrokeCap.round,
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('$overall',
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800)),
+                            Text('%',
+                                style: TextStyle(
+                                    color: _tealLight,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600)),
+                          ],
+                        ),
                       ],
+                    ),
+                    const SizedBox(width: 18),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Life Score',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700)),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Solid foundation. Vision & Spiritual\nneed some attention this week.',
+                            style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.55),
+                                fontSize: 12,
+                                height: 1.5),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(width: 18),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Life Score',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 4),
-                      Text(
-                          'You\'re doing great. Spiritual & Vision\nneed a little attention this week.',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.55),
-                              fontSize: 12,
-                              height: 1.5)),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          _scoreTag(Icons.favorite_rounded, '84%',
-                              const Color(0xFF14B8A6)),
-                          const SizedBox(width: 8),
-                          _scoreTag(Icons.self_improvement_rounded, '61%',
-                              const Color(0xFF8B5CF6)),
-                          const SizedBox(width: 8),
-                          _scoreTag(Icons.trending_up_rounded, '79%',
-                              const Color(0xFF10B981)),
-                        ],
-                      ),
-                    ],
-                  ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    _scoreTag(Icons.trending_up_rounded, 'Financial',
+                        '${(_domainScores[0] * 100).round()}%',
+                        const Color(0xFF10B981)),
+                    const SizedBox(width: 6),
+                    _scoreTag(Icons.favorite_rounded, 'Health',
+                        '${(_domainScores[1] * 100).round()}%',
+                        const Color(0xFF14B8A6)),
+                    const SizedBox(width: 6),
+                    _scoreTag(Icons.remove_red_eye_rounded, 'Vision',
+                        '${(_domainScores[5] * 100).round()}%',
+                        const Color(0xFF3B82F6)),
+                    const SizedBox(width: 6),
+                    _scoreTag(Icons.self_improvement_rounded, 'Spiritual',
+                        '${(_domainScores[6] * 100).round()}%',
+                        const Color(0xFF8B5CF6)),
+                  ],
                 ),
               ],
             ),
@@ -392,9 +427,9 @@ class _LifeXPageState extends State<LifeXPage>
     );
   }
 
-  Widget _scoreTag(IconData icon, String val, Color color) {
+  Widget _scoreTag(IconData icon, String label, String val, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
@@ -402,11 +437,13 @@ class _LifeXPageState extends State<LifeXPage>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 11),
+          Icon(icon, color: color, size: 10),
           const SizedBox(width: 4),
           Text(val,
               style: TextStyle(
-                  color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+                  color: color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -417,12 +454,18 @@ class _LifeXPageState extends State<LifeXPage>
 
 class _ModuleCard extends StatelessWidget {
   final _Module module;
+  final double score;
   final VoidCallback onTap;
 
-  const _ModuleCard({required this.module, required this.onTap});
+  const _ModuleCard({
+    required this.module,
+    required this.score,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final pct = (score * 100).round();
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -455,17 +498,35 @@ class _ModuleCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: module.color.withValues(alpha: 0.2),
-                      border: Border.all(
-                          color: module.color.withValues(alpha: 0.5),
-                          width: 1),
-                    ),
-                    child: Icon(module.icon, color: module.color, size: 18),
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: module.color.withValues(alpha: 0.2),
+                          border: Border.all(
+                              color: module.color.withValues(alpha: 0.5),
+                              width: 1),
+                        ),
+                        child: Icon(module.icon, color: module.color, size: 17),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: module.color.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text('$pct%',
+                            style: TextStyle(
+                                color: module.color,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800)),
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   Text(module.title,
@@ -482,28 +543,22 @@ class _ModuleCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Container(
-                        height: 3,
-                        width: 40,
-                        decoration: BoxDecoration(
+                      Expanded(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(2),
-                          color: module.color.withValues(alpha: 0.35),
-                        ),
-                        child: FractionallySizedBox(
-                          widthFactor: 0.7,
-                          heightFactor: 1,
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: module.color,
-                            ),
+                          child: LinearProgressIndicator(
+                            value: score,
+                            backgroundColor:
+                                module.color.withValues(alpha: 0.15),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                module.color),
+                            minHeight: 3,
                           ),
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Icon(Icons.arrow_forward_ios_rounded,
-                          color: module.color, size: 12),
+                          color: module.color, size: 11),
                     ],
                   ),
                 ],
