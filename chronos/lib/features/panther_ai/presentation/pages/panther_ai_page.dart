@@ -569,7 +569,7 @@ class _PantherAiPageState extends State<PantherAiPage>
           ),
         ),
         SizedBox(
-          height: 104,
+          height: 122,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),

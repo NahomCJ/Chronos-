@@ -11,17 +11,14 @@ class LifeXOnboardingPage extends StatefulWidget {
 
 class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
     with TickerProviderStateMixin {
-  static const _bg = Color(0xFF08080F);
-  static const _teal = Color(0xFF0F766E);
-  static const _tealLight = Color(0xFF14B8A6);
-  static const _card = Color(0xFF0F0F1C);
+  late AnimationController _pulseCtrl;
+  late AnimationController _floatCtrl;
 
-  final List<_ChatMessage> _messages = [];
   List<String> _currentOptions = [];
   bool _isTyping = false;
   bool _surveyComplete = false;
   int _step = 0;
-  final ScrollController _scrollCtrl = ScrollController();
+  String _currentMessage = '';
 
   String _situation = '';
   String _debt = '';
@@ -34,155 +31,119 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
   @override
   void initState() {
     super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2600),
+    )..repeat(reverse: true);
+    _floatCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4200),
+    )..repeat(reverse: true);
     WidgetsBinding.instance.addPostFrameCallback((_) => _startSurvey());
   }
 
   @override
   void dispose() {
-    _scrollCtrl.dispose();
+    _pulseCtrl.dispose();
+    _floatCtrl.dispose();
     super.dispose();
   }
 
   void _startSurvey() async {
     await _showTyping(900);
-    _addMessage(_ChrisMessage(
-        "Hey! I'm Chris 👋  I'm your personal life guide here on Chronos."));
-    await Future.delayed(const Duration(milliseconds: 700));
+    _setMessage("Hey! I'm Chris 👋  I'm your personal life guide here on Chronos.");
+    await Future.delayed(const Duration(milliseconds: 1600));
     await _showTyping(1100);
-    _addMessage(_ChrisMessage(
-        "Let me take 2 minutes to understand where you are right now — not to judge, just to actually help."));
-    await Future.delayed(const Duration(milliseconds: 500));
+    _setMessage("Let me take 2 minutes to understand where you are right now — not to judge, just to actually help.");
+    await Future.delayed(const Duration(milliseconds: 1900));
     await _showTyping(800);
-    _addMessage(_ChrisMessage("What's your current situation?"));
-    _showOptions(
-        ['Student', 'Working full-time', 'Student + Working', 'Other']);
+    _setMessage("What's your current situation?");
+    _showOptions(['Student', 'Working full-time', 'Student + Working', 'Other']);
   }
 
   Future<void> _showTyping(int ms) async {
-    setState(() => _isTyping = true);
+    setState(() {
+      _isTyping = true;
+      _currentOptions = [];
+    });
     await Future.delayed(Duration(milliseconds: ms));
     if (mounted) setState(() => _isTyping = false);
   }
 
-  void _addMessage(_ChatMessage msg) {
-    setState(() => _messages.add(msg));
-    _scrollToBottom();
+  void _setMessage(String msg) {
+    if (mounted) setState(() => _currentMessage = msg);
   }
 
-  void _showOptions(List<String> options) {
-    setState(() => _currentOptions = options);
-    _scrollToBottom();
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollCtrl.hasClients) {
-        _scrollCtrl.animateTo(
-          _scrollCtrl.position.maxScrollExtent + 120,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+  void _showOptions(List<String> opts) {
+    if (mounted) setState(() => _currentOptions = opts);
   }
 
   Future<void> _onOptionTap(String option) async {
-    _addMessage(_UserMessage(option));
     setState(() => _currentOptions = []);
     await _processAnswer(option);
   }
 
   Future<void> _processAnswer(String answer) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-
+    await Future.delayed(const Duration(milliseconds: 250));
     switch (_step) {
       case 0:
         _situation = answer;
         _step++;
         await _showTyping(900);
-        _addMessage(_ChrisMessage("Got it. Do you carry any debt right now?"));
-        _showOptions(
-            ['No debt', 'Credit card', 'Student loans', 'Multiple types']);
+        _setMessage("Got it. Do you carry any debt right now?");
+        _showOptions(['No debt', 'Credit card', 'Student loans', 'Multiple types']);
         break;
-
       case 1:
         _debt = answer;
         _step++;
         if (answer != 'No debt') {
           await _showTyping(700);
-          _addMessage(
-              _ChrisMessage("Roughly what range are we talking?"));
-          _showOptions(
-              ['Under \$5K', '\$5K – \$20K', '\$20K – \$50K', 'Over \$50K']);
+          _setMessage("Roughly what range are we talking?");
+          _showOptions([r'Under $5K', r'$5K – $20K', r'$20K – $50K', r'Over $50K']);
         } else {
           _step++;
           await _showTyping(900);
-          _addMessage(_ChrisMessage(
-              "Nice — no debt is a solid foundation. How's your relationship with money day to day?"));
-          _showOptions([
-            'I save consistently',
-            'I spend most of what I make',
-            'I pretty much break even',
-            'Honestly not sure',
-          ]);
+          _setMessage("Nice — no debt is a solid foundation. How's your relationship with money day to day?");
+          _showOptions(['I save consistently', 'I spend most of what I make', 'I pretty much break even', 'Honestly not sure']);
         }
         break;
-
       case 2:
         _debtRange = answer;
         _step++;
         await _showTyping(900);
-        _addMessage(_ChrisMessage(
-            "Okay, I've got that. How's your relationship with money day to day?"));
-        _showOptions([
-          'I save consistently',
-          'I spend most of what I make',
-          'I pretty much break even',
-          'Honestly not sure',
-        ]);
+        _setMessage("Okay, I've got that. How's your relationship with money day to day?");
+        _showOptions(['I save consistently', 'I spend most of what I make', 'I pretty much break even', 'Honestly not sure']);
         break;
-
       case 3:
         _moneyRel = answer;
         _step++;
         await _showTyping(800);
-        _addMessage(_ChrisMessage("Do you stay active or work out?"));
+        _setMessage("Do you stay active or work out?");
         _showOptions(['Yes, regularly', 'Here and there', 'Not really']);
         break;
-
       case 4:
         _active = answer;
         _step++;
         await _showTyping(700);
-        _addMessage(_ChrisMessage("Are you in a relationship?"));
+        _setMessage("Are you in a relationship?");
         _showOptions(['Yes', 'Single', 'Prefer not to say']);
         break;
-
       case 5:
         _relationship = answer;
         _step++;
         await _showTyping(800);
-        _addMessage(_ChrisMessage(
-            "Last one — what's the one area you most want to get a handle on?"));
-        _showOptions([
-          'My money & finances',
-          'My health & energy',
-          'My goals & future',
-          'My relationships',
-        ]);
+        _setMessage("Last one — what's the one area you most want to get a handle on?");
+        _showOptions(['My money & finances', 'My health & energy', 'My goals & future', 'My relationships']);
         break;
-
       case 6:
         _priority = answer;
         _step++;
         await _showTyping(1200);
-        _addMessage(_ChrisMessage(
-            "That's all I need for now. Based on what you've shared, here's where you stand."));
-        await Future.delayed(const Duration(milliseconds: 900));
+        _setMessage("That's all I need for now. Based on what you've shared, here's where you stand.");
+        await Future.delayed(const Duration(milliseconds: 1400));
         await _showTyping(600);
-        _addMessage(_ChrisMessage(
-            "I'll guide you from here — one step at a time. No overwhelm. 🙌"));
-        await Future.delayed(const Duration(milliseconds: 1000));
+        _setMessage("I'll guide you from here — one step at a time. No overwhelm. 🙌");
+        await Future.delayed(const Duration(milliseconds: 1200));
         if (mounted) setState(() => _surveyComplete = true);
         break;
     }
@@ -191,28 +152,43 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: const Color(0xFF06060F),
       body: Stack(
         children: [
+          // Background
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment(0, -0.4),
+                  radius: 0.9,
+                  colors: [Color(0xFF0D0D2B), Color(0xFF06060F)],
+                ),
+              ),
+            ),
+          ),
           SafeArea(
             child: Column(
               children: [
                 _buildHeader(),
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollCtrl,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                    itemCount: _messages.length + (_isTyping ? 1 : 0),
-                    itemBuilder: (ctx, i) {
-                      if (_isTyping && i == _messages.length) {
-                        return const _TypingIndicator();
-                      }
-                      return _buildMessage(_messages[i]);
-                    },
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 18),
+                      _buildStatusText(),
+                      const SizedBox(height: 28),
+                      _buildOrb(),
+                      const SizedBox(height: 28),
+                      _buildMessageText(),
+                      const Spacer(),
+                      if (_currentOptions.isNotEmpty && !_surveyComplete)
+                        _buildOptions(),
+                      const SizedBox(height: 20),
+                      _buildBottomBar(),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
-                if (_currentOptions.isNotEmpty && !_surveyComplete)
-                  _buildOptions(),
               ],
             ),
           ),
@@ -232,180 +208,237 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
   }
 
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      decoration: BoxDecoration(
-        border: Border(
-            bottom: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => context.go(RouteConstants.lifex.toPath),
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.07),
-              ),
-              child: const Icon(Icons.close_rounded,
-                  color: Colors.white54, size: 18),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _teal.withValues(alpha: 0.25),
-              border: Border.all(
-                  color: _tealLight.withValues(alpha: 0.5), width: 1),
-            ),
-            child: const Icon(Icons.auto_awesome_rounded,
-                color: _tealLight, size: 16),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Chris',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700)),
-              Text('LifeX Guide',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontSize: 11)),
-            ],
+            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white54, size: 18),
           ),
           const Spacer(),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: _teal.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
-              border:
-                  Border.all(color: _teal.withValues(alpha: 0.4), width: 1),
+          const Text('Voice chat',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600)),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => context.go(RouteConstants.lifex.toPath),
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+              ),
+              child: const Icon(Icons.close_rounded,
+                  color: Colors.white54, size: 15),
             ),
-            child: const Text('Life Survey',
-                style: TextStyle(
-                    color: _tealLight,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMessage(_ChatMessage msg) {
-    if (msg is _ChrisMessage) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 30,
-              height: 30,
-              margin: const EdgeInsets.only(right: 8, top: 2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _teal.withValues(alpha: 0.2),
-                border: Border.all(
-                    color: _tealLight.withValues(alpha: 0.4), width: 1),
-              ),
-              child: const Icon(Icons.auto_awesome_rounded,
-                  color: _tealLight, size: 13),
-            ),
-            Flexible(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 11),
-                decoration: BoxDecoration(
-                  color: _card,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.07), width: 1),
-                ),
-                child: Text(msg.text,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.88),
-                        fontSize: 14,
-                        height: 1.5)),
-              ),
-            ),
-            const SizedBox(width: 40),
-          ],
+  Widget _buildStatusText() {
+    final text = _isTyping
+        ? 'Chris is thinking...'
+        : _currentOptions.isNotEmpty
+            ? 'Choose an option below'
+            : 'Go ahead, I\'m listening';
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: Text(
+        text,
+        key: ValueKey(text),
+        style: const TextStyle(
+          color: Color(0xFF14B8A6),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
-      );
-    }
-    final user = msg as _UserMessage;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const SizedBox(width: 40),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-            decoration: const BoxDecoration(
-              color: _teal,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(4),
-                bottomLeft: Radius.circular(16),
-                bottomRight: Radius.circular(16),
+      ),
+    );
+  }
+
+  Widget _buildOrb() {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pulseCtrl, _floatCtrl]),
+      builder: (_, __) {
+        final p = _pulseCtrl.value;
+        final f = _floatCtrl.value;
+        return SizedBox(
+          width: 220,
+          height: 220,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer ambient glow
+              Container(
+                width: 220 + p * 18,
+                height: 220 + p * 18,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF3B82F6)
+                          .withValues(alpha: 0.06 + p * 0.04),
+                      const Color(0xFF8B5CF6).withValues(alpha: 0.03),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
               ),
-            ),
-            child: Text(user.text,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600)),
+              // Mid glow ring
+              Container(
+                width: 186 + p * 8,
+                height: 186 + p * 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFF6366F1)
+                          .withValues(alpha: 0.12 + p * 0.06),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+              // Main sphere
+              ClipOval(
+                child: SizedBox(
+                  width: 162 + p * 4,
+                  height: 162 + p * 4,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Blue base
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF60A5FA),
+                              Color(0xFF2563EB),
+                              Color(0xFF1E3A8A),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Purple floating blob
+                      Positioned(
+                        right: -22 + f * 16,
+                        bottom: -16 + f * 22,
+                        child: Container(
+                          width: 122,
+                          height: 122,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF8B5CF6)
+                                .withValues(alpha: 0.76),
+                          ),
+                        ),
+                      ),
+                      // Teal accent blob
+                      Positioned(
+                        left: -12 + f * 10,
+                        top: 18 + f * 12,
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF14B8A6)
+                                .withValues(alpha: 0.46),
+                          ),
+                        ),
+                      ),
+                      // White specular highlight
+                      Positioned(
+                        top: 18 - f * 4,
+                        left: 36 + f * 4,
+                        child: Container(
+                          width: 50,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            color: Colors.white.withValues(alpha: 0.28),
+                          ),
+                        ),
+                      ),
+                      // Inner white reflection
+                      Positioned(
+                        top: 46 - f * 6,
+                        left: 28 + f * 2,
+                        child: Container(
+                          width: 22,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white.withValues(alpha: 0.14),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        );
+      },
+    );
+  }
+
+  Widget _buildMessageText() {
+    if (_isTyping) {
+      return _TypingDots(pulse: _pulseCtrl);
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 36),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        child: Text(
+          _currentMessage,
+          key: ValueKey(_currentMessage),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            height: 1.45,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildOptions() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-      decoration: BoxDecoration(
-        color: _bg,
-        border: Border(
-            top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+        spacing: 10,
+        runSpacing: 10,
+        alignment: WrapAlignment.center,
         children: _currentOptions
             .map((opt) => GestureDetector(
                   onTap: () => _onOptionTap(opt),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                        horizontal: 20, vertical: 13),
                     decoration: BoxDecoration(
-                      color: _teal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(24),
+                      color: const Color(0xFF14B8A6).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(30),
                       border: Border.all(
-                          color: _teal.withValues(alpha: 0.45), width: 1),
+                          color: const Color(0xFF14B8A6).withValues(alpha: 0.5),
+                          width: 1),
                     ),
                     child: Text(opt,
                         style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 13.5,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500)),
                   ),
                 ))
@@ -413,122 +446,91 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
       ),
     );
   }
-}
 
-// ── Chat message types ────────────────────────────────────────────────────────
-
-abstract class _ChatMessage {
-  final String text;
-  const _ChatMessage(this.text);
-}
-
-class _ChrisMessage extends _ChatMessage {
-  const _ChrisMessage(super.text);
-}
-
-class _UserMessage extends _ChatMessage {
-  const _UserMessage(super.text);
-}
-
-// ── Typing indicator ──────────────────────────────────────────────────────────
-
-class _TypingIndicator extends StatefulWidget {
-  const _TypingIndicator();
-
-  @override
-  State<_TypingIndicator> createState() => _TypingIndicatorState();
-}
-
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with TickerProviderStateMixin {
-  late List<AnimationController> _ctrls;
-  late List<Animation<double>> _anims;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrls = List.generate(
-        3,
-        (i) => AnimationController(
-            vsync: this,
-            duration: const Duration(milliseconds: 600)));
-    _anims = _ctrls
-        .map((c) => Tween<double>(begin: 0, end: -5).animate(
-            CurvedAnimation(parent: c, curve: Curves.easeInOut)))
-        .toList();
-    for (int i = 0; i < 3; i++) {
-      Future.delayed(Duration(milliseconds: i * 180), () {
-        if (mounted) _ctrls[i].repeat(reverse: true);
-      });
-    }
+  Widget _buildBottomBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Chat history icon
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withValues(alpha: 0.06),
+            border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12), width: 1),
+          ),
+          child: const Icon(Icons.chat_bubble_outline_rounded,
+              color: Colors.white54, size: 19),
+        ),
+        const SizedBox(width: 28),
+        // Mic button — blue, larger
+        Container(
+          width: 66,
+          height: 66,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF3B82F6),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.45),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: const Icon(Icons.mic_rounded, color: Colors.white, size: 30),
+        ),
+        const SizedBox(width: 28),
+        // Close button
+        GestureDetector(
+          onTap: () => context.go(RouteConstants.lifex.toPath),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.06),
+              border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.12), width: 1),
+            ),
+            child: const Icon(Icons.close_rounded,
+                color: Colors.white54, size: 19),
+          ),
+        ),
+      ],
+    );
   }
+}
 
-  @override
-  void dispose() {
-    for (final c in _ctrls) {
-      c.dispose();
-    }
-    super.dispose();
-  }
+// ── Typing dots ───────────────────────────────────────────────────────────────
+
+class _TypingDots extends StatelessWidget {
+  final Animation<double> pulse;
+  const _TypingDots({required this.pulse});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 30,
-            height: 30,
-            margin: const EdgeInsets.only(right: 8, top: 2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFF0F766E).withValues(alpha: 0.2),
-              border: Border.all(
-                  color: const Color(0xFF14B8A6).withValues(alpha: 0.4),
-                  width: 1),
-            ),
-            child: const Icon(Icons.auto_awesome_rounded,
-                color: Color(0xFF14B8A6), size: 13),
-          ),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F0F1C),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
-                bottomRight: Radius.circular(16),
+    return AnimatedBuilder(
+      animation: pulse,
+      builder: (_, __) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (i) {
+            final t = (pulse.value + i * 0.28) % 1.0;
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.25 + t * 0.65),
               ),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.07), width: 1),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                3,
-                (i) => AnimatedBuilder(
-                  animation: _anims[i],
-                  builder: (_, __) => Container(
-                    margin: EdgeInsets.only(
-                        right: i < 2 ? 4 : 0,
-                        bottom: (-_anims[i].value).clamp(0.0, 8.0)),
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF14B8A6),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+            );
+          }),
+        );
+      },
     );
   }
 }
@@ -581,45 +583,44 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
   void initState() {
     super.initState();
     _scores = _calculateScores();
-
     _enterCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
-    _fadeAnim =
-        CurvedAnimation(parent: _enterCtrl, curve: Curves.easeOut);
-
+    _fadeAnim = CurvedAnimation(parent: _enterCtrl, curve: Curves.easeOut);
     _ringCtrls = List.generate(
         7,
         (_) => AnimationController(
-            vsync: this,
-            duration: const Duration(milliseconds: 1100)));
+            vsync: this, duration: const Duration(milliseconds: 1100)));
     _ringAnims = _ringCtrls
-        .map((c) =>
-            CurvedAnimation(parent: c, curve: Curves.easeOut))
+        .map((c) => CurvedAnimation(parent: c, curve: Curves.easeOut))
         .toList();
-
     _enterCtrl.forward();
     _animateRings();
   }
 
   List<double> _calculateScores() {
     double fin = 0.5;
-    if (widget.moneyRel == 'I save consistently') fin = 0.82;
-    else if (widget.moneyRel == 'I pretty much break even') fin = 0.54;
-    else if (widget.moneyRel == 'I spend most of what I make') fin = 0.36;
-    else fin = 0.44;
-    if (widget.debt == 'No debt') fin = (fin + 0.1).clamp(0.0, 1.0);
-    else if (widget.debt == 'Multiple types') fin = (fin - 0.1).clamp(0.0, 1.0);
-
+    if (widget.moneyRel == 'I save consistently') {
+      fin = 0.82;
+    } else if (widget.moneyRel == 'I pretty much break even') {
+      fin = 0.54;
+    } else if (widget.moneyRel == 'I spend most of what I make') {
+      fin = 0.36;
+    } else {
+      fin = 0.44;
+    }
+    if (widget.debt == 'No debt') {
+      fin = (fin + 0.1).clamp(0.0, 1.0);
+    } else if (widget.debt == 'Multiple types') {
+      fin = (fin - 0.1).clamp(0.0, 1.0);
+    }
     final health = widget.active == 'Yes, regularly'
         ? 0.78
         : widget.active == 'Here and there'
             ? 0.54
             : 0.33;
-
     final edu = widget.situation.contains('Student') ? 0.70 : 0.58;
     final rel = widget.relationship == 'Yes' ? 0.64 : 0.54;
     final vision = widget.priority == 'My goals & future' ? 0.70 : 0.48;
-
     return [fin, health, 0.60, edu, rel, vision, 0.50];
   }
 
@@ -645,7 +646,7 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
     return FadeTransition(
       opacity: _fadeAnim,
       child: Container(
-        color: const Color(0xFF08080F).withValues(alpha: 0.97),
+        color: const Color(0xFF06060F).withValues(alpha: 0.97),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(22, 20, 22, 24),
@@ -678,11 +679,12 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
                         height: 1.15)),
                 const SizedBox(height: 8),
                 Text(
-                    "This is your starting point. Chris will guide you from here — slowly.",
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 13,
-                        height: 1.5)),
+                  "This is your starting point. Chris will guide you from here — slowly.",
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 13,
+                      height: 1.5),
+                ),
                 const SizedBox(height: 24),
                 Expanded(
                   child: GridView.builder(
@@ -701,8 +703,7 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
                       return AnimatedBuilder(
                         animation: _ringAnims[i],
                         builder: (_, __) {
-                          final progress =
-                              _ringAnims[i].value * targetScore;
+                          final progress = _ringAnims[i].value * targetScore;
                           final pct = (progress * 100).round();
                           return Column(
                             mainAxisSize: MainAxisSize.min,
@@ -741,14 +742,12 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
                               ),
                               const SizedBox(height: 6),
                               Text(d.name,
-                                  style: TextStyle(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.65),
-                                      fontSize: 9.5,
-                                      fontWeight: FontWeight.w600),
                                   textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis),
+                                  style: TextStyle(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.55),
+                                      fontSize: 9,
+                                      height: 1.3)),
                             ],
                           );
                         },
@@ -756,73 +755,24 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
                     },
                   ),
                 ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0F0F1C),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.06),
-                        width: 1),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF0F766E)
-                              .withValues(alpha: 0.15),
-                        ),
-                        child: const Icon(Icons.auto_awesome_rounded,
-                            color: Color(0xFF14B8A6), size: 14),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          "These scores sharpen as you use Chronos. Chris is learning your patterns.",
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.55),
-                              fontSize: 12,
-                              height: 1.45),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 8),
                 GestureDetector(
                   onTap: widget.onDone,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F766E),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
+                      ),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0F766E)
-                              .withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Let's Go",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700)),
-                        SizedBox(width: 8),
-                        Icon(Icons.arrow_forward_rounded,
-                            color: Colors.white, size: 18),
-                      ],
-                    ),
+                    child: const Text('Enter LifeX',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700)),
                   ),
                 ),
               ],
@@ -833,6 +783,8 @@ class _LifeSnapshotOverlayState extends State<_LifeSnapshotOverlay>
     );
   }
 }
+
+// ── Data classes ──────────────────────────────────────────────────────────────
 
 class _Domain {
   final String name;

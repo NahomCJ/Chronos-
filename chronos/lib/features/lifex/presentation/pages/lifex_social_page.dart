@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
-import '../../../../core/theme/text_theme.dart';
 
 class LifeXSocialPage extends StatefulWidget {
   const LifeXSocialPage({super.key});
@@ -16,8 +15,8 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   late TabController _tabs;
   final Set<String> _joinedGroups = {};
 
-  static const _bg = Color(0xFF0F0608);
-  static const _card = Color(0xFF1A090C);
+  static const _bg = Color(0xFF0A0608);
+  static const _card = Color(0xFF130910);
   static const _red = Color(0xFFEF4444);
   static const _redLight = Color(0xFFF87171);
 
@@ -40,30 +39,35 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
     _InterestCat('Volunteering', Icons.volunteer_activism_rounded,
         Color(0xFFEC4899), '890 members',
         'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400'),
-    _InterestCat('Networking', Icons.handshake_rounded, Color(0xFF14B8A6),
-        '3.3K members',
-        'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400'),
-    _InterestCat('Travel', Icons.flight_rounded, Color(0xFFF97316),
-        '6.7K members',
-        'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=400'),
   ];
 
   static const _upcomingEvents = [
     _Event('Rooftop Dinner', 'Sat, Jun 21', '7:00 PM', 4,
-        Color(0xFFF59E0B), Icons.restaurant_rounded, '\$35/person'),
+        Color(0xFFF59E0B), Icons.restaurant_rounded, r'$35/person',
+        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _Event('Hiking Trail Run', 'Sun, Jun 22', '8:00 AM', 6,
-        Color(0xFF10B981), Icons.terrain_rounded, 'Free'),
+        Color(0xFF10B981), Icons.terrain_rounded, 'Free',
+        'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _Event('Game Night', 'Fri, Jun 27', '8:00 PM', 8,
-        Color(0xFF06B6D4), Icons.sports_esports_rounded, 'Free'),
+        Color(0xFF06B6D4), Icons.sports_esports_rounded, 'Free',
+        'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400'),
   ];
 
   static const _billSplits = [
-    _BillSplit('Cabo Trip Expenses', '\$1,240', 5, Color(0xFFF97316),
-        'In progress'),
-    _BillSplit("Alex's Birthday Dinner", '\$312', 8, Color(0xFF10B981),
-        'Settled'),
-    _BillSplit('Airbnb – Memorial Weekend', '\$680', 4, Color(0xFF3B82F6),
-        "You're owed \$170"),
+    _BillSplit('Cabo Trip Expenses', r'$1,240', 5, Color(0xFFF97316), 'In progress'),
+    _BillSplit("Alex's Birthday Dinner", r'$312', 8, Color(0xFF10B981), 'Settled'),
+    _BillSplit('Airbnb – Memorial Weekend', r'$680', 4, Color(0xFF3B82F6), "You're owed \$170"),
+  ];
+
+  static const _activityFeed = [
+    _Activity('Marcus W.', 'created "Cabo Trip" · 5 members joining',
+        Icons.flight_rounded, Color(0xFFF97316), '2h ago'),
+    _Activity('You', 'joined Rooftop Dinner · Jun 21',
+        Icons.restaurant_rounded, Color(0xFFF59E0B), '5h ago'),
+    _Activity('Aisha C.', 'split \$312 dinner bill · settled',
+        Icons.receipt_long_rounded, Color(0xFF10B981), 'Yesterday'),
+    _Activity('Derek K.', 'posted in Sports & Fitness group',
+        Icons.sports_basketball_rounded, Color(0xFF3B82F6), 'Yesterday'),
   ];
 
   @override
@@ -89,7 +93,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       body: NestedScrollView(
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
-            expandedHeight: 230,
+            expandedHeight: 240,
             pinned: true,
             backgroundColor: _bg,
             leading: GestureDetector(
@@ -105,27 +109,33 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
-            bottom: TabBar(
-              controller: _tabs,
-              tabs: const [
-                Tab(text: 'Group Planner'),
-                Tab(text: 'Communities'),
-                Tab(text: 'Bill Split'),
-              ],
-              labelColor: _red,
-              unselectedLabelColor: Colors.white54,
-              indicatorColor: _red,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 13),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48),
+              child: Container(
+                color: _bg,
+                child: TabBar(
+                  controller: _tabs,
+                  tabs: const [
+                    Tab(text: 'Overview'),
+                    Tab(text: 'Events'),
+                    Tab(text: 'Bills'),
+                  ],
+                  labelColor: _red,
+                  unselectedLabelColor: Colors.white38,
+                  indicatorColor: _red,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  labelStyle: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 13),
+                ),
+              ),
             ),
           ),
         ],
         body: TabBarView(
           controller: _tabs,
           children: [
-            _buildGroupPlannerTab(),
-            _buildCommunitiesTab(),
+            _buildOverviewTab(),
+            _buildEventsTab(),
             _buildBillSplitTab(),
           ],
         ),
@@ -152,30 +162,61 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.3),
-                _bg.withValues(alpha: 0.97),
+                Colors.black.withValues(alpha: 0.4),
+                _bg.withValues(alpha: 0.98),
               ],
             ),
           ),
         ),
         Positioned(
-          bottom: 54,
+          bottom: 60,
           left: 20,
+          right: 20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _tag(Icons.group_rounded, 'SOCIAL DOMAIN', _red),
               const SizedBox(height: 10),
-              Text('Your Social\nUniverse',
-                  style: TextStyles.displaySmall.copyWith(
+              const Text('Your Social\nUniverse',
+                  style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
+              const SizedBox(height: 6),
+              Row(children: [
+                _pillStat('60', 'Score', _red),
+                const SizedBox(width: 10),
+                _pillStat('3', 'Groups', const Color(0xFFF59E0B)),
+                const SizedBox(width: 10),
+                _pillStat('2', 'Events', const Color(0xFF10B981)),
+              ]),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _pillStat(String val, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Text(val,
+            style: TextStyle(
+                color: color, fontSize: 13, fontWeight: FontWeight.w800)),
+        const SizedBox(width: 4),
+        Text(label,
+            style: TextStyle(
+                color: color.withValues(alpha: 0.75),
+                fontSize: 10,
+                fontWeight: FontWeight.w500)),
+      ]),
     );
   }
 
@@ -200,9 +241,321 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
     );
   }
 
-  // ── GROUP PLANNER TAB ────────────────────────────────────────────────────────
+  // ── OVERVIEW TAB ─────────────────────────────────────────────────────────────
 
-  Widget _buildGroupPlannerTab() {
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSpendingCard(),
+          const SizedBox(height: 20),
+          _buildQuickActions(),
+          const SizedBox(height: 22),
+          _sectionTitle('Next Up'),
+          const SizedBox(height: 12),
+          _buildNextEventCard(_upcomingEvents[0]),
+          const SizedBox(height: 22),
+          _sectionTitle('Friend Activity'),
+          const SizedBox(height: 12),
+          ..._activityFeed.map((a) => _ActivityTile(activity: a)),
+          const SizedBox(height: 22),
+          _sectionTitle('Discover Groups'),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _interestCategories.length,
+              itemBuilder: (_, i) {
+                final cat = _interestCategories[i];
+                final joined = _joinedGroups.contains(cat.name);
+                return _GroupChip(
+                  cat: cat,
+                  joined: joined,
+                  onTap: () => setState(() {
+                    if (joined) {
+                      _joinedGroups.remove(cat.name);
+                    } else {
+                      _joinedGroups.add(cat.name);
+                    }
+                  }),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 22),
+          _buildChrisNudge(
+              "You've had 2 social events this month. Your most active friends are Marcus and Aisha — consider planning something this weekend."),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpendingCard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _red.withValues(alpha: 0.14),
+                Colors.white.withValues(alpha: 0.02),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: _red.withValues(alpha: 0.28), width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(children: [
+                const Text('Social Spending',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700)),
+                const Spacer(),
+                _tag(Icons.calendar_month_rounded, 'THIS MONTH', _red),
+              ]),
+              const SizedBox(height: 16),
+              Row(children: [
+                Expanded(
+                    child: _spendStat(r'$165', 'Dining out',
+                        const Color(0xFFF59E0B))),
+                _vDivider(),
+                Expanded(
+                    child: _spendStat(r'$85', 'Entertainment',
+                        const Color(0xFF8B5CF6))),
+                _vDivider(),
+                Expanded(
+                    child: _spendStat(r'$210', 'Travel/trips',
+                        const Color(0xFF3B82F6))),
+              ]),
+              const SizedBox(height: 16),
+              Container(
+                height: 1,
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Total social spend',
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          fontSize: 12)),
+                  const Text(r'$460 / mo',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800)),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _spendStat(String val, String label, Color color) {
+    return Column(children: [
+      Text(val,
+          style: TextStyle(
+              color: color, fontSize: 18, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 3),
+      Text(label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.4),
+              fontSize: 10,
+              height: 1.3)),
+    ]);
+  }
+
+  Widget _vDivider() => Container(
+      width: 1,
+      height: 36,
+      color: Colors.white.withValues(alpha: 0.07));
+
+  Widget _buildQuickActions() {
+    const actions = [
+      ('Plan Event', Icons.event_rounded, Color(0xFFF59E0B)),
+      ('Split Bill', Icons.receipt_long_rounded, Color(0xFF10B981)),
+      ('Find Group', Icons.group_add_rounded, Color(0xFF3B82F6)),
+      ('Invite', Icons.person_add_rounded, _red),
+    ];
+    return Row(
+      children: actions.map((a) {
+        final (label, icon, color) = a;
+        return Expanded(
+          child: Container(
+            margin: EdgeInsets.only(
+                right: a == actions.last ? 0 : 8),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+              border:
+                  Border.all(color: color.withValues(alpha: 0.22), width: 1),
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Icon(icon, color: color, size: 20),
+              const SizedBox(height: 6),
+              Text(label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: color.withValues(alpha: 0.9),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600)),
+            ]),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNextEventCard(_Event event) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Stack(
+        children: [
+          SizedBox(
+            height: 140,
+            width: double.infinity,
+            child: CachedNetworkImage(
+              imageUrl: event.imageUrl,
+              fit: BoxFit.cover,
+              placeholder: (_, __) =>
+                  Container(color: event.color.withValues(alpha: 0.2)),
+              errorWidget: (_, __, ___) =>
+                  Container(color: event.color.withValues(alpha: 0.2)),
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.4),
+                    Colors.black.withValues(alpha: 0.7),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: event.color,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(event.cost,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(event.title,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 3),
+                      Text(
+                          '${event.date} · ${event.time} · ${event.people} going',
+                          style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.65),
+                              fontSize: 12)),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: event.color,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text('Join',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChrisNudge(String text) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _red.withValues(alpha: 0.12),
+              border:
+                  Border.all(color: _red.withValues(alpha: 0.4), width: 1)),
+          child: const Icon(Icons.auto_awesome_rounded, color: _red, size: 15),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              const Text('Chris says',
+                  style: TextStyle(
+                      color: _redLight,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              Text(text,
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 12.5,
+                      height: 1.5)),
+            ])),
+      ]),
+    );
+  }
+
+  // ── EVENTS TAB ───────────────────────────────────────────────────────────────
+
+  Widget _buildEventsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
       child: Column(
@@ -277,164 +630,24 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
 
   Widget _quickPlan(String label, IconData icon, Color color) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border:
-                Border.all(color: color.withValues(alpha: 0.3), width: 1),
-          ),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(height: 4),
-            Text(label,
-                style: TextStyle(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center),
-          ]),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border:
+              Border.all(color: color.withValues(alpha: 0.3), width: 1),
         ),
-      ),
-    );
-  }
-
-  Widget _buildChrisNudge(String text) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1),
-      ),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _red.withValues(alpha: 0.12),
-              border:
-                  Border.all(color: _red.withValues(alpha: 0.4), width: 1)),
-          child:
-              const Icon(Icons.auto_awesome_rounded, color: _red, size: 15),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-              const Text('Chris says',
-                  style: TextStyle(
-                      color: _redLight,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(height: 4),
-              Text(text,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 12.5,
-                      height: 1.5)),
-            ])),
-      ]),
-    );
-  }
-
-  // ── COMMUNITIES TAB ──────────────────────────────────────────────────────────
-
-  Widget _buildCommunitiesTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCommunitiesHeader(),
-          const SizedBox(height: 18),
-          _sectionTitle('Browse by Interest'),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.35,
-            ),
-            itemCount: _interestCategories.length,
-            itemBuilder: (ctx, i) {
-              final cat = _interestCategories[i];
-              final joined = _joinedGroups.contains(cat.name);
-              return _InterestCard(
-                cat: cat,
-                joined: joined,
-                onJoin: () => setState(() {
-                  if (joined) {
-                    _joinedGroups.remove(cat.name);
-                  } else {
-                    _joinedGroups.add(cat.name);
-                  }
-                }),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCommunitiesHeader() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _red.withValues(alpha: 0.12),
-                Colors.white.withValues(alpha: 0.03),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            border:
-                Border.all(color: _red.withValues(alpha: 0.25), width: 1),
-          ),
-          child: Row(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Find Your People',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700)),
-              Text('Join groups that match your vibe',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 12)),
-            ]),
-            const Spacer(),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: _red,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text('Explore',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700)),
-            ),
-          ]),
-        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(label,
+              style: TextStyle(
+                  color: color,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center),
+        ]),
       ),
     );
   }
@@ -505,17 +718,11 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
           ),
           child: Row(children: [
             Expanded(
-                child: _splitStat(
-                    "You're Owed", '\$170', const Color(0xFF10B981))),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
-            Expanded(child: _splitStat('You Owe', '\$0', Colors.white54)),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
+                child: _splitStat("You're Owed", r'$170',
+                    const Color(0xFF10B981))),
+            _vDivider(),
+            Expanded(child: _splitStat('You Owe', r'$0', Colors.white54)),
+            _vDivider(),
             Expanded(child: _splitStat('Active', '2', _red)),
           ]),
         ),
@@ -541,6 +748,165 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
           color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
 }
 
+// ── Activity tile ─────────────────────────────────────────────────────────────
+
+class _ActivityTile extends StatelessWidget {
+  final _Activity activity;
+  const _ActivityTile({required this.activity});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF130910),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: Colors.white.withValues(alpha: 0.07), width: 1),
+      ),
+      child: Row(children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: activity.color.withValues(alpha: 0.14),
+            border: Border.all(
+                color: activity.color.withValues(alpha: 0.35), width: 1),
+          ),
+          child: Icon(activity.icon, color: activity.color, size: 17),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${activity.name} ',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    TextSpan(
+                      text: activity.action,
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.55),
+                          fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(activity.time,
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      fontSize: 11)),
+            ],
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+// ── Group chip (horizontal) ───────────────────────────────────────────────────
+
+class _GroupChip extends StatelessWidget {
+  final _InterestCat cat;
+  final bool joined;
+  final VoidCallback onTap;
+  const _GroupChip(
+      {required this.cat, required this.joined, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: cat.color.withValues(alpha: 0.1),
+          border: Border.all(
+              color: cat.color.withValues(alpha: joined ? 0.6 : 0.2),
+              width: joined ? 1.5 : 1),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: cat.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (_, __) =>
+                    Container(color: cat.color.withValues(alpha: 0.15)),
+                errorWidget: (_, __, ___) =>
+                    Container(color: cat.color.withValues(alpha: 0.15)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.78),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(cat.name,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 2),
+                    Text(cat.members,
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            fontSize: 9)),
+                    if (joined)
+                      const SizedBox(height: 4),
+                    if (joined)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: cat.color,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text('Joined',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Event card ────────────────────────────────────────────────────────────────
 
 class _EventCard extends StatelessWidget {
@@ -551,177 +917,86 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A090C),
+        color: const Color(0xFF130910),
         borderRadius: BorderRadius.circular(16),
         border:
             Border.all(color: event.color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(children: [
+        // Left color bar
         Container(
-          width: 46,
-          height: 46,
+          width: 4,
+          height: 80,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: event.color.withValues(alpha: 0.15),
-            border: Border.all(
-                color: event.color.withValues(alpha: 0.4), width: 1),
+            color: event.color,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              bottomLeft: Radius.circular(16),
+            ),
           ),
-          child: Icon(event.icon, color: event.color, size: 20),
         ),
         const SizedBox(width: 14),
         Expanded(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            Text(event.title,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700)),
-            const SizedBox(height: 3),
-            Text('${event.date} · ${event.time}',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
-                    fontSize: 12)),
-            const SizedBox(height: 4),
-            Row(children: [
-              Icon(Icons.group_rounded,
-                  color: Colors.white.withValues(alpha: 0.35), size: 13),
-              const SizedBox(width: 4),
-              Text('${event.people} people',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 11)),
-              const SizedBox(width: 10),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: event.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(event.cost,
-                    style: TextStyle(
-                        color: event.color,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600)),
-              ),
-            ]),
-          ]),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: event.color,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Text('Join',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700)),
-        ),
-      ]),
-    );
-  }
-}
-
-// ── Interest category card ────────────────────────────────────────────────────
-
-class _InterestCard extends StatelessWidget {
-  final _InterestCat cat;
-  final bool joined;
-  final VoidCallback onJoin;
-
-  const _InterestCard({
-    required this.cat,
-    required this.joined,
-    required this.onJoin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onJoin,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            CachedNetworkImage(
-              imageUrl: cat.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (_, __) =>
-                  Container(color: cat.color.withValues(alpha: 0.2)),
-              errorWidget: (_, __, ___) =>
-                  Container(color: cat.color.withValues(alpha: 0.2)),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    cat.color.withValues(alpha: 0.1),
-                    const Color(0xFF0F0608).withValues(alpha: 0.85),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: cat.color.withValues(alpha: 0.2),
-                        border: Border.all(
-                            color: cat.color.withValues(alpha: 0.5), width: 1),
-                      ),
-                      child: Icon(cat.icon, color: cat.color, size: 15),
-                    ),
-                    const Spacer(),
-                    if (joined)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: cat.color,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('Joined',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                  ]),
-                  const Spacer(),
-                  Text(cat.name,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700),
-                      maxLines: 2),
-                  const SizedBox(height: 2),
-                  Text(cat.members,
+              Text(event.title,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700)),
+              const SizedBox(height: 4),
+              Text('${event.date} · ${event.time}',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.45),
+                      fontSize: 12)),
+              const SizedBox(height: 5),
+              Row(children: [
+                Icon(Icons.group_rounded,
+                    color: Colors.white.withValues(alpha: 0.35), size: 13),
+                const SizedBox(width: 4),
+                Text('${event.people} going',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 11)),
+                const SizedBox(width: 10),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: event.color.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(event.cost,
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 10)),
-                ],
-              ),
-            ),
-          ],
+                          color: event.color,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ]),
+            ]),
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.only(right: 14),
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: event.color,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Text('Join',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700)),
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -739,7 +1014,7 @@ class _BillSplitCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A090C),
+        color: const Color(0xFF130910),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
             color: split.color.withValues(alpha: settled ? 0.1 : 0.25),
@@ -773,7 +1048,8 @@ class _BillSplitCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text('${split.people} people',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                      color: Colors.white.withValues(alpha: 0.4),
+                      fontSize: 11)),
             ]),
           ]),
         ),
@@ -785,27 +1061,17 @@ class _BillSplitCard extends StatelessWidget {
                   fontSize: 15,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 3),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-            decoration: BoxDecoration(
-              color: settled
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : split.color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(split.status,
-                style: TextStyle(
-                    color: settled ? Colors.white38 : split.color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600)),
-          ),
+          Text(split.status,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              textAlign: TextAlign.end),
         ]),
       ]),
     );
   }
 }
 
-// ── Data models ───────────────────────────────────────────────────────────────
+// ── Data classes ──────────────────────────────────────────────────────────────
 
 class _InterestCat {
   final String name;
@@ -813,8 +1079,7 @@ class _InterestCat {
   final Color color;
   final String members;
   final String imageUrl;
-  const _InterestCat(
-      this.name, this.icon, this.color, this.members, this.imageUrl);
+  const _InterestCat(this.name, this.icon, this.color, this.members, this.imageUrl);
 }
 
 class _Event {
@@ -825,8 +1090,9 @@ class _Event {
   final Color color;
   final IconData icon;
   final String cost;
+  final String imageUrl;
   const _Event(this.title, this.date, this.time, this.people, this.color,
-      this.icon, this.cost);
+      this.icon, this.cost, this.imageUrl);
 }
 
 class _BillSplit {
@@ -835,6 +1101,14 @@ class _BillSplit {
   final int people;
   final Color color;
   final String status;
-  const _BillSplit(
-      this.title, this.total, this.people, this.color, this.status);
+  const _BillSplit(this.title, this.total, this.people, this.color, this.status);
+}
+
+class _Activity {
+  final String name;
+  final String action;
+  final IconData icon;
+  final Color color;
+  final String time;
+  const _Activity(this.name, this.action, this.icon, this.color, this.time);
 }
