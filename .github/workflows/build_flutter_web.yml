@@ -1,0 +1,47 @@
+name: Build Flutter Web for Vercel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'chronos/lib/**'
+      - 'chronos/pubspec.yaml'
+      - 'chronos/pubspec.lock'
+      - 'chronos/web/**'
+      - 'chronos/assets/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Build Flutter web
+        run: |
+          cd chronos
+          flutter pub get
+          flutter build web --release
+
+      - name: Commit web build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add chronos/build/web/
+          if git diff --staged --quiet; then
+            echo "No changes to web build — skipping commit"
+          else
+            git commit -m "build: auto-rebuild Flutter web for Vercel"
+            git push origin HEAD
+          fi
