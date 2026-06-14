@@ -43,5 +43,5 @@ jobs:
             echo "No changes to web build — skipping commit"
           else
             git commit -m "build: auto-rebuild Flutter web for Vercel"
-            git push origin main
+            git push origin HEAD
           fi
