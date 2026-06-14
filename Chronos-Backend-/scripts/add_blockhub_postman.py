@@ -1,5 +1,6 @@
 import json, os
 
+MAIN = "http://chronos.us-east-1.elasticbeanstalk.com"
 BH = "http://blockhub-env.us-east-1.elasticbeanstalk.com"
 
 def auth_hdr():
@@ -14,11 +15,11 @@ def auth_json_hdr():
 def raw_body(obj):
     return {"mode": "raw", "raw": json.dumps(obj, indent=2), "options": {"raw": {"language": "json"}}}
 
-def get(name, path, public=False):
-    return {"name": name, "request": {"method": "GET", "header": [] if public else auth_hdr(), "url": BH + path}}
+def get(name, path, public=False, base=BH):
+    return {"name": name, "request": {"method": "GET", "header": [] if public else auth_hdr(), "url": base + path}}
 
-def post(name, path, body, public=False):
-    return {"name": name, "request": {"method": "POST", "header": json_hdr() if public else auth_json_hdr(), "body": raw_body(body), "url": BH + path}}
+def post(name, path, body, public=False, base=BH):
+    return {"name": name, "request": {"method": "POST", "header": json_hdr() if public else auth_json_hdr(), "body": raw_body(body), "url": base + path}}
 
 def delete(name, path):
     return {"name": name, "request": {"method": "DELETE", "header": auth_hdr(), "url": BH + path}}
@@ -33,35 +34,32 @@ blockhub_folder = {
         {
             "name": "Crypto — Market",
             "item": [
-                get("Get All Prices", "/market/prices", public=True),
-                get("Get Price — BTC", "/market/prices/BTC", public=True),
-                get("Get Price — ETH", "/market/prices/ETH", public=True),
-                get("Get Price — SOL", "/market/prices/SOL", public=True),
-                get("Get Price — UNI", "/market/prices/UNI", public=True),
-                get("Get Price — AAVE", "/market/prices/AAVE", public=True),
-                get("Get Price — LINK", "/market/prices/LINK", public=True),
+                get("Get Price — BTC", "/api/v1/crypto/price/BTC", public=True, base=MAIN),
+                get("Get Price — ETH", "/api/v1/crypto/price/ETH", public=True, base=MAIN),
+                get("Get Price — SOL", "/api/v1/crypto/price/SOL", public=True, base=MAIN),
+                get("Get Price — UNI", "/api/v1/crypto/price/UNI", public=True, base=MAIN),
+                get("Get Price — AAVE", "/api/v1/crypto/price/AAVE", public=True, base=MAIN),
+                get("Get Price — LINK", "/api/v1/crypto/price/LINK", public=True, base=MAIN),
             ]
         },
         {
             "name": "Crypto — Portfolio",
             "item": [
-                get("Get Crypto Holdings (PnL)", "/api/v1/portfolio"),
-                get("Get Trade History", "/api/v1/transactions"),
+                get("Get Crypto Dashboard", "/api/v1/crypto", base=MAIN),
+                get("Get Crypto History", "/api/v1/crypto/history?page=1&limit=25", base=MAIN),
             ]
         },
         {
             "name": "Crypto — Trading",
             "item": [
-                post("Buy Crypto", "/api/v1/trade/buy", {
+                post("Buy Crypto", "/api/v1/crypto/buy", {
                     "asset": "BTC",
-                    "amountUsd": 100,
-                    "walletId": "{{walletId}}"
-                }),
-                post("Sell Crypto", "/api/v1/trade/sell", {
-                    "asset": "ETH",
-                    "quantity": 0.05,
-                    "walletId": "{{walletId}}"
-                }),
+                    "amount_usd": 5
+                }, base=MAIN),
+                post("Sell Crypto", "/api/v1/crypto/sell", {
+                    "asset": "BTC",
+                    "amount_crypto": 0.0001
+                }, base=MAIN),
             ]
         },
         {
@@ -177,7 +175,8 @@ col["item"].append(blockhub_folder)
 col["info"]["description"] = (
     "Full Chronos API — all endpoints.\n\n"
     "Main API:  http://chronos.us-east-1.elasticbeanstalk.com\n"
-    "BlockHub:  http://blockhub-env.us-east-1.elasticbeanstalk.com\n\n"
+    "BlockHub crypto: main API /api/v1/crypto\n"
+    "BlockHub NFT:  http://blockhub-env.us-east-1.elasticbeanstalk.com\n\n"
     "STEP 1: Run Register or Login — token auto-saved to {{token}}\n"
     "STEP 2: All auth requests use {{token}} automatically\n"
     "STEP 3: BlockHub uses the same {{token}} — no separate login needed\n"

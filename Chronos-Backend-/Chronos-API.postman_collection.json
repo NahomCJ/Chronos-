@@ -3836,19 +3836,11 @@
           "name": "Crypto / Market Prices",
           "item": [
             {
-              "name": "Get All Prices",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices"
-              }
-            },
-            {
               "name": "Get Price — BTC",
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/BTC"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/BTC"
               }
             },
             {
@@ -3856,7 +3848,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/ETH"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/ETH"
               }
             },
             {
@@ -3864,7 +3856,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/SOL"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/SOL"
               }
             },
             {
@@ -3872,7 +3864,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/UNI"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/UNI"
               }
             },
             {
@@ -3880,7 +3872,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/AAVE"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/AAVE"
               }
             },
             {
@@ -3888,7 +3880,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/LINK"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/LINK"
               }
             }
           ]
@@ -3897,7 +3889,7 @@
           "name": "Crypto / Portfolio",
           "item": [
             {
-              "name": "Get Crypto Holdings (PnL)",
+              "name": "Get Crypto Dashboard",
               "request": {
                 "method": "GET",
                 "header": [
@@ -3906,11 +3898,11 @@
                     "value": "Bearer {{token}}"
                   }
                 ],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto"
               }
             },
             {
-              "name": "Get Trade History",
+              "name": "Get Crypto History",
               "request": {
                 "method": "GET",
                 "header": [
@@ -3919,7 +3911,7 @@
                     "value": "Bearer {{token}}"
                   }
                 ],
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/transactions"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/history?page=1&limit=25"
               }
             }
           ]
@@ -3943,14 +3935,14 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"asset\": \"BTC\",\n  \"amountUsd\": 100,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "raw": "{\n  \"asset\": \"BTC\",\n  \"amount_usd\": 5\n}",
                   "options": {
                     "raw": {
                       "language": "json"
                     }
                   }
                 },
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/trade/buy"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/buy"
               }
             },
             {
@@ -3969,14 +3961,14 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"asset\": \"ETH\",\n  \"quantity\": 0.05,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "raw": "{\n  \"asset\": \"BTC\",\n  \"amount_crypto\": 0.0001\n}",
                   "options": {
                     "raw": {
                       "language": "json"
                     }
                   }
                 },
-                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/trade/sell"
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/sell"
               }
             }
           ]

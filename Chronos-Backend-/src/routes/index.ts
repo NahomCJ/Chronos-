@@ -26,7 +26,7 @@ import fxRoutes from "../modules/core/fx/fx.routes";
 import walletRoutes from "../modules/core/wallet/wallet.routes";
 import kycRoutes from "../modules/core/kyc/kyc.routes";
 import transactionRoutes from "../modules/core/transactions/transaction.route";
-import r from "../modules/crypto/routes/crypto.routes";
+import cryptoRoutes from "../modules/crypto/routes/crypto.routes";
 import depositRoutes from "../modules/core/deposit/deposit.routes";
 // import cryptoRoutes from "../modules/crypto/routes/crypto.routes";
 import aiRoutes from "../modules/ai/ai.routes";
@@ -40,6 +40,7 @@ const router = Router();
 // Mount API v1
 router.use("/v1/auth", authRoutes);
 router.use("/v1/transfer", transferRoutes);
+router.use("/v1/crypto", cryptoRoutes);
 router.use('/core/accounts', accountRoutes);
 
 // router.use("/v1/cards", cardRoutes);

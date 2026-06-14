@@ -4,6 +4,7 @@ import { CountryCode, Products, Strategy } from "plaid";
 import { AccountStatus } from "@prisma/client";
 import prisma from "../../../config/prisma";
 import { plaidClient } from "../../../config/plaid";
+import cryptoService from "../../crypto/services/crypto.service";
 import { NotificationService } from "../../notification/notificatoin.service";
 import * as T from "../../notification/email.templates";
 import {
@@ -140,6 +141,10 @@ export class KycService {
         ...(mapped.rejectedAt && { rejectedAt: mapped.rejectedAt }),
       },
     });
+
+    if (mapped.status === "APPROVED") {
+      this.provisionCryptoWalletAfterKyc(userId);
+    }
 
     return { plaidStatus, internalStatus: mapped.status };
   }
@@ -376,6 +381,7 @@ export class KycService {
       for (const { userId } of profiles) {
         const user = await prisma.user.findUnique({ where: { id: userId }, select: { firstName: true } });
         if (mapped.status === "APPROVED") {
+          this.provisionCryptoWalletAfterKyc(userId);
           NotificationService.notifyUser(userId, {
             subject: "Your identity has been verified",
             title: "KYC Approved",
@@ -421,7 +427,7 @@ export class KycService {
   // ─── Admin overrides ────────────────────────────────────────────────────────
 
   async approveKyc(userId: string, riskLevel: RiskLevel) {
-    return prisma.bankingProfile.update({
+    const profile = await prisma.bankingProfile.update({
       where: { userId },
       data: {
         status: "APPROVED",
@@ -430,6 +436,8 @@ export class KycService {
         approvedAt: new Date(),
       },
     });
+    this.provisionCryptoWalletAfterKyc(userId);
+    return profile;
   }
 
   async rejectKyc(userId: string, reason: string) {
@@ -455,6 +463,13 @@ export class KycService {
     return prisma.bankingProfile.update({
       where: { userId },
       data: { frozen: false, status: "APPROVED" },
+    });
+  }
+
+  private provisionCryptoWalletAfterKyc(userId: string): void {
+    cryptoService.ensureWalletForUser(userId).catch((err) => {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`Crypto wallet provisioning failed for ${userId}: ${message}`);
     });
   }
 }

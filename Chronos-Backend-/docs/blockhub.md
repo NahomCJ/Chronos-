@@ -1,6 +1,6 @@
 # BlockHub — Crypto Trading Module
 
-**Path:** `src/modules/blockhub/`  
+**Path:** `src/modules/crypto/`
 **Integration:** Paxos (custody + order execution)
 
 BlockHub is the crypto trading arm of Chronos. Users buy and sell crypto assets through Paxos's institutional-grade brokerage API. The module enforces a compliance gate before every trade.
@@ -9,16 +9,16 @@ BlockHub is the crypto trading arm of Chronos. Users buy and sell crypto assets 
 
 ## Architecture Note
 
-BlockHub was originally a standalone NestJS application. It has been merged into Chronos as a module under `src/modules/blockhub/`. The NestJS decorators (`@Injectable`, `PrismaService`, `ConfigService`) are being progressively replaced with Chronos's Express + direct Prisma pattern.
+BlockHub was originally a standalone NestJS application. The backend contract now runs in Chronos's Express API under `src/modules/crypto/`, using shared Prisma and the Chronos auth/KYC middleware.
 
-**Current status:** Services are being adapted file-by-file. `revenue.service.ts` is already converted. Auth and compliance modules from BlockHub have been removed — Chronos's unified `requireAuth` and KYC gate are used instead.
+**Current status:** The public backend routes are mounted under `/api/v1/crypto`. Flutter/mobile work is out of scope for this backend sprint.
 
 ---
 
 ## Trade Flow
 
 ```
-POST /blockhub/trade/buy  (or /sell)
+POST /api/v1/crypto/buy  (or /sell)
       │
       ▼
 1. Compliance gate (KYC approved + not suspended + under daily limit + no fraud flag)
@@ -53,23 +53,21 @@ POST /blockhub/trade/buy  (or /sell)
 
 | Method | Route | Auth | KYC | Description |
 |--------|-------|------|-----|-------------|
-| POST | `/blockhub/trade/buy` | Yes | Yes | Buy crypto with USD |
-| POST | `/blockhub/trade/sell` | Yes | Yes | Sell crypto for USD |
+| POST | `/api/v1/crypto/buy` | Yes | Yes | Buy crypto with USD |
+| POST | `/api/v1/crypto/sell` | Yes | Yes | Sell crypto for USD |
 
 ### Wallet
 
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
-| GET  | `/blockhub/wallet` | Yes | Get crypto wallet info |
-| GET  | `/blockhub/wallet/balance/usd` | Yes | USD balance on Paxos |
-| GET  | `/blockhub/wallet/balance/:asset` | Yes | Crypto balance |
+| GET  | `/api/v1/crypto` | Yes | Wallet status, Paxos balances, supported assets, and portfolio summary |
 
 ### Portfolio
 
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
-| GET  | `/blockhub/portfolio` | Yes | All holdings with live prices |
-| GET  | `/blockhub/portfolio/:asset` | Yes | Single asset holding |
+| GET  | `/api/v1/crypto/history` | Yes | Trade history plus Paxos transfer references |
+| GET  | `/api/v1/crypto/price/:asset` | No | Live Paxos price, or CoinGecko fallback |
 
 ### Webhooks
 
@@ -122,13 +120,14 @@ Both fee types recorded as `Revenue` rows for accounting.
 
 | Operation | Paxos API call |
 |-----------|---------------|
-| Create identity | `POST /identity/identity` |
-| Create profile | `POST /identity/profile` |
-| Get USD balance | `GET /transfer/profile/{id}/balance` |
-| Get crypto balance | `GET /transfer/profile/{id}/balance` |
-| Get market price | `GET /markets/market-data` |
-| Place order | `POST /brokerage/order` |
-| Poll order | `GET /brokerage/order/{id}` |
+| Create identity | `POST /identity/identities` |
+| Create profile | `POST /profiles` |
+| List profile balances | `GET /profiles/{profile_id}/balances` |
+| Get market ticker | `GET /markets/{market}/ticker` |
+| Place order | `POST /profiles/{profile_id}/orders` |
+| Poll order | `GET /profiles/{profile_id}/orders/{order_id}` |
+| List transfers | `GET /transfer/transfers?profile_ids={profile_id}` |
+| Internal transfer | `POST /transfer/internal` |
 
 ---
 
@@ -151,15 +150,25 @@ Triggered automatically when KYC is approved (Plaid webhook → `kycVerified: tr
 ## Environment Variables
 
 ```env
-PAXOS_API_URL=https://api.sandbox.paxos.com/v2
+PAXOS_ENV=sandbox
 PAXOS_CLIENT_ID=
 PAXOS_CLIENT_SECRET=
 PAXOS_PROFILE_ID=          # Your platform's Paxos profile ID
+PAXOS_SETTLEMENT_PROFILE_ID=
+PAXOS_SCOPES=              # Optional; defaults include profile, trading, identity, and transfer scopes
 FEE_RATE_DEFAULT=0.005     # 0.5%
 SPREAD_RATE=0.002          # 0.2%
 DAILY_TRADE_LIMIT_STANDARD=10000
 DAILY_TRADE_LIMIT_VERIFIED_PLUS=50000
 ```
+
+## Sandbox Smoke Test
+
+Run `npm run test:paxos:sandbox` after setting `PAXOS_CLIENT_ID`, `PAXOS_CLIENT_SECRET`, and `PAXOS_PROFILE_ID`. Without those variables the command exits successfully with a skip message.
+
+By default the command validates OAuth, profile balances, prices for BTC/ETH/SOL/UNI/AAVE/LINK, and transfer listing. Set `PAXOS_SANDBOX_RUN_TRADES=true` to place a small buy/sell loop, and `PAXOS_SANDBOX_RUN_TRANSFERS=true` with `PAXOS_SETTLEMENT_PROFILE_ID` to submit settlement profile credit/debit checks.
+
+See `docs/blockhub-testing.md` for the full deterministic test matrix, schema checks, and live sandbox test gates.
 
 ---
 

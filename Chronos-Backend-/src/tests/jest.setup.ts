@@ -1,10 +1,15 @@
-import  prisma from "../config/prisma";
+import prisma from "../config/prisma";
 
-beforeEach(async () => {
-  // Delete all users before each test
-  await prisma.user.deleteMany();
-});
+const shouldUseDatabase =
+  process.env.SKIP_DB_TEST_SETUP !== "true" && Boolean(process.env.DATABASE_URL);
 
-afterAll(async () => {
-  await prisma.$disconnect();
-});
+if (shouldUseDatabase) {
+  beforeEach(async () => {
+    // Delete all users before each test
+    await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+}

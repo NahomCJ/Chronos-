@@ -22,6 +22,9 @@
     "generate:md": "widdershins swagger.json -o docs/docs/api.md",
     "generate:docs": "cd docs && npm run build",
     "test": "cross-env NODE_ENV=test jest --passWithNoTests",
+    "test:crypto": "cross-env NODE_ENV=test SKIP_DB_TEST_SETUP=true jest src/modules/crypto src/modules/core/kyc/kyc.crypto-provisioning.spec.ts --runInBand",
+    "test:crypto:coverage": "cross-env NODE_ENV=test SKIP_DB_TEST_SETUP=true jest src/modules/crypto src/modules/core/kyc/kyc.crypto-provisioning.spec.ts --runInBand --coverage --collectCoverageFrom='src/modules/crypto/controllers/**/*.ts' --collectCoverageFrom='src/modules/crypto/routes/**/*.ts' --collectCoverageFrom='src/modules/crypto/services/**/*.ts' --collectCoverageFrom='!src/modules/crypto/**/*.spec.ts' --collectCoverageFrom='src/modules/core/kyc/kyc.service.ts' --coverageDirectory=coverage/crypto",
+    "test:paxos:sandbox": "tsx scripts/paxos-sandbox-smoke.ts",
     "test:watch": "jest --watch"
   },
   "keywords": [
