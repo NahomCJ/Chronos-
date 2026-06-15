@@ -12,12 +12,15 @@ class _BillsManagementPageState extends State<BillsManagementPage>
   late AnimationController _animCtrl;
   late Animation<double> _anim;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
   static const _blue = Color(0xFF3B82F6);
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
   static const _amber = Color(0xFFF59E0B);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textSubtle = Color(0xFF9CA3AF);
+  static const _border = Color(0xFFE8EAF0);
 
   static const _bills = [
     _Bill('Rent / Mortgage', '\$1,850', 'Jun 1', Icons.home_rounded, Color(0xFF6366F1), true),
@@ -63,22 +66,23 @@ class _BillsManagementPageState extends State<BillsManagementPage>
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08)),
+                color: Color(0xFFF3F4F6)),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16),
+                color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Bills Management',
             style: TextStyle(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
         actions: [
@@ -128,12 +132,19 @@ class _BillsManagementPageState extends State<BillsManagementPage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _blue.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.03),
+            _blue.withValues(alpha: 0.08),
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _blue.withValues(alpha: 0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +155,7 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _blue.withValues(alpha: 0.15)),
+                    color: _blue.withValues(alpha: 0.12)),
                 child: const Icon(Icons.receipt_rounded,
                     color: _blue, size: 20),
               ),
@@ -152,13 +163,13 @@ class _BillsManagementPageState extends State<BillsManagementPage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Monthly Bills',
+                  const Text('Monthly Bills',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: _textSecondary,
                           fontSize: 12)),
                   Text('\$${_totalMonthly.toStringAsFixed(0)}',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: _textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
                 ],
@@ -167,13 +178,13 @@ class _BillsManagementPageState extends State<BillsManagementPage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Next due',
+                  const Text('Next due',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: _textSubtle,
                           fontSize: 11)),
-                  Text('Jun 1',
-                      style: const TextStyle(
-                          color: Colors.white,
+                  const Text('Jun 1',
+                      style: TextStyle(
+                          color: _textPrimary,
                           fontSize: 18,
                           fontWeight: FontWeight.w700)),
                   Text('in 3 days',
@@ -227,16 +238,23 @@ class _BillsManagementPageState extends State<BillsManagementPage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Spending by Category',
+          const Text('Spending by Category',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 18),
@@ -256,12 +274,12 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                       const SizedBox(width: 8),
                       Expanded(
                           child: Text(c.name,
-                              style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                              style: const TextStyle(
+                                  color: _textSecondary,
                                   fontSize: 12))),
                       Text('\$${c.amount.toStringAsFixed(0)}',
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: _textPrimary,
                               fontSize: 12,
                               fontWeight: FontWeight.w600)),
                     ],
@@ -271,7 +289,7 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: pct * _anim.value,
-                      backgroundColor: Colors.white.withValues(alpha: 0.06),
+                      backgroundColor: _border,
                       valueColor: AlwaysStoppedAnimation(c.color),
                       minHeight: 6,
                     ),
@@ -289,9 +307,9 @@ class _BillsManagementPageState extends State<BillsManagementPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Upcoming Bills',
+        const Text('Upcoming Bills',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -299,10 +317,16 @@ class _BillsManagementPageState extends State<BillsManagementPage>
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: _card,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.06), width: 0.8),
+                border: Border.all(color: _border, width: 0.8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -320,19 +344,19 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                       children: [
                         Text(b.name,
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: _textPrimary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500)),
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            Icon(Icons.calendar_today_rounded,
-                                color: Colors.white.withValues(alpha: 0.3),
+                            const Icon(Icons.calendar_today_rounded,
+                                color: _textSubtle,
                                 size: 10),
                             const SizedBox(width: 4),
                             Text(b.dueDate,
-                                style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.4),
+                                style: const TextStyle(
+                                    color: _textSubtle,
                                     fontSize: 10)),
                           ],
                         ),
@@ -344,7 +368,7 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                     children: [
                       Text(b.amount,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: _textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.w700)),
                       const SizedBox(height: 3),
@@ -353,8 +377,8 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
                           color: b.autoPay
-                              ? _green.withValues(alpha: 0.12)
-                              : _amber.withValues(alpha: 0.12),
+                              ? _green.withValues(alpha: 0.10)
+                              : _amber.withValues(alpha: 0.10),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(b.autoPay ? 'Auto' : 'Manual',
@@ -376,9 +400,16 @@ class _BillsManagementPageState extends State<BillsManagementPage>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _green.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -391,19 +422,19 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                 color: _green, size: 20),
           ),
           const SizedBox(width: 14),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Auto-Pay Active',
+                Text('Auto-Pay Active',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: _textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600)),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text('4 of 7 bills paid automatically. Save time — enable auto-pay for remaining bills.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: _textSecondary,
                         fontSize: 11,
                         height: 1.4)),
               ],
@@ -413,10 +444,10 @@ class _BillsManagementPageState extends State<BillsManagementPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: _green.withValues(alpha: 0.15),
+              color: _green.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text('Manage',
+            child: const Text('Manage',
                 style: TextStyle(
                     color: _green,
                     fontSize: 12,

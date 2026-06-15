@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-14
+Last updated: 2026-06-15
 
 ---
 
@@ -181,7 +181,7 @@ Path: `lib/features/panther_ai/`
 | Screen | Route | File | Status |
 |--------|-------|------|--------|
 | Panther AI Dashboard | `/panther-ai` | `panther_ai_page.dart` | [LIVE] |
-| Panther AI Chat | `/panther-ai-chat` | `panther_ai_chat_page.dart` | [LIVE] |
+| Panther AI Chat | `/panther-ai-chat` | `panther_ai_chat_page.dart` | [LIVE] | Text + Voice mode toggle; voice mode shows full-screen purple orb |
 | Panther AI Settings | `/panther-ai-settings` | `panther_ai_settings_page.dart` | [LIVE] |
 | Market Intelligence | `/market-intelligence` | `market_intelligence_page.dart` | [LIVE] |
 | Full Portfolio Analysis | `/full-portfolio-analysis` | `analysis/full_portfolio_analysis_page.dart` | [LIVE] |
@@ -202,13 +202,19 @@ Path: `lib/features/panther_ai/`
 
 **Financial Intelligence dashboards (Mahesh pipeline — stub data, Plaid integration pending):**
 
+All 7 intelligence pages use the Panther light theme: `Color(0xFFF5F6FA)` bg, white cards, `Color(0xFFE8EAF0)` borders.
+
 | Screen | Route | File | Status | Key UI |
 |--------|-------|------|--------|--------|
+| Portfolio Intelligence | `/panther/portfolio` | `portfolio_intelligence_page.dart` | [STUB] | Hero card ($45,890 total), allocation bars, performance chart, holdings list, Chris insight |
+| Trading Assistant | `/panther/trading` | `trading_assistant_page.dart` | [STUB] | Market strip (BTC/ETH/SPX), 4 active signals with confidence bars, market conditions, Chris recommendation |
 | Tax Intelligence | `/panther/tax` | `tax_intelligence_page.dart` | [STUB] | Pie chart (Federal/State/FICA/Medicare), deductions list, quarterly timeline |
 | Bills Management | `/panther/bills` | `bills_management_page.dart` | [STUB] | 7 bills, auto-pay status, linear progress bars per category |
 | Liabilities | `/panther/liabilities` | `liabilities_intelligence_page.dart` | [STUB] | Donut chart, 4 debts, Avalanche/Snowball strategy cards |
 | Budget | `/panther/budget` | `budget_intelligence_page.dart` | [STUB] | Period toggle, ring progress per category, over-budget alerts |
 | Net Worth | `/panther/net-worth` | `net_worth_intelligence_page.dart` | [STUB] | Line chart (6-month trend), assets vs liabilities bars |
+| Market Intelligence | `/market-intelligence` | `market_intelligence_page.dart` | [STUB] | Market mood card, movers list, alerts, portfolio impact |
+| TickPay AI | `/tickpay-ai` | `tickpay_ai_page.dart` | [LIVE] | 3-tab (Shop/Plans/Rewards), BLoC-driven, credit card hero, Chris insight |
 
 > To connect real data: replace stub constants with Plaid API calls via Panther AI backend (`/api/lifex/finance`).
 
@@ -339,15 +345,21 @@ Path: `lib/features/profile/`
 |-------|-------|-------|
 | App background | `#08080F` | Search, global dark base |
 | LifeX background | `#0D0D22` | Slight navy for LifeX pages |
-| Panther card | `#0F0F1C` | Financial intelligence cards |
-| Card dark | `#111118` / `#141420` | General cards |
+| Panther page bg | `#F5F6FA` | All Panther AI pages and intelligence dashboards |
+| Panther card bg | `#FFFFFF` | Cards on all Panther intelligence pages |
+| Panther card border | `#E8EAF0` | Card borders on Panther light theme pages |
+| Panther text primary | `#1A1A2E` | Headings and primary text on Panther pages |
+| Panther text secondary | `#6B7080` | Secondary text, labels on Panther pages |
+| Icon container bg | `#F3F4F6` | Icon chip backgrounds on Panther pages (replaces dark cards) |
+| Card dark | `#111118` / `#141420` | General dark-theme cards (non-Panther) |
 | Accent green | `#22C55E` | Positive values, LifeX |
 | Accent amber | `#F59E0B` | Taxes, warnings |
 | Accent blue | `#3B82F6` | Bills, info |
 | Accent red | `#EF4444` | Liabilities, negative |
-| Accent purple | `#8B5CF6` | Rebalance, liabilities chart |
+| Accent purple | `#7C6EF0` | Panther AI orb, voice mode, portfolio accent |
 
 **Bottom nav / global nav:** white icons on dark bg. No purple on search page.
+**Panther AI chat:** light bg, purple user message bubbles, white AI bubbles, voice mode shows full-screen orb.
 
 ---
 
@@ -378,6 +390,9 @@ Path: `lib/features/profile/`
 | Item | Priority | Notes |
 |------|----------|-------|
 | Pexels video on web | Medium | `MEDIA_ERR_SRC_NOT_SUPPORTED` in Chrome — video_player package doesn't support web without additional setup |
-| Financial intelligence real data | High | All 5 Panther financial pages use stub data; wire to Plaid via backend |
+| Financial intelligence real data | High | All Panther financial intelligence pages use stub data; wire to Plaid via backend |
 | LifeX family page | Low | `lifex_family_page.dart` exists but may not be linked from dashboard tile |
 | `dart:math` in liabilities | Done | Needed for `min()` in `_DonutPainter` — keep the import |
+| Panther dashboard intelligence grid | Done | Replaced horizontal scroll ListView with 2-column GridView — all 8 tiles visible at once |
+| Voice mode in Panther chat | Done | ChatGPT-style full-screen orb voice mode added to `panther_ai_chat_page.dart` |
+| CLAUDE.md Panther card token | Low | `chronos/CLAUDE.md` still documents `#0F0F1C` as Panther card color — update if CLAUDE.md is edited |

@@ -138,9 +138,9 @@ class _OrbPainter extends CustomPainter {
   List<Color> _stateColors(OrbState s) {
     return switch (s) {
       OrbState.idle => idleColorOverride ?? [
-          const Color(0xFFDC8F4A),
-          const Color(0xFFB06428),
-          const Color(0xFFFFBF7C),
+          const Color(0xFF7C6EF0),
+          const Color(0xFF5B50D6),
+          const Color(0xFF9F96F5),
         ],
       OrbState.thinking => [
           const Color(0xFF6A8EDC),
