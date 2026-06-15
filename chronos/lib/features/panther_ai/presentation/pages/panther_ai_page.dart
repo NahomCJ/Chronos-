@@ -26,6 +26,15 @@ class _PantherAiPageState extends State<PantherAiPage>
   int _awarenessIndex = 0;
   int _currentStory = 0;
 
+  static const _bg = Color(0xFFF5F6FA);
+  static const _cardBg = Colors.white;
+  static const _cardBorder = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _purple = Color(0xFF7C6EF0);
+  static const _green = Color(0xFF22C55E);
+  static const _teal = Color(0xFF14B8A6);
+
   static const _awareness = [
     'Tracking 4 spending patterns',
     'Markets stable · No action needed',
@@ -66,7 +75,7 @@ class _PantherAiPageState extends State<PantherAiPage>
     return BlocProvider.value(
       value: _alertsBloc,
       child: Scaffold(
-        backgroundColor: const Color(0xFF06060E),
+        backgroundColor: _bg,
         body: SafeArea(
           child: CustomScrollView(
             slivers: [
@@ -84,8 +93,6 @@ class _PantherAiPageState extends State<PantherAiPage>
     );
   }
 
-  // ── Header ──────────────────────────────────────────────────────────────────
-
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
@@ -95,9 +102,9 @@ class _PantherAiPageState extends State<PantherAiPage>
           Text(
             'PANTHER',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.32),
+              color: _textSecondary,
               fontSize: 11,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               letterSpacing: 2.2,
             ),
           ),
@@ -110,12 +117,10 @@ class _PantherAiPageState extends State<PantherAiPage>
                   height: 7,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF22C55E),
+                    color: _green,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF22C55E).withValues(
-                          alpha: 0.25 + _glowCtrl.value * 0.45,
-                        ),
+                        color: _green.withValues(alpha: 0.25 + _glowCtrl.value * 0.45),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -127,19 +132,25 @@ class _PantherAiPageState extends State<PantherAiPage>
               Text(
                 'Aware',
                 style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF22C55E),
+                  color: _green,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(width: 16),
               GestureDetector(
-                onTap: () =>
-                    context.push(RouteConstants.pantherAiSettings.toPath),
-                child: Icon(
-                  Icons.tune_rounded,
-                  color: Colors.white.withValues(alpha: 0.32),
-                  size: 20,
+                onTap: () => context.push(RouteConstants.pantherAiSettings.toPath),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: Color(0xFF374151),
+                    size: 18,
+                  ),
                 ),
               ),
             ],
@@ -149,31 +160,26 @@ class _PantherAiPageState extends State<PantherAiPage>
     );
   }
 
-  // ── Orb Hero ────────────────────────────────────────────────────────────────
-
   Widget _buildOrbHero() {
     return GestureDetector(
       onTap: () => context.push(RouteConstants.pantherAiChat.toPath),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        height: 275,
+        height: 270,
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Ambient glow
             AnimatedBuilder(
               animation: _glowCtrl,
               builder: (_, __) => Container(
-                width: 260,
-                height: 260,
+                width: 240,
+                height: 240,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      const Color(0xFFDC8F4A).withValues(
-                        alpha: 0.07 + _glowCtrl.value * 0.05,
-                      ),
-                      const Color(0xFFDC8F4A).withValues(alpha: 0.02),
+                      _purple.withValues(alpha: 0.10 + _glowCtrl.value * 0.06),
+                      _purple.withValues(alpha: 0.03),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.55, 1.0],
@@ -189,7 +195,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                 Text(
                   'Tap to talk with Chris',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: _textSecondary,
                     fontSize: 12,
                     letterSpacing: 0.4,
                   ),
@@ -203,10 +209,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                       position: Tween<Offset>(
                         begin: const Offset(0, 0.25),
                         end: Offset.zero,
-                      ).animate(CurvedAnimation(
-                        parent: anim,
-                        curve: Curves.easeOut,
-                      )),
+                      ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOut)),
                       child: child,
                     ),
                   ),
@@ -214,7 +217,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                     _awareness[_awarenessIndex],
                     key: ValueKey(_awarenessIndex),
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFFDC8F4A).withValues(alpha: 0.6),
+                      color: _purple.withValues(alpha: 0.7),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -227,8 +230,6 @@ class _PantherAiPageState extends State<PantherAiPage>
       ),
     );
   }
-
-  // ── Stories Section ─────────────────────────────────────────────────────────
 
   Widget _buildStoriesSection() {
     return BlocBuilder<AlertsBloc, AlertsState>(
@@ -248,9 +249,9 @@ class _PantherAiPageState extends State<PantherAiPage>
                   Text(
                     'What Chris sees',
                     style: TextStyles.titleMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: _textPrimary,
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -261,7 +262,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                       child: CircularProgressIndicator(
                         strokeWidth: 1.5,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.white.withValues(alpha: 0.3),
+                          _textSecondary.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -288,10 +289,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                   itemCount: stories.length,
                   itemBuilder: (_, i) => GestureDetector(
                     onTap: stories[i].onTap,
-                    child: _StoryCard(
-                      story: stories[i],
-                      width: screenWidth * 0.80,
-                    ),
+                    child: _StoryCard(story: stories[i], width: screenWidth * 0.80),
                   ),
                 ),
               ),
@@ -307,8 +305,8 @@ class _PantherAiPageState extends State<PantherAiPage>
                   height: 6,
                   decoration: BoxDecoration(
                     color: i == _currentStory
-                        ? const Color(0xFFDC8F4A)
-                        : Colors.white.withValues(alpha: 0.18),
+                        ? _purple
+                        : _textSecondary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 );
@@ -329,7 +327,7 @@ class _PantherAiPageState extends State<PantherAiPage>
       final isRisk = a.type == 'FRAUD' || a.type == 'BNPL_RISK';
       stories.add(_Story(
         tag: isRisk ? 'HEADS UP' : 'INSIGHT',
-        tagColor: isRisk ? const Color(0xFFE07040) : const Color(0xFFF0B100),
+        tagColor: isRisk ? const Color(0xFFEF4444) : const Color(0xFFF59E0B),
         headline: a.title,
         detail: a.message,
         action: 'Review',
@@ -340,7 +338,7 @@ class _PantherAiPageState extends State<PantherAiPage>
     stories.addAll([
       _Story(
         tag: 'SPENDING',
-        tagColor: const Color(0xFFDC8F4A),
+        tagColor: const Color(0xFF7C6EF0),
         headline: 'Food delivery up 40% this week',
         detail: '\$128 vs your \$90 average. 4 days left in the month.',
         action: 'See breakdown',
@@ -348,7 +346,7 @@ class _PantherAiPageState extends State<PantherAiPage>
       ),
       _Story(
         tag: 'OPPORTUNITY',
-        tagColor: const Color(0xFF6A8EDC),
+        tagColor: const Color(0xFF3B82F6),
         headline: '\$340 sitting idle in checking',
         detail: "No bills for 12 days. Your money isn't working.",
         action: 'Move to savings',
@@ -356,7 +354,7 @@ class _PantherAiPageState extends State<PantherAiPage>
       ),
       _Story(
         tag: 'MARKET',
-        tagColor: const Color(0xFF22C55E),
+        tagColor: _green,
         headline: 'ETH entry signal — 87% confidence',
         detail: 'Pattern matches your risk profile. Window is open.',
         action: 'View signal',
@@ -367,20 +365,22 @@ class _PantherAiPageState extends State<PantherAiPage>
     return stories;
   }
 
-  // ── LifeX Card ──────────────────────────────────────────────────────────────
-
   Widget _buildLifeXCard() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1C1B),
+          color: _cardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: const Color(0xFF14B8A6).withValues(alpha: 0.22),
-            width: 0.8,
-          ),
+          border: Border.all(color: _teal.withValues(alpha: 0.25), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: _teal.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,21 +388,16 @@ class _PantherAiPageState extends State<PantherAiPage>
             Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                   decoration: BoxDecoration(
-                    color:
-                        const Color(0xFF14B8A6).withValues(alpha: 0.12),
+                    color: _teal.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      color: const Color(0xFF14B8A6).withValues(alpha: 0.35),
-                      width: 0.7,
-                    ),
+                    border: Border.all(color: _teal.withValues(alpha: 0.3), width: 0.7),
                   ),
                   child: Text(
                     'LIFEX × MONEY',
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF14B8A6),
+                      color: _teal,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.9,
@@ -410,18 +405,14 @@ class _PantherAiPageState extends State<PantherAiPage>
                   ),
                 ),
                 const Spacer(),
-                Icon(
-                  Icons.hub_outlined,
-                  color: const Color(0xFF14B8A6).withValues(alpha: 0.45),
-                  size: 16,
-                ),
+                Icon(Icons.hub_outlined, color: _teal.withValues(alpha: 0.45), size: 16),
               ],
             ),
             const SizedBox(height: 16),
             Text(
               'Life × Money Intelligence',
               style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -430,23 +421,15 @@ class _PantherAiPageState extends State<PantherAiPage>
             Text(
               'Chris cross-references your LifeX data with financial patterns to surface decisions that benefit from more context.',
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.38),
+                color: _textSecondary,
                 fontSize: 13,
                 height: 1.5,
               ),
             ),
             const SizedBox(height: 18),
-            _signalRow(
-              'ACTIVITY',
-              'High-load period detected',
-              const Color(0xFFF0B100),
-            ),
+            _signalRow('ACTIVITY', 'High-load period detected', const Color(0xFFF59E0B)),
             const SizedBox(height: 10),
-            _signalRow(
-              'FINANCE SIGNAL',
-              '2 decisions flagged for review',
-              const Color(0xFFE07040),
-            ),
+            _signalRow('FINANCE SIGNAL', '2 decisions flagged for review', const Color(0xFFEF4444)),
             const SizedBox(height: 18),
             GestureDetector(
               onTap: () => context.push(RouteConstants.lifex.toPath),
@@ -455,17 +438,13 @@ class _PantherAiPageState extends State<PantherAiPage>
                   Text(
                     'Open LifeX',
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF14B8A6),
+                      color: _teal,
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 5),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Color(0xFF14B8A6),
-                    size: 14,
-                  ),
+                  const Icon(Icons.arrow_forward_rounded, color: _teal, size: 14),
                 ],
               ),
             ),
@@ -481,10 +460,7 @@ class _PantherAiPageState extends State<PantherAiPage>
         Container(
           width: 3,
           height: 38,
-          decoration: BoxDecoration(
-            color: accent,
-            borderRadius: BorderRadius.circular(2),
-          ),
+          decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(2)),
         ),
         const SizedBox(width: 12),
         Column(
@@ -493,7 +469,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             Text(
               label,
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: _textSecondary,
                 fontSize: 10,
                 letterSpacing: 0.8,
                 fontWeight: FontWeight.w600,
@@ -503,7 +479,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             Text(
               value,
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.7),
+                color: _textPrimary,
                 fontSize: 13,
               ),
             ),
@@ -512,8 +488,6 @@ class _PantherAiPageState extends State<PantherAiPage>
       ],
     );
   }
-
-  // ── Quick Actions ───────────────────────────────────────────────────────────
 
   Widget _buildQuickActions() {
     return Padding(
@@ -524,7 +498,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             child: _QuickTile(
               icon: Icons.mic_none_rounded,
               label: 'Talk\nto Chris',
-              accent: const Color(0xFFDC8F4A),
+              accent: _purple,
               onTap: () => context.push(RouteConstants.pantherAiChat.toPath),
             ),
           ),
@@ -533,7 +507,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             child: _QuickTile(
               icon: Icons.local_fire_department_rounded,
               label: 'Weekly\nRoast',
-              accent: const Color(0xFFE07040),
+              accent: const Color(0xFFEF4444),
               onTap: () {},
             ),
           ),
@@ -542,7 +516,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             child: _QuickTile(
               icon: Icons.tune_rounded,
               label: 'Set a\nRule',
-              accent: const Color(0xFF6A8EDC),
+              accent: const Color(0xFF3B82F6),
               onTap: () {},
             ),
           ),
@@ -551,9 +525,74 @@ class _PantherAiPageState extends State<PantherAiPage>
     );
   }
 
-  // ── Intelligence Tiles ──────────────────────────────────────────────────────
-
   Widget _buildIntelligence() {
+    final tiles = [
+      _IntelData(
+        icon: Icons.account_balance_wallet_outlined,
+        title: 'Portfolio',
+        value: '\$45,890',
+        change: '+12.4%',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.portfolioIntelligence.toPath),
+      ),
+      _IntelData(
+        icon: Icons.show_chart_rounded,
+        title: 'Trading',
+        value: '4 signals',
+        change: '87% conf.',
+        changeColor: _purple,
+        onTap: () => context.push(RouteConstants.tradingAssistant.toPath),
+      ),
+      _IntelData(
+        icon: Icons.payment_rounded,
+        title: 'TickPay',
+        value: '\$420 safe',
+        change: 'This month',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.tickPayAi.toPath),
+      ),
+      _IntelData(
+        icon: Icons.receipt_long_rounded,
+        title: 'Taxes',
+        value: '\$4,200',
+        change: 'Apr 15 due',
+        changeColor: const Color(0xFFF59E0B),
+        onTap: () => context.push(RouteConstants.taxIntelligence.toPath),
+      ),
+      _IntelData(
+        icon: Icons.receipt_rounded,
+        title: 'Bills',
+        value: '5 upcoming',
+        change: '\$840/mo',
+        changeColor: const Color(0xFF3B82F6),
+        onTap: () => context.push(RouteConstants.billsManagement.toPath),
+      ),
+      _IntelData(
+        icon: Icons.credit_card_off_rounded,
+        title: 'Liabilities',
+        value: '\$318.8k',
+        change: '-\$8.4k paid',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.liabilitiesIntelligence.toPath),
+      ),
+      _IntelData(
+        icon: Icons.bar_chart_rounded,
+        title: 'Budget',
+        value: '67% used',
+        change: '\$1,240 left',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.budgetIntelligence.toPath),
+      ),
+      _IntelData(
+        icon: Icons.trending_up_rounded,
+        title: 'Net Worth',
+        value: '\$47.2k',
+        change: '+8.2% YTD',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.netWorthIntelligence.toPath),
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -562,105 +601,31 @@ class _PantherAiPageState extends State<PantherAiPage>
           child: Text(
             'Intelligence',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: _textPrimary,
               fontSize: 16,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        SizedBox(
-          height: 122,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: [
-              _IntelTile(
-                icon: Icons.account_balance_wallet_outlined,
-                title: 'Portfolio',
-                value: '\$45,890',
-                change: '+12.4%',
-                changeColor: const Color(0xFF22C55E),
-                onTap: () => context
-                    .push(RouteConstants.portfolioIntelligence.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.show_chart_rounded,
-                title: 'Trading',
-                value: '4 signals',
-                change: '87% conf.',
-                changeColor: const Color(0xFFDC8F4A),
-                onTap: () =>
-                    context.push(RouteConstants.tradingAssistant.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.payment_rounded,
-                title: 'TickPay',
-                value: '\$420 safe',
-                change: 'This month',
-                changeColor: const Color(0xFF22C55E),
-                onTap: () => context.push(RouteConstants.tickPayAi.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.receipt_long_rounded,
-                title: 'Taxes',
-                value: '\$4,200',
-                change: 'Apr 15 due',
-                changeColor: const Color(0xFFF59E0B),
-                onTap: () =>
-                    context.push(RouteConstants.taxIntelligence.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.receipt_rounded,
-                title: 'Bills',
-                value: '5 upcoming',
-                change: '\$840/mo',
-                changeColor: const Color(0xFF3B82F6),
-                onTap: () =>
-                    context.push(RouteConstants.billsManagement.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.credit_card_off_rounded,
-                title: 'Liabilities',
-                value: '\$318.8k',
-                change: '-\$8.4k paid',
-                changeColor: const Color(0xFF22C55E),
-                onTap: () => context
-                    .push(RouteConstants.liabilitiesIntelligence.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.bar_chart_rounded,
-                title: 'Budget',
-                value: '67% used',
-                change: '\$1,240 left',
-                changeColor: const Color(0xFF22C55E),
-                onTap: () =>
-                    context.push(RouteConstants.budgetIntelligence.toPath),
-              ),
-              const SizedBox(width: 12),
-              _IntelTile(
-                icon: Icons.trending_up_rounded,
-                title: 'Net Worth',
-                value: '\$47.2k',
-                change: '+8.2% YTD',
-                changeColor: const Color(0xFF22C55E),
-                onTap: () =>
-                    context.push(RouteConstants.netWorthIntelligence.toPath),
-              ),
-            ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.55,
+            ),
+            itemCount: tiles.length,
+            itemBuilder: (_, i) => _IntelTile(data: tiles[i]),
           ),
         ),
       ],
     );
   }
 }
-
-// ── Story Data ────────────────────────────────────────────────────────────────
 
 class _Story {
   final String tag;
@@ -680,12 +645,9 @@ class _Story {
   });
 }
 
-// ── Story Card ────────────────────────────────────────────────────────────────
-
 class _StoryCard extends StatelessWidget {
   final _Story story;
   final double width;
-
   const _StoryCard({required this.story, required this.width});
 
   @override
@@ -695,12 +657,16 @@ class _StoryCard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.07),
-          width: 0.8,
-        ),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -708,19 +674,15 @@ class _StoryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: story.tagColor.withValues(alpha: 0.12),
+              color: story.tagColor.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(100),
-              border: Border.all(
-                color: story.tagColor.withValues(alpha: 0.28),
-                width: 0.7,
-              ),
             ),
             child: Text(
               story.tag,
               style: TextStyle(
                 color: story.tagColor,
                 fontSize: 10,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 0.8,
               ),
             ),
@@ -729,7 +691,7 @@ class _StoryCard extends StatelessWidget {
           Text(
             story.headline,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF1A1A2E),
               fontSize: 15,
               fontWeight: FontWeight.w600,
               height: 1.3,
@@ -739,8 +701,8 @@ class _StoryCard extends StatelessWidget {
           Expanded(
             child: Text(
               story.detail,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.42),
+              style: const TextStyle(
+                color: Color(0xFF6B7080),
                 fontSize: 13,
                 height: 1.45,
               ),
@@ -760,11 +722,7 @@ class _StoryCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(
-                Icons.arrow_forward_rounded,
-                color: story.tagColor,
-                size: 14,
-              ),
+              Icon(Icons.arrow_forward_rounded, color: story.tagColor, size: 14),
             ],
           ),
         ],
@@ -772,8 +730,6 @@ class _StoryCard extends StatelessWidget {
     );
   }
 }
-
-// ── Quick Tile ────────────────────────────────────────────────────────────────
 
 class _QuickTile extends StatelessWidget {
   final IconData icon;
@@ -795,12 +751,16 @@ class _QuickTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
         decoration: BoxDecoration(
-          color: accent.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: accent.withValues(alpha: 0.18),
-            width: 0.8,
-          ),
+          border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -810,10 +770,11 @@ class _QuickTile extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.68),
+              style: const TextStyle(
+                color: Color(0xFF374151),
                 fontSize: 11,
                 height: 1.35,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -823,9 +784,7 @@ class _QuickTile extends StatelessWidget {
   }
 }
 
-// ── Intel Tile ────────────────────────────────────────────────────────────────
-
-class _IntelTile extends StatelessWidget {
+class _IntelData {
   final IconData icon;
   final String title;
   final String value;
@@ -833,7 +792,7 @@ class _IntelTile extends StatelessWidget {
   final Color changeColor;
   final VoidCallback onTap;
 
-  const _IntelTile({
+  const _IntelData({
     required this.icon,
     required this.title,
     required this.value,
@@ -841,49 +800,70 @@ class _IntelTile extends StatelessWidget {
     required this.changeColor,
     required this.onTap,
   });
+}
+
+class _IntelTile extends StatelessWidget {
+  final _IntelData data;
+  const _IntelTile({required this.data});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: data.onTap,
       child: Container(
-        width: 140,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.04),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07),
-            width: 0.7,
-          ),
+          border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: const Color(0xFFDC8F4A), size: 18),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.35),
-                fontSize: 10,
-                letterSpacing: 0.3,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(data.icon, color: const Color(0xFF374151), size: 16),
+                ),
+                Icon(Icons.chevron_right_rounded, color: const Color(0xFFD1D5DB), size: 16),
+              ],
             ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 10),
             Text(
-              value,
+              data.title,
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+                color: Color(0xFF6B7080),
+                fontSize: 11,
+                letterSpacing: 0.2,
               ),
             ),
             const SizedBox(height: 3),
             Text(
-              change,
-              style: TextStyle(color: changeColor, fontSize: 10),
+              data.value,
+              style: const TextStyle(
+                color: Color(0xFF1A1A2E),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              data.change,
+              style: TextStyle(color: data.changeColor, fontSize: 11, fontWeight: FontWeight.w500),
             ),
           ],
         ),

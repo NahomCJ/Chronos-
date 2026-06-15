@@ -15,11 +15,14 @@ class _LiabilitiesIntelligencePageState
   late AnimationController _animCtrl;
   late Animation<double> _anim;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
   static const _red = Color(0xFFEF4444);
   static const _green = Color(0xFF22C55E);
-  static const _purple = Color(0xFF8B5CF6);
+  static const _purple = Color(0xFF7C6EF0);
 
   static const _debts = [
     _Debt('Mortgage', 285000, 320000, 3.8, 'Jan 2048',
@@ -56,34 +59,37 @@ class _LiabilitiesIntelligencePageState
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: _card,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08)),
+            decoration: const BoxDecoration(
+                shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16),
+                color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Liabilities',
             style: TextStyle(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: _border),
+        ),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: _red.withValues(alpha: 0.12),
+              color: _red.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text('4 accounts',
+            child: const Text('4 accounts',
                 style: TextStyle(
                     color: _red,
                     fontSize: 11,
@@ -94,11 +100,10 @@ class _LiabilitiesIntelligencePageState
       body: AnimatedBuilder(
         animation: _anim,
         builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
               _buildSummaryCard(),
               const SizedBox(height: 24),
               _buildDonutChart(),
@@ -119,16 +124,23 @@ class _LiabilitiesIntelligencePageState
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
+        color: _card,
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _red.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.03),
+            _red.withValues(alpha: 0.06),
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _red.withValues(alpha: 0.3), width: 1),
+        border: Border.all(color: _red.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: _red.withValues(alpha: 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +151,7 @@ class _LiabilitiesIntelligencePageState
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _red.withValues(alpha: 0.15)),
+                    color: _red.withValues(alpha: 0.10)),
                 child: const Icon(Icons.credit_card_off_rounded,
                     color: _red, size: 20),
               ),
@@ -148,12 +160,10 @@ class _LiabilitiesIntelligencePageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Total Liabilities',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 12)),
+                      style: TextStyle(color: _textSecondary, fontSize: 12)),
                   Text('\$${_fmtK(_totalDebt)}',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: _textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
                 ],
@@ -165,13 +175,13 @@ class _LiabilitiesIntelligencePageState
                   Text('Monthly\nPayments',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: _textSecondary,
                           fontSize: 11,
                           height: 1.3)),
                   const SizedBox(height: 2),
-                  Text('\$2,340',
-                      style: const TextStyle(
-                          color: Colors.white,
+                  const Text('\$2,340',
+                      style: TextStyle(
+                          color: _textPrimary,
                           fontSize: 20,
                           fontWeight: FontWeight.w700)),
                 ],
@@ -198,7 +208,7 @@ class _LiabilitiesIntelligencePageState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -206,7 +216,7 @@ class _LiabilitiesIntelligencePageState
           children: [
             Text(label,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: _textSecondary,
                     fontSize: 10,
                     height: 1.3)),
             const SizedBox(height: 4),
@@ -227,14 +237,20 @@ class _LiabilitiesIntelligencePageState
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Debt Composition',
+          const Text('Debt Composition',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
@@ -270,11 +286,10 @@ class _LiabilitiesIntelligencePageState
                           children: [
                             Text(d.name,
                                 style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.6),
-                                    fontSize: 11)),
+                                    color: _textSecondary, fontSize: 11)),
                             Text('\$${_fmtK(d.balance)}',
                                 style: const TextStyle(
-                                    color: Colors.white,
+                                    color: _textPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600)),
                           ],
@@ -295,9 +310,9 @@ class _LiabilitiesIntelligencePageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Debt Accounts',
+        const Text('Debt Accounts',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -309,8 +324,13 @@ class _LiabilitiesIntelligencePageState
             decoration: BoxDecoration(
               color: _card,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.06), width: 0.8),
+              border: Border.all(color: _border, width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2))
+              ],
             ),
             child: Column(
               children: [
@@ -320,7 +340,7 @@ class _LiabilitiesIntelligencePageState
                       padding: const EdgeInsets.all(9),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: d.color.withValues(alpha: 0.12)),
+                          color: d.color.withValues(alpha: 0.10)),
                       child: Icon(d.icon, color: d.color, size: 16),
                     ),
                     const SizedBox(width: 12),
@@ -330,13 +350,12 @@ class _LiabilitiesIntelligencePageState
                         children: [
                           Text(d.name,
                               style: const TextStyle(
-                                  color: Colors.white,
+                                  color: _textPrimary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600)),
                           Text('${d.rate}% APR · Due ${d.payoffDate}',
                               style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.35),
-                                  fontSize: 10)),
+                                  color: _textSecondary, fontSize: 10)),
                         ],
                       ),
                     ),
@@ -345,12 +364,11 @@ class _LiabilitiesIntelligencePageState
                       children: [
                         Text('\$${_fmtK(d.balance)}',
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: _textPrimary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700)),
-                        Text(
-                            '${(progress * 100).toStringAsFixed(0)}% paid',
-                            style: TextStyle(
+                        Text('${(progress * 100).toStringAsFixed(0)}% paid',
+                            style: const TextStyle(
                                 color: _green, fontSize: 10)),
                       ],
                     ),
@@ -361,7 +379,7 @@ class _LiabilitiesIntelligencePageState
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress * _anim.value,
-                    backgroundColor: Colors.white.withValues(alpha: 0.06),
+                    backgroundColor: const Color(0xFFE8EAF0),
                     valueColor: AlwaysStoppedAnimation(d.color),
                     minHeight: 5,
                   ),
@@ -380,19 +398,24 @@ class _LiabilitiesIntelligencePageState
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _purple.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: _purple.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.trending_down_rounded,
-                  color: _purple, size: 18),
+              const Icon(Icons.trending_down_rounded, color: _purple, size: 18),
               const SizedBox(width: 8),
-              Text('Paydown Strategy',
+              const Text('Paydown Strategy',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: _textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600)),
             ],
@@ -408,13 +431,13 @@ class _LiabilitiesIntelligencePageState
     );
   }
 
-  Widget _strategyRow(
-      String name, String desc, String benefit, Color color) {
+  Widget _strategyRow(String name, String desc, String benefit, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -429,9 +452,7 @@ class _LiabilitiesIntelligencePageState
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
                 Text(desc,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.55),
-                        fontSize: 11)),
+                    style: TextStyle(color: _textSecondary, fontSize: 11)),
               ],
             ),
           ),
@@ -449,7 +470,7 @@ class _LiabilitiesIntelligencePageState
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _red.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: _red.withValues(alpha: 0.15), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,7 +480,7 @@ class _LiabilitiesIntelligencePageState
             height: 34,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _red.withValues(alpha: 0.12)),
+                color: _red.withValues(alpha: 0.10)),
             child: const Icon(Icons.auto_awesome_rounded,
                 color: _red, size: 16),
           ),
@@ -468,7 +489,7 @@ class _LiabilitiesIntelligencePageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Chris suggests',
+                const Text('Chris suggests',
                     style: TextStyle(
                         color: _red,
                         fontSize: 11,
@@ -477,9 +498,7 @@ class _LiabilitiesIntelligencePageState
                 Text(
                   'Your credit card at 22.4% is costing you \$60/month in interest. Paying \$500 extra monthly would clear it in 7 months and save \$420.',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
-                      fontSize: 12,
-                      height: 1.5),
+                      color: _textSecondary, fontSize: 12, height: 1.5),
                 ),
               ],
             ),

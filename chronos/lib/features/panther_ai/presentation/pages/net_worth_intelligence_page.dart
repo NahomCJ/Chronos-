@@ -13,8 +13,11 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
   late AnimationController _animCtrl;
   late Animation<double> _anim;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
   static const _blue = Color(0xFF3B82F6);
@@ -43,10 +46,8 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     ('Jun', 47200.0),
   ];
 
-  double get _totalAssets =>
-      _assets.fold(0.0, (s, a) => s + a.value);
-  double get _totalLiabilities =>
-      _liabilities.fold(0.0, (s, l) => s + l.value);
+  double get _totalAssets => _assets.fold(0.0, (s, a) => s + a.value);
+  double get _totalLiabilities => _liabilities.fold(0.0, (s, l) => s + l.value);
   double get _netWorth => _totalAssets - _totalLiabilities;
 
   @override
@@ -71,40 +72,43 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08)),
+                color: const Color(0xFFF3F4F6)),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16),
+                color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Net Worth',
             style: TextStyle(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: _border),
+        ),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: _green.withValues(alpha: 0.12),
+              color: _green.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.trending_up_rounded,
-                    color: _green, size: 13),
+                const Icon(Icons.trending_up_rounded, color: _green, size: 13),
                 const SizedBox(width: 4),
-                Text('+8.2% YTD',
+                const Text('+8.2% YTD',
                     style: TextStyle(
                         color: _green,
                         fontSize: 11,
@@ -117,11 +121,10 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       body: AnimatedBuilder(
         animation: _anim,
         builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
               _buildHeroCard(),
               const SizedBox(height: 24),
               _buildLineChart(),
@@ -148,35 +151,40 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _green.withValues(alpha: 0.18),
-            _blue.withValues(alpha: 0.08),
-            Colors.white.withValues(alpha: 0.02),
+            _green.withValues(alpha: 0.08),
+            _blue.withValues(alpha: 0.04),
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: _green.withValues(alpha: 0.3), width: 1),
+        border: Border.all(color: _green.withValues(alpha: 0.25), width: 1),
+        color: _card,
+        boxShadow: [
+          BoxShadow(
+              color: _green.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Net Worth',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+              style: TextStyle(color: _textSecondary, fontSize: 13)),
           const SizedBox(height: 6),
           Text('\$${_fmtK(_netWorth)}',
               style: const TextStyle(
-                  color: Colors.white,
+                  color: _textPrimary,
                   fontSize: 40,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -1)),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.arrow_upward_rounded,
-                  color: _green, size: 14),
+              const Icon(Icons.arrow_upward_rounded, color: _green, size: 14),
               const SizedBox(width: 4),
-              Text('+\$3,600 since last month',
-                  style: const TextStyle(
+              const Text('+\$3,600 since last month',
+                  style: TextStyle(
                       color: _green,
                       fontSize: 12,
                       fontWeight: FontWeight.w600)),
@@ -186,12 +194,8 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           Row(
             children: [
               _netStatCol('Total Assets', '\$${_fmtK(_totalAssets)}', _green),
-              Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.white.withValues(alpha: 0.1)),
-              _netStatCol(
-                  'Total Liabilities', '-\$${_fmtK(_totalLiabilities)}', _red),
+              Container(width: 1, height: 40, color: _border),
+              _netStatCol('Total Liabilities', '-\$${_fmtK(_totalLiabilities)}', _red),
             ],
           ),
         ],
@@ -206,15 +210,11 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+            Text(label, style: TextStyle(color: _textSecondary, fontSize: 11)),
             const SizedBox(height: 4),
             Text(value,
                 style: TextStyle(
-                    color: color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700)),
+                    color: color, fontSize: 18, fontWeight: FontWeight.w700)),
           ],
         ),
       ),
@@ -227,14 +227,20 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('6-Month Trend',
+          const Text('6-Month Trend',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
@@ -251,9 +257,7 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _history
                 .map((h) => Text(h.$1,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        fontSize: 10)))
+                    style: TextStyle(color: _textSecondary, fontSize: 10)))
                 .toList(),
           ),
         ],
@@ -268,14 +272,20 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Assets vs Liabilities',
+          const Text('Assets vs Liabilities',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
@@ -290,47 +300,34 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
   }
 
   Widget _barRow(String label, double value, double max, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            SizedBox(
-                width: 90,
-                child: Text(label,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        fontSize: 12))),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: ((value / max) * _anim.value).clamp(0.0, 1.0),
-                  backgroundColor: Colors.white.withValues(alpha: 0.06),
-                  valueColor: AlwaysStoppedAnimation(color),
-                  minHeight: 8,
-                ),
-              ),
+        SizedBox(
+            width: 90,
+            child: Text(label,
+                style: TextStyle(color: _textSecondary, fontSize: 12))),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: ((value / max) * _anim.value).clamp(0.0, 1.0),
+              backgroundColor: const Color(0xFFE8EAF0),
+              valueColor: AlwaysStoppedAnimation(color),
+              minHeight: 8,
             ),
-            const SizedBox(width: 10),
-            Text('\$${_fmtK(value)}',
-                style: TextStyle(
-                    color: color,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700)),
-          ],
+          ),
         ),
+        const SizedBox(width: 10),
+        Text('\$${_fmtK(value)}',
+            style: TextStyle(
+                color: color, fontSize: 12, fontWeight: FontWeight.w700)),
       ],
     );
   }
 
-  Widget _buildAssetsList() {
-    return _buildNWSection('Assets', _assets, _green);
-  }
-
-  Widget _buildLiabilitiesList() {
-    return _buildNWSection('Liabilities', _liabilities, _red);
-  }
+  Widget _buildAssetsList() => _buildNWSection('Assets', _assets, _green);
+  Widget _buildLiabilitiesList() =>
+      _buildNWSection('Liabilities', _liabilities, _red);
 
   Widget _buildNWSection(String title, List<_NWItem> items, Color accent) {
     return Column(
@@ -339,8 +336,8 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
         Row(
           children: [
             Text(title,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85),
+                style: const TextStyle(
+                    color: _textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600)),
             const Spacer(),
@@ -356,22 +353,24 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           decoration: BoxDecoration(
             color: _card,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: Colors.white.withValues(alpha: 0.07), width: 0.8),
+            border: Border.all(color: _border, width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2))
+            ],
           ),
           child: Column(
             children: items.map((e) {
               final isLast = e == items.last;
               return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   border: isLast
                       ? null
                       : Border(
-                          bottom: BorderSide(
-                              color: Colors.white.withValues(alpha: 0.05),
-                              width: 0.8)),
+                          bottom: BorderSide(color: _border, width: 0.8)),
                 ),
                 child: Row(
                   children: [
@@ -379,14 +378,14 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: e.color.withValues(alpha: 0.1)),
+                          color: e.color.withValues(alpha: 0.10)),
                       child: Icon(e.icon, color: e.color, size: 16),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                         child: Text(e.name,
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 13))),
+                                color: _textPrimary, fontSize: 13))),
                     Text('\$${_fmtK(e.value)}',
                         style: TextStyle(
                             color: e.color,
@@ -418,7 +417,7 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
             height: 34,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _green.withValues(alpha: 0.12)),
+                color: _green.withValues(alpha: 0.10)),
             child: const Icon(Icons.auto_awesome_rounded,
                 color: _green, size: 16),
           ),
@@ -427,18 +426,16 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Chris says',
+                const Text('Chris says',
                     style: TextStyle(
                         color: _green,
                         fontSize: 11,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
                 Text(
-                  'You\'re on track to hit \$100k net worth by Q3 2027 at your current savings rate. Increasing monthly savings by \$300 would get you there 8 months sooner.',
+                  "You're on track to hit \$100k net worth by Q3 2027 at your current savings rate. Increasing monthly savings by \$300 would get you there 8 months sooner.",
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
-                      fontSize: 12,
-                      height: 1.5),
+                      color: _textSecondary, fontSize: 12, height: 1.5),
                 ),
               ],
             ),
@@ -480,7 +477,6 @@ class _LineChartPainter extends CustomPainter {
         .take((points.length * progress).ceil().clamp(1, points.length))
         .toList();
 
-    // Fill gradient
     final path = Path()..moveTo(animatedPoints.first.dx, size.height);
     for (final p in animatedPoints) {
       path.lineTo(p.dx, p.dy);
@@ -495,15 +491,15 @@ class _LineChartPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            color.withValues(alpha: 0.25),
+            color.withValues(alpha: 0.18),
             color.withValues(alpha: 0.0),
           ],
         ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
     );
 
-    // Line
     if (animatedPoints.length > 1) {
-      final linePath = Path()..moveTo(animatedPoints.first.dx, animatedPoints.first.dy);
+      final linePath = Path()
+        ..moveTo(animatedPoints.first.dx, animatedPoints.first.dy);
       for (final p in animatedPoints.skip(1)) {
         linePath.lineTo(p.dx, p.dy);
       }
@@ -517,10 +513,14 @@ class _LineChartPainter extends CustomPainter {
       );
     }
 
-    // Dot on latest point
-    canvas.drawCircle(animatedPoints.last, 4, Paint()..color = color);
-    canvas.drawCircle(animatedPoints.last, 4,
-        Paint()..color = Colors.white..style = PaintingStyle.stroke..strokeWidth = 1.5);
+    canvas.drawCircle(animatedPoints.last, 5, Paint()..color = color);
+    canvas.drawCircle(
+        animatedPoints.last,
+        5,
+        Paint()
+          ..color = const Color(0xFFF5F6FA)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2);
   }
 
   double mathMin(double a, double b) => a < b ? a : b;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/theme/text_theme.dart';
 import '../bloc/chat_bloc.dart';
@@ -22,6 +21,8 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   final ScrollController _scrollController = ScrollController();
   late final ChatBloc _chatBloc;
 
+  bool _isVoiceMode = false;
+
   final List<_ChatMessage> _messages = [
     _ChatMessage(
       text: "Hello! I'm Chris, your AI financial advisor. What can I do for you today?",
@@ -31,9 +32,9 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   ];
 
   late AnimationController _dotController;
+  late AnimationController _pulseController;
   OrbState _orbState = OrbState.idle;
 
-  // ── Voice input ──────────────────────────────────────────────────────────
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool _speechAvailable = false;
   bool _isListening = false;
@@ -45,6 +46,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     'Credit score tips',
   ];
 
+  static const _bg = Color(0xFFF5F6FA);
+  static const _cardBg = Colors.white;
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _purple = Color(0xFF7C6EF0);
+  static const _borderColor = Color(0xFFE8EAF0);
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +61,10 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
     _messages.first = _ChatMessage(
       text: _messages.first.text,
       isUser: false,
@@ -77,19 +89,31 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     if (!_speechAvailable) return;
     if (_isListening) {
       await _speech.stop();
-      setState(() => _isListening = false);
+      setState(() {
+        _isListening = false;
+        _orbState = OrbState.idle;
+      });
     } else {
-      setState(() => _isListening = true);
+      setState(() {
+        _isListening = true;
+        _orbState = OrbState.thinking;
+      });
       await _speech.listen(
         onResult: (result) {
-          setState(() {
-            _controller.text = result.recognizedWords;
-            _controller.selection = TextSelection.fromPosition(
-              TextPosition(offset: _controller.text.length),
-            );
-          });
-          if (result.finalResult && result.recognizedWords.isNotEmpty) {
-            _sendMessage(result.recognizedWords);
+          if (_isVoiceMode) {
+            if (result.finalResult && result.recognizedWords.isNotEmpty) {
+              _sendMessage(result.recognizedWords);
+            }
+          } else {
+            setState(() {
+              _controller.text = result.recognizedWords;
+              _controller.selection = TextSelection.fromPosition(
+                TextPosition(offset: _controller.text.length),
+              );
+            });
+            if (result.finalResult && result.recognizedWords.isNotEmpty) {
+              _sendMessage(result.recognizedWords);
+            }
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -106,6 +130,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   void dispose() {
     _chatBloc.close();
     _dotController.dispose();
+    _pulseController.dispose();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -114,11 +139,10 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   void _sendMessage(String text) {
     if (text.trim().isEmpty) return;
     setState(() {
-      _messages.add(
-        _ChatMessage(text: text.trim(), isUser: true, time: _currentTime()),
-      );
+      _messages.add(_ChatMessage(text: text.trim(), isUser: true, time: _currentTime()));
       _controller.clear();
       _orbState = OrbState.thinking;
+      _isListening = false;
     });
     _scrollToBottom();
     _chatBloc.add(ChatMessageSent(text.trim()));
@@ -162,7 +186,6 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               ));
             });
             _scrollToBottom();
-            // Return to idle after speaking animation
             Future.delayed(const Duration(milliseconds: 2200), () {
               if (mounted) setState(() => _orbState = OrbState.idle);
             });
@@ -179,47 +202,87 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    _buildHeader(context),
-                    _buildOrbSection(),
-                    Expanded(
-                      child: BlocBuilder<ChatBloc, ChatState>(
-                        builder: (context, state) {
-                          final isThinking = state is ChatThinking;
-                          return ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            itemCount:
-                                _messages.length + (isThinking ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index == _messages.length && isThinking) {
-                                return _buildThinkingBubble();
-                              }
-                              return _buildMessageBubble(_messages[index]);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    _buildSuggestions(),
-                    _buildInputBar(),
-                  ],
-                ),
-              ),
-            ],
+          backgroundColor: _bg,
+          body: SafeArea(
+            child: _isVoiceMode ? _buildVoiceView() : _buildTextView(),
           ),
         ),
+      ),
+    );
+  }
+
+  // ── Text Chat View ──────────────────────────────────────────────────────────
+
+  Widget _buildTextView() {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildOrbSection(),
+        Expanded(
+          child: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              final isThinking = state is ChatThinking;
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: _messages.length + (isThinking ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _messages.length && isThinking) {
+                    return _buildThinkingBubble();
+                  }
+                  return _buildMessageBubble(_messages[index]);
+                },
+              );
+            },
+          ),
+        ),
+        _buildSuggestions(),
+        _buildInputBar(),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        border: Border(bottom: BorderSide(color: _borderColor)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF374151), size: 16),
+            ),
+          ),
+          const Spacer(),
+          _ModeToggle(
+            isVoiceMode: _isVoiceMode,
+            onTextTap: () {},
+            onVoiceTap: () => setState(() {
+              _isVoiceMode = true;
+              _orbState = OrbState.idle;
+            }),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.settings_outlined,
+                color: Color(0xFF374151), size: 18),
+          ),
+        ],
       ),
     );
   }
@@ -234,11 +297,11 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
       curve: Curves.easeInOut,
-      height: _orbState == OrbState.idle ? 150 : 170,
+      height: _orbState == OrbState.idle ? 130 : 150,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ChrisVoiceOrb(state: _orbState, size: 110),
+          ChrisVoiceOrb(state: _orbState, size: 88),
           const SizedBox(height: 8),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -247,75 +310,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               key: ValueKey(label),
               style: TextStyles.bodySmall.copyWith(
                 color: _orbState == OrbState.idle
-                    ? Colors.white.withValues(alpha: 0.45)
+                    ? _textSecondary
                     : _orbState == OrbState.thinking
-                        ? const Color(0xFF8AAAFF).withValues(alpha: 0.85)
-                        : const Color(0xFFDC8F4A).withValues(alpha: 0.90),
-                fontSize: 13,
+                        ? _purple
+                        : const Color(0xFF22C55E),
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.07)),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: ChrisVoiceOrb(state: _orbState, size: 38),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Chronos',
-                      style: TextStyles.titleMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Text(
-                      'Active',
-                      style: TextStyles.bodySmall.copyWith(
-                        color: const Color(0xFF22C55E),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.settings_outlined,
-              color: Colors.white.withValues(alpha: 0.7),
-              size: 22,
             ),
           ),
         ],
@@ -336,23 +338,28 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.72,
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: msg.isUser
-                    ? Colors.white.withValues(alpha: 0.18)
-                    : Colors.white.withValues(alpha: 0.08),
+                color: msg.isUser ? _purple : Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
                   bottomLeft: Radius.circular(msg.isUser ? 18 : 4),
                   bottomRight: Radius.circular(msg.isUser ? 4 : 18),
                 ),
+                border: msg.isUser ? null : Border.all(color: _borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Text(
                 msg.text,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: msg.isUser ? Colors.white : _textPrimary,
                   fontSize: 14,
                   height: 1.45,
                 ),
@@ -363,7 +370,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               Text(
                 msg.time,
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: _textSecondary.withValues(alpha: 0.6),
                   fontSize: 11,
                 ),
               ),
@@ -379,14 +386,19 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          _ThinkingDots(controller: _dotController),
-          const SizedBox(width: 10),
-          Text(
-            'Thinking',
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.45),
-              fontSize: 13,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+                bottomLeft: Radius.circular(4),
+              ),
+              border: Border.all(color: _borderColor),
             ),
+            child: _ThinkingDots(controller: _dotController),
           ),
         ],
       ),
@@ -405,18 +417,16 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
           return GestureDetector(
             onTap: () => _sendMessage(_suggestions[index]),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(50),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12)),
+                border: Border.all(color: _borderColor),
               ),
               child: Text(
                 _suggestions[index],
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white,
+                  color: _textPrimary,
                   fontSize: 13,
                 ),
               ),
@@ -432,29 +442,32 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       margin: const EdgeInsets.fromLTRB(16, 10, 16, 16),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        border: Border.all(color: _purple.withValues(alpha: 0.4), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: _purple.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.attach_file_outlined,
-            color: Colors.white.withValues(alpha: 0.45),
-            size: 20,
-          ),
+          Icon(Icons.attach_file_outlined, color: _textSecondary, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
               controller: _controller,
               style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 14,
               ),
               decoration: InputDecoration(
                 hintText: 'Ask Chris anything...',
                 hintStyle: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: _textSecondary,
                   fontSize: 14,
                 ),
                 border: InputBorder.none,
@@ -472,9 +485,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               child: Icon(
                 _isListening ? Icons.mic : Icons.mic_none_outlined,
                 key: ValueKey(_isListening),
-                color: _isListening
-                    ? const Color(0xFFDC8F4A)
-                    : Colors.white.withValues(alpha: 0.45),
+                color: _isListening ? _purple : _textSecondary,
                 size: 20,
               ),
             ),
@@ -486,17 +497,304 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               width: 36,
               height: 36,
               decoration: const BoxDecoration(
-                color: Color(0xFFDC8F4A),
+                color: _purple,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.send_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
+              child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Voice Chat View ─────────────────────────────────────────────────────────
+
+  Widget _buildVoiceView() {
+    final statusText = switch (_orbState) {
+      OrbState.idle => _isListening ? 'AI is listening...' : 'Tap mic to speak',
+      OrbState.thinking => 'Chris is thinking...',
+      OrbState.speaking => 'Chris is speaking...',
+    };
+
+    return Column(
+      children: [
+        _buildVoiceHeader(),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (_, child) {
+                    final scale = _isListening
+                        ? 1.0 + _pulseController.value * 0.10
+                        : 1.0;
+                    return Transform.scale(scale: scale, child: child);
+                  },
+                  child: Container(
+                    width: 216,
+                    height: 216,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _purple.withValues(alpha: _isListening ? 0.22 : 0.10),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Center(
+                      child: ChrisVoiceOrb(state: _orbState, size: 185),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Text(
+                    statusText,
+                    key: ValueKey(statusText),
+                    style: TextStyles.titleMedium.copyWith(
+                      color: _textPrimary,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        _buildVoiceControls(),
+        const SizedBox(height: 36),
+      ],
+    );
+  }
+
+  Widget _buildVoiceHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        border: Border(bottom: BorderSide(color: _borderColor)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF374151), size: 16),
+            ),
+          ),
+          const Spacer(),
+          _ModeToggle(
+            isVoiceMode: _isVoiceMode,
+            onTextTap: () => setState(() {
+              _isVoiceMode = false;
+              if (_isListening) {
+                _speech.stop();
+                _isListening = false;
+                _orbState = OrbState.idle;
+              }
+            }),
+            onVoiceTap: () {},
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.settings_outlined,
+                color: Color(0xFF374151), size: 18),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVoiceControls() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _VoiceControlBtn(icon: Icons.volume_up_rounded, onTap: () {}),
+          GestureDetector(
+            onTap: _toggleListening,
+            child: AnimatedBuilder(
+              animation: _pulseController,
+              builder: (_, __) => Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _purple,
+                  boxShadow: [
+                    BoxShadow(
+                      color: _purple.withValues(
+                        alpha: _isListening
+                            ? 0.35 + _pulseController.value * 0.2
+                            : 0.2,
+                      ),
+                      blurRadius: _isListening ? 24 : 12,
+                      spreadRadius: _isListening ? 4 : 0,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
+          _VoiceControlBtn(
+              icon: Icons.switch_access_shortcut_rounded, onTap: () {}),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Shared widgets ─────────────────────────────────────────────────────────────
+
+class _ModeToggle extends StatelessWidget {
+  final bool isVoiceMode;
+  final VoidCallback onTextTap;
+  final VoidCallback onVoiceTap;
+
+  const _ModeToggle({
+    required this.isVoiceMode,
+    required this.onTextTap,
+    required this.onVoiceTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ModeTab(
+            icon: Icons.chat_bubble_outline_rounded,
+            label: 'Text',
+            isActive: !isVoiceMode,
+            onTap: onTextTap,
+          ),
+          _ModeTab(
+            icon: Icons.graphic_eq_rounded,
+            label: 'Voice',
+            isActive: isVoiceMode,
+            onTap: onVoiceTap,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ModeTab extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _ModeTab({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  )
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isActive
+                  ? const Color(0xFF1A1A2E)
+                  : const Color(0xFF6B7080),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive
+                    ? const Color(0xFF1A1A2E)
+                    : const Color(0xFF6B7080),
+                fontSize: 12,
+                fontWeight:
+                    isActive ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VoiceControlBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _VoiceControlBtn({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE8EAF0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(icon, color: const Color(0xFF374151), size: 22),
       ),
     );
   }
@@ -512,6 +810,7 @@ class _ThinkingDots extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         return Row(
+          mainAxisSize: MainAxisSize.min,
           children: List.generate(3, (i) {
             final delay = i / 3;
             final progress =
@@ -523,8 +822,8 @@ class _ThinkingDots extends StatelessWidget {
               width: 9,
               height: 9,
               decoration: BoxDecoration(
-                color: Colors.white
-                    .withValues(alpha: 0.3 + bounce * 0.5),
+                color: const Color(0xFF7C6EF0)
+                    .withValues(alpha: 0.4 + bounce * 0.5),
                 shape: BoxShape.circle,
               ),
               transform: Matrix4.translationValues(0, -4 * bounce, 0),

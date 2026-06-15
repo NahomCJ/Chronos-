@@ -13,12 +13,16 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
   late Animation<double> _anim;
   int _selectedPeriod = 0;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _cardBorder = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textSubtle = Color(0xFF9CA3AF);
   static const _teal = Color(0xFF14B8A6);
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
   static const _amber = Color(0xFFF59E0B);
+  static const _purple = Color(0xFF7C6EF0);
 
   static const _periods = ['This Month', 'Last Month', 'YTD'];
 
@@ -59,22 +63,22 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08)),
+                color: Color(0xFFF3F4F6)),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16),
+                color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Budget Intelligence',
             style: TextStyle(
-                color: Colors.white,
+                color: _textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
       ),
@@ -105,8 +109,16 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _cardBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: List.generate(
@@ -119,7 +131,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: _selectedPeriod == i
-                      ? _teal.withValues(alpha: 0.2)
+                      ? _purple.withValues(alpha: 0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -128,8 +140,8 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: _selectedPeriod == i
-                        ? _teal
-                        : Colors.white.withValues(alpha: 0.4),
+                        ? _purple
+                        : _textSecondary,
                     fontSize: 12,
                     fontWeight: _selectedPeriod == i
                         ? FontWeight.w600
@@ -154,12 +166,19 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _teal.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.03),
+            _teal.withValues(alpha: 0.1),
+            _teal.withValues(alpha: 0.03),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _teal.withValues(alpha: 0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,13 +188,13 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Spent',
+                  const Text('Spent',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: _textSecondary,
                           fontSize: 12)),
                   Text('\$${_totalSpent.toStringAsFixed(0)}',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: _textPrimary,
                           fontSize: 30,
                           fontWeight: FontWeight.w800)),
                 ],
@@ -184,13 +203,13 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Budget',
+                  const Text('Budget',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: _textSubtle,
                           fontSize: 11)),
                   Text('\$${_totalBudget.toStringAsFixed(0)}',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: _textPrimary,
                           fontSize: 22,
                           fontWeight: FontWeight.w700)),
                 ],
@@ -202,7 +221,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: (pct * _anim.value).clamp(0.0, 1.0),
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              backgroundColor: _cardBorder,
               valueColor: AlwaysStoppedAnimation(
                   over ? _red : pct > 0.85 ? _amber : _green),
               minHeight: 8,
@@ -222,8 +241,8 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
               ),
               const Spacer(),
               Text('${(pct * 100).toStringAsFixed(0)}% used',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
+                  style: const TextStyle(
+                      color: _textSubtle,
                       fontSize: 12)),
             ],
           ),
@@ -236,16 +255,23 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _cardBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Category Overview',
+          const Text('Category Overview',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
@@ -270,8 +296,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                             child: CircularProgressIndicator(
                               value: pct * _anim.value,
                               strokeWidth: 5,
-                              backgroundColor:
-                                  Colors.white.withValues(alpha: 0.07),
+                              backgroundColor: _cardBorder,
                               valueColor: AlwaysStoppedAnimation(
                                   over ? _red : c.color),
                               strokeCap: StrokeCap.round,
@@ -282,13 +307,13 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                       ),
                       const SizedBox(height: 8),
                       Text(c.name.split(' ').first,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
+                          style: const TextStyle(
+                              color: _textSecondary,
                               fontSize: 10)),
                       const SizedBox(height: 2),
                       Text('${(pct * 100).toStringAsFixed(0)}%',
                           style: TextStyle(
-                              color: over ? _red : Colors.white,
+                              color: over ? _red : _textPrimary,
                               fontSize: 11,
                               fontWeight: FontWeight.w700)),
                     ],
@@ -306,9 +331,9 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Category Breakdown',
+        const Text('Category Breakdown',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -319,13 +344,20 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: _card,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                   color: over
                       ? _red.withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.06),
+                      : _cardBorder,
                   width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               children: [
@@ -342,18 +374,18 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                     Expanded(
                       child: Text(c.name,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: _textPrimary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500)),
                     ),
                     Text('\$${c.spent.toStringAsFixed(0)}',
                         style: TextStyle(
-                            color: over ? _red : Colors.white,
+                            color: over ? _red : _textPrimary,
                             fontSize: 13,
                             fontWeight: FontWeight.w700)),
                     Text(' / \$${c.budget.toStringAsFixed(0)}',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.35),
+                        style: const TextStyle(
+                            color: _textSecondary,
                             fontSize: 11)),
                   ],
                 ),
@@ -362,7 +394,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: pct * _anim.value,
-                    backgroundColor: Colors.white.withValues(alpha: 0.06),
+                    backgroundColor: _cardBorder,
                     valueColor:
                         AlwaysStoppedAnimation(over ? _red : c.color),
                     minHeight: 5,
@@ -380,9 +412,16 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _teal.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +436,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                 color: _teal, size: 16),
           ),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -406,11 +445,11 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                         color: _teal,
                         fontSize: 11,
                         fontWeight: FontWeight.w700)),
-                const SizedBox(height: 5),
+                SizedBox(height: 5),
                 Text(
                   'Shopping is \$90 over budget this month. Redirecting that to savings would hit your 3-month emergency fund goal by September.',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
+                      color: _textSecondary,
                       fontSize: 12,
                       height: 1.5),
                 ),

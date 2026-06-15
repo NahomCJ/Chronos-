@@ -13,11 +13,14 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
   late AnimationController _animCtrl;
   late Animation<double> _anim;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
   static const _amber = Color(0xFFF59E0B);
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textSubtle = Color(0xFF9CA3AF);
+  static const _border = Color(0xFFE8EAF0);
 
   static const _breakdown = [
     _TaxItem('Federal Income', 2840, Color(0xFFEF4444)),
@@ -57,29 +60,30 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
     return Scaffold(
       backgroundColor: _bg,
       appBar: AppBar(
-        backgroundColor: _bg,
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Color(0xFFF3F4F6),
             ),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16),
+                color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Tax Intelligence',
             style: TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                color: _textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: _amber.withValues(alpha: 0.15),
+              color: _amber.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -131,12 +135,19 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _amber.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.03),
+            _amber.withValues(alpha: 0.08),
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _amber.withValues(alpha: 0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,39 +158,39 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _amber.withValues(alpha: 0.15),
+                  color: _amber.withValues(alpha: 0.12),
                 ),
                 child: const Icon(Icons.receipt_long_rounded,
                     color: _amber, size: 20),
               ),
               const SizedBox(width: 12),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Total Tax Owed',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: _textSecondary,
                           fontSize: 12)),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text('\$4,200',
-                      style: const TextStyle(
-                          color: Colors.white,
+                      style: TextStyle(
+                          color: _textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
                 ],
               ),
               const Spacer(),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text('Effective Rate',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: _textSubtle,
                           fontSize: 11)),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text('18.4%',
-                      style: const TextStyle(
-                          color: Colors.white,
+                      style: TextStyle(
+                          color: _textPrimary,
                           fontSize: 20,
                           fontWeight: FontWeight.w700)),
                 ],
@@ -206,15 +217,15 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+                style: const TextStyle(
+                    color: _textSubtle, fontSize: 10)),
             const SizedBox(height: 3),
             Text(value,
                 style: TextStyle(
@@ -231,16 +242,23 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tax Breakdown',
+          const Text('Tax Breakdown',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
+                  color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
@@ -278,14 +296,13 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(e.name,
-                                        style: TextStyle(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.7),
+                                        style: const TextStyle(
+                                            color: _textSecondary,
                                             fontSize: 11)),
                                     Text(
                                         '\$${e.amount.toStringAsFixed(0)}',
                                         style: const TextStyle(
-                                            color: Colors.white,
+                                            color: _textPrimary,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600)),
                                   ],
@@ -307,9 +324,9 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Category Breakdown',
+        const Text('Category Breakdown',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -319,10 +336,16 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _card,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.06), width: 0.8),
+              border: Border.all(color: _border, width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,13 +361,13 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                     Expanded(
                       child: Text(e.name,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: _textPrimary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500)),
                     ),
                     Text('\$${e.amount.toStringAsFixed(0)}',
                         style: const TextStyle(
-                            color: Colors.white,
+                            color: _textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w700)),
                   ],
@@ -354,15 +377,15 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: pct * _anim.value,
-                    backgroundColor: Colors.white.withValues(alpha: 0.06),
+                    backgroundColor: _border,
                     valueColor: AlwaysStoppedAnimation(e.color),
                     minHeight: 5,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text('${(pct * 100).toStringAsFixed(1)}% of total',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.35),
+                    style: const TextStyle(
+                        color: _textSubtle,
                         fontSize: 10)),
               ],
             ),
@@ -378,19 +401,19 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
       children: [
         Row(
           children: [
-            Text('Deductions Found',
+            const Text('Deductions Found',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: _textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600)),
             const Spacer(),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: _green.withValues(alpha: 0.12),
+                color: _green.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text('Saves \$1,380',
+              child: const Text('Saves \$1,380',
                   style: TextStyle(
                       color: _green,
                       fontSize: 11,
@@ -401,10 +424,16 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: _card,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: Colors.white.withValues(alpha: 0.07), width: 0.8),
+            border: Border.all(color: _border, width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             children: _deductions
@@ -420,9 +449,16 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _amber.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: _amber.withValues(alpha: 0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,7 +474,7 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                 color: _amber, size: 16),
           ),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -447,11 +483,11 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                         color: _amber,
                         fontSize: 11,
                         fontWeight: FontWeight.w700)),
-                const SizedBox(height: 5),
+                SizedBox(height: 5),
                 Text(
                   'Maximizing your 401(k) contribution to \$23,500 this year could reduce your federal tax bill by up to \$2,820. You\'re currently \$4,200 below the limit.',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
+                      color: _textSecondary,
                       fontSize: 12,
                       height: 1.5),
                 ),
@@ -473,9 +509,9 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quarterly Estimates',
+        const Text('Quarterly Estimates',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: _textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -483,10 +519,16 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: _card,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.06), width: 0.8),
+                border: Border.all(color: _border, width: 0.8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -496,8 +538,8 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: q.$4
-                          ? _green.withValues(alpha: 0.12)
-                          : _amber.withValues(alpha: 0.12),
+                          ? _green.withValues(alpha: 0.10)
+                          : _amber.withValues(alpha: 0.10),
                     ),
                     child: Icon(
                         q.$4
@@ -509,7 +551,7 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                   const SizedBox(width: 12),
                   Text(q.$1,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: _textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w500)),
                   const Spacer(),
@@ -518,7 +560,7 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                     children: [
                       Text(q.$3,
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: _textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.w700)),
                       Text(q.$2,
@@ -562,7 +604,7 @@ class _PieChartPainter extends CustomPainter {
     }
 
     canvas.drawCircle(center, radius * 0.55,
-        Paint()..color = const Color(0xFF0F0F1C));
+        Paint()..color = Colors.white);
 
     final tp = TextPainter(
       text: TextSpan(
@@ -570,14 +612,14 @@ class _PieChartPainter extends CustomPainter {
           TextSpan(
             text: '\$${total.toStringAsFixed(0)}\n',
             style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF1A1A2E),
                 fontSize: 14,
                 fontWeight: FontWeight.w700),
           ),
-          TextSpan(
+          const TextSpan(
             text: 'total',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+                color: Color(0xFF6B7080), fontSize: 10),
           ),
         ],
       ),
@@ -600,10 +642,10 @@ class _DeductionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
             bottom: BorderSide(
-                color: Colors.white.withValues(alpha: 0.05), width: 0.8)),
+                color: Color(0xFFE8EAF0), width: 0.8)),
       ),
       child: Row(
         children: [
@@ -612,7 +654,7 @@ class _DeductionTile extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(deduction.name,
-                style: const TextStyle(color: Colors.white, fontSize: 13)),
+                style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13)),
           ),
           Text(deduction.amount,
               style: TextStyle(
