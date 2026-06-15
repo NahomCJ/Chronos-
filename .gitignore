@@ -44,3 +44,4 @@ newman-report.html
 *.bin
 *.pkl
 *.parquet
+.claude/
