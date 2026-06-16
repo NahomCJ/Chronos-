@@ -17,8 +17,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
   bool _useAvalanche = true;
   int _selectedRefi = 0;
 
-  static const _bg = Color(0xFF08080F);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _indigo = Color(0xFF6366F1);
   static const _indigoLight = Color(0xFF818CF8);
 
@@ -76,10 +76,10 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: const Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -91,7 +91,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 Tab(text: 'Skills'),
               ],
               labelColor: _indigo,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: const Color(0xFF6B7080),
               indicatorColor: _indigo,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle: const TextStyle(
@@ -130,8 +130,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.25),
-                _bg.withValues(alpha: 0.95),
+                Colors.black.withValues(alpha: 0.15),
+                _bg.withValues(alpha: 0.92),
               ],
             ),
           ),
@@ -169,7 +169,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               const SizedBox(height: 10),
               Text('Your Education\nFinances',
                   style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
@@ -214,8 +214,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _indigo.withValues(alpha: 0.2),
-                Colors.white.withValues(alpha: 0.03),
+                _indigo.withValues(alpha: 0.08),
+                Colors.white,
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -232,11 +232,11 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                     children: [
                       Text('Total Balance',
                           style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.5),
+                              color: const Color(0xFF6B7080),
                               fontSize: 12)),
                       const Text('\$28,500',
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A2E),
                               fontSize: 32,
                               fontWeight: FontWeight.w800)),
                     ],
@@ -252,7 +252,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                           value: 0.38,
                           strokeWidth: 6,
                           backgroundColor:
-                              Colors.white.withValues(alpha: 0.08),
+                              const Color(0xFFE8EAF0),
                           valueColor:
                               const AlwaysStoppedAnimation<Color>(_indigo),
                           strokeCap: StrokeCap.round,
@@ -284,7 +284,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 borderRadius: BorderRadius.circular(6),
                 child: LinearProgressIndicator(
                   value: 0.38,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  backgroundColor: const Color(0xFFE8EAF0),
                   valueColor:
                       const AlwaysStoppedAnimation<Color>(_indigo),
                   minHeight: 8,
@@ -301,7 +301,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                   const Spacer(),
                   Text('\$28,500 remaining',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: const Color(0xFF6B7080),
                           fontSize: 11)),
                 ],
               ),
@@ -324,7 +324,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               textAlign: TextAlign.center),
           Text(label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+                  color: const Color(0xFF6B7080), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -333,7 +333,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
 
   Widget _divider() {
     return Container(
-        width: 1, height: 28, color: Colors.white.withValues(alpha: 0.1));
+        width: 1, height: 28, color: const Color(0xFFE8EAF0));
   }
 
   Widget _buildIDRSection() {
@@ -344,7 +344,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
         const SizedBox(height: 6),
         Text('Compare options based on your income of \$52,000/yr.',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                color: const Color(0xFF6B7080), fontSize: 12)),
         const SizedBox(height: 14),
         ..._idrPlans.map((p) => _IDRPlanCard(plan: p)),
       ],
@@ -357,8 +357,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,12 +381,12 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 children: [
                   const Text('Forgiveness Tracker',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 14,
                           fontWeight: FontWeight.w700)),
                   Text('Public Service Loan Forgiveness (PSLF)',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: const Color(0xFF6B7080),
                           fontSize: 11)),
                 ],
               ),
@@ -405,7 +405,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: 32 / 120,
-              backgroundColor: Colors.white.withValues(alpha: 0.07),
+              backgroundColor: const Color(0xFFE8EAF0),
               valueColor:
                   const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
               minHeight: 8,
@@ -414,7 +414,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           const SizedBox(height: 8),
           Text('Must work at a qualifying employer. Your current employer qualifies.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: const Color(0xFF6B7080),
                   fontSize: 11,
                   height: 1.4)),
         ],
@@ -432,7 +432,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               textAlign: TextAlign.center),
           Text(label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+                  color: const Color(0xFF6B7080), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -464,7 +464,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
         const SizedBox(height: 6),
         Text('Refi saves money but eliminates PSLF eligibility. Choose wisely.',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                color: const Color(0xFF6B7080), fontSize: 12)),
         const SizedBox(height: 14),
         ...List.generate(
           _refiOffers.length,
@@ -482,8 +482,9 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 border: Border.all(
                     color: _selectedRefi == i
                         ? _indigo.withValues(alpha: 0.5)
-                        : Colors.white.withValues(alpha: 0.07),
+                        : const Color(0xFFE8EAF0),
                     width: _selectedRefi == i ? 1.5 : 1),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
               ),
               child: Row(
                 children: [
@@ -493,12 +494,12 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                       children: [
                         Text(_refiOffers[i].lender,
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF1A1A2E),
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700)),
                         Text('${_refiOffers[i].monthlyPayment}/mo',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.45),
+                                color: const Color(0xFF6B7080),
                                 fontSize: 12)),
                       ],
                     ),
@@ -544,8 +545,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,7 +577,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 Text(
                     'You\'re 7 years from PSLF forgiveness on \$28,500. Switching to SAVE drops your payment to \$186/mo — that\'s \$126/mo freed up to put toward your emergency fund, which is still at \$0.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF6B7080),
                         fontSize: 13,
                         height: 1.5)),
                 const SizedBox(height: 12),
@@ -605,12 +606,12 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.07),
+                          color: const Color(0xFFF3F4F6),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text('Ask Chris',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7),
+                                color: const Color(0xFF374151),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600)),
                       ),
@@ -651,8 +652,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _indigo.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.02),
+            _indigo.withValues(alpha: 0.08),
+            Colors.white,
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -709,7 +710,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
             child: Text(
                 'Your degree generates \$370K more in 10 years than the no-degree median. At \$46K total cost, that\'s \$8.04 earned per \$1 spent.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: const Color(0xFF6B7080),
                     fontSize: 12,
                     height: 1.4)),
           ),
@@ -728,7 +729,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
               textAlign: TextAlign.center),
           Text(label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+                  color: const Color(0xFF6B7080), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -737,7 +738,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
 
   Widget _roiDivider() {
     return Container(
-        width: 1, height: 32, color: Colors.white.withValues(alpha: 0.1));
+        width: 1, height: 32, color: const Color(0xFFE8EAF0));
   }
 
   Widget _roiBar(String label, String amount, double val, Color color) {
@@ -748,7 +749,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           children: [
             Text(label,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.55),
+                    color: const Color(0xFF6B7080),
                     fontSize: 11)),
             const Spacer(),
             Text(amount,
@@ -763,7 +764,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: val,
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 6,
           ),
@@ -780,7 +781,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
         const SizedBox(height: 6),
         Text('Many employers offer up to \$5,250/yr tax-free for education.',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                color: const Color(0xFF6B7080), fontSize: 12)),
         const SizedBox(height: 14),
         ...[
           _EmployerBenefit('Your Employer', '\$5,250/yr', true,
@@ -808,7 +809,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 child: Text(
                     '\$5,250/yr in employer benefits not claimed yet. That\'s real money left on the table.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7080),
                         fontSize: 12,
                         height: 1.4)),
               ),
@@ -825,21 +826,21 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Career Salary Trajectory',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 14,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text('Median for Computer Science graduates.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                  color: const Color(0xFF6B7080), fontSize: 11)),
           const SizedBox(height: 16),
           ...[
             _CareerLevel('Entry Level (Now)', '\$72,000', 0.40, const Color(0xFF6366F1)),
@@ -855,7 +856,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                       children: [
                         Text(c.level,
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: const Color(0xFF6B7080),
                                 fontSize: 12)),
                         const Spacer(),
                         Text(c.salary,
@@ -870,7 +871,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: c.progress,
-                        backgroundColor: Colors.white.withValues(alpha: 0.06),
+                        backgroundColor: const Color(0xFFE8EAF0),
                         valueColor: AlwaysStoppedAnimation<Color>(c.color),
                         minHeight: 5,
                       ),
@@ -898,7 +899,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           Text(
               'Free to start. Chris picks based on your career path and learning style.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,
@@ -934,8 +935,8 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -966,7 +967,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                 Text(
                     'Adding financial modeling to your CS background puts you in the top 8% of candidates for FinTech roles — which pay 22% more than typical CS roles at your level.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF6B7080),
                         fontSize: 13,
                         height: 1.5)),
               ],
@@ -980,7 +981,7 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
   Widget _sectionTitle(String title) {
     return Text(title,
         style: const TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+            color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
   }
 }
 
@@ -1040,13 +1041,14 @@ class _IDRPlanCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: plan.recommended
             ? plan.color.withValues(alpha: 0.1)
-            : const Color(0xFF0F0F1C),
+            : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: plan.recommended
                 ? plan.color.withValues(alpha: 0.4)
-                : Colors.white.withValues(alpha: 0.07),
+                : const Color(0xFFE8EAF0),
             width: plan.recommended ? 1.5 : 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -1058,7 +1060,7 @@ class _IDRPlanCard extends StatelessWidget {
                   children: [
                     Text(plan.name,
                         style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A2E),
                             fontSize: 14,
                             fontWeight: FontWeight.w700)),
                     if (plan.recommended) ...[
@@ -1082,7 +1084,7 @@ class _IDRPlanCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(plan.note,
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: const Color(0xFF6B7080),
                         fontSize: 11,
                         height: 1.3)),
               ],
@@ -1110,13 +1112,14 @@ class _EmployerBenefitTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: benefit.eligible
                 ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.06),
+                : const Color(0xFFE8EAF0),
             width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1125,7 +1128,7 @@ class _EmployerBenefitTile extends StatelessWidget {
             children: [
               Text(benefit.employer,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 13.5,
                       fontWeight: FontWeight.w600)),
               const Spacer(),
@@ -1133,7 +1136,7 @@ class _EmployerBenefitTile extends StatelessWidget {
                   style: TextStyle(
                       color: benefit.eligible
                           ? const Color(0xFF10B981)
-                          : Colors.white.withValues(alpha: 0.35),
+                          : const Color(0xFF9CA3AF),
                       fontSize: 13,
                       fontWeight: FontWeight.w700)),
             ],
@@ -1141,7 +1144,7 @@ class _EmployerBenefitTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(benefit.note,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                  color: const Color(0xFF6B7080), fontSize: 11)),
         ],
       ),
     );
@@ -1159,9 +1162,10 @@ class _SkillAppCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F0F1C),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: app.color.withValues(alpha: 0.2), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
         ),
         child: Row(
           children: [
@@ -1182,14 +1186,14 @@ class _SkillAppCard extends StatelessWidget {
                 children: [
                   Text(app.name,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
                   Text(app.description,
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: const Color(0xFF6B7080),
                           fontSize: 10),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
@@ -1213,10 +1217,11 @@ class _FreeCourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: course.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -1226,7 +1231,7 @@ class _FreeCourseCard extends StatelessWidget {
               children: [
                 Text(course.title,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
@@ -1239,7 +1244,7 @@ class _FreeCourseCard extends StatelessWidget {
                             fontWeight: FontWeight.w600)),
                     Text('  ·  ${course.duration}',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.35),
+                            color: const Color(0xFF6B7080),
                             fontSize: 11)),
                   ],
                 ),
