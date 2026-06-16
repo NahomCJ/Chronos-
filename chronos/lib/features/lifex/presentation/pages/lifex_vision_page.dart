@@ -14,8 +14,8 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
 
-  static const _bg = Color(0xFF060810);
-  static const _card = Color(0xFF0C0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _blue = Color(0xFF3B82F6);
   static const _blueLight = Color(0xFF60A5FA);
 
@@ -141,10 +141,10 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: const Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -156,7 +156,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 Tab(text: '90-Day'),
               ],
               labelColor: _blue,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: const Color(0xFF6B7080),
               indicatorColor: _blue,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle:
@@ -196,7 +196,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black.withValues(alpha: 0.2),
-                _bg.withValues(alpha: 0.97),
+                const Color(0xFFF5F6FA).withValues(alpha: 0.97),
               ],
             ),
           ),
@@ -235,7 +235,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
               const SizedBox(height: 10),
               Text('Your Future\nSelf',
                   style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
@@ -260,7 +260,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           const SizedBox(height: 6),
           Text('Each goal has a cost. Chris tracks the money side automatically.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,
@@ -311,6 +311,12 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
         color: _card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _blue.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,7 +346,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 Text(
                     'Your business launch is on track at 45%. To hit the 18-month target, you need \$1,389/mo — you\'re currently saving \$640. Close that gap and this goal stays on schedule.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7080),
                         fontSize: 12.5,
                         height: 1.5)),
                 const SizedBox(height: 12),
@@ -386,7 +392,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           const SizedBox(height: 6),
           Text('What each goal actually costs and where you stand.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           ..._financialPlans.map((p) => _FinancialPlanCard(plan: p)),
           const SizedBox(height: 24),
@@ -400,16 +406,15 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _blue.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.02),
-          ],
-        ),
+        color: _blue.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _blue.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,7 +437,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
               const SizedBox(width: 8),
               const Text('Vision Check-in',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
             ],
@@ -441,7 +446,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           Text(
               'You set 4 goals this year. 3 are on track, 1 needs attention. Your savings rate is your biggest lever right now — everything else is on schedule.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.65),
+                  color: const Color(0xFF6B7080),
                   fontSize: 13,
                   height: 1.5)),
           const SizedBox(height: 14),
@@ -466,8 +471,8 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                   color: color, fontSize: 20, fontWeight: FontWeight.w800),
               textAlign: TextAlign.center),
           Text(label,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              style: const TextStyle(
+                  color: Color(0xFF6B7080), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -481,32 +486,38 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
         color: _card,
         borderRadius: BorderRadius.circular(18),
         border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+            Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Monthly Savings Required',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 14,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
-          Text('To hit all goals on time.',
+          const Text('To hit all goals on time.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 16),
           _gapRow('Business Launch', '\$1,389/mo', '\$640/mo', const Color(0xFF6366F1)),
           const SizedBox(height: 10),
           _gapRow('Home Down Payment', '\$1,200/mo', '\$650/mo', const Color(0xFF10B981)),
           const SizedBox(height: 10),
           _gapRow('Marathon Entry', '\$0/mo', 'Funded', const Color(0xFFF59E0B)),
-          const Divider(color: Colors.white12, height: 24),
+          const Divider(color: Color(0xFFE8EAF0), height: 24),
           Row(
             children: [
               const Text('Total needed',
                   style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w600)),
+                      color: Color(0xFF1A1A2E), fontWeight: FontWeight.w600)),
               const Spacer(),
               const Text('\$2,589/mo',
                   style: TextStyle(
@@ -517,9 +528,9 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           ),
           Row(
             children: [
-              Text('Currently saving',
+              const Text('Currently saving',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Color(0xFF6B7080),
                       fontSize: 12)),
               const Spacer(),
               const Text('\$1,290/mo',
@@ -533,13 +544,13 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(
+            child: const Text(
                 'Gap: \$1,299/mo. Cutting dining spend (\$165/mo) and pausing Hulu + YouTube Premium (\$27/mo) closes \$192. Ask Chris for a personalized plan.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: Color(0xFF6B7080),
                     fontSize: 12,
                     height: 1.4)),
           ),
@@ -559,8 +570,8 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
         const SizedBox(width: 10),
         Expanded(
           child: Text(label,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
+              style: const TextStyle(
+                  color: Color(0xFF6B7080), fontSize: 12)),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -571,8 +582,8 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                     fontSize: 12,
                     fontWeight: FontWeight.w700)),
             Text('saving $current',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.35),
+                style: const TextStyle(
+                    color: Color(0xFF9CA3AF),
                     fontSize: 10)),
           ],
         ),
@@ -593,8 +604,8 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           _sectionTitle('90-Day Milestone Map'),
           const SizedBox(height: 6),
           Text('3 months. One step at a time.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+              style: const TextStyle(
+                  color: Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 16),
           ..._milestones.map((m) => _MonthCard(month: m)),
         ],
@@ -606,16 +617,15 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _blue.withValues(alpha: 0.16),
-            Colors.white.withValues(alpha: 0.02),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _blue.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(
         children: [
@@ -628,7 +638,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 child: CircularProgressIndicator(
                   value: 1 / 9,
                   strokeWidth: 6,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  backgroundColor: const Color(0xFFE8EAF0),
                   valueColor: const AlwaysStoppedAnimation<Color>(_blue),
                   strokeCap: StrokeCap.round,
                 ),
@@ -638,12 +648,12 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 children: [
                   const Text('1',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 22,
                           fontWeight: FontWeight.w800)),
-                  Text('/ 9',
+                  const Text('/ 9',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: Color(0xFF6B7080),
                           fontSize: 10)),
                 ],
               ),
@@ -656,13 +666,13 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
               children: [
                 const Text('Tasks Complete',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
-                Text('1 of 9 milestones done. July is your foundation month — lock in the legal structure.',
+                const Text('1 of 9 milestones done. July is your foundation month — lock in the legal structure.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: Color(0xFF6B7080),
                         fontSize: 12,
                         height: 1.4)),
               ],
@@ -676,7 +686,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
   Widget _sectionTitle(String t) {
     return Text(t,
         style: const TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+            color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
   }
 }
 
@@ -820,10 +830,16 @@ class _FinancialPlanCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF0C0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border:
             Border.all(color: plan.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -840,7 +856,7 @@ class _FinancialPlanCard extends StatelessWidget {
               Expanded(
                 child: Text(plan.goalName,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 14,
                         fontWeight: FontWeight.w700)),
               ),
@@ -870,7 +886,7 @@ class _FinancialPlanCard extends StatelessWidget {
               _planStat(
                   plan.monthsLeft > 0 ? '${plan.monthsLeft}mo' : 'Now',
                   'Timeline',
-                  Colors.white54),
+                  const Color(0xFF6B7080)),
             ],
           ),
           const SizedBox(height: 14),
@@ -878,7 +894,7 @@ class _FinancialPlanCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: plan.progress.clamp(0.0, 1.0),
-              backgroundColor: Colors.white.withValues(alpha: 0.07),
+              backgroundColor: const Color(0xFFE8EAF0),
               valueColor: AlwaysStoppedAnimation<Color>(plan.color),
               minHeight: 8,
             ),
@@ -894,8 +910,8 @@ class _FinancialPlanCard extends StatelessWidget {
               const Spacer(),
               if (!isFullyFunded)
                 Text('Need ${plan.monthlyNeeded}/mo',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                    style: const TextStyle(
+                        color: Color(0xFF6B7080),
                         fontSize: 11)),
             ],
           ),
@@ -904,12 +920,12 @@ class _FinancialPlanCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.04),
+                color: const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text('Currently ${plan.gap}',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7080),
                       fontSize: 11)),
             ),
           ],
@@ -927,8 +943,8 @@ class _FinancialPlanCard extends StatelessWidget {
                   color: color, fontSize: 13, fontWeight: FontWeight.w700),
               textAlign: TextAlign.center),
           Text(label,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.35), fontSize: 10),
+              style: const TextStyle(
+                  color: Color(0xFF9CA3AF), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -937,7 +953,7 @@ class _FinancialPlanCard extends StatelessWidget {
 
   Widget _planDivider() {
     return Container(
-        width: 1, height: 24, color: Colors.white.withValues(alpha: 0.08));
+        width: 1, height: 24, color: const Color(0xFFE8EAF0));
   }
 }
 
@@ -965,10 +981,16 @@ class _MonthCardState extends State<_MonthCard> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0C0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07), width: 1),
+            color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -986,7 +1008,7 @@ class _MonthCardState extends State<_MonthCard> {
                 const SizedBox(width: 10),
                 Text(widget.month.label,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 14,
                         fontWeight: FontWeight.w700)),
                 const Spacer(),
@@ -994,7 +1016,7 @@ class _MonthCardState extends State<_MonthCard> {
                     style: TextStyle(
                         color: completedCount == total
                             ? const Color(0xFF10B981)
-                            : Colors.white.withValues(alpha: 0.4),
+                            : const Color(0xFF6B7080),
                         fontSize: 12,
                         fontWeight: FontWeight.w600)),
               ],
@@ -1004,7 +1026,7 @@ class _MonthCardState extends State<_MonthCard> {
             borderRadius: BorderRadius.circular(2),
             child: LinearProgressIndicator(
               value: completedCount / total,
-              backgroundColor: Colors.white.withValues(alpha: 0.06),
+              backgroundColor: const Color(0xFFE8EAF0),
               valueColor: const AlwaysStoppedAnimation<Color>(
                   Color(0xFF3B82F6)),
               minHeight: 3,
@@ -1018,10 +1040,10 @@ class _MonthCardState extends State<_MonthCard> {
               child: Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                       top: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: Color(0xFFE8EAF0),
                           width: 1)),
                 ),
                 child: Row(
@@ -1033,11 +1055,11 @@ class _MonthCardState extends State<_MonthCard> {
                         shape: BoxShape.circle,
                         color: _done[i]
                             ? const Color(0xFF3B82F6)
-                            : Colors.white.withValues(alpha: 0.06),
+                            : const Color(0xFFF3F4F6),
                         border: Border.all(
                             color: _done[i]
                                 ? const Color(0xFF3B82F6)
-                                : Colors.white.withValues(alpha: 0.15),
+                                : const Color(0xFFE8EAF0),
                             width: 1),
                       ),
                       child: _done[i]
@@ -1051,8 +1073,8 @@ class _MonthCardState extends State<_MonthCard> {
                           widget.month.tasks[i].text,
                           style: TextStyle(
                               color: _done[i]
-                                  ? Colors.white
-                                  : Colors.white.withValues(alpha: 0.55),
+                                  ? const Color(0xFF1A1A2E)
+                                  : const Color(0xFF6B7080),
                               fontSize: 13,
                               decoration: _done[i]
                                   ? TextDecoration.none

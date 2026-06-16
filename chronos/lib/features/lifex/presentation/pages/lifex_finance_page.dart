@@ -16,10 +16,15 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   late TabController _tabs;
   bool _useAvalanche = true;
 
-  static const _bg = Color(0xFF06100A);
-  static const _card = Color(0xFF0C1A10);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _green = Color(0xFF10B981);
   static const _greenLight = Color(0xFF34D399);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textSubtle = Color(0xFF9CA3AF);
+  static const _border = Color(0xFFE8EAF0);
+  static const _iconBg = Color(0xFFF3F4F6);
 
   @override
   void initState() {
@@ -53,10 +58,10 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -68,7 +73,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 Tab(text: 'Goals'),
               ],
               labelColor: _green,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: Color(0xFF9CA3AF),
               indicatorColor: _green,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle: const TextStyle(
@@ -191,8 +196,8 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _green.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.02),
+                _green.withValues(alpha: 0.08),
+                Colors.white,
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -220,13 +225,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 const Spacer(),
                 Text('Updated today',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.35),
+                        color: Color(0xFF9CA3AF),
                         fontSize: 11)),
               ]),
               const SizedBox(height: 14),
               const Text('\$5,300',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 36,
                       fontWeight: FontWeight.w800)),
               Row(children: [
@@ -246,14 +251,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 Container(
                     width: 1,
                     height: 36,
-                    color: Colors.white.withValues(alpha: 0.08)),
+                    color: Color(0xFFE8EAF0)),
                 Expanded(
                     child: _netWorthStat(
                         'Debts', '-\$18,200', const Color(0xFFEF4444))),
                 Container(
                     width: 1,
                     height: 36,
-                    color: Colors.white.withValues(alpha: 0.08)),
+                    color: Color(0xFFE8EAF0)),
                 Expanded(
                     child: _netWorthStat(
                         'Net', '\$5,300', const Color(0xFF10B981))),
@@ -262,7 +267,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               Text(
                   "Most people never see this number. This is your starting point — it only goes up from here.",
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.38),
+                      color: Color(0xFF9CA3AF),
                       fontSize: 11,
                       height: 1.5)),
             ],
@@ -280,7 +285,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
       const SizedBox(height: 2),
       Text(label,
           style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+              color: Color(0xFF9CA3AF), fontSize: 11)),
     ]);
   }
 
@@ -288,10 +293,10 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-            color: Colors.white.withValues(alpha: 0.06), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -302,14 +307,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
             Container(
                 width: 1,
                 height: 36,
-                color: Colors.white.withValues(alpha: 0.08)),
+                color: Color(0xFFE8EAF0)),
             Expanded(
                 child: _cashflowStat(
                     'Monthly Spend', '\$2,985', const Color(0xFFEF4444))),
             Container(
                 width: 1,
                 height: 36,
-                color: Colors.white.withValues(alpha: 0.08)),
+                color: Color(0xFFE8EAF0)),
             Expanded(
                 child: _cashflowStat(
                     'Saved', '\$1,215', const Color(0xFF3B82F6))),
@@ -319,7 +324,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: 2985 / 4200,
-              backgroundColor: Colors.white.withValues(alpha: 0.06),
+              backgroundColor: Color(0xFFE8EAF0),
               valueColor:
                   const AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
               minHeight: 6,
@@ -329,7 +334,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           Row(children: [
             Text('71.1% of income spent',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: Color(0xFF9CA3AF),
                     fontSize: 11)),
             const Spacer(),
             Text('28.9% saved',
@@ -351,7 +356,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
       const SizedBox(height: 2),
       Text(label,
           style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4),
+              color: Color(0xFF9CA3AF),
               fontSize: 10),
           textAlign: TextAlign.center),
     ]);
@@ -383,11 +388,12 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: _card,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
                 color: const Color(0xFF6366F1).withValues(alpha: 0.3),
                 width: 1),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -407,12 +413,12 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text('Federal Student Loans',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 14,
                           fontWeight: FontWeight.w700)),
                   Text('6.5% interest · Repaye plan',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: Color(0xFF9CA3AF),
                           fontSize: 12)),
                 ]),
                 const Spacer(),
@@ -429,7 +435,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                         const Color(0xFF6366F1))),
                 Expanded(
                     child: _loanStat('Payoff Date', 'Oct 2031',
-                        Colors.white)),
+                        Color(0xFF1A1A2E))),
                 Expanded(
                     child: _loanStat('Total Interest', '\$4,820',
                         const Color(0xFFEF4444))),
@@ -449,7 +455,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               const SizedBox(height: 6),
               Text('38% paid off · \$13,950 remaining',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: Color(0xFF9CA3AF),
                       fontSize: 11)),
               const SizedBox(height: 14),
               Row(children: [
@@ -477,7 +483,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
       const SizedBox(height: 2),
       Text(label,
           style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              color: Color(0xFF9CA3AF), fontSize: 10),
           textAlign: TextAlign.center),
     ]);
   }
@@ -511,10 +517,11 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
             color: _green.withValues(alpha: 0.25), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -542,7 +549,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               Text(
                 "You've saved 28.9% of your income — that's ahead of most people your age. One small next step: set up an automatic \$50/week transfer to a separate savings account.",
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.65),
+                    color: Color(0xFF374151),
                     fontSize: 12.5,
                     height: 1.5),
               ),
@@ -616,8 +623,8 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _green.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.02),
+                _green.withValues(alpha: 0.08),
+                Colors.white,
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -633,14 +640,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 Container(
                     width: 1,
                     height: 40,
-                    color: Colors.white.withValues(alpha: 0.08)),
+                    color: Color(0xFFE8EAF0)),
                 Expanded(
                     child:
                         _overviewStat('Budget', '\$3,200', _green)),
                 Container(
                     width: 1,
                     height: 40,
-                    color: Colors.white.withValues(alpha: 0.08)),
+                    color: Color(0xFFE8EAF0)),
                 Expanded(
                     child: _overviewStat(
                         'Saved', '\$1,215', const Color(0xFF3B82F6))),
@@ -650,7 +657,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: 2485 / 3200,
-                  backgroundColor: Colors.white.withValues(alpha: 0.06),
+                  backgroundColor: Color(0xFFE8EAF0),
                   valueColor:
                       const AlwaysStoppedAnimation<Color>(_green),
                   minHeight: 6,
@@ -660,7 +667,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               Row(children: [
                 Text('77.7% of monthly budget used',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: Color(0xFF9CA3AF),
                         fontSize: 11)),
                 const Spacer(),
                 const Text('11 days left',
@@ -683,7 +690,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               color: color, fontSize: 18, fontWeight: FontWeight.w800)),
       Text(label,
           style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
+              color: Color(0xFF9CA3AF), fontSize: 11)),
     ]);
   }
 
@@ -748,10 +755,10 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: _card,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-                color: Colors.white.withValues(alpha: 0.07), width: 1),
+            border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,25 +826,25 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
       decoration: BoxDecoration(
         color: selected
             ? _green.withValues(alpha: 0.15)
-            : Colors.white.withValues(alpha: 0.04),
+            : Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
             color: selected
                 ? _green.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.08),
+                : Color(0xFFE8EAF0),
             width: 1),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
             style: TextStyle(
-                color: selected ? _greenLight : Colors.white54,
+                color: selected ? _greenLight : Color(0xFF6B7080),
                 fontSize: 13,
                 fontWeight: FontWeight.w700)),
         Text(sub,
             style: TextStyle(
                 color: selected
-                    ? Colors.white.withValues(alpha: 0.55)
-                    : Colors.white.withValues(alpha: 0.3),
+                    ? Color(0xFF374151)
+                    : Color(0xFF9CA3AF),
                 fontSize: 10)),
       ]),
     );
@@ -863,7 +870,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
+                color: Color(0xFFF5F6FA),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(children: [
@@ -889,12 +896,12 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                       children: [
                         Text(e.value.name,
                             style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF1A1A2E),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600)),
                         Text('${e.value.rate} APR',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.4),
+                                color: Color(0xFF9CA3AF),
                                 fontSize: 11)),
                       ]),
                 ),
@@ -912,10 +919,10 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-            color: Colors.white.withValues(alpha: 0.06), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -942,7 +949,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               const SizedBox(height: 4),
               Text(text,
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: Color(0xFF374151),
                       fontSize: 12.5,
                       height: 1.5)),
             ])),
@@ -952,7 +959,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
 
   Widget _sectionTitle(String t) => Text(t,
       style: const TextStyle(
-          color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+          color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 // ── Data models ───────────────────────────────────────────────────────────────
@@ -979,7 +986,7 @@ class _SpendingBar extends StatelessWidget {
           width: 130,
           child: Text(cat.name,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: Color(0xFF374151),
                   fontSize: 12.5),
               overflow: TextOverflow.ellipsis),
         ),

@@ -11,8 +11,11 @@ class LifeXActivityPage extends StatefulWidget {
 }
 
 class _LifeXActivityPageState extends State<LifeXActivityPage> {
-  static const _bg = Color(0xFF0A0800);
-  static const _card = Color(0xFF120F00);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
   static const _amber = Color(0xFFF59E0B);
   static const _amberLight = Color(0xFFFBBF24);
 
@@ -98,15 +101,16 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
           child: GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(width: 36, height: 36,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFF3F4F6),
+                  border: Border.all(color: _border, width: 1)),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16),
             ),
           ),
         )),
         Positioned(bottom: 24, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _tag(Icons.directions_run_rounded, 'ACTIVITY & FITNESS', _amber),
           const SizedBox(height: 10),
-          Text('Stay in\nMotion', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
+          Text('Stay in\nMotion', style: TextStyles.displaySmall.copyWith(color: _textPrimary, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
         ])),
       ]),
     );
@@ -131,22 +135,23 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
         color: _card,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _amber.withValues(alpha: 0.2), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(children: [
         Stack(alignment: Alignment.center, children: [
           SizedBox(width: 90, height: 90,
             child: CircularProgressIndicator(value: 0.74, strokeWidth: 8,
-                backgroundColor: Colors.white.withValues(alpha: 0.07),
+                backgroundColor: const Color(0xFFE8EAF0),
                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
                 strokeCap: StrokeCap.round)),
           Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text('74%', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-            Text('goal', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+            Text('74%', style: TextStyle(color: _textPrimary, fontSize: 20, fontWeight: FontWeight.w800)),
+            Text('goal', style: TextStyle(color: _textSecondary, fontSize: 10)),
           ]),
         ]),
         const SizedBox(width: 20),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Today\'s Goal', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+          Text('Today\'s Goal', style: TextStyle(color: _textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           _activityStat(Icons.directions_walk_rounded, '7,430', '/ 10,000 steps', _amber),
           const SizedBox(height: 6),
@@ -163,7 +168,7 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
       Icon(icon, color: color, size: 13),
       const SizedBox(width: 6),
       Text(val, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)),
-      Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+      Text(label, style: TextStyle(color: const Color(0xFF9CA3AF), fontSize: 11)),
     ]);
   }
 
@@ -173,7 +178,8 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: _card, borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1)),
+          border: Border.all(color: _border, width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: List.generate(7, (i) {
         final isToday = i == 4;
         return Expanded(child: Padding(
@@ -188,14 +194,14 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(days[i], style: TextStyle(color: isToday ? _amber : Colors.white.withValues(alpha: 0.35), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+            Text(days[i], style: TextStyle(color: isToday ? _amber : const Color(0xFF9CA3AF), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
           ]),
         ));
       })),
     );
   }
 
-  Widget _sectionTitle(String t) => Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+  Widget _sectionTitle(String t) => Text(t, style: TextStyle(color: _textPrimary, fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 class _ActivityLog {
@@ -217,21 +223,22 @@ class _ActivityCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: const Color(0xFF120F00), borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: activity.color.withValues(alpha: 0.2), width: 1)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: activity.color.withValues(alpha: 0.2), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))]),
       child: Row(children: [
         Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle, color: activity.color.withValues(alpha: 0.12)),
             child: Icon(activity.icon, color: activity.color, size: 22)),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(activity.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+          Text(activity.name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Row(children: [
             Text(activity.metric1, style: TextStyle(color: activity.color, fontSize: 12, fontWeight: FontWeight.w600)),
-            Text('  ·  ${activity.metric2}  ·  ${activity.calories}', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+            Text('  ·  ${activity.metric2}  ·  ${activity.calories}', style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 11)),
           ]),
         ])),
-        Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.2), size: 20),
+        const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 20),
       ]),
     );
   }
@@ -254,8 +261,8 @@ class _VideoCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Stack(fit: StackFit.expand, children: [
             CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: const Color(0xFF120F00)),
-                errorWidget: (_, __, ___) => Container(color: const Color(0xFF120F00))),
+                placeholder: (_, __) => Container(color: const Color(0xFFE8EAF0)),
+                errorWidget: (_, __, ___) => Container(color: const Color(0xFFE8EAF0))),
             Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
                 colors: [Colors.transparent, Colors.black.withValues(alpha: 0.75)]))),
             Center(child: Container(width: 46, height: 46,

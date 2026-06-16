@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
@@ -15,8 +14,8 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   late TabController _tabs;
   final Set<String> _joinedGroups = {};
 
-  static const _bg = Color(0xFF0A0608);
-  static const _card = Color(0xFF130910);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _red = Color(0xFFEF4444);
   static const _redLight = Color(0xFFF87171);
 
@@ -100,12 +99,12 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -121,7 +120,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
                     Tab(text: 'Bills'),
                   ],
                   labelColor: _red,
-                  unselectedLabelColor: Colors.white38,
+                  unselectedLabelColor: const Color(0xFF6B7080),
                   indicatorColor: _red,
                   indicatorSize: TabBarIndicatorSize.label,
                   labelStyle: const TextStyle(
@@ -163,7 +162,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black.withValues(alpha: 0.4),
-                _bg.withValues(alpha: 0.98),
+                const Color(0xFFF5F6FA).withValues(alpha: 0.98),
               ],
             ),
           ),
@@ -179,7 +178,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               const SizedBox(height: 10),
               const Text('Your Social\nUniverse',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
@@ -294,73 +293,66 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   }
 
   Widget _buildSpendingCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _red.withValues(alpha: 0.14),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _red.withValues(alpha: 0.28), width: 1),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            const Text('Social Spending',
+                style: TextStyle(
+                    color: Color(0xFF1A1A2E),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700)),
+            const Spacer(),
+            _tag(Icons.calendar_month_rounded, 'THIS MONTH', _red),
+          ]),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(
+                child: _spendStat(r'$165', 'Dining out',
+                    const Color(0xFFF59E0B))),
+            _vDivider(),
+            Expanded(
+                child: _spendStat(r'$85', 'Entertainment',
+                    const Color(0xFF8B5CF6))),
+            _vDivider(),
+            Expanded(
+                child: _spendStat(r'$210', 'Travel/trips',
+                    const Color(0xFF3B82F6))),
+          ]),
+          const SizedBox(height: 16),
+          Container(
+            height: 1,
+            color: const Color(0xFFE8EAF0),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(children: [
-                const Text('Social Spending',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700)),
-                const Spacer(),
-                _tag(Icons.calendar_month_rounded, 'THIS MONTH', _red),
-              ]),
-              const SizedBox(height: 16),
-              Row(children: [
-                Expanded(
-                    child: _spendStat(r'$165', 'Dining out',
-                        const Color(0xFFF59E0B))),
-                _vDivider(),
-                Expanded(
-                    child: _spendStat(r'$85', 'Entertainment',
-                        const Color(0xFF8B5CF6))),
-                _vDivider(),
-                Expanded(
-                    child: _spendStat(r'$210', 'Travel/trips',
-                        const Color(0xFF3B82F6))),
-              ]),
-              const SizedBox(height: 16),
-              Container(
-                height: 1,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Total social spend',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          fontSize: 12)),
-                  const Text(r'$460 / mo',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800)),
-                ],
-              ),
+              const Text('Total social spend',
+                  style: TextStyle(
+                      color: Color(0xFF6B7080),
+                      fontSize: 12)),
+              const Text(r'$460 / mo',
+                  style: TextStyle(
+                      color: Color(0xFF1A1A2E),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800)),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -373,8 +365,8 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       const SizedBox(height: 3),
       Text(label,
           textAlign: TextAlign.center,
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4),
+          style: const TextStyle(
+              color: Color(0xFF6B7080),
               fontSize: 10,
               height: 1.3)),
     ]);
@@ -383,7 +375,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   Widget _vDivider() => Container(
       width: 1,
       height: 36,
-      color: Colors.white.withValues(alpha: 0.07));
+      color: const Color(0xFFE8EAF0));
 
   Widget _buildQuickActions() {
     const actions = [
@@ -519,7 +511,13 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
         color: _card,
         borderRadius: BorderRadius.circular(16),
         border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+            Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -544,8 +542,8 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(text,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7080),
                       fontSize: 12.5,
                       height: 1.5)),
             ])),
@@ -575,55 +573,48 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   }
 
   Widget _buildCreateEventCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _red.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.03),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _red.withValues(alpha: 0.3), width: 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Plan Something Together',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(height: 4),
-              Text(
-                  'Create an event, invite your people, split costs seamlessly.',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 12.5,
-                      height: 1.45)),
-              const SizedBox(height: 16),
-              Row(children: [
-                _quickPlan('Dinner', Icons.restaurant_rounded,
-                    const Color(0xFFF59E0B)),
-                const SizedBox(width: 8),
-                _quickPlan(
-                    'Trip', Icons.flight_rounded, const Color(0xFFF97316)),
-                const SizedBox(width: 8),
-                _quickPlan('Game Night', Icons.sports_esports_rounded,
-                    const Color(0xFF06B6D4)),
-                const SizedBox(width: 8),
-                _quickPlan('Other', Icons.add_rounded, _red),
-              ]),
-            ],
-          ),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Plan Something Together',
+              style: TextStyle(
+                  color: Color(0xFF1A1A2E),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          const Text(
+              'Create an event, invite your people, split costs seamlessly.',
+              style: TextStyle(
+                  color: Color(0xFF6B7080),
+                  fontSize: 12.5,
+                  height: 1.45)),
+          const SizedBox(height: 16),
+          Row(children: [
+            _quickPlan('Dinner', Icons.restaurant_rounded,
+                const Color(0xFFF59E0B)),
+            const SizedBox(width: 8),
+            _quickPlan(
+                'Trip', Icons.flight_rounded, const Color(0xFFF97316)),
+            const SizedBox(width: 8),
+            _quickPlan('Game Night', Icons.sports_esports_rounded,
+                const Color(0xFF06B6D4)),
+            const SizedBox(width: 8),
+            _quickPlan('Other', Icons.add_rounded, _red),
+          ]),
+        ],
       ),
     );
   }
@@ -698,35 +689,28 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   }
 
   Widget _buildSplitSummaryCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _red.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _red.withValues(alpha: 0.3), width: 1),
-          ),
-          child: Row(children: [
-            Expanded(
-                child: _splitStat("You're Owed", r'$170',
-                    const Color(0xFF10B981))),
-            _vDivider(),
-            Expanded(child: _splitStat('You Owe', r'$0', Colors.white54)),
-            _vDivider(),
-            Expanded(child: _splitStat('Active', '2', _red)),
-          ]),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
+      child: Row(children: [
+        Expanded(
+            child: _splitStat("You're Owed", r'$170',
+                const Color(0xFF10B981))),
+        _vDivider(),
+        Expanded(child: _splitStat('You Owe', r'$0', const Color(0xFF6B7080))),
+        _vDivider(),
+        Expanded(child: _splitStat('Active', '2', _red)),
+      ]),
     );
   }
 
@@ -737,15 +721,15 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               color: color, fontSize: 20, fontWeight: FontWeight.w800)),
       const SizedBox(height: 2),
       Text(label,
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
+          style: const TextStyle(
+              color: Color(0xFF6B7080), fontSize: 11),
           textAlign: TextAlign.center),
     ]);
   }
 
   Widget _sectionTitle(String t) => Text(t,
       style: const TextStyle(
-          color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+          color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 // ── Activity tile ─────────────────────────────────────────────────────────────
@@ -760,10 +744,16 @@ class _ActivityTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF130910),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07), width: 1),
+            color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(children: [
         Container(
@@ -788,14 +778,14 @@ class _ActivityTile extends StatelessWidget {
                     TextSpan(
                       text: '${activity.name} ',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 13,
                           fontWeight: FontWeight.w700),
                     ),
                     TextSpan(
                       text: activity.action,
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.55),
+                      style: const TextStyle(
+                          color: Color(0xFF6B7080),
                           fontSize: 13),
                     ),
                   ],
@@ -803,8 +793,8 @@ class _ActivityTile extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(activity.time,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.3),
+                  style: const TextStyle(
+                      color: Color(0xFF9CA3AF),
                       fontSize: 11)),
             ],
           ),
@@ -918,10 +908,16 @@ class _EventCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF130910),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border:
             Border.all(color: event.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(children: [
         // Left color bar
@@ -945,22 +941,22 @@ class _EventCard extends StatelessWidget {
                 children: [
               Text(event.title,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text('${event.date} · ${event.time}',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7080),
                       fontSize: 12)),
               const SizedBox(height: 5),
               Row(children: [
-                Icon(Icons.group_rounded,
-                    color: Colors.white.withValues(alpha: 0.35), size: 13),
+                const Icon(Icons.group_rounded,
+                    color: Color(0xFF9CA3AF), size: 13),
                 const SizedBox(width: 4),
                 Text('${event.people} going',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                    style: const TextStyle(
+                        color: Color(0xFF6B7080),
                         fontSize: 11)),
                 const SizedBox(width: 10),
                 Container(
@@ -1014,11 +1010,17 @@ class _BillSplitCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF130910),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
             color: split.color.withValues(alpha: settled ? 0.1 : 0.25),
             width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
+        ],
       ),
       child: Row(children: [
         Container(
@@ -1037,18 +1039,18 @@ class _BillSplitCard extends StatelessWidget {
               children: [
             Text(split.title,
                 style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1A1A2E),
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis),
             const SizedBox(height: 3),
             Row(children: [
-              Icon(Icons.group_rounded,
-                  color: Colors.white.withValues(alpha: 0.35), size: 12),
+              const Icon(Icons.group_rounded,
+                  color: Color(0xFF9CA3AF), size: 12),
               const SizedBox(width: 4),
               Text('${split.people} people',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7080),
                       fontSize: 11)),
             ]),
           ]),
@@ -1062,8 +1064,8 @@ class _BillSplitCard extends StatelessWidget {
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: 3),
           Text(split.status,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+              style: const TextStyle(
+                  color: Color(0xFF6B7080), fontSize: 10),
               textAlign: TextAlign.end),
         ]),
       ]),

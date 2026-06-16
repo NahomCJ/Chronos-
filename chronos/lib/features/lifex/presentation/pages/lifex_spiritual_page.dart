@@ -20,10 +20,15 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   bool _dailyReminderOn = true;
   bool _reflectionExpanded = false;
 
-  static const _bg = Color(0xFF06040E);
-  static const _card = Color(0xFF0E0B1A);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _purple = Color(0xFF8B5CF6);
   static const _purpleLight = Color(0xFFA78BFA);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textSubtle = Color(0xFF9CA3AF);
+  static const _border = Color(0xFFE8EAF0);
+  static const _iconBg = Color(0xFFF3F4F6);
 
   static const _meditations = [
     _Meditation('Morning Calm', '10 min', 'Guided',
@@ -125,10 +130,10 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -140,7 +145,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 Tab(text: 'Anchor'),
               ],
               labelColor: _purple,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: Color(0xFF9CA3AF),
               indicatorColor: _purple,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle:
@@ -226,7 +231,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               const SizedBox(height: 6),
               Text('Silence is the loudest form of clarity.',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.55),
+                      color: Colors.white.withValues(alpha: 0.75),
                       fontSize: 13,
                       fontStyle: FontStyle.italic)),
             ],
@@ -336,12 +341,12 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                   const SizedBox(height: 4),
                   const Text('21',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
                   Text('day streak',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: Color(0xFF6B7080),
                           fontSize: 11)),
                 ],
               ),
@@ -352,14 +357,14 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                   children: [
                     const Text('Profound Peace',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A2E),
                             fontSize: 16,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 4),
                     Text(
                         '3 weeks of consecutive spiritual practice. Consistency is building real inner strength.',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
+                            color: Color(0xFF6B7080),
                             fontSize: 12,
                             height: 1.45)),
                     const SizedBox(height: 12),
@@ -397,10 +402,10 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border:
-            Border.all(color: _purple.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -412,12 +417,12 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                   children: [
                     const Text('4-7-8 Breathing',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A2E),
                             fontSize: 16,
                             fontWeight: FontWeight.w700)),
                     Text('Inhale 4 · Hold 7 · Exhale 8',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.45),
+                            color: Color(0xFF6B7080),
                             fontSize: 12)),
                   ],
                 ),
@@ -537,7 +542,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           const SizedBox(height: 6),
           Text('Recurring giving set up through your Chronos wallet.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: Color(0xFF9CA3AF), fontSize: 12)),
           const SizedBox(height: 14),
           ..._charities.map((c) => _CharityTile(charity: c)),
           const SizedBox(height: 14),
@@ -588,8 +593,8 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _purple.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.03),
+                _purple.withValues(alpha: 0.08),
+                Colors.white,
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -603,7 +608,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 children: [
                   const Text('Giving This Year',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 14,
                           fontWeight: FontWeight.w700)),
                   const Spacer(),
@@ -637,7 +642,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 borderRadius: BorderRadius.circular(6),
                 child: LinearProgressIndicator(
                   value: 0.63,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  backgroundColor: Color(0xFFE8EAF0),
                   valueColor: const AlwaysStoppedAnimation<Color>(
                       Color(0xFF10B981)),
                   minHeight: 6,
@@ -646,7 +651,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               const SizedBox(height: 6),
               Text('Goal: 10% of income — \$433/mo needed, \$70/mo current',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
+                      color: Color(0xFF9CA3AF),
                       fontSize: 11)),
             ],
           ),
@@ -665,7 +670,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               textAlign: TextAlign.center),
           Text(label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+                  color: Color(0xFF9CA3AF), fontSize: 10),
               textAlign: TextAlign.center),
         ],
       ),
@@ -674,17 +679,17 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
 
   Widget _givingDivider() {
     return Container(
-        width: 1, height: 28, color: Colors.white.withValues(alpha: 0.1));
+        width: 1, height: 28, color: Color(0xFFE8EAF0));
   }
 
   Widget _buildAutoTitheCard() {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,7 +700,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               const SizedBox(width: 8),
               const Text('Auto-Tithe',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
               const Spacer(),
@@ -721,7 +726,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           Text(
               'Set a percentage of every deposit to auto-give to your chosen organizations the moment money arrives. No friction, no forgetting.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.55),
+                  color: Color(0xFF6B7080),
                   fontSize: 12,
                   height: 1.5)),
         ],
@@ -746,7 +751,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           Text(
               'Curated. Chris tracks your usage to see what helps your recovery score.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: Color(0xFF9CA3AF), fontSize: 12)),
           const SizedBox(height: 14),
           ..._mindfulnessApps.map((a) => _MindAppTile(app: a)),
           const SizedBox(height: 22),
@@ -789,15 +794,15 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                     color: _purple, size: 16),
               ),
               const SizedBox(width: 12),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Today\'s Anchor',
+                  const Text('Today\'s Anchor',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 15,
                           fontWeight: FontWeight.w700)),
-                  Text('Chris · Sunday, June 14',
+                  const Text('Chris · Sunday, June 14',
                       style: TextStyle(
                           color: _purpleLight,
                           fontSize: 11)),
@@ -809,7 +814,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: _purple.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                   color: _purple.withValues(alpha: 0.15), width: 1),
@@ -817,7 +822,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
             child: Text(
                 '"The secret of getting ahead is getting started." — Mark Twain\n\nToday: Before you open your first app, spend 5 minutes in silence. No phone. Just you.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Color(0xFF374151).withValues(alpha: 0.9),
                     fontSize: 13,
                     height: 1.6,
                     fontStyle: FontStyle.italic)),
@@ -851,12 +856,12 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.07),
+                    color: Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text('Refresh',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Color(0xFF6B7080),
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),
                 ),
@@ -874,10 +879,10 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _card,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border:
-              Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+          border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
         ),
         child: Column(
           children: [
@@ -887,7 +892,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                 const SizedBox(width: 10),
                 const Text('Weekly Reflection',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 14,
                         fontWeight: FontWeight.w700)),
                 const Spacer(),
@@ -895,7 +900,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                     _reflectionExpanded
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
-                    color: Colors.white38,
+                    color: Color(0xFF9CA3AF),
                     size: 20),
               ],
             ),
@@ -903,22 +908,22 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               const SizedBox(height: 14),
               Text('What went well this week? What would you do differently?',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Color(0xFF9CA3AF),
                       fontSize: 12)),
               const SizedBox(height: 12),
               TextField(
                 maxLines: 4,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Write your reflection...',
                   hintStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.25),
+                      color: Color(0xFF9CA3AF),
                       fontSize: 13),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: Color(0xFFF5F6FA),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: Color(0xFFE8EAF0)),
                   ),
                 ),
               ),
@@ -952,10 +957,10 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -968,12 +973,12 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               children: [
                 const Text('Daily Anchor Reminder',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 14,
                         fontWeight: FontWeight.w600)),
                 Text('7:00 AM every morning',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Color(0xFF9CA3AF),
                         fontSize: 12)),
               ],
             ),
@@ -991,7 +996,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   Widget _sectionTitle(String title) {
     return Text(title,
         style: const TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+            color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
   }
 }
 
@@ -1154,10 +1159,11 @@ class _GoalCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
             color: goal.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1167,7 +1173,7 @@ class _GoalCard extends StatelessWidget {
               Expanded(
                 child: Text(goal.name,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600)),
               ),
@@ -1191,7 +1197,7 @@ class _GoalCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text('${(pct * 100).round()}% complete',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.35), fontSize: 10)),
+                  color: Color(0xFF9CA3AF), fontSize: 10)),
         ],
       ),
     );
@@ -1208,10 +1214,11 @@ class _GratitudeCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -1220,7 +1227,7 @@ class _GratitudeCard extends StatelessWidget {
           Expanded(
             child: Text(text,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Color(0xFF374151),
                     fontSize: 13,
                     height: 1.4)),
           ),
@@ -1247,13 +1254,14 @@ class _CharityTileState extends State<_CharityTile> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
             color: _giving
                 ? widget.charity.color.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.06),
+                : Color(0xFFE8EAF0),
             width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -1274,13 +1282,13 @@ class _CharityTileState extends State<_CharityTile> {
               children: [
                 Text(widget.charity.name,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600)),
                 Text(
                     '${widget.charity.category}  ·  ${widget.charity.amount}',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Color(0xFF9CA3AF),
                         fontSize: 11)),
               ],
             ),
@@ -1294,19 +1302,19 @@ class _CharityTileState extends State<_CharityTile> {
               decoration: BoxDecoration(
                 color: _giving
                     ? widget.charity.color.withValues(alpha: 0.15)
-                    : Colors.white.withValues(alpha: 0.06),
+                    : Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                     color: _giving
                         ? widget.charity.color.withValues(alpha: 0.4)
-                        : Colors.white.withValues(alpha: 0.1),
+                        : Color(0xFFE8EAF0),
                     width: 1),
               ),
               child: Text(_giving ? 'Active' : 'Paused',
                   style: TextStyle(
                       color: _giving
                           ? widget.charity.color
-                          : Colors.white.withValues(alpha: 0.35),
+                          : Color(0xFF9CA3AF),
                       fontSize: 11,
                       fontWeight: FontWeight.w600)),
             ),
@@ -1327,10 +1335,11 @@ class _GivingHistoryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: Colors.white.withValues(alpha: 0.06), width: 1),
+            color: Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -1351,12 +1360,12 @@ class _GivingHistoryCard extends StatelessWidget {
               children: [
                 Text(record.month,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600)),
                 Text('${record.description}  ·  ${record.count}',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Color(0xFF9CA3AF),
                         fontSize: 11)),
               ],
             ),
@@ -1384,10 +1393,11 @@ class _MindAppTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF0E0B1A),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-              color: Colors.white.withValues(alpha: 0.06), width: 1),
+              color: Color(0xFFE8EAF0), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
         ),
         child: Row(
           children: [
@@ -1407,12 +1417,12 @@ class _MindAppTile extends StatelessWidget {
                 children: [
                   Text(app.name,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 13.5,
                           fontWeight: FontWeight.w600)),
                   Text(app.description,
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: Color(0xFF9CA3AF),
                           fontSize: 11)),
                 ],
               ),
@@ -1461,7 +1471,7 @@ class _AddGratitudeSheetState extends State<_AddGratitudeSheet> {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        color: const Color(0xFF0E0B1A),
+        color: Colors.white,
         padding: EdgeInsets.fromLTRB(
             24, 16, 24, MediaQuery.of(context).viewInsets.bottom + 30),
         child: Column(
@@ -1471,14 +1481,14 @@ class _AddGratitudeSheetState extends State<_AddGratitudeSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: Color(0xFFE8EAF0),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 20),
             const Text('Add Gratitude',
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1A1A2E),
                     fontSize: 18,
                     fontWeight: FontWeight.w700)),
             const SizedBox(height: 16),
@@ -1486,16 +1496,16 @@ class _AddGratitudeSheetState extends State<_AddGratitudeSheet> {
               controller: _ctrl,
               autofocus: true,
               maxLines: 3,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 15),
               decoration: InputDecoration(
                 hintText: 'What are you grateful for today?',
                 hintStyle: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+                    color: Color(0xFF9CA3AF), fontSize: 14),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.06),
+                fillColor: Color(0xFFF5F6FA),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: Color(0xFFE8EAF0)),
                 ),
               ),
             ),

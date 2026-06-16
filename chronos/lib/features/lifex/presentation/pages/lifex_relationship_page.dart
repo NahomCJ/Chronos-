@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
@@ -15,8 +14,8 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
 
-  static const _bg = Color(0xFF0F060A);
-  static const _card = Color(0xFF1A0C14);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _pink = Color(0xFFEC4899);
   static const _pinkLight = Color(0xFFF472B6);
 
@@ -65,10 +64,10 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: const Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -80,7 +79,7 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
                 Tab(text: 'Subscriptions'),
               ],
               labelColor: _pink,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: const Color(0xFF6B7080),
               indicatorColor: _pink,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle: const TextStyle(
@@ -120,7 +119,7 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
               end: Alignment.bottomCenter,
               colors: [
                 Colors.black.withValues(alpha: 0.3),
-                _bg.withValues(alpha: 0.97),
+                const Color(0xFFF5F6FA).withValues(alpha: 0.97),
               ],
             ),
           ),
@@ -135,7 +134,7 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
               const SizedBox(height: 10),
               Text('Your\nRelationships',
                   style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
@@ -213,45 +212,39 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
   }
 
   Widget _buildSharedOverview() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _pink.withValues(alpha: 0.15),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: _pink.withValues(alpha: 0.3), width: 1),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _pink.withValues(alpha: 0.3), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Row(children: [
-            Expanded(
-                child: _overviewStat(
-                    'Shared Saved', '\$11,500', const Color(0xFF10B981))),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
-            Expanded(
-                child: _overviewStat(
-                    'Joint Goals', '3', _pink)),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
-            Expanded(
-                child: _overviewStat(
-                    'Subs Overlap', '\$58/mo', const Color(0xFFF59E0B))),
-          ]),
-        ),
+        ],
       ),
+      child: Row(children: [
+        Expanded(
+            child: _overviewStat(
+                'Shared Saved', '\$11,500', const Color(0xFF10B981))),
+        Container(
+            width: 1,
+            height: 40,
+            color: const Color(0xFFE8EAF0)),
+        Expanded(
+            child: _overviewStat(
+                'Joint Goals', '3', _pink)),
+        Container(
+            width: 1,
+            height: 40,
+            color: const Color(0xFFE8EAF0)),
+        Expanded(
+            child: _overviewStat(
+                'Subs Overlap', '\$58/mo', const Color(0xFFF59E0B))),
+      ]),
     );
   }
 
@@ -262,8 +255,8 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
               color: color, fontSize: 18, fontWeight: FontWeight.w800)),
       const SizedBox(height: 2),
       Text(label,
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
+          style: const TextStyle(
+              color: Color(0xFF6B7080), fontSize: 10),
           textAlign: TextAlign.center),
     ]);
   }
@@ -294,47 +287,41 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
   }
 
   Widget _buildDateIdeaCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _pink.withValues(alpha: 0.12),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _pink.withValues(alpha: 0.25), width: 1),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _pink.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Plan a Date Night",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700)),
-              Text('Chris suggests ideas in your budget',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 12)),
-              const SizedBox(height: 14),
-              Row(children: [
-                _dateBudget('Under \$50'),
-                const SizedBox(width: 8),
-                _dateBudget('\$50 – \$100'),
-                const SizedBox(width: 8),
-                _dateBudget('\$100+'),
-              ]),
-            ],
-          ),
-        ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Plan a Date Night",
+              style: TextStyle(
+                  color: Color(0xFF1A1A2E),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700)),
+          const Text('Chris suggests ideas in your budget',
+              style: TextStyle(
+                  color: Color(0xFF6B7080),
+                  fontSize: 12)),
+          const SizedBox(height: 14),
+          Row(children: [
+            _dateBudget('Under \$50'),
+            const SizedBox(width: 8),
+            _dateBudget('\$50 – \$100'),
+            const SizedBox(width: 8),
+            _dateBudget('\$100+'),
+          ]),
+        ],
       ),
     );
   }
@@ -366,9 +353,16 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(children: [
         Container(
@@ -385,12 +379,12 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title,
                 style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1A1A2E),
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600)),
             Text('$date · $budget',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                style: const TextStyle(
+                    color: Color(0xFF6B7080), fontSize: 12)),
           ]),
         ),
         Container(
@@ -411,15 +405,22 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _pink.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(children: [
         Row(children: [
           const Text('Monthly Gift Budget',
               style: TextStyle(
-                  color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                  color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
           const Spacer(),
           const Text('\$200',
               style: TextStyle(
@@ -430,16 +431,16 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: 0.60,
-            backgroundColor: _pink.withValues(alpha: 0.1),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: const AlwaysStoppedAnimation<Color>(_pink),
             minHeight: 5,
           ),
         ),
         const SizedBox(height: 6),
         Row(children: [
-          Text('\$120 used',
+          const Text('\$120 used',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                  color: Color(0xFF6B7080), fontSize: 11)),
           const Spacer(),
           const Text('\$80 remaining',
               style: TextStyle(
@@ -471,45 +472,39 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
   }
 
   Widget _buildSubsOverview() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                _pink.withValues(alpha: 0.12),
-                Colors.white.withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _pink.withValues(alpha: 0.25), width: 1),
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _pink.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Row(children: [
-            Expanded(
-                child: _overviewStat(
-                    'Joint Subs', '\$58.96/mo', _pink)),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
-            Expanded(
-                child: _overviewStat('Overlap Waste', '\$9.99/mo',
-                    const Color(0xFFEF4444))),
-            Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.08)),
-            Expanded(
-                child: _overviewStat('Yearly',
-                    '\$707.52', const Color(0xFFF59E0B))),
-          ]),
-        ),
+        ],
       ),
+      child: Row(children: [
+        Expanded(
+            child: _overviewStat(
+                'Joint Subs', '\$58.96/mo', _pink)),
+        Container(
+            width: 1,
+            height: 40,
+            color: const Color(0xFFE8EAF0)),
+        Expanded(
+            child: _overviewStat('Overlap Waste', '\$9.99/mo',
+                const Color(0xFFEF4444))),
+        Container(
+            width: 1,
+            height: 40,
+            color: const Color(0xFFE8EAF0)),
+        Expanded(
+            child: _overviewStat('Yearly',
+                '\$707.52', const Color(0xFFF59E0B))),
+      ]),
     );
   }
 
@@ -517,10 +512,17 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border:
-            Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1),
+            Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -545,8 +547,8 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(text,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                  style: const TextStyle(
+                      color: Color(0xFF6B7080),
                       fontSize: 12.5,
                       height: 1.5)),
             ])),
@@ -556,7 +558,7 @@ class _LifeXRelationshipPageState extends State<LifeXRelationshipPage>
 
   Widget _sectionTitle(String t) => Text(t,
       style: const TextStyle(
-          color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+          color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 // ── Shared goal card ──────────────────────────────────────────────────────────
@@ -571,9 +573,16 @@ class _SharedGoalCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0C14),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: goal.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -588,7 +597,7 @@ class _SharedGoalCard extends StatelessWidget {
           Expanded(
               child: Text(goal.title,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w600))),
           Text('${(goal.progress * 100).round()}%',
@@ -602,7 +611,7 @@ class _SharedGoalCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: goal.progress,
-            backgroundColor: goal.color.withValues(alpha: 0.1),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: AlwaysStoppedAnimation<Color>(goal.color),
             minHeight: 6,
           ),
@@ -615,8 +624,8 @@ class _SharedGoalCard extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w700)),
           Text(' of ${goal.target}',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+              style: const TextStyle(
+                  color: Color(0xFF6B7080), fontSize: 12)),
         ]),
       ]),
     );
@@ -635,10 +644,17 @@ class _SubCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0C14),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border:
             Border.all(color: sub.color.withValues(alpha: 0.15), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(children: [
         Container(
@@ -655,16 +671,16 @@ class _SubCard extends StatelessWidget {
         Expanded(
             child: Text(sub.name,
                 style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1A1A2E),
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600))),
         Text(sub.price,
             style: TextStyle(
                 color: sub.color, fontSize: 14, fontWeight: FontWeight.w800)),
         const SizedBox(width: 6),
-        Text('/mo',
+        const Text('/mo',
             style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+                color: Color(0xFF9CA3AF), fontSize: 11)),
       ]),
     );
   }

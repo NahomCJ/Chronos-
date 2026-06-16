@@ -17,8 +17,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   bool _appleHealthConnected = false;
   bool _googleFitConnected = false;
 
-  static const _bg = Color(0xFF08080F);
-  static const _card = Color(0xFF0F0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _teal = Color(0xFF14B8A6);
   static const _tealDark = Color(0xFF0F766E);
 
@@ -120,10 +120,10 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: const Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -135,7 +135,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 Tab(text: 'Nutrition'),
               ],
               labelColor: _teal,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: const Color(0xFF6B7080),
               indicatorColor: _teal,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle:
@@ -174,8 +174,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withValues(alpha: 0.2),
-                _bg.withValues(alpha: 0.95),
+                Colors.black.withValues(alpha: 0.15),
+                _bg.withValues(alpha: 0.92),
               ],
             ),
           ),
@@ -213,7 +213,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
               const SizedBox(height: 10),
               Text('Your Health\nEconomy',
                   style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),
@@ -275,8 +275,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _teal.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.03),
+                _teal.withValues(alpha: 0.08),
+                Colors.white,
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -295,7 +295,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                       value: 0.84,
                       strokeWidth: 7,
                       backgroundColor:
-                          Colors.white.withValues(alpha: 0.08),
+                          const Color(0xFFE8EAF0),
                       valueColor:
                           const AlwaysStoppedAnimation<Color>(_teal),
                       strokeCap: StrokeCap.round,
@@ -306,12 +306,12 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                     children: [
                       const Text('84',
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A2E),
                               fontSize: 24,
                               fontWeight: FontWeight.w800)),
                       Text('/ 100',
                           style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.45),
+                              color: Color(0xFF9CA3AF),
                               fontSize: 10)),
                     ],
                   ),
@@ -324,14 +324,14 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                   children: [
                     const Text('Health Score',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF1A1A2E),
                             fontSize: 17,
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 4),
                     Text(
                         'Hydration + sleep are your two unlocks. Fix those and you clear 90.',
                         style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
+                            color: Color(0xFF6B7080),
                             fontSize: 12,
                             height: 1.45)),
                     const SizedBox(height: 12),
@@ -364,8 +364,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,7 +377,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
               const SizedBox(width: 8),
               const Text('Health Spending — June',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
               const Spacer(),
@@ -412,7 +412,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                   child: Text(
                       'Your supplement spend is 2.4× the avg for your age group. Chris found a bundle that cuts this to \$54/mo.',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.65),
+                          color: Color(0xFF6B7080),
                           fontSize: 11.5,
                           height: 1.4)),
                 ),
@@ -432,11 +432,11 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           children: [
             Text(label,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
+                    color: const Color(0xFF6B7080), fontSize: 12)),
             const Spacer(),
             Text(amount,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: const Color(0xFF1A1A2E),
                     fontSize: 12,
                     fontWeight: FontWeight.w600)),
           ],
@@ -446,7 +446,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: pct,
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 4,
           ),
@@ -461,22 +461,22 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Connect Your Health Apps',
               style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A1A2E),
                   fontSize: 14,
                   fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
               'Chris gets smarter with your real data — steps, sleep, heart rate.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Color(0xFF6B7080),
                   fontSize: 12,
                   height: 1.4)),
           const SizedBox(height: 14),
@@ -492,12 +492,12 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                     decoration: BoxDecoration(
                       color: _appleHealthConnected
                           ? const Color(0xFFEF4444).withValues(alpha: 0.15)
-                          : Colors.white.withValues(alpha: 0.05),
+                          : const Color(0xFFF3F4F6),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                           color: _appleHealthConnected
                               ? const Color(0xFFEF4444).withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.1),
+                              : const Color(0xFFE8EAF0),
                           width: 1),
                     ),
                     child: Column(
@@ -505,14 +505,14 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                         Icon(Icons.favorite_rounded,
                             color: _appleHealthConnected
                                 ? const Color(0xFFEF4444)
-                                : Colors.white.withValues(alpha: 0.3),
+                                : const Color(0xFF9CA3AF),
                             size: 22),
                         const SizedBox(height: 6),
                         Text('Apple Health',
                             style: TextStyle(
                                 color: _appleHealthConnected
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.4),
+                                    ? const Color(0xFF1A1A2E)
+                                    : const Color(0xFF6B7080),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600)),
                         Text(
@@ -520,7 +520,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                             style: TextStyle(
                                 color: _appleHealthConnected
                                     ? const Color(0xFFEF4444)
-                                    : Colors.white.withValues(alpha: 0.3),
+                                    : const Color(0xFF9CA3AF),
                                 fontSize: 10)),
                       ],
                     ),
@@ -538,12 +538,12 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                     decoration: BoxDecoration(
                       color: _googleFitConnected
                           ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                          : Colors.white.withValues(alpha: 0.05),
+                          : const Color(0xFFF3F4F6),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                           color: _googleFitConnected
                               ? const Color(0xFF10B981).withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.1),
+                              : const Color(0xFFE8EAF0),
                           width: 1),
                     ),
                     child: Column(
@@ -551,14 +551,14 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                         Icon(Icons.directions_run_rounded,
                             color: _googleFitConnected
                                 ? const Color(0xFF10B981)
-                                : Colors.white.withValues(alpha: 0.3),
+                                : const Color(0xFF9CA3AF),
                             size: 22),
                         const SizedBox(height: 6),
                         Text('Google Fit',
                             style: TextStyle(
                                 color: _googleFitConnected
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.4),
+                                    ? const Color(0xFF1A1A2E)
+                                    : const Color(0xFF6B7080),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600)),
                         Text(
@@ -566,7 +566,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                             style: TextStyle(
                                 color: _googleFitConnected
                                     ? const Color(0xFF10B981)
-                                    : Colors.white.withValues(alpha: 0.3),
+                                    : const Color(0xFF9CA3AF),
                                 fontSize: 10)),
                       ],
                     ),
@@ -586,8 +586,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,7 +618,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 Text(
                     'Your steps dropped 23% this week. A 10-min walk at 1PM fits your calendar gap. That alone would push your weekly average past the metabolic risk threshold of 8,000 steps.',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF6B7080),
                         fontSize: 13,
                         height: 1.5)),
                 const SizedBox(height: 12),
@@ -659,7 +659,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           Text(
               'Ranked by value-to-cost ratio for your fitness goal.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           ..._gyms.map((g) => _GymCard(gym: g)),
           const SizedBox(height: 24),
@@ -667,7 +667,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           const SizedBox(height: 6),
           Text('Verified. Session packages bookable through Chronos.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           ..._trainers.map((t) => _TrainerCard(trainer: t)),
           const SizedBox(height: 24),
@@ -675,7 +675,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           const SizedBox(height: 6),
           Text('Personalized to your goal: build muscle, improve energy.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,
@@ -708,13 +708,13 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                     children: [
                       const Text('Monthly stack total: \$82',
                           style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF1A1A2E),
                               fontSize: 13,
                               fontWeight: FontWeight.w600)),
                       Text(
                           'Subscribe through Chronos and save 15% — \$69.70/mo',
                           style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.5),
+                              color: Color(0xFF6B7080),
                               fontSize: 11)),
                     ],
                   ),
@@ -744,7 +744,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           Text(
               'Chris pulls data from these to personalize your plan.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: const Color(0xFF6B7080), fontSize: 12)),
           const SizedBox(height: 14),
           ..._healthApps.map((a) => _HealthAppTile(app: a)),
         ],
@@ -827,8 +827,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -837,7 +837,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
             children: [
               const Text('Food Spend — June',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 14,
                       fontWeight: FontWeight.w700)),
               const Spacer(),
@@ -851,7 +851,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           const SizedBox(height: 4),
           Text('vs \$480 last month (+8.3%)',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                  color: const Color(0xFF6B7080), fontSize: 11)),
           const SizedBox(height: 14),
           _spendRow('Groceries', '\$310', 0.60, const Color(0xFF14B8A6)),
           const SizedBox(height: 8),
@@ -862,13 +862,13 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
                 'Cooking 2 more meals at home each week saves ~\$85/mo — that\'s \$1,020/yr toward your emergency fund.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: const Color(0xFF6B7080),
                     fontSize: 12,
                     height: 1.4)),
           ),
@@ -883,8 +883,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Row(
         children: [
@@ -897,7 +897,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 child: CircularProgressIndicator(
                   value: 0.61,
                   strokeWidth: 9,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  backgroundColor: const Color(0xFFE8EAF0),
                   valueColor: const AlwaysStoppedAnimation<Color>(
                       Color(0xFFF59E0B)),
                   strokeCap: StrokeCap.round,
@@ -910,12 +910,12 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                       color: Color(0xFFF59E0B), size: 20),
                   const Text('1,840',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A1A2E),
                           fontSize: 18,
                           fontWeight: FontWeight.w800)),
                   Text('kcal',
                       style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
+                          color: Color(0xFF9CA3AF),
                           fontSize: 10)),
                 ],
               ),
@@ -928,13 +928,13 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
               children: [
                 const Text('Calories Today',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text('1,840 / 3,000 kcal',
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: Color(0xFF6B7080),
                         fontSize: 12)),
                 const SizedBox(height: 12),
                 _miniBar('Consumed', 1840, 3000, const Color(0xFFF59E0B)),
@@ -956,12 +956,12 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           children: [
             Text(label,
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: const Color(0xFF6B7080),
                     fontSize: 10)),
             const Spacer(),
             Text('$val / $max',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: const Color(0xFF374151),
                     fontSize: 10,
                     fontWeight: FontWeight.w600)),
           ],
@@ -971,7 +971,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: val / max,
-            backgroundColor: Colors.white.withValues(alpha: 0.08),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 4,
           ),
@@ -983,7 +983,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   Widget _sectionTitle(String title) {
     return Text(title,
         style: const TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+            color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
   }
 }
 
@@ -1052,10 +1052,10 @@ class _MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: metric.color.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: metric.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1067,7 +1067,7 @@ class _MetricCard extends StatelessWidget {
               const Spacer(),
               Text(metric.unit,
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.35),
+                      color: const Color(0xFF9CA3AF),
                       fontSize: 10)),
             ],
           ),
@@ -1076,12 +1076,12 @@ class _MetricCard extends StatelessWidget {
             children: [
               Text(metric.value,
                   style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontSize: 22,
                       fontWeight: FontWeight.w800)),
               Text(metric.label,
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: const Color(0xFF6B7080),
                       fontSize: 11)),
               const SizedBox(height: 6),
               ClipRRect(
@@ -1126,27 +1126,28 @@ class _HabitTileState extends State<_HabitTile> {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F0F1C),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
               color: _done
                   ? const Color(0xFF14B8A6).withValues(alpha: 0.3)
-                  : Colors.white.withValues(alpha: 0.06),
+                  : const Color(0xFFE8EAF0),
               width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
         ),
         child: Row(
           children: [
             Icon(widget.habit.icon,
                 color: _done
                     ? const Color(0xFF14B8A6)
-                    : Colors.white.withValues(alpha: 0.3),
+                    : const Color(0xFF9CA3AF),
                 size: 18),
             const SizedBox(width: 12),
             Text(widget.habit.name,
                 style: TextStyle(
                     color: _done
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.5),
+                        ? const Color(0xFF1A1A2E)
+                        : const Color(0xFF6B7080),
                     fontSize: 14)),
             const Spacer(),
             Container(
@@ -1156,11 +1157,11 @@ class _HabitTileState extends State<_HabitTile> {
                 shape: BoxShape.circle,
                 color: _done
                     ? const Color(0xFF14B8A6)
-                    : Colors.white.withValues(alpha: 0.08),
+                    : const Color(0xFFF3F4F6),
                 border: Border.all(
                     color: _done
                         ? const Color(0xFF14B8A6)
-                        : Colors.white.withValues(alpha: 0.15),
+                        : const Color(0xFFE8EAF0),
                     width: 1),
               ),
               child: _done
@@ -1185,9 +1186,10 @@ class _GymCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: gym.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

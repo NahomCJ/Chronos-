@@ -18,7 +18,7 @@ class _LifeXPageState extends State<LifeXPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseCtrl;
 
-  static const _bg = Color(0xFF0D0D22);
+  static const _bg = Color(0xFFF5F6FA);
   static const _teal = Color(0xFF0F766E);
   static const _tealLight = Color(0xFF14B8A6);
 
@@ -125,9 +125,9 @@ class _LifeXPageState extends State<LifeXPage>
             imageUrl:
                 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=800',
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: const Color(0xFF111130)),
+            placeholder: (_, __) => Container(color: const Color(0xFFE8EAF0)),
             errorWidget: (_, __, ___) =>
-                Container(color: const Color(0xFF111130)),
+                Container(color: const Color(0xFFE8EAF0)),
           ),
           Container(
             decoration: BoxDecoration(
@@ -135,7 +135,7 @@ class _LifeXPageState extends State<LifeXPage>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.5),
+                  Colors.black.withValues(alpha: 0.35),
                   _bg,
                 ],
               ),
@@ -194,13 +194,13 @@ class _LifeXPageState extends State<LifeXPage>
                           height: 34,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.12),
+                            color: const Color(0xFFF3F4F6),
                             border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
+                                color: const Color(0xFFE8EAF0),
                                 width: 1),
                           ),
                           child: const Icon(Icons.mic_rounded,
-                              color: Colors.white, size: 16),
+                              color: Color(0xFF374151), size: 16),
                         ),
                       ),
                     ],
@@ -209,7 +209,7 @@ class _LifeXPageState extends State<LifeXPage>
                   Text(
                     'Your LifeX',
                     style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1,
@@ -219,7 +219,7 @@ class _LifeXPageState extends State<LifeXPage>
                   Text(
                     'Seven domains. One life.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: const Color(0xFF6B7080),
                       fontSize: 13,
                     ),
                   ),
@@ -289,7 +289,7 @@ class _LifeXPageState extends State<LifeXPage>
           child: CircularProgressIndicator(
             value: _overallScore,
             strokeWidth: 4,
-            backgroundColor: Colors.white.withValues(alpha: 0.08),
+            backgroundColor: const Color(0xFFE8EAF0),
             valueColor: const AlwaysStoppedAnimation<Color>(_tealLight),
             strokeCap: StrokeCap.round,
           ),
@@ -301,23 +301,17 @@ class _LifeXPageState extends State<LifeXPage>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _teal.withValues(alpha: 0.6),
-                  const Color(0xFF0D0D2B),
-                ],
-              ),
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE8EAF0), width: 1.5),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.person_rounded, color: Colors.white70, size: 28),
+                const Icon(Icons.person_rounded, color: Color(0xFF9CA3AF), size: 28),
                 const SizedBox(height: 2),
                 Text('$overall%',
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF1A1A2E),
                         fontSize: 13,
                         fontWeight: FontWeight.w800)),
               ],
@@ -341,16 +335,16 @@ class _LifeXPageState extends State<LifeXPage>
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _teal.withValues(alpha: 0.18),
-                  Colors.white.withValues(alpha: 0.04),
-                ],
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _teal.withValues(alpha: 0.3), width: 1),
+              border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               children: [
@@ -365,8 +359,7 @@ class _LifeXPageState extends State<LifeXPage>
                           child: CircularProgressIndicator(
                             value: _overallScore,
                             strokeWidth: 6,
-                            backgroundColor:
-                                Colors.white.withValues(alpha: 0.1),
+                            backgroundColor: const Color(0xFFE8EAF0),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 _tealLight),
                             strokeCap: StrokeCap.round,
@@ -377,7 +370,7 @@ class _LifeXPageState extends State<LifeXPage>
                           children: [
                             Text('$overall',
                                 style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF1A1A2E),
                                     fontSize: 22,
                                     fontWeight: FontWeight.w800)),
                             Text('%',
@@ -396,14 +389,14 @@ class _LifeXPageState extends State<LifeXPage>
                         children: [
                           const Text('Life Score',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF1A1A2E),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700)),
                           const SizedBox(height: 4),
                           Text(
                             'Solid foundation. Vision & Spiritual\nneed some attention this week.',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.55),
+                                color: const Color(0xFF6B7080),
                                 fontSize: 12,
                                 height: 1.5),
                           ),
@@ -482,7 +475,7 @@ class _RingDecoration extends StatelessWidget {
         height: radius * 2,
         child: CustomPaint(
           painter: _DashedRingPainter(
-            alpha: 0.08 + pulse.value * 0.05,
+            alpha: 0.12 + pulse.value * 0.08,
           ),
         ),
       ),
@@ -497,7 +490,7 @@ class _DashedRingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: alpha)
+      ..color = const Color(0xFF9CA3AF).withValues(alpha: alpha)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     canvas.drawCircle(
@@ -539,7 +532,7 @@ class _DomainOrb extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score,
                   strokeWidth: 3.5,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
+                  backgroundColor: const Color(0xFFE8EAF0),
                   valueColor:
                       AlwaysStoppedAnimation<Color>(module.color),
                   strokeCap: StrokeCap.round,
@@ -572,8 +565,8 @@ class _DomainOrb extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             module.title,
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.65),
+            style: const TextStyle(
+                color: Color(0xFF6B7080),
                 fontSize: 9,
                 fontWeight: FontWeight.w500),
           ),

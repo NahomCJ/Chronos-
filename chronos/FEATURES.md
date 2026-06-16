@@ -281,7 +281,7 @@ Path: `lib/features/lifex/`
 
 LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages use the shell navigator so the bottom nav remains visible.
 
-**Theme:** Dark bg `Color(0xFF0D0D22)` with per-category accent colors. No yoga imagery in Spiritual.
+**Theme:** Light bg `Color(0xFFF5F6FA)`, white cards with `Color(0xFFE8EAF0)` borders. Per-category accent colors retained for fills and icons. No yoga imagery in Spiritual.
 
 **Main:**
 

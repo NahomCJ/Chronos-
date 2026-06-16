@@ -13,7 +13,10 @@ class LifeXFeedPage extends StatefulWidget {
 class _LifeXFeedPageState extends State<LifeXFeedPage> {
   int _selectedFilter = 0;
 
-  static const _bg = Color(0xFF060810);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
   static const _orange = Color(0xFFF97316);
   static const _filters = ['All', 'Health', 'Finance', 'Mindset', 'Lifestyle'];
 
@@ -49,7 +52,7 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
               _buildFeatured(),
               const SizedBox(height: 22),
               Row(children: [
-                const Text('For You', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+                Text('For You', style: TextStyle(color: _textPrimary, fontSize: 18, fontWeight: FontWeight.w700)),
                 const Spacer(),
               ]),
               const SizedBox(height: 12),
@@ -67,12 +70,12 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: active ? _orange : Colors.white.withValues(alpha: 0.06),
+                          color: active ? _orange : Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: active ? _orange : Colors.white.withValues(alpha: 0.1), width: 1),
+                          border: Border.all(color: active ? _orange : _border, width: 1),
                         ),
                         child: Text(_filters[i], style: TextStyle(
-                          color: active ? Colors.white : Colors.white.withValues(alpha: 0.55),
+                          color: active ? Colors.white : _textSecondary,
                           fontSize: 13, fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                         )),
                       ),
@@ -112,8 +115,10 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
         child: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Container(width: 36, height: 36, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16)),
+          child: Container(width: 36, height: 36,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFF3F4F6),
+                  border: Border.all(color: _border, width: 1)),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16)),
         ),
       )),
       Positioned(bottom: 20, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -125,7 +130,7 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
             Text('LIFESTYLE FEED', style: TextStyle(color: _orange, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
           ])),
         const SizedBox(height: 10),
-        Text('Your Daily\nInspiration', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 28, height: 1.1)),
+        Text('Your Daily\nInspiration', style: TextStyles.displaySmall.copyWith(color: _textPrimary, fontWeight: FontWeight.w800, fontSize: 28, height: 1.1)),
       ])),
     ]));
   }
@@ -185,8 +190,11 @@ class _FeedCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        decoration: BoxDecoration(color: const Color(0xFF0C0F1A), borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: item.color.withValues(alpha: 0.15), width: 1)),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: item.color.withValues(alpha: 0.15), width: 1),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
         child: Row(children: [
           ClipRRect(
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(18), bottomLeft: Radius.circular(18)),
@@ -208,18 +216,18 @@ class _FeedCard extends StatelessWidget {
                 decoration: BoxDecoration(color: item.color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                 child: Text(item.category, style: TextStyle(color: item.color, fontSize: 10, fontWeight: FontWeight.w600))),
               const SizedBox(height: 6),
-              Text(item.title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.35)),
+              Text(item.title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.35)),
               const SizedBox(height: 8),
               Row(children: [
                 Icon(item.isVideo ? Icons.play_circle_rounded : Icons.menu_book_rounded,
-                    color: Colors.white38, size: 13),
+                    color: const Color(0xFF9CA3AF), size: 13),
                 const SizedBox(width: 4),
-                Text(item.readTime, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+                Text(item.readTime, style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 11)),
               ]),
             ]),
           )),
-          Padding(padding: const EdgeInsets.only(right: 14),
-              child: Icon(Icons.bookmark_border_rounded, color: Colors.white.withValues(alpha: 0.25), size: 18)),
+          const Padding(padding: EdgeInsets.only(right: 14),
+              child: Icon(Icons.bookmark_border_rounded, color: Color(0xFFD1D5DB), size: 18)),
         ]),
       ),
     );
