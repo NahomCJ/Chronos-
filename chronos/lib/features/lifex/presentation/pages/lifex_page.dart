@@ -17,7 +17,7 @@ class _LifeXPageState extends State<LifeXPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _pulseCtrl;
 
-  static const _bg = Color(0xFFF5F6FA);
+  static const _bg = Color(0xFFE4E7F3);
   static const _teal = Color(0xFF0F766E);
   static const _tealLight = Color(0xFF14B8A6);
 
@@ -526,8 +526,7 @@ class _DomainOrb extends StatelessWidget {
                   value: score,
                   strokeWidth: 3.5,
                   backgroundColor: const Color(0xFFE8EAF0),
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(module.color),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF475569)),
                   strokeCap: StrokeCap.round,
                 ),
               ),
@@ -536,18 +535,17 @@ class _DomainOrb extends StatelessWidget {
                 height: orbSize - 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: module.color.withValues(alpha: 0.12),
-                  border: Border.all(
-                      color: module.color.withValues(alpha: 0.25), width: 1),
+                  color: const Color(0xFFDDE0ED),
+                  border: Border.all(color: const Color(0xFFC4C9D8), width: 1),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(module.icon, color: module.color, size: 16),
+                    Icon(module.icon, color: const Color(0xFF374151), size: 16),
                     const SizedBox(height: 1),
                     Text('$pct%',
-                        style: TextStyle(
-                            color: module.color,
+                        style: const TextStyle(
+                            color: Color(0xFF374151),
                             fontSize: 9,
                             fontWeight: FontWeight.w700)),
                   ],

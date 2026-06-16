@@ -101,12 +101,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFFDDDDDD).withValues(alpha: 0.22),
-                    const Color(0xFFBBBBBB).withValues(alpha: 0.12),
+                    const Color(0xFFBBBBBB).withValues(alpha: 0.50),
+                    const Color(0xFF999999).withValues(alpha: 0.35),
                   ],
                 ),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.38),
+                  color: Colors.black.withValues(alpha: 0.18),
                   width: 1.5,
                 ),
               ),

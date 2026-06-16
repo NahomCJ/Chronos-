@@ -29,8 +29,8 @@ class CustomBottomNav extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0xFFE8EAF0).withValues(alpha: 0.97),
-                  const Color(0xFFD8DCE8).withValues(alpha: 0.99),
+                  const Color(0xFFD0D4E4).withValues(alpha: 0.97),
+                  const Color(0xFFC2C7D8).withValues(alpha: 0.99),
                 ],
               ),
               borderRadius: BorderRadius.circular(50),
