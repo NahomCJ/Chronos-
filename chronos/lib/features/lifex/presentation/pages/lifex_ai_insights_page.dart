@@ -11,8 +11,8 @@ class LifeXAiInsightsPage extends StatefulWidget {
 }
 
 class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
-  static const _bg = Color(0xFF05080C);
-  static const _card = Color(0xFF0A0F16);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _cyan = Color(0xFF06B6D4);
   static const _cyanLight = Color(0xFF22D3EE);
 
@@ -139,8 +139,8 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
               onTap: () => Navigator.pop(context),
               child: Container(
                 width: 36, height: 36,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16),
               ),
             ),
           ),
@@ -173,9 +173,16 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _cyan.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(children: _trends.map((t) => _TrendRow(trend: t)).toList()),
     );
@@ -185,9 +192,16 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _cyan.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -204,9 +218,9 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Chris says', style: TextStyle(color: _cyanLight, fontSize: 11, fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
-            Text(
+            const Text(
               'Your overall life score is 74 this week — up 6 points from last week. Your biggest growth area is Finance (+12%). Your wellbeing dipped slightly due to sleep. I\'ve prioritised 4 actions that will have the most impact this week.',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12.5, height: 1.5),
+              style: TextStyle(color: Color(0xFF6B7080), fontSize: 12.5, height: 1.5),
             ),
           ]),
         ),
@@ -215,7 +229,7 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
   }
 
   Widget _sectionTitle(String t) =>
-      Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+      Text(t, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 class _Insight {
@@ -236,9 +250,16 @@ class _InsightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0F16),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: insight.color.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -251,7 +272,7 @@ class _InsightCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Expanded(
-                child: Text(insight.title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                child: Text(insight.title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w700)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -263,7 +284,7 @@ class _InsightCard extends StatelessWidget {
               ),
             ]),
             const SizedBox(height: 6),
-            Text(insight.body, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12.5, height: 1.5)),
+            Text(insight.body, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 12.5, height: 1.5)),
           ]),
         ),
       ]),
@@ -289,14 +310,14 @@ class _TrendRow extends StatelessWidget {
       child: Row(children: [
         SizedBox(
           width: 80,
-          child: Text(trend.label, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
+          child: Text(trend.label, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 12)),
         ),
         Expanded(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: trend.value,
-              backgroundColor: Colors.white.withValues(alpha: 0.06),
+              backgroundColor: const Color(0xFFE8EAF0),
               valueColor: AlwaysStoppedAnimation<Color>(trend.color),
               minHeight: 6,
             ),
@@ -327,9 +348,16 @@ class _ActionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0F16),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: action.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(children: [
         Container(
@@ -338,8 +366,8 @@ class _ActionTile extends StatelessWidget {
           child: Icon(action.icon, color: action.color, size: 17),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Text(action.text, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500))),
-        Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.2), size: 20),
+        Expanded(child: Text(action.text, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w500))),
+        const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 20),
       ]),
     );
   }

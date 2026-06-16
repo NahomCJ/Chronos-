@@ -11,8 +11,8 @@ class LifeXActivityPage extends StatefulWidget {
 }
 
 class _LifeXActivityPageState extends State<LifeXActivityPage> {
-  static const _bg = Color(0xFF0A0800);
-  static const _card = Color(0xFF120F00);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _amber = Color(0xFFF59E0B);
   static const _amberLight = Color(0xFFFBBF24);
 
@@ -26,7 +26,7 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: const Color(0xFFF5F6FA),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 30),
         child: const ChrisHomeFab(),
@@ -86,8 +86,8 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
         CachedNetworkImage(
           imageUrl: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
-          placeholder: (_, __) => Container(color: _amber.withValues(alpha: 0.15)),
-          errorWidget: (_, __, ___) => Container(color: _amber.withValues(alpha: 0.15)),
+          placeholder: (_, __) => const ColoredBox(color: Color(0xFFE8EAF0)),
+          errorWidget: (_, __, ___) => const ColoredBox(color: Color(0xFFE8EAF0)),
         ),
         Container(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -98,8 +98,8 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
           child: GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(width: 36, height: 36,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16),
             ),
           ),
         )),
@@ -128,25 +128,31 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _amber.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(children: [
         Stack(alignment: Alignment.center, children: [
           SizedBox(width: 90, height: 90,
             child: CircularProgressIndicator(value: 0.74, strokeWidth: 8,
-                backgroundColor: Colors.white.withValues(alpha: 0.07),
+                backgroundColor: const Color(0xFFE8EAF0),
                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
                 strokeCap: StrokeCap.round)),
           Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text('74%', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
-            Text('goal', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+            const Text('74%', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 20, fontWeight: FontWeight.w800)),
+            const Text('goal', style: TextStyle(color: Color(0xFF6B7080), fontSize: 10)),
           ]),
         ]),
         const SizedBox(width: 20),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Today\'s Goal', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+          const Text('Today\'s Goal', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           _activityStat(Icons.directions_walk_rounded, '7,430', '/ 10,000 steps', _amber),
           const SizedBox(height: 6),
@@ -163,7 +169,7 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
       Icon(icon, color: color, size: 13),
       const SizedBox(width: 6),
       Text(val, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)),
-      Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+      Text(label, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
     ]);
   }
 
@@ -172,8 +178,9 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
     const values = [0.6, 0.85, 0.4, 0.9, 0.74, 1.0, 0.3];
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: _card, borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: List.generate(7, (i) {
         final isToday = i == 4;
         return Expanded(child: Padding(

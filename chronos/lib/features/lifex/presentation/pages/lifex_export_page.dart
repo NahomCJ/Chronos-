@@ -11,8 +11,8 @@ class LifeXExportPage extends StatefulWidget {
 }
 
 class _LifeXExportPageState extends State<LifeXExportPage> {
-  static const _bg = Color(0xFF060A04);
-  static const _card = Color(0xFF0B1008);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _lime = Color(0xFF84CC16);
   static const _limeLight = Color(0xFFA3E635);
 
@@ -106,8 +106,8 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
               onTap: () => Navigator.pop(context),
               child: Container(
                 width: 36, height: 36,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+                decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16),
               ),
             ),
           ),
@@ -152,9 +152,16 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _lime.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -167,9 +174,9 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('End-to-end encrypted', style: TextStyle(color: _limeLight, fontSize: 13, fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
-            Text(
+            const Text(
               'All exported data is encrypted and accessible only to you. Chronos never shares your personal data with third parties.',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12, height: 1.5),
+              style: TextStyle(color: Color(0xFF6B7080), fontSize: 12, height: 1.5),
             ),
           ]),
         ),
@@ -178,7 +185,7 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
   }
 
   Widget _sectionTitle(String t) =>
-      Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+      Text(t, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 class _Report {
@@ -199,9 +206,16 @@ class _ReportCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0B1008),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: report.color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(children: [
         Container(
@@ -212,9 +226,9 @@ class _ReportCard extends StatelessWidget {
         const SizedBox(width: 14),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(report.title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
+            Text(report.title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13.5, fontWeight: FontWeight.w600)),
             const SizedBox(height: 3),
-            Text(report.period, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 12)),
+            Text(report.period, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 12)),
           ]),
         ),
         Container(
@@ -254,9 +268,16 @@ class _ExportTypeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1008),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: type.color.withValues(alpha: 0.25), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Container(
@@ -265,8 +286,8 @@ class _ExportTypeCard extends StatelessWidget {
             child: Icon(type.icon, color: type.color, size: 16),
           ),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(type.title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
-            Text(type.subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+            Text(type.title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 12, fontWeight: FontWeight.w700)),
+            Text(type.subtitle, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 10)),
           ]),
         ]),
       ),

@@ -11,15 +11,18 @@ class LifeXFamilyPage extends StatefulWidget {
 }
 
 class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
-  static const _bg = Color(0xFF0A0614);
-  static const _card = Color(0xFF130B1E);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _pink = Color(0xFFEC4899);
   static const _pinkLight = Color(0xFFF472B6);
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: const Color(0xFFF5F6FA),
       floatingActionButton: Container(margin: const EdgeInsets.only(bottom: 30), child: const ChrisHomeFab()),
       body: CustomScrollView(
         slivers: [
@@ -61,13 +64,13 @@ class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
         errorWidget: (_, __, ___) => Container(color: _pink.withValues(alpha: 0.1)),
       ),
       Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [Colors.black.withValues(alpha: 0.2), _bg.withValues(alpha: 0.97)]))),
+          colors: [Colors.black.withValues(alpha: 0.2), const Color(0xFFF5F6FA).withValues(alpha: 0.97)]))),
       SafeArea(child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
         child: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Container(width: 36, height: 36, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16)),
+          child: Container(width: 36, height: 36, decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF374151), size: 16)),
         ),
       )),
       Positioned(bottom: 24, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -79,7 +82,7 @@ class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
             Text('FAMILY & BONDS', style: TextStyle(color: _pinkLight, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
           ])),
         const SizedBox(height: 10),
-        Text('Your People', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
+        Text('Your People', style: TextStyles.displaySmall.copyWith(color: const Color(0xFF1A1A2E), fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
       ])),
     ]));
   }
@@ -93,19 +96,20 @@ class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
     ];
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: _card, borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: _pink.withValues(alpha: 0.2), width: 1)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: _pink.withValues(alpha: 0.2), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Row(children: [
         ...members.map((m) => Padding(
           padding: const EdgeInsets.only(right: 12),
           child: Column(children: [
             ClipOval(child: CachedNetworkImage(imageUrl: m.$2, width: 48, height: 48, fit: BoxFit.cover,
                 placeholder: (_, __) => Container(color: _pink.withValues(alpha: 0.15), width: 48, height: 48,
-                    child: const Icon(Icons.person_rounded, color: Colors.white38, size: 24)),
+                    child: const Icon(Icons.person_rounded, color: Color(0xFF9CA3AF), size: 24)),
                 errorWidget: (_, __, ___) => Container(color: _pink.withValues(alpha: 0.15), width: 48, height: 48,
-                    child: const Icon(Icons.person_rounded, color: Colors.white38, size: 24)))),
+                    child: const Icon(Icons.person_rounded, color: Color(0xFF9CA3AF), size: 24)))),
             const SizedBox(height: 5),
-            Text(m.$1, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11)),
+            Text(m.$1, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
           ]),
         )),
         GestureDetector(
@@ -126,11 +130,12 @@ class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: _card, borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600))),
+          Expanded(child: Text(title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13.5, fontWeight: FontWeight.w600))),
           Text('${(progress * 100).round()}%', style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 10),
