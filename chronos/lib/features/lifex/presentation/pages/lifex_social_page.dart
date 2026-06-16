@@ -503,7 +503,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -565,7 +565,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: Column(
@@ -676,7 +676,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: Row(children: [
@@ -723,7 +723,7 @@ class _ActivityTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Row(children: [
@@ -881,7 +881,7 @@ class _EventCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(children: [
@@ -977,7 +977,7 @@ class _BillSplitCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: const Border.all(color: Color(0xFFE8EAF0), width: 1),
+        border: Border.all(color: Color(0xFFE8EAF0), width: 1),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Row(children: [

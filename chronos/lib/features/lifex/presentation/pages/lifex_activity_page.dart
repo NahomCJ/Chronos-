@@ -195,14 +195,14 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(days[i], style: TextStyle(color: isToday ? _amber : Colors.white.withValues(alpha: 0.35), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+            Text(days[i], style: TextStyle(color: isToday ? _amber : const Color(0xFF6B7080), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
           ]),
         ));
       })),
     );
   }
 
-  Widget _sectionTitle(String t) => Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+  Widget _sectionTitle(String t) => Text(t, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
 }
 
 class _ActivityLog {
@@ -224,21 +224,23 @@ class _ActivityCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: const Color(0xFF120F00), borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: activity.color.withValues(alpha: 0.2), width: 1)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: activity.color.withValues(alpha: 0.2), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Row(children: [
         Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle, color: activity.color.withValues(alpha: 0.12)),
             child: Icon(activity.icon, color: activity.color, size: 22)),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(activity.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+          Text(activity.name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Row(children: [
             Text(activity.metric1, style: TextStyle(color: activity.color, fontSize: 12, fontWeight: FontWeight.w600)),
-            Text('  ·  ${activity.metric2}  ·  ${activity.calories}', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
+            const Text('  ·  ', style: TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
+            Text('${activity.metric2}  ·  ${activity.calories}', style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
           ]),
         ])),
-        Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.2), size: 20),
+        const Icon(Icons.chevron_right_rounded, color: Color(0xFFE8EAF0), size: 20),
       ]),
     );
   }
@@ -257,12 +259,13 @@ class _VideoCard extends StatelessWidget {
       onTap: () {},
       child: Container(
         height: 155,
+        color: Colors.white,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Stack(fit: StackFit.expand, children: [
             CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: const Color(0xFF120F00)),
-                errorWidget: (_, __, ___) => Container(color: const Color(0xFF120F00))),
+                placeholder: (_, __) => const ColoredBox(color: Color(0xFFE8EAF0)),
+                errorWidget: (_, __, ___) => const ColoredBox(color: Color(0xFFE8EAF0))),
             Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
                 colors: [Colors.transparent, Colors.black.withValues(alpha: 0.75)]))),
             Center(child: Container(width: 46, height: 46,
