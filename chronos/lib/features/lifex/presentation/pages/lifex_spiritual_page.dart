@@ -20,8 +20,8 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   bool _dailyReminderOn = true;
   bool _reflectionExpanded = false;
 
-  static const _bg = Color(0xFF06040E);
-  static const _card = Color(0xFF0E0B1A);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _purple = Color(0xFF8B5CF6);
   static const _purpleLight = Color(0xFFA78BFA);
 
@@ -108,7 +108,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: const Color(0xFFF5F6FA),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 30),
         child: const ChrisHomeFab(),

@@ -14,10 +14,13 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
 
-  static const _bg = Color(0xFF060810);
-  static const _card = Color(0xFF0C0F1C);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _blue = Color(0xFF3B82F6);
   static const _blueLight = Color(0xFF60A5FA);
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
 
   static const _goals = [
     _VisionGoal(
@@ -139,12 +142,12 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
@@ -156,7 +159,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
                 Tab(text: '90-Day'),
               ],
               labelColor: _blue,
-              unselectedLabelColor: Colors.white54,
+              unselectedLabelColor: Color(0xFF6B7080),
               indicatorColor: _blue,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle:
@@ -260,7 +263,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           const SizedBox(height: 6),
           Text('Each goal has a cost. Chris tracks the money side automatically.',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+                  color: _textSecondary, fontSize: 12)),
           const SizedBox(height: 14),
           GridView.builder(
             shrinkWrap: true,

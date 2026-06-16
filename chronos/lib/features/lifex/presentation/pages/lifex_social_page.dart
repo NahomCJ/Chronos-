@@ -15,8 +15,12 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
   late TabController _tabs;
   final Set<String> _joinedGroups = {};
 
-  static const _bg = Color(0xFF0A0608);
-  static const _card = Color(0xFF130910);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _textMuted = Color(0xFF9CA3AF);
   static const _red = Color(0xFFEF4444);
   static const _redLight = Color(0xFFF87171);
 
@@ -95,24 +99,26 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
           SliverAppBar(
             expandedHeight: 240,
             pinned: true,
-            backgroundColor: _bg,
+            backgroundColor: Colors.white,
+            shape: const Border(
+                bottom: BorderSide(color: Color(0xFFE8EAF0))),
             leading: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Color(0xFFF3F4F6),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                    color: Color(0xFF374151), size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(48),
               child: Container(
-                color: _bg,
+                color: Colors.white,
                 child: TabBar(
                   controller: _tabs,
                   tabs: const [
@@ -121,7 +127,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
                     Tab(text: 'Bills'),
                   ],
                   labelColor: _red,
-                  unselectedLabelColor: Colors.white38,
+                  unselectedLabelColor: Color(0xFF9CA3AF),
                   indicatorColor: _red,
                   indicatorSize: TabBarIndicatorSize.label,
                   labelStyle: const TextStyle(
@@ -179,7 +185,7 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               const SizedBox(height: 10),
               const Text('Your Social\nUniverse',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w800,
                       fontSize: 30,
                       height: 1.1)),

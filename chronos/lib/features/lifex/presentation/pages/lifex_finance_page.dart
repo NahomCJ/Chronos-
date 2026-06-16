@@ -16,10 +16,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   late TabController _tabs;
   bool _useAvalanche = true;
 
-  static const _bg = Color(0xFF06100A);
-  static const _card = Color(0xFF0C1A10);
+  static const _bg = Color(0xFFF5F6FA);
+  static const _card = Colors.white;
   static const _green = Color(0xFF10B981);
   static const _greenLight = Color(0xFF34D399);
+  static const _border = Color(0xFFE8EAF0);
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
 
   @override
   void initState() {
@@ -36,7 +39,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: const Color(0xFFF5F6FA),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 30),
         child: const ChrisHomeFab(),
