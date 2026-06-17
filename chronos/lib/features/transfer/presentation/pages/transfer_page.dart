@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 import 'transfer_contacts_page.dart';
 import 'transfer_chronos_user_page.dart';
 import 'transfer_qr_page.dart';
@@ -163,27 +164,31 @@ class _TransferPageState extends State<TransferPage>
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => context.canPop()
-                ? context.pop()
-                : context.go(RouteConstants.home.toPath),
-            child: _iconBtn(Icons.arrow_back_rounded),
-          ),
-          const Spacer(),
-          const Text('Send Money',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.3)),
-          const Spacer(),
-          GestureDetector(
-            onTap: _showQrSheet,
-            child: _iconBtn(Icons.qr_code_2_rounded),
-          ),
-        ],
+      child: FluidGlass.dark(
+        borderRadius: BorderRadius.circular(14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => context.canPop()
+                  ? context.pop()
+                  : context.go(RouteConstants.home.toPath),
+              child: _iconBtn(Icons.arrow_back_rounded),
+            ),
+            const Spacer(),
+            const Text('Send Money',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.3)),
+            const Spacer(),
+            GestureDetector(
+              onTap: _showQrSheet,
+              child: _iconBtn(Icons.qr_code_2_rounded),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -209,64 +214,46 @@ class _TransferPageState extends State<TransferPage>
   Widget _buildBalanceCard() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ClipRRect(
+      child: FluidGlass.dark(
         borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withValues(alpha: 0.12),
-                  Colors.white.withValues(alpha: 0.06),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border:
-                  Border.all(color: Colors.white.withValues(alpha: 0.15)),
-            ),
-            child: Row(
+        blur: 20,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Available Balance',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
-                            fontSize: 10)),
-                    const SizedBox(height: 3),
-                    const Text('\$12,430.50',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.5)),
-                  ],
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF14B8A6).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: const Color(0xFF14B8A6)
-                            .withValues(alpha: 0.4)),
-                  ),
-                  child: const Text('USD',
-                      style: TextStyle(
-                          color: Color(0xFF14B8A6),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600)),
-                ),
+                Text('Available Balance',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.55),
+                        fontSize: 10)),
+                const SizedBox(height: 3),
+                const Text('\$12,430.50',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5)),
               ],
             ),
-          ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF14B8A6).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color: const Color(0xFF14B8A6)
+                        .withValues(alpha: 0.4)),
+              ),
+              child: const Text('USD',
+                  style: TextStyle(
+                      color: Color(0xFF14B8A6),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600)),
+            ),
+          ],
         ),
       ),
     );
@@ -519,15 +506,9 @@ class _QrOptionsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1E),
-        borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border(
-            top: BorderSide(
-                color: Colors.white.withValues(alpha: 0.08), width: 1)),
-      ),
+    return FluidGlass.dark(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      blur: 20,
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,

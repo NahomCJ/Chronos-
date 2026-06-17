@@ -1,10 +1,10 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/theme_cubit.dart';
 import '../../../../features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -425,31 +425,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.1)),
         ),
-        ClipRRect(
+        FluidGlass(
           borderRadius: BorderRadius.circular(22),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.18)),
-              ),
-              child: Column(
-                children: [
-                  _tile(Icons.logout_rounded, 'Sign Out', 'Sign out of your account',
-                      iconColor: Colors.red.withValues(alpha: 0.8),
-                      valueColor: Colors.red.withValues(alpha: 0.5),
-                      onTap: () => _confirmSignOut(context)),
-                  Divider(height: 1, color: Colors.red.withValues(alpha: 0.1)),
-                  _tile(Icons.delete_forever_rounded, 'Delete Account',
-                      'Permanently remove all data',
-                      iconColor: Colors.red.withValues(alpha: 0.8),
-                      valueColor: Colors.red.withValues(alpha: 0.5),
-                      onTap: () => _confirmDelete(context)),
-                ],
-              ),
-            ),
+          blur: 12,
+          tintColor: Colors.red,
+          tintOpacity: 0.06,
+          child: Column(
+            children: [
+              _tile(Icons.logout_rounded, 'Sign Out', 'Sign out of your account',
+                  iconColor: Colors.red.withValues(alpha: 0.8),
+                  valueColor: Colors.red.withValues(alpha: 0.5),
+                  onTap: () => _confirmSignOut(context)),
+              Divider(height: 1, color: Colors.red.withValues(alpha: 0.1)),
+              _tile(Icons.delete_forever_rounded, 'Delete Account',
+                  'Permanently remove all data',
+                  iconColor: Colors.red.withValues(alpha: 0.8),
+                  valueColor: Colors.red.withValues(alpha: 0.5),
+                  onTap: () => _confirmDelete(context)),
+            ],
           ),
         ),
       ],
@@ -458,19 +451,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // ── Glass card helper ───────────────────────────────────────────────────────
   Widget _glass({required Widget child}) {
-    return ClipRRect(
+    return FluidGlass.dark(
       borderRadius: BorderRadius.circular(22),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.13),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
-          ),
-          child: child,
-        ),
-      ),
+      blur: 14,
+      child: child,
     );
   }
 

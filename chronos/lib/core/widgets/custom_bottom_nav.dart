@@ -12,7 +12,8 @@ class CustomBottomNav extends StatelessWidget {
     required this.onItemSelected,
   });
 
-  static const _amber = Color(0xFF0F766E); // active teal on light bg
+  static const _activeColor = Colors.white;
+  static final _inactiveColor = Colors.white.withValues(alpha: 0.38);
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +30,19 @@ class CustomBottomNav extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0xFFD0D4E4).withValues(alpha: 0.97),
-                  const Color(0xFFC2C7D8).withValues(alpha: 0.99),
+                  const Color(0xFF0A0A14).withValues(alpha: 0.82),
+                  const Color(0xFF060610).withValues(alpha: 0.88),
                 ],
               ),
               borderRadius: BorderRadius.circular(50),
               border: Border.all(
-                color: Colors.black.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.12),
                 width: 0.8,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 24,
+                  color: Colors.black.withValues(alpha: 0.35),
+                  blurRadius: 28,
                   offset: const Offset(0, 8),
                 ),
               ],
@@ -64,7 +65,7 @@ class CustomBottomNav extends StatelessWidget {
 
   Widget _item(IconData icon, String label, int index) {
     final active = selectedIndex == index;
-    final color = active ? _amber : Colors.black.withValues(alpha: 0.45);
+    final color = active ? _activeColor : _inactiveColor;
     return GestureDetector(
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,
@@ -79,7 +80,7 @@ class CustomBottomNav extends StatelessWidget {
                 height: 3,
                 margin: const EdgeInsets.only(bottom: 3),
                 decoration: const BoxDecoration(
-                  color: _amber,
+                  color: _activeColor,
                   shape: BoxShape.circle,
                 ),
               )
@@ -103,7 +104,7 @@ class CustomBottomNav extends StatelessWidget {
 
   Widget _itemImage(String path, String label, int index) {
     final active = selectedIndex == index;
-    final color = active ? _amber : Colors.black.withValues(alpha: 0.45);
+    final color = active ? _activeColor : _inactiveColor;
     return GestureDetector(
       onTap: () => onItemSelected(index),
       behavior: HitTestBehavior.opaque,
@@ -118,7 +119,7 @@ class CustomBottomNav extends StatelessWidget {
                 height: 3,
                 margin: const EdgeInsets.only(bottom: 3),
                 decoration: const BoxDecoration(
-                  color: _amber,
+                  color: _activeColor,
                   shape: BoxShape.circle,
                 ),
               )

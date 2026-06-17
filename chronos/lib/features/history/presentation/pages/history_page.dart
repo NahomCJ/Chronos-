@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 
 enum _HistoryCategory { all, transfers, exchange, crypto, nft, tickpay }
 
@@ -125,28 +126,65 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      appBar: AppBar(
-        backgroundColor: _accent,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
-        ),
-        title: const Text(
-          'History',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list_rounded, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      extendBodyBehindAppBar: false,
       body: Column(
         children: [
+          _buildGlassHeader(context),
           _buildCategoryBar(),
           Expanded(child: _buildList()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGlassHeader(BuildContext context) {
+    return FluidGlass.light(
+      borderRadius: BorderRadius.zero,
+      blur: 12,
+      padding: EdgeInsets.fromLTRB(
+        16,
+        MediaQuery.of(context).padding.top + 12,
+        16,
+        12,
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: _accent.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+                border: Border.all(color: _accent.withValues(alpha: 0.12)),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: _accent, size: 16),
+            ),
+          ),
+          const Expanded(
+            child: Text(
+              'History',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: _accent, fontWeight: FontWeight.w700, fontSize: 18),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: _accent.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+                border: Border.all(color: _accent.withValues(alpha: 0.12)),
+              ),
+              child: const Icon(Icons.filter_list_rounded,
+                  color: _accent, size: 18),
+            ),
+          ),
         ],
       ),
     );
