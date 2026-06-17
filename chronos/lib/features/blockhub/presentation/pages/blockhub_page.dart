@@ -164,7 +164,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
     final hp = isSmallScreen ? 16.0 : 20.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A12),
+      backgroundColor: const Color(0xFFF5F7FA),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
@@ -183,12 +183,12 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   Positioned.fill(
                     child: CachedNetworkImage(
                       imageUrl:
-                          'https://images.pexels.com/photos/12920871/pexels-photo-12920871.jpeg?auto=compress&cs=tinysrgb&w=900',
+                          'https://images.pexels.com/photos/30475613/pexels-photo-30475613.jpeg?auto=compress&cs=tinysrgb&w=900',
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>
-                          Container(color: const Color(0xFF14063E)),
+                          Container(color: const Color(0xFF1A0A3E)),
                       errorWidget: (_, __, ___) =>
-                          Container(color: const Color(0xFF14063E)),
+                          Container(color: const Color(0xFF1A0A3E)),
                     ),
                   ),
                   Positioned.fill(
@@ -198,8 +198,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            const Color(0xFF14063E).withValues(alpha: 0.72),
-                            const Color(0xFF0A0A12).withValues(alpha: 0.96),
+                            const Color(0xFF1A0A3E).withValues(alpha: 0.50),
+                            const Color(0xFF0A0A12).withValues(alpha: 0.88),
                           ],
                         ),
                       ),
@@ -330,57 +330,63 @@ class _BlockHubPageState extends State<BlockHubPage> {
               ),
             ),
 
-            const SizedBox(height: 28),
+            // ── Light-theme bottom section ─────────────────────────────────
+            Container(
+              color: const Color(0xFFF5F7FA),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 28),
 
-              // ── Top Movers ───────────────────────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0D0D1A),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Top Movers',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17)),
-                    const SizedBox(height: 14),
-                    SizedBox(
-                      height: 200,
-                      child: PageView.builder(
-                        controller: PageController(viewportFraction: 0.72),
-                        itemCount: _coins.length,
-                        itemBuilder: (context, index) {
-                          final coin = _coins[index];
-                          return GestureDetector(
-                            onTap: () => _showCoinDetail(context, coin),
-                            child: _buildCoinCard(coin),
-                          );
-                        },
-                      ),
+                  // Top Movers
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: hp),
+                    child: const Text('Top Movers',
+                        style: TextStyle(
+                            color: Color(0xFF12122A),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 17)),
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    height: 210,
+                    child: PageView.builder(
+                      controller: PageController(viewportFraction: 0.72),
+                      itemCount: _coins.length,
+                      itemBuilder: (context, index) {
+                        final coin = _coins[index];
+                        return GestureDetector(
+                          onTap: () => _showCoinDetail(context, coin),
+                          child: _buildCoinCardLight(coin),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Watchlist
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: hp),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Watchlist',
+                            style: TextStyle(
+                                color: Color(0xFF12122A),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 17)),
+                        const SizedBox(height: 14),
+                        ..._watchlist.map((asset) =>
+                            _buildWatchlistItemLight(asset, isSmallScreen)),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 120),
+                ],
               ),
-
-              const SizedBox(height: 24),
-
-              // ── Watchlist ─────────────────────────────────────────────────
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: hp),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Watchlist',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17)),
-                    const SizedBox(height: 14),
-                    ..._watchlist.map((asset) => _buildWatchlistItem(asset, isSmallScreen)),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 120),
+            ),
             ],
           ),
         ),
@@ -486,8 +492,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  // ── Coin card (2D flat) ────────────────────────────────────────────────────
-  Widget _buildCoinCard(_CoinData coin) {
+  // ── Light-theme coin card (used in bottom white section) ──────────────────
+  Widget _buildCoinCardLight(_CoinData coin) {
     final priceStr = coin.price >= 1000
         ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
         : coin.price >= 1
@@ -497,13 +503,18 @@ class _BlockHubPageState extends State<BlockHubPage> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: coin.primaryColor.withValues(alpha: 0.18),
-            blurRadius: 16,
+            color: coin.primaryColor.withValues(alpha: 0.12),
+            blurRadius: 20,
             offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -517,18 +528,15 @@ class _BlockHubPageState extends State<BlockHubPage> {
             Text(
               coin.symbol,
               style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
+                color: Color(0xFF12122A),
+                fontWeight: FontWeight.w800,
                 fontSize: 16,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               coin.name,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: Color(0xFF888899), fontSize: 11),
             ),
             const SizedBox(height: 8),
             Row(
@@ -537,25 +545,28 @@ class _BlockHubPageState extends State<BlockHubPage> {
                 Text(
                   priceStr,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF12122A),
+                    fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: coin.isPositive
-                        ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                        : Colors.red.withValues(alpha: 0.15),
+                        ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                        : const Color(0xFFEF4444).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
                     style: TextStyle(
-                      color: coin.isPositive ? const Color(0xFF10B981) : Colors.red,
-                      fontWeight: FontWeight.w600,
+                      color: coin.isPositive
+                          ? const Color(0xFF059669)
+                          : const Color(0xFFDC2626),
+                      fontWeight: FontWeight.w700,
                       fontSize: 11,
                     ),
                   ),
@@ -564,6 +575,92 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // ── Light-theme watchlist item ────────────────────────────────────────────
+  Widget _buildWatchlistItemLight(CryptoAsset asset, bool isSmallScreen) {
+    return Container(
+      margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F0F8),
+              shape: BoxShape.circle,
+              border:
+                  Border.all(color: const Color(0xFFE0E0EE), width: 1),
+            ),
+            child: Icon(
+              _getCryptoIcon(asset.symbol),
+              color: const Color(0xFF4A4A6A),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  asset.name,
+                  style: const TextStyle(
+                    color: Color(0xFF12122A),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  asset.symbol,
+                  style: const TextStyle(
+                    color: Color(0xFF888899),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '\$${asset.price.toStringAsFixed(2)}k',
+                style: const TextStyle(
+                  color: Color(0xFF12122A),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                '${asset.isPositive ? '+' : ''}${asset.change.toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: asset.isPositive
+                      ? const Color(0xFF059669)
+                      : const Color(0xFFDC2626),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -724,84 +821,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
             const SizedBox(height: 8),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildWatchlistItem(CryptoAsset asset, bool isSmallScreen) {
-    return Container(
-      margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-      ),
-      child: Row(
-        children: [
-          // Crypto Icon
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
-            ),
-            child: Icon(
-              _getCryptoIcon(asset.symbol),
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Name and Symbol
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  asset.name,
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  asset.symbol,
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Price and Change
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '\$${asset.price.toStringAsFixed(2)}k',
-                style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '${asset.isPositive ? '+' : ''}${asset.change.toStringAsFixed(2)}%',
-                style: TextStyles.bodySmall.copyWith(
-                  color:
-                      asset.isPositive ? const Color(0xFF10B981) : Colors.red,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
