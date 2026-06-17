@@ -1036,6 +1036,12 @@ class _AiCommandSheetState extends State<AiCommandSheet>
         return Icons.schedule_outlined;
       case ChrisActionType.addMoney:
         return Icons.add_circle_outline;
+      case ChrisActionType.buyCrypto:
+        return Icons.currency_bitcoin_rounded;
+      case ChrisActionType.sellCrypto:
+        return Icons.trending_down_rounded;
+      case ChrisActionType.sendCrypto:
+        return Icons.send_rounded;
       case ChrisActionType.unknown:
         return Icons.psychology_outlined;
     }
