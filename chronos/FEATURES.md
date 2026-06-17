@@ -373,6 +373,14 @@ Accessible via the history icon (top-right of home hero section, replaces bell i
 **Bottom nav / global nav:** white icons on dark bg. No purple on search page.
 **Panther AI chat:** light bg, purple user message bubbles, white AI bubbles, voice mode shows full-screen orb.
 
+### Glass System
+
+| Component | File | Usage | Status |
+|-----------|------|-------|--------|
+| FluidGlass widget | `lib/core/widgets/fluid_glass.dart` | Glass-morphism container applied to nav bar, headers, cards | [LIVE] |
+| `FluidGlass.dark` | — | Subtle white tint (9% opacity) for dark bg pages (Transfer, Exchange, Profile, BlockHub) | [LIVE] |
+| `FluidGlass.light` | — | Strong white frosted tint (72% opacity) for light bg pages (History) | [LIVE] |
+
 ---
 
 ## Custom Painters

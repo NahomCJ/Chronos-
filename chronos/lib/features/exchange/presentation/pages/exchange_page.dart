@@ -6,6 +6,7 @@ import '../../../../core/theme/text_theme.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 
 class ExchangePage extends StatefulWidget {
   const ExchangePage({super.key});
@@ -61,31 +62,47 @@ class _ExchangePageState extends State<ExchangePage> {
               children: [
                 // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (context.canPop()) {
-                            context.pop();
-                          } else {
-                            context.go(RouteConstants.home.toPath);
-                          }
-                        },
-                        child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Exchange',
-                        style: TextStyles.titleLarge.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: FluidGlass.dark(
+                    borderRadius: BorderRadius.circular(14),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go(RouteConstants.home.toPath);
+                            }
+                          },
+                          child: Container(
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.18)),
+                            ),
+                            child: const Icon(Icons.arrow_back,
+                                color: Colors.white, size: 18),
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 20),
-                    ],
+                        Expanded(
+                          child: Text(
+                            'Exchange',
+                            textAlign: TextAlign.center,
+                            style: TextStyles.titleLarge.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 34),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -97,17 +114,10 @@ class _ExchangePageState extends State<ExchangePage> {
                         const SizedBox(height: 8),
 
                         // Currency Selectors Card
-                        ClipRRect(
+                        FluidGlass.dark(
                           borderRadius: BorderRadius.circular(18),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-                              ),
-                              child: Column(
+                          blur: 16,
+                          child: Column(
                                 children: [
                                   _buildCurrencyRow(
                                     label: 'You send',
@@ -198,8 +208,6 @@ class _ExchangePageState extends State<ExchangePage> {
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
                         ),
 
                         const SizedBox(height: 12),
@@ -253,7 +261,11 @@ class _ExchangePageState extends State<ExchangePage> {
                         const SizedBox(height: 28),
 
                         // Review Exchange Button
-                        SizedBox(
+                        FluidGlass.dark(
+                          borderRadius: BorderRadius.circular(26),
+                          padding: const EdgeInsets.all(4),
+                          showShadow: false,
+                          child: SizedBox(
                           width: double.infinity,
                           height: 44,
                           child: ElevatedButton(
@@ -286,6 +298,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                 fontSize: 15,
                               ),
                             ),
+                          ),
                           ),
                         ),
 
