@@ -11,6 +11,9 @@ enum ChrisActionType {
   checkBalance,
   bnplCheck,
   addMoney,
+  buyCrypto,
+  sellCrypto,
+  sendCrypto,
   unknown,
 }
 
@@ -113,6 +116,31 @@ class ChrisActionService {
         rawMessage: raw,
       );
     }
+    if (_isBuyCrypto(msg)) {
+      return ChrisIntent(
+        type: ChrisActionType.buyCrypto,
+        amount: amount,
+        toCurrency: _parseCryptoCoin(msg),
+        rawMessage: raw,
+      );
+    }
+    if (_isSellCrypto(msg)) {
+      return ChrisIntent(
+        type: ChrisActionType.sellCrypto,
+        amount: amount,
+        fromCurrency: _parseCryptoCoin(msg),
+        rawMessage: raw,
+      );
+    }
+    if (_isSendCrypto(msg)) {
+      return ChrisIntent(
+        type: ChrisActionType.sendCrypto,
+        amount: amount,
+        fromCurrency: _parseCryptoCoin(msg),
+        recipientHint: _parseRecipient(msg),
+        rawMessage: raw,
+      );
+    }
     return ChrisIntent(type: ChrisActionType.unknown, rawMessage: raw);
   }
 
@@ -130,6 +158,12 @@ class ChrisActionService {
         return _bnplPlan(intent);
       case ChrisActionType.addMoney:
         return _addMoneyPlan(intent);
+      case ChrisActionType.buyCrypto:
+        return _buyCryptoPlan(intent);
+      case ChrisActionType.sellCrypto:
+        return _sellCryptoPlan(intent);
+      case ChrisActionType.sendCrypto:
+        return _sendCryptoPlan(intent);
       case ChrisActionType.unknown:
         return null;
     }
@@ -426,6 +460,102 @@ class ChrisActionService {
 
   // ── Shared helpers ─────────────────────────────────────────────────────
 
+
+  // ── Buy Crypto ─────────────────────────────────────────────────────────────
+
+  static Future<ChrisActionPlan?> _buyCryptoPlan(ChrisIntent intent) async {
+    final coin = (intent.toCurrency ?? 'BTC').toUpperCase();
+    final amount = intent.amount ?? 0;
+
+    return ChrisActionPlan(
+      type: ChrisActionType.buyCrypto,
+      title: 'Buy $coin',
+      subtitle: amount > 0 ? '\$${amount.toStringAsFixed(2)} of $coin' : 'Market order for $coin',
+      details: [
+        if (amount > 0) ('Amount', '\$${amount.toStringAsFixed(2)}'),
+        ('Asset', coin),
+        ('Order type', 'Market order'),
+        ('Settlement', 'Instant'),
+      ],
+      execute: () async {
+        try {
+          final res = await _api.post('/api/v1/crypto/buy', {
+            'asset': coin,
+            if (amount > 0) 'amount': amount,
+            'orderType': 'MARKET',
+          });
+          return ChrisActionResult(
+            success: true,
+            message: 'Done! Purchased $coin successfully.',
+            details: {'Status': res['status']?.toString() ?? 'Completed'},
+          );
+        } catch (e) {
+          return ChrisActionResult(success: false, message: _clean(e.toString()));
+        }
+      },
+      warning: 'Crypto prices fluctuate. Market order executes at current price.',
+    );
+  }
+
+  // ── Sell Crypto ─────────────────────────────────────────────────────────────
+
+  static Future<ChrisActionPlan?> _sellCryptoPlan(ChrisIntent intent) async {
+    final coin = (intent.fromCurrency ?? 'BTC').toUpperCase();
+    final amount = intent.amount ?? 0;
+
+    return ChrisActionPlan(
+      type: ChrisActionType.sellCrypto,
+      title: 'Sell $coin',
+      subtitle: amount > 0 ? 'Sell \$${amount.toStringAsFixed(2)} of $coin' : 'Sell $coin at market price',
+      details: [
+        if (amount > 0) ('Amount', '\$${amount.toStringAsFixed(2)}'),
+        ('Asset', coin),
+        ('Order type', 'Market sell'),
+      ],
+      execute: () async {
+        try {
+          final res = await _api.post('/api/v1/crypto/sell', {
+            'asset': coin,
+            if (amount > 0) 'amount': amount,
+            'orderType': 'MARKET',
+          });
+          return ChrisActionResult(
+            success: true,
+            message: 'Done! Sold $coin successfully.',
+            details: {'Status': res['status']?.toString() ?? 'Completed'},
+          );
+        } catch (e) {
+          return ChrisActionResult(success: false, message: _clean(e.toString()));
+        }
+      },
+    );
+  }
+
+  // ── Send Crypto ─────────────────────────────────────────────────────────────
+
+  static Future<ChrisActionPlan?> _sendCryptoPlan(ChrisIntent intent) async {
+    final coin = (intent.fromCurrency ?? 'BTC').toUpperCase();
+    final amount = intent.amount ?? 0;
+    final recipient = intent.recipientHint ?? 'Unknown';
+
+    return ChrisActionPlan(
+      type: ChrisActionType.sendCrypto,
+      title: 'Send $coin',
+      subtitle: 'Send to $recipient',
+      details: [
+        if (amount > 0) ('Amount', '${amount.toStringAsFixed(8)} $coin'),
+        ('Asset', coin),
+        ('To', recipient),
+        ('Network', 'Ethereum / Polygon'),
+      ],
+      execute: () async => ChrisActionResult(
+        success: false,
+        message: 'Please use the BlockHub Send screen to enter the wallet address and confirm.',
+      ),
+      warning: 'Crypto sends are irreversible. Always verify the wallet address.',
+    );
+  }
+
   static Future<String?> _defaultWalletId() async {
     final wallets = await _walletList();
     return wallets.isNotEmpty ? wallets.first['id']?.toString() : null;
@@ -544,6 +674,32 @@ class ChrisActionService {
             caseSensitive: false)
         .firstMatch(msg);
     return m?.group(1)?.trim();
+  }
+
+  static bool _isBuyCrypto(String m) =>
+      RegExp(r'\b(buy|purchase|get)\b').hasMatch(m) &&
+      _hasCryptoMention(m);
+
+  static bool _isSellCrypto(String m) =>
+      RegExp(r'\b(sell|dump|offload)\b').hasMatch(m) &&
+      _hasCryptoMention(m);
+
+  static bool _isSendCrypto(String m) =>
+      RegExp(r'\b(send|transfer)\b').hasMatch(m) &&
+      _hasCryptoMention(m);
+
+  static bool _hasCryptoMention(String m) =>
+      RegExp(r'\b(bitcoin|btc|ethereum|eth|solana|sol|bnb|crypto|nft|usdc|usdt|polygon|matic)\b').hasMatch(m);
+
+  static String? _parseCryptoCoin(String msg) {
+    if (msg.contains('bitcoin') || msg.contains('btc')) return 'BTC';
+    if (msg.contains('ethereum') || msg.contains('eth')) return 'ETH';
+    if (msg.contains('solana') || msg.contains('sol')) return 'SOL';
+    if (msg.contains('bnb')) return 'BNB';
+    if (msg.contains('polygon') || msg.contains('matic')) return 'MATIC';
+    if (msg.contains('usdc')) return 'USDC';
+    if (msg.contains('usdt')) return 'USDT';
+    return 'BTC';
   }
 
   static const _currencyKeywords = {

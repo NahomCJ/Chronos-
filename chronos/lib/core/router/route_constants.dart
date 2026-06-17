@@ -80,6 +80,7 @@ enum RouteConstants {
   liabilitiesIntelligence,
   budgetIntelligence,
   netWorthIntelligence,
+  history,
   profile,
   changePassword,
   notificationSettings,
@@ -296,6 +297,8 @@ extension RouteConstantsX on RouteConstants {
         return '/panther/budget';
       case RouteConstants.netWorthIntelligence:
         return '/panther/net-worth';
+      case RouteConstants.history:
+        return '/history';
     }
   }
 
@@ -494,6 +497,8 @@ extension RouteConstantsX on RouteConstants {
         return 'budget-intelligence';
       case RouteConstants.netWorthIntelligence:
         return 'net-worth-intelligence';
+      case RouteConstants.history:
+        return 'history';
     }
   }
 }

@@ -16,8 +16,8 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
   bool _videoReady = false;
 
   static const _bg = Color(0xFF06060E);
-  static const _amber = Color(0xFFF59E0B);
-  static const _teal = Color(0xFF14B8A6);
+  static const _lightGray = Color(0xFFE5E5E5);
+  static const _nearWhite = Color(0xFFF8F8F8);
 
   static const _videoUrl =
       'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4';
@@ -150,11 +150,12 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _amber.withValues(alpha: 0.12),
+              color: _lightGray.withValues(alpha: 0.08),
               border: Border.all(
-                  color: _amber.withValues(alpha: 0.3), width: 0.8),
+                  color: _lightGray.withValues(alpha: 0.2), width: 0.8),
             ),
-            child: const Icon(Icons.hub_rounded, color: _amber, size: 18),
+            child: Icon(Icons.hub_rounded,
+                color: _lightGray.withValues(alpha: 0.8), size: 18),
           ),
           const SizedBox(width: 8),
           const Text('BlockHub',
@@ -190,10 +191,10 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _amber.withValues(alpha: 0.1),
+                  color: _lightGray.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: _amber.withValues(alpha: 0.3), width: 0.8),
+                      color: _lightGray.withValues(alpha: 0.2), width: 0.8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -202,11 +203,12 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: _amber)),
+                            shape: BoxShape.circle,
+                            color: _lightGray.withValues(alpha: 0.7))),
                     const SizedBox(width: 6),
                     Text('POWERED BY PANTHER AI',
                         style: TextStyle(
-                            color: _amber,
+                            color: _lightGray.withValues(alpha: 0.85),
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.2)),
@@ -276,9 +278,10 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _amber.withValues(alpha: 0.1),
+              color: _lightGray.withValues(alpha: 0.08),
             ),
-            child: Icon(f.icon, color: _amber, size: 20),
+            child: Icon(f.icon,
+                color: _lightGray.withValues(alpha: 0.75), size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -322,16 +325,16 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: _teal.withValues(alpha: 0.06),
+          color: _lightGray.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: _teal.withValues(alpha: 0.15), width: 0.8),
+              color: _lightGray.withValues(alpha: 0.12), width: 0.8),
         ),
         child: Column(
           children: [
             Text(value,
                 style: TextStyle(
-                    color: _teal,
+                    color: _nearWhite,
                     fontSize: 14,
                     fontWeight: FontWeight.w800)),
             const SizedBox(height: 3),
@@ -361,11 +364,11 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: _amber,
+                color: const Color(0xFF2A2A2A),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                      color: _amber.withValues(alpha: 0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 20,
                       spreadRadius: 0,
                       offset: const Offset(0, 6)),
@@ -374,7 +377,7 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               child: const Text('Get Started',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w800)),
             ),

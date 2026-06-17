@@ -92,6 +92,7 @@ import '../../features/profile/presentation/pages/profile_page.dart' as profile_
 import '../../features/profile/presentation/pages/theme_settings_page.dart';
 import '../../features/profile/presentation/pages/change_password_page.dart';
 import '../../features/profile/presentation/pages/notification_settings_page.dart';
+import '../../features/history/presentation/pages/history_page.dart';
 import '../theme/theme_cubit.dart';
 import '../pages/search_page.dart';
 import '../../features/lifex/presentation/pages/lifex_page.dart';
@@ -711,6 +712,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.notificationSettings.toPath,
       name: RouteConstants.notificationSettings.name,
       builder: (context, state) => const NotificationSettingsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.history.toPath,
+      name: RouteConstants.history.toName,
+      builder: (_, __) => const HistoryPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
