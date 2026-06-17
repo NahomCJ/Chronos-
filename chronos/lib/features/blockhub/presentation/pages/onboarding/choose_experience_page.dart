@@ -14,7 +14,7 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
 
   static const _bg = Color(0xFF06060E);
   static const _card = Color(0xFF0F0F1C);
-  static const _amber = Color(0xFFF59E0B);
+  static const _amber = Color(0xFF3B3B3B);
 
   static const _levels = [
     _Level(
@@ -156,7 +156,7 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
           height: 6,
           decoration: BoxDecoration(
             color: i + 1 == current
-                ? _amber
+                ? const Color(0xFFE5E5E5)
                 : Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(3),
           ),
@@ -386,7 +386,7 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
   Widget _buildBottomBar(BuildContext context) {
     final canContinue = _selected != null;
     final color = _selected != null
-        ? _levels.firstWhere((l) => l.id == _selected!).color
+        ? const Color(0xFF1A1A2E)
         : _amber;
 
     return Padding(
@@ -413,7 +413,7 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: canContinue
-                      ? Colors.black
+                      ? Colors.white
                       : Colors.white.withValues(alpha: 0.3),
                   fontSize: 16,
                   fontWeight: FontWeight.w800)),

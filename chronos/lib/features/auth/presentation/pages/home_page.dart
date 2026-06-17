@@ -175,19 +175,22 @@ class _HomeViewState extends State<_HomeView> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      ClipOval(
-                        child: Container(
-                          padding: EdgeInsets.all(8 * scale),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              width: 0.8,
+                      GestureDetector(
+                        onTap: () => context.push(RouteConstants.history.toPath),
+                        child: ClipOval(
+                          child: Container(
+                            padding: EdgeInsets.all(8 * scale),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: 0.8,
+                              ),
                             ),
+                            child: Icon(Icons.history_rounded,
+                                color: Colors.white, size: 22 * scale),
                           ),
-                          child: Icon(Icons.notifications_none,
-                              color: Colors.white, size: 22 * scale),
                         ),
                       ),
                     ],

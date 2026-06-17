@@ -1,8 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../router/route_constants.dart';
+import '../services/tts_service.dart';
+import '../services/chris_action_service.dart';
+import 'voice_confirmation_sheet.dart';
 
 class ChrisHomeFab extends StatefulWidget {
   final VoidCallback? onTap;
@@ -49,8 +53,11 @@ class _ChrisHomeFabState extends State<ChrisHomeFab> {
       setState(() => _wakeActive = true);
       await _speech.listen(
         onResult: (r) {
-          if (r.recognizedWords.toLowerCase().contains('chris')) {
+          final words = r.recognizedWords.toLowerCase();
+          if (words.contains('hey chris') || (words.startsWith('hey') && words.contains('chris'))) {
             _speech.stop();
+            HapticFeedback.mediumImpact();
+            TtsService().speak('Hey, what can I do for you?');
             if (mounted) _openSheet();
           }
         },
@@ -198,11 +205,25 @@ class _ChrisSheetState extends State<_ChrisSheet> {
     );
   }
 
-  void _send() {
-    if (_ctrl.text.trim().isNotEmpty) {
-      Navigator.pop(context);
-      widget.parentContext.push(RouteConstants.pantherAiChat.toPath);
+  void _send() async {
+    final text = _ctrl.text.trim();
+    if (text.isEmpty) return;
+
+    // Parse intent
+    final intent = ChrisActionService.parseIntent(text);
+    if (intent.type != ChrisActionType.unknown) {
+      // Build a plan and show confirmation
+      final plan = await ChrisActionService.buildPlan(intent);
+      if (plan != null && mounted) {
+        Navigator.pop(context);
+        await VoiceConfirmationSheet.show(widget.parentContext, plan);
+        return;
+      }
     }
+
+    // Fallback: open chat page
+    Navigator.pop(context);
+    widget.parentContext.push(RouteConstants.pantherAiChat.toPath);
   }
 
   @override
