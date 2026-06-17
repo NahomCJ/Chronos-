@@ -183,12 +183,12 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   Positioned.fill(
                     child: CachedNetworkImage(
                       imageUrl:
-                          'https://images.pexels.com/photos/30475613/pexels-photo-30475613.jpeg?auto=compress&cs=tinysrgb&w=900',
+                          'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
                       fit: BoxFit.cover,
                       placeholder: (_, __) =>
-                          Container(color: const Color(0xFF1A0A3E)),
+                          Container(color: const Color(0xFF1A3A5E)),
                       errorWidget: (_, __, ___) =>
-                          Container(color: const Color(0xFF1A0A3E)),
+                          Container(color: const Color(0xFF1A3A5E)),
                     ),
                   ),
                   Positioned.fill(
@@ -198,8 +198,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            const Color(0xFF1A0A3E).withValues(alpha: 0.50),
-                            const Color(0xFF0A0A12).withValues(alpha: 0.88),
+                            Colors.black.withValues(alpha: 0.40),
+                            const Color(0xFFF5F7FA).withValues(alpha: 0.92),
                           ],
                         ),
                       ),
