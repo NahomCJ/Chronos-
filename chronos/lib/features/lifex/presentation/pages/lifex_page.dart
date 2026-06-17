@@ -539,9 +539,9 @@ class _DomainOrb extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score,
                   strokeWidth: 3.5,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(module.color),
+                  backgroundColor: Colors.white.withValues(alpha: 0.10),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white.withValues(alpha: 0.45)),
                   strokeCap: StrokeCap.round,
                 ),
               ),
@@ -550,18 +550,18 @@ class _DomainOrb extends StatelessWidget {
                 height: orbSize - 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: module.color.withValues(alpha: 0.12),
+                  color: Colors.white.withValues(alpha: 0.07),
                   border: Border.all(
-                      color: module.color.withValues(alpha: 0.25), width: 1),
+                      color: Colors.white.withValues(alpha: 0.18), width: 1),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(module.icon, color: module.color, size: 16),
+                    Icon(module.icon, color: Colors.white, size: 15),
                     const SizedBox(height: 1),
                     Text('$pct%',
                         style: TextStyle(
-                            color: module.color,
+                            color: Colors.white.withValues(alpha: 0.7),
                             fontSize: 9,
                             fontWeight: FontWeight.w700)),
                   ],
