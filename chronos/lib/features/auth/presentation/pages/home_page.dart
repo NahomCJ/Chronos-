@@ -114,21 +114,21 @@ class _HomeViewState extends State<_HomeView> {
               children: [
                 CachedNetworkImage(
                   imageUrl:
-                      'https://images.pexels.com/photos/30475613/pexels-photo-30475613.jpeg?auto=compress&cs=tinysrgb&w=900',
+                      'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
                   fit: BoxFit.cover,
                   placeholder: (_, __) =>
-                      Container(color: const Color(0xFF1A0A3E)),
+                      Container(color: const Color(0xFF1A3A5E)),
                   errorWidget: (_, __, ___) =>
-                      Container(color: const Color(0xFF1A0A3E)),
+                      Container(color: const Color(0xFF1A3A5E)),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
-                        const Color(0xFF1A0A3E).withValues(alpha: 0.48),
-                        const Color(0xFF08041A).withValues(alpha: 0.60),
+                        Colors.black.withValues(alpha: 0.38),
+                        Colors.black.withValues(alpha: 0.18),
                       ],
                     ),
                   ),
