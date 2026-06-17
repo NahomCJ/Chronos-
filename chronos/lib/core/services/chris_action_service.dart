@@ -14,6 +14,28 @@ enum ChrisActionType {
   buyCrypto,
   sellCrypto,
   sendCrypto,
+  // Navigation intents
+  navigateHome,
+  navigateBlockHub,
+  navigateTickPay,
+  navigateLifex,
+  navigateLifexHealth,
+  navigateLifexFinance,
+  navigateLifexActivity,
+  navigateLifexEducation,
+  navigateLifexSpiritual,
+  navigateLifexVision,
+  navigateLifexFamily,
+  navigateLifexSocial,
+  navigateLifexFeed,
+  navigateLifexAiInsights,
+  navigatePantherAi,
+  navigateWallet,
+  navigateProfile,
+  navigateHistory,
+  navigateExchange,
+  navigateTransfer,
+  navigateAddMoney,
   unknown,
 }
 
@@ -44,6 +66,8 @@ class ChrisActionPlan {
   final List<(String, String)> details;
   final Future<ChrisActionResult> Function() execute;
   final String? warning;
+  // Non-null for navigation intents — the UI will push this route directly
+  final String? navigateTo;
 
   const ChrisActionPlan({
     required this.type,
@@ -52,6 +76,7 @@ class ChrisActionPlan {
     required this.details,
     required this.execute,
     this.warning,
+    this.navigateTo,
   });
 }
 
@@ -141,6 +166,11 @@ class ChrisActionService {
         rawMessage: raw,
       );
     }
+    // Navigation intents (checked after transactional intents)
+    final navType = _parseNavigationIntent(msg);
+    if (navType != null) {
+      return ChrisIntent(type: navType, rawMessage: raw);
+    }
     return ChrisIntent(type: ChrisActionType.unknown, rawMessage: raw);
   }
 
@@ -164,9 +194,63 @@ class ChrisActionService {
         return _sellCryptoPlan(intent);
       case ChrisActionType.sendCrypto:
         return _sendCryptoPlan(intent);
+      // Navigation plans
+      case ChrisActionType.navigateHome:
+        return _navPlan('Home', 'Going to your dashboard', '/home');
+      case ChrisActionType.navigateBlockHub:
+        return _navPlan('BlockHub', 'Opening crypto & NFT marketplace', '/blockhub');
+      case ChrisActionType.navigateTickPay:
+        return _navPlan('TickPay', 'Opening your BNPL shopping hub', '/tickpay');
+      case ChrisActionType.navigateLifex:
+        return _navPlan('LifeX', 'Opening your life coaching dashboard', '/lifex');
+      case ChrisActionType.navigateLifexHealth:
+        return _navPlan('LifeX Health', 'Opening your health & wellness tracker', '/lifex/health');
+      case ChrisActionType.navigateLifexFinance:
+        return _navPlan('LifeX Finance', 'Opening financial wellness module', '/lifex/finance');
+      case ChrisActionType.navigateLifexActivity:
+        return _navPlan('LifeX Activity', 'Opening activity & fitness tracker', '/lifex/activity');
+      case ChrisActionType.navigateLifexEducation:
+        return _navPlan('LifeX Education', 'Opening your learning center', '/lifex/education');
+      case ChrisActionType.navigateLifexSpiritual:
+        return _navPlan('LifeX Spiritual', 'Opening mindfulness & reflection', '/lifex/spiritual');
+      case ChrisActionType.navigateLifexVision:
+        return _navPlan('LifeX Vision', 'Opening your vision board & goals', '/lifex/vision');
+      case ChrisActionType.navigateLifexFamily:
+        return _navPlan('LifeX Family', 'Opening family planning module', '/lifex/family');
+      case ChrisActionType.navigateLifexSocial:
+        return _navPlan('LifeX Social', 'Opening your social & network hub', '/lifex/social');
+      case ChrisActionType.navigateLifexFeed:
+        return _navPlan('LifeX Feed', 'Opening your community feed', '/lifex/feed');
+      case ChrisActionType.navigateLifexAiInsights:
+        return _navPlan('LifeX AI Insights', 'Opening AI-powered life insights', '/lifex/ai-insights');
+      case ChrisActionType.navigatePantherAi:
+        return _navPlan('Panther AI Chat', 'Connecting you with Panther AI', '/panther/ai-chat');
+      case ChrisActionType.navigateWallet:
+        return _navPlan('Wallet', 'Opening your wallet', '/wallet');
+      case ChrisActionType.navigateProfile:
+        return _navPlan('Profile & Settings', 'Opening your profile', '/profile');
+      case ChrisActionType.navigateHistory:
+        return _navPlan('Transaction History', 'Showing all your transactions', '/history');
+      case ChrisActionType.navigateExchange:
+        return _navPlan('Currency Exchange', 'Opening the exchange screen', '/exchange');
+      case ChrisActionType.navigateTransfer:
+        return _navPlan('Send Money', 'Opening the transfer screen', '/transfer');
+      case ChrisActionType.navigateAddMoney:
+        return _navPlan('Add Money', 'Opening the deposit screen', '/add-money');
       case ChrisActionType.unknown:
         return null;
     }
+  }
+
+  static ChrisActionPlan _navPlan(String title, String subtitle, String route) {
+    return ChrisActionPlan(
+      type: ChrisActionType.navigateHome,
+      title: title,
+      subtitle: subtitle,
+      details: [],
+      navigateTo: route,
+      execute: () async => ChrisActionResult(success: true, message: 'Opening $title...'),
+    );
   }
 
   // ── Exchange ────────────────────────────────────────────────────────────
@@ -701,6 +785,49 @@ class ChrisActionService {
     if (msg.contains('usdt')) return 'USDT';
     return 'BTC';
   }
+
+  // ── Navigation intent parser ───────────────────────────────────────────────
+
+  static ChrisActionType? _parseNavigationIntent(String msg) {
+    // Navigation trigger words
+    final hasNavTrigger = RegExp(
+      r'\b(go to|open|show|take me to|navigate|launch|switch to|bring up|view|see)\b',
+    ).hasMatch(msg);
+    if (!hasNavTrigger && !RegExp(r'\b(home|dashboard)\b').hasMatch(msg)) {
+      return null;
+    }
+
+    // LifeX sub-pages (check before generic lifex)
+    if (RegExp(r'\b(health|wellness|fitness)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexHealth;
+    if (RegExp(r'\b(finance|money goal|financial wellness)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFinance;
+    if (RegExp(r'\b(activity|steps|workout|exercise)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexActivity;
+    if (RegExp(r'\b(education|learn|course|study)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexEducation;
+    if (RegExp(r'\b(spiritual|mindful|meditat|reflect)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexSpiritual;
+    if (RegExp(r'\b(vision|goal|dream|vision board)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexVision;
+    if (RegExp(r'\b(family|parenting|kid)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFamily;
+    if (RegExp(r'\b(social|network|friend|community)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexSocial;
+    if (RegExp(r'\b(feed|post|news)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFeed;
+    if (RegExp(r'\b(ai insight|life insight|coaching insight)\b').hasMatch(msg)) return ChrisActionType.navigateLifexAiInsights;
+
+    // Feature pages
+    if (RegExp(r'\b(lifex|life x|life coaching|coaching|life hub)\b').hasMatch(msg)) return ChrisActionType.navigateLifex;
+    if (RegExp(r'\b(blockhub|block hub|crypto|nft|bitcoin|ethereum)\b').hasMatch(msg)) return ChrisActionType.navigateBlockHub;
+    if (RegExp(r'\b(tickpay|tick pay|bnpl|shopping|buy now pay|installment)\b').hasMatch(msg)) return ChrisActionType.navigateTickPay;
+    if (RegExp(r'\b(panther|ai chat|chris chat|ai advisor|financial ai)\b').hasMatch(msg)) return ChrisActionType.navigatePantherAi;
+    if (RegExp(r'\b(wallet|my wallet)\b').hasMatch(msg)) return ChrisActionType.navigateWallet;
+    if (RegExp(r'\b(profile|settings|account settings|my account)\b').hasMatch(msg)) return ChrisActionType.navigateProfile;
+    if (RegExp(r'\b(history|transaction history|past transaction|all transaction)\b').hasMatch(msg)) return ChrisActionType.navigateHistory;
+    if (RegExp(r'\b(exchange|fx|foreign exchange|currency)\b').hasMatch(msg)) return ChrisActionType.navigateExchange;
+    if (RegExp(r'\b(transfer|send money|wire)\b').hasMatch(msg)) return ChrisActionType.navigateTransfer;
+    if (RegExp(r'\b(add money|deposit|top up)\b').hasMatch(msg)) return ChrisActionType.navigateAddMoney;
+    if (RegExp(r'\b(home|dashboard|main page)\b').hasMatch(msg)) return ChrisActionType.navigateHome;
+
+    return null;
+  }
+
+  static bool _hasLifexContext(String msg) =>
+      RegExp(r'\b(lifex|life x|life coaching|coaching|life hub|my)\b').hasMatch(msg) ||
+      !RegExp(r'\b(go to|open|show)\b').hasMatch(msg); // standalone mentions without nav verb still count
 
   static const _currencyKeywords = {
     'usd': 'USD', 'dollar': 'USD', 'dollars': 'USD', 'us dollar': 'USD',
