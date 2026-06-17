@@ -169,84 +169,86 @@ class _BlockHubPageState extends State<BlockHubPage> {
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // ── Hero Banner ─────────────────────────────────────────────
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(28),
-                  bottomRight: Radius.circular(28),
-                ),
-                child: SizedBox(
-                  height: 180,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl:
-                            'https://images.pexels.com/photos/7567598/pexels-photo-7567598.jpeg?auto=compress&cs=tinysrgb&w=900',
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) =>
-                            Container(color: const Color(0xFF1A0A3E)),
-                        errorWidget: (_, __, ___) =>
-                            Container(color: const Color(0xFF1A0A3E)),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withValues(alpha: 0.35),
-                              const Color(0xFF0A0A12).withValues(alpha: 0.90),
-                            ],
-                          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // ── Hero Photo (header → wallet boxes → nav icons → action btns) ──
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(28),
+                bottomRight: Radius.circular(28),
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://images.pexels.com/photos/12920871/pexels-photo-12920871.jpeg?auto=compress&cs=tinysrgb&w=900',
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) =>
+                          Container(color: const Color(0xFF14063E)),
+                      errorWidget: (_, __, ___) =>
+                          Container(color: const Color(0xFF14063E)),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF14063E).withValues(alpha: 0.72),
+                            const Color(0xFF0A0A12).withValues(alpha: 0.96),
+                          ],
                         ),
                       ),
-                      SafeArea(
-                        bottom: false,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(hp, 14, hp, 18),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(hp, 14, hp, 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title row
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  const Text('BlockHub',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w800)),
-                                  const Spacer(),
-                                  Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.12),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.2)),
-                                    ),
-                                    child: const Icon(Icons.search_rounded,
-                                        color: Colors.white, size: 18),
-                                  ),
-                                ],
-                              ),
+                              const Text('BlockHub',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w800)),
                               const Spacer(),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
+                                width: 36,
+                                height: 36,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.18),
-                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
                                   border: Border.all(
-                                      color: const Color(0xFFF59E0B).withValues(alpha: 0.45)),
+                                      color: Colors.white.withValues(alpha: 0.2)),
                                 ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
+                                child: const Icon(Icons.search_rounded,
+                                    color: Colors.white, size: 18),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF59E0B).withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.45)),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                                     Icon(Icons.currency_bitcoin,
                                         color: Color(0xFFF59E0B), size: 12),
                                     SizedBox(width: 5),
@@ -258,92 +260,77 @@ class _BlockHubPageState extends State<BlockHubPage> {
                                             letterSpacing: 0.8)),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(height: 6),
-                              const Text('Your Digital\nAsset Hub',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w800,
-                                      height: 1.1)),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text('Your Digital\nAsset Hub',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.1)),
+                          const SizedBox(height: 20),
+                          // Wallet boxes
+                          Row(
+                            children: [
+                              Expanded(child: _buildWalletBox(
+                                label: 'Crypto',
+                                value: '\$24,521',
+                                sublabel: 'Portfolio Value',
+                                icon: Icons.currency_bitcoin,
+                                color: const Color(0xFFF59E0B),
+                                bg: Colors.white.withValues(alpha: 0.10),
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage())),
+                              )),
+                              const SizedBox(width: 12),
+                              Expanded(child: _buildWalletBox(
+                                label: 'NFT',
+                                value: '12 Items',
+                                sublabel: 'Collection',
+                                icon: Icons.collections_rounded,
+                                color: const Color(0xFF8B5CF6),
+                                bg: Colors.white.withValues(alpha: 0.08),
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage())),
+                              )),
                             ],
                           ),
-                        ),
+                          const SizedBox(height: 20),
+                          // Circular nav icons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
+                              _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                              _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
+                              _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          // Action buttons (Buy/Sell/Swap/Send/More)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildActionButton(Icons.add, 'Buy', isSmallScreen,
+                                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyBtcPage()))),
+                              _buildActionButton(Icons.trending_down, 'Sell', isSmallScreen,
+                                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellBtcPage()))),
+                              _buildActionButton(Icons.swap_horiz, 'Swap', isSmallScreen,
+                                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                              _buildActionButton(Icons.send, 'Send', isSmallScreen,
+                                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendCryptoPage()))),
+                              _buildActionButton(Icons.more_horiz, 'More', isSmallScreen,
+                                  onTap: () => MoreOptionsModal.show(context)),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
+            ),
 
-              const SizedBox(height: 20),
-
-              // ── Dual Wallet Profile Boxes ────────────────────────────────
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: hp),
-                child: Row(
-                  children: [
-                    Expanded(child: _buildWalletBox(
-                      label: 'Crypto',
-                      value: '\$24,521',
-                      sublabel: 'Portfolio Value',
-                      icon: Icons.currency_bitcoin,
-                      color: const Color(0xFFF59E0B),
-                      bg: const Color(0xFF1A1A2E),
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage())),
-                    )),
-                    const SizedBox(width: 12),
-                    Expanded(child: _buildWalletBox(
-                      label: 'NFT',
-                      value: '12 Items',
-                      sublabel: 'Collection',
-                      icon: Icons.collections_rounded,
-                      color: const Color(0xFF8B5CF6),
-                      bg: const Color(0xFF0F0F1C),
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage())),
-                    )),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Circular Nav Icons ───────────────────────────────────────
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: hp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
-                    _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
-                    _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
-                    _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Action Buttons (Buy/Sell/Swap/Send/More) ─────────────────
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: hp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildActionButton(Icons.add, 'Buy', isSmallScreen,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyBtcPage()))),
-                    _buildActionButton(Icons.trending_down, 'Sell', isSmallScreen,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellBtcPage()))),
-                    _buildActionButton(Icons.swap_horiz, 'Swap', isSmallScreen,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
-                    _buildActionButton(Icons.send, 'Send', isSmallScreen,
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendCryptoPage()))),
-                    _buildActionButton(Icons.more_horiz, 'More', isSmallScreen,
-                        onTap: () => MoreOptionsModal.show(context)),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 28),
+            const SizedBox(height: 28),
 
               // ── Top Movers ───────────────────────────────────────────────
               Container(
@@ -397,7 +384,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -415,13 +401,13 @@ class _BlockHubPageState extends State<BlockHubPage> {
             width: isSmallScreen ? 44 : 48,
             height: isSmallScreen ? 44 : 48,
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.white.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
             ),
             child: Icon(
               icon,
-              color: Colors.grey[700],
+              color: Colors.white,
               size: isSmallScreen ? 18 : 20,
             ),
           ),
@@ -429,7 +415,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.grey[600],
+              color: Colors.white.withValues(alpha: 0.80),
               fontSize: isSmallScreen ? 10 : 11,
             ),
           ),
@@ -878,15 +864,15 @@ class _BlockHubPageState extends State<BlockHubPage> {
           Container(
             width: 52, height: 52,
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A2E),
+              color: Colors.white.withValues(alpha: 0.13),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
             ),
-            child: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 22),
+            child: Icon(icon, color: Colors.white, size: 22),
           ),
           const SizedBox(height: 6),
           Text(label,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 10, fontWeight: FontWeight.w500)),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 10, fontWeight: FontWeight.w500)),
         ],
       ),
     );
