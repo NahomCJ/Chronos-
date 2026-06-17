@@ -199,7 +199,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.black.withValues(alpha: 0.40),
-                            const Color(0xFFF5F7FA).withValues(alpha: 0.92),
+                            Colors.black.withValues(alpha: 0.72),
                           ],
                         ),
                       ),
@@ -407,9 +407,9 @@ class _BlockHubPageState extends State<BlockHubPage> {
             width: isSmallScreen ? 44 : 48,
             height: isSmallScreen ? 44 : 48,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.14),
+              color: Colors.white.withValues(alpha: 0.22),
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.40)),
             ),
             child: Icon(
               icon,
@@ -883,9 +883,9 @@ class _BlockHubPageState extends State<BlockHubPage> {
           Container(
             width: 52, height: 52,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.13),
+              color: Colors.white.withValues(alpha: 0.22),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.40)),
             ),
             child: Icon(icon, color: Colors.white, size: 22),
           ),

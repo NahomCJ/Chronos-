@@ -212,10 +212,16 @@ class _ChrisSheetState extends State<_ChrisSheet> {
     // Parse intent
     final intent = ChrisActionService.parseIntent(text);
     if (intent.type != ChrisActionType.unknown) {
-      // Build a plan and show confirmation
+      // Build a plan
       final plan = await ChrisActionService.buildPlan(intent);
       if (plan != null && mounted) {
         Navigator.pop(context);
+        // Navigation intents: go directly without confirmation sheet
+        if (plan.navigateTo != null) {
+          widget.parentContext.push(plan.navigateTo!);
+          return;
+        }
+        // Transactional intents: show confirmation
         await VoiceConfirmationSheet.show(widget.parentContext, plan);
         return;
       }
