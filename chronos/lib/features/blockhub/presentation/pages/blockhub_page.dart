@@ -154,395 +154,167 @@ class _BlockHubPageState extends State<BlockHubPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFF59E0B)),
-        ),
+        backgroundColor: Color(0xFF08080F),
+        body: Center(child: CircularProgressIndicator(color: Color(0xFFF59E0B))),
       );
     }
 
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 400;
-    final horizontalPadding = isSmallScreen ? 16.0 : 20.0;
+    final hp = isSmallScreen ? 16.0 : 20.0;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      extendBodyBehindAppBar: false,
+      backgroundColor: const Color(0xFF0A0A12),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
       ),
-      body: Stack(
-        children: [
-          // Background Image (only visible in dark sections)
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
-
-          // White overlay for top section (covers status bar + header + portfolio)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              color: Colors.white,
-              height: MediaQuery.of(context).padding.top,
-            ),
-          ),
-
-          // Content
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // White background container for all content including header
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Column(
-                      children: [
-                        // Header (now with white background)
-                        Padding(
-                          padding: EdgeInsets.all(horizontalPadding),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.menu,
-                                color: Colors.grey[700],
-                                size: 24,
-                              ),
-                              const Spacer(),
-                              Text(
-                                'BlockHub',
-                                style: TextStyles.titleLarge.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 20 : 24,
-                                ),
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isSmallScreen ? 10 : 16),
-
-                        // Portfolio Card
-                        Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: horizontalPadding,
-                          ),
-                          padding: EdgeInsets.only(
-                            top: isSmallScreen ? 20 : 24,
-                            left: isSmallScreen ? 20 : 24,
-                            right: isSmallScreen ? 20 : 24,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.grey.withValues(alpha: 0.2),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Total Portfolio Value',
-                                    style: TextStyles.bodyMedium.copyWith(
-                                      color: Colors.grey[600],
-                                      fontSize: isSmallScreen ? 13 : 14,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Icon(
-                                    Icons.visibility_outlined,
-                                    color: Colors.grey[700],
-                                    size: 26,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: isSmallScreen ? 8 : 12),
-                              Column(
-                                children: [
-                                  Text(
-                                    '\$24,521.83',
-                                    style: TextStyles.headlineLarge.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: isSmallScreen ? 28 : 32,
-                                    ),
-                                  ),
-                                  SizedBox(height: isSmallScreen ? 6 : 8),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isSmallScreen ? 6 : 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFF10B981,
-                                      ).withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      '24H Change: +\$2,521.83 (+11.6%)',
-                                      style: TextStyles.bodySmall.copyWith(
-                                        color: const Color(0xFF10B981),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: isSmallScreen ? 10 : 11,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: isSmallScreen ? 16 : 20),
-
-                              // Portfolio Chart
-                              Image.asset(
-                                'assets/Frame blochub.png',
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isSmallScreen ? 20 : 24),
-
-                        // Action Buttons
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: horizontalPadding,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildActionButton(
-                                Icons.add,
-                                'Buy',
-                                isSmallScreen,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const BuyBtcPage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              _buildActionButton(
-                                Icons.trending_down,
-                                'Sell',
-                                isSmallScreen,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const SellBtcPage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              _buildActionButton(
-                                Icons.swap_horiz,
-                                'Swap',
-                                isSmallScreen,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const TradePage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              _buildActionButton(
-                                Icons.send,
-                                'Send',
-                                isSmallScreen,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const SendCryptoPage(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              _buildActionButton(
-                                Icons.more_horiz,
-                                'More',
-                                isSmallScreen,
-                                onTap: () {
-                                  MoreOptionsModal.show(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isSmallScreen ? 20 : 24),
-
-                        // Section navigation
-                        SizedBox(
-                          height: 44,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                            children: [
-                              _sectionPill(context, Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
-                              const SizedBox(width: 10),
-                              _sectionPill(context, Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
-                              const SizedBox(width: 10),
-                              _sectionPill(context, Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
-                              const SizedBox(width: 10),
-                              _sectionPill(context, Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
-                              const SizedBox(width: 10),
-                              _sectionPill(context, Icons.collections_rounded, 'NFT', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage()))),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isSmallScreen ? 20 : 24),
-                      ],
-                    ),
-                  ),
-
-                  // Top Movers Section - Full Width Dark Container
-                  Container(
-                    width: double.infinity, // edge-to-edge
-                    margin: EdgeInsets.zero, // No margin for full width
-                    padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.grey.withValues(alpha: 0.2),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // ── Header ──────────────────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(hp, 16, hp, 0),
+                child: Row(
+                  children: [
+                    const Text('BlockHub',
+                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
+                    const Spacer(),
+                    Container(
+                      width: 36, height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      child: const Icon(Icons.search_rounded, color: Colors.white, size: 18),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Top Movers',
-                          style: TextStyles.titleMedium.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: isSmallScreen ? 16 : 18,
-                          ),
-                        ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
+                  ],
+                ),
+              ),
 
-                        // Horizontal coin slideshow
-                        SizedBox(
-                          height: 200,
-                          child: PageView.builder(
-                            controller: PageController(viewportFraction: 0.72),
-                            itemCount: _coins.length,
-                            itemBuilder: (context, index) {
-                              final coin = _coins[index];
-                              return GestureDetector(
-                                onTap: () => _showCoinDetail(context, coin),
-                                child: _buildCoinCard(coin),
-                              );
-                            },
-                          ),
-                        ),
+              const SizedBox(height: 20),
 
-                        SizedBox(height: isSmallScreen ? 12 : 16),
-                      ],
-                    ),
-                  ),
+              // ── Dual Wallet Profile Boxes ────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: hp),
+                child: Row(
+                  children: [
+                    Expanded(child: _buildWalletBox(
+                      label: 'Crypto',
+                      value: '\$24,521',
+                      sublabel: 'Portfolio Value',
+                      icon: Icons.currency_bitcoin,
+                      color: const Color(0xFFF59E0B),
+                      bg: const Color(0xFF1A1A2E),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage())),
+                    )),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildWalletBox(
+                      label: 'NFT',
+                      value: '12 Items',
+                      sublabel: 'Collection',
+                      icon: Icons.collections_rounded,
+                      color: const Color(0xFF8B5CF6),
+                      bg: const Color(0xFF0F0F1C),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage())),
+                    )),
+                  ],
+                ),
+              ),
 
-                  SizedBox(height: isSmallScreen ? 20 : 24),
+              const SizedBox(height: 20),
 
-                  // Watchlist Section (keeping dark theme)
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5),
-                    padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                    decoration: BoxDecoration(
-                      // Darker background to match image
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.05),
+              // ── Circular Nav Icons ───────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: hp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
+                    _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                    _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
+                    _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ── Action Buttons (Buy/Sell/Swap/Send/More) ─────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: hp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildActionButton(Icons.add, 'Buy', isSmallScreen,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyBtcPage()))),
+                    _buildActionButton(Icons.trending_down, 'Sell', isSmallScreen,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellBtcPage()))),
+                    _buildActionButton(Icons.swap_horiz, 'Swap', isSmallScreen,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                    _buildActionButton(Icons.send, 'Send', isSmallScreen,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendCryptoPage()))),
+                    _buildActionButton(Icons.more_horiz, 'More', isSmallScreen,
+                        onTap: () => MoreOptionsModal.show(context)),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // ── Top Movers ───────────────────────────────────────────────
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D0D1A),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Top Movers',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17)),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      height: 200,
+                      child: PageView.builder(
+                        controller: PageController(viewportFraction: 0.72),
+                        itemCount: _coins.length,
+                        itemBuilder: (context, index) {
+                          final coin = _coins[index];
+                          return GestureDetector(
+                            onTap: () => _showCoinDetail(context, coin),
+                            child: _buildCoinCard(coin),
+                          );
+                        },
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Watchlist',
-                          style: TextStyles.titleMedium.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: isSmallScreen ? 16 : 18,
-                          ),
-                        ),
-                        SizedBox(height: isSmallScreen ? 12 : 16),
-
-                        ..._watchlist.map(
-                          (asset) => _buildWatchlistItem(asset, isSmallScreen),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 120),
-                ],
+                  ],
+                ),
               ),
-            ),
+
+              const SizedBox(height: 24),
+
+              // ── Watchlist ─────────────────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: hp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Watchlist',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 17)),
+                    const SizedBox(height: 14),
+                    ..._watchlist.map((asset) => _buildWatchlistItem(asset, isSmallScreen)),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 120),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _sectionPill(
-    BuildContext context,
-    IconData icon,
-    String label,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 15, color: Colors.grey[700]),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -962,6 +734,78 @@ class _BlockHubPageState extends State<BlockHubPage> {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWalletBox({
+    required String label,
+    required String value,
+    required String sublabel,
+    required IconData icon,
+    required Color color,
+    required Color bg,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 36, height: 36,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 18),
+                ),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: 0.25), size: 12),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(value,
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 3),
+            Text(sublabel,
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+            const SizedBox(height: 6),
+            Text(label,
+                style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCircleNav(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 52, height: 52,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1A2E),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 22),
+          ),
+          const SizedBox(height: 6),
+          Text(label,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 10, fontWeight: FontWeight.w500)),
         ],
       ),
     );

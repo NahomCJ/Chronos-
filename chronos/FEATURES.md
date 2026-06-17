@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-15
+Last updated: 2026-06-17
 
 ---
 
@@ -323,6 +323,18 @@ Path: `lib/features/profile/`
 | Change Password | `/profile/change-password` | `change_password_page.dart` | [LIVE] |
 | Notification Settings | `/profile/notifications` | `notification_settings_page.dart` | [LIVE] |
 | Theme Settings | — | `theme_settings_page.dart` | [LIVE] |
+
+---
+
+## History Feature
+
+Path: `lib/features/history/`
+
+| Screen | Route | File | Status |
+|--------|-------|------|--------|
+| History | `/history` | `history_page.dart` | [STUB] — sample data only; real data from `/api/transactions` not yet wired |
+
+Accessible via the history icon (top-right of home hero section, replaces bell icon).
 
 ---
 
