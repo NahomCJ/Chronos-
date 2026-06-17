@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
 
@@ -108,7 +109,7 @@ class _TopGainersPageState extends State<TopGainersPage> {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
           ),
 
           SafeArea(

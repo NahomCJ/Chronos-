@@ -68,10 +68,15 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             children: [
               // ── Full background ───────────────────────────────────────────
               Positioned.fill(
-                child: Image.asset('assets/tickpay/background.png', fit: BoxFit.cover),
-              ),
-              Positioned.fill(
-                child: Container(color: Colors.black.withValues(alpha: 0.35)),
+                child: Stack(fit: StackFit.expand, children: [
+                  CachedNetworkImage(
+                    imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(color: const Color(0xFF0A1628)),
+                    errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628)),
+                  ),
+                  Container(color: Colors.black.withValues(alpha: 0.52)),
+                ]),
               ),
               // ── Content (fully scrollable) ────────────────────────────
               SafeArea(
@@ -304,13 +309,13 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
           clipBehavior: Clip.hardEdge,
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.11),
+            color: Colors.black.withValues(alpha: 0.38),
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25), width: 1.2),
+                color: Colors.white.withValues(alpha: 0.22), width: 1.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
+                color: Colors.black.withValues(alpha: 0.40),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
@@ -503,13 +508,13 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                   height: 50,
                   decoration: BoxDecoration(
                     color: isAi
-                        ? const Color(0xFF14B8A6).withValues(alpha: 0.2)
-                        : Colors.white.withValues(alpha: 0.12),
+                        ? const Color(0xFF14B8A6).withValues(alpha: 0.30)
+                        : Colors.black.withValues(alpha: 0.30),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isAi
-                          ? const Color(0xFF14B8A6).withValues(alpha: 0.5)
-                          : Colors.white.withValues(alpha: 0.2),
+                          ? const Color(0xFF14B8A6).withValues(alpha: 0.6)
+                          : Colors.white.withValues(alpha: 0.30),
                       width: isAi ? 1.2 : 0.8,
                     ),
                   ),
@@ -595,7 +600,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               const Text(
                 'Active Plans',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -603,10 +608,10 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               GestureDetector(
                 onTap: () =>
                     context.push(RouteConstants.tickpayActivePlans.toPath),
-                child: Text(
+                child: const Text(
                   'View All',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.55),
+                    color: Color(0xFF555555),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

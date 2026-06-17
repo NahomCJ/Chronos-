@@ -51,12 +51,13 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             ),
             // ── Dark section: filters + content ───────────────────────────
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.black,
                 image: DecorationImage(
-                  image: AssetImage('assets/background.png'),
+                  image: const NetworkImage('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900'),
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
+                  colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.58), BlendMode.darken),
                 ),
               ),
               child: Padding(
