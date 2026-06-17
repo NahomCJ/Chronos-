@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -45,7 +46,7 @@ class _HomeViewState extends State<_HomeView> {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final summary = state is HomeLoaded ? state.summary : null;
-        final balance = summary?.accountBalance ?? 8324.30;
+        final balance = summary?.accountBalance ?? 24332.34;
         final transactions = summary?.recentTransactions ?? [];
 
         return Scaffold(
@@ -101,16 +102,38 @@ class _HomeViewState extends State<_HomeView> {
 
     return Stack(
       children: [
-        Container(
-          height: heroHeight,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/background.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
+        ClipRRect(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
+          child: SizedBox(
+            height: heroHeight,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CachedNetworkImage(
+                  imageUrl:
+                      'https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=900',
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) =>
+                      Container(color: const Color(0xFF1A0A3E)),
+                  errorWidget: (_, __, ___) =>
+                      Container(color: const Color(0xFF1A0A3E)),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF1A0A3E).withValues(alpha: 0.55),
+                        const Color(0xFF0A0A2E).withValues(alpha: 0.65),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

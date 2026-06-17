@@ -17,8 +17,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   bool _appleHealthConnected = false;
   bool _googleFitConnected = false;
 
-  static const _bg = Color(0xFFF5F6FA);
-  static const _card = Colors.white;
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
   static const _teal = Color(0xFF14B8A6);
   static const _tealDark = Color(0xFF0F766E);
 

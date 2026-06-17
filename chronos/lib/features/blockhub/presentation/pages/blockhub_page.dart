@@ -173,24 +173,105 @@ class _BlockHubPageState extends State<BlockHubPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // ── Header ──────────────────────────────────────────────────
-              Padding(
-                padding: EdgeInsets.fromLTRB(hp, 16, hp, 0),
-                child: Row(
-                  children: [
-                    const Text('BlockHub',
-                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
-                    const Spacer(),
-                    Container(
-                      width: 36, height: 36,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+              // ── Hero Banner ─────────────────────────────────────────────
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(28),
+                  bottomRight: Radius.circular(28),
+                ),
+                child: SizedBox(
+                  height: 180,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl:
+                            'https://images.pexels.com/photos/7567598/pexels-photo-7567598.jpeg?auto=compress&cs=tinysrgb&w=900',
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) =>
+                            Container(color: const Color(0xFF1A0A3E)),
+                        errorWidget: (_, __, ___) =>
+                            Container(color: const Color(0xFF1A0A3E)),
                       ),
-                      child: const Icon(Icons.search_rounded, color: Colors.white, size: 18),
-                    ),
-                  ],
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.35),
+                              const Color(0xFF0A0A12).withValues(alpha: 0.90),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(hp, 14, hp, 18),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text('BlockHub',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w800)),
+                                  const Spacer(),
+                                  Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.12),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white.withValues(alpha: 0.2)),
+                                    ),
+                                    child: const Icon(Icons.search_rounded,
+                                        color: Colors.white, size: 18),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.18),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: const Color(0xFFF59E0B).withValues(alpha: 0.45)),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.currency_bitcoin,
+                                        color: Color(0xFFF59E0B), size: 12),
+                                    SizedBox(width: 5),
+                                    Text('CRYPTO & NFT MARKETPLACE',
+                                        style: TextStyle(
+                                            color: Color(0xFFF59E0B),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 0.8)),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text('Your Digital\nAsset Hub',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.1)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

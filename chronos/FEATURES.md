@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-17
+Last updated: 2026-06-17 (updated: home balance, Pexels photos, LifeX orb colors, health dark bg, social invite)
 
 ---
 
@@ -68,6 +68,8 @@ Path: `lib/features/auth/`
 - JWT stored via `token_storage_service.dart`
 - Phone OTP via backend `/api/v1/auth/phone`
 - Home tile grid: Wallet, Transfer, Exchange, BlockHub, Panther AI, TickPay, LifeX, Find ATM
+- Hero background: Pexels photo 3943716 (sharp city/financial) via `CachedNetworkImageProvider` — replaced previous blurry purple `assets/background.png`
+- Default fallback balance: **$24,332.34** (updated from $8,324.30); live data from `/api/home/summary`
 
 ---
 
@@ -138,7 +140,7 @@ Path: `lib/features/blockhub/`
 
 | Screen | Route | File | Status |
 |--------|-------|------|--------|
-| BlockHub Home | `/blockhub` | `blockhub_page.dart` | [LIVE] |
+| BlockHub Home | `/blockhub` | `blockhub_page.dart` | [LIVE] | Pexels hero banner (photo 7567598) at top; crypto/NFT sub-tiles below |
 | Bitcoin Detail | — | `bitcoin_detail_page.dart` | [LIVE] |
 | Ethereum Detail | `/ethereum-detail` | `ethereum_detail_page.dart` | [LIVE] |
 | Markets | — | `markets_page.dart` | [LIVE] |
@@ -287,7 +289,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 
 | Screen | Route | File | Status |
 |--------|-------|------|--------|
-| LifeX Dashboard | `/lifex` | `lifex_page.dart` | [LIVE] |
+| LifeX Dashboard | `/lifex` | `lifex_page.dart` | [LIVE] | Domain orbs: consistent grey/white styling (icons white, rings grey) — replaces rainbow per-module colors |
 | LifeX Onboarding | `/lifex/onboarding` | `lifex_onboarding_page.dart` | [LIVE] |
 | Feed | `/lifex/feed` | `lifex_feed_page.dart` | [LIVE] |
 | AI Insights | `/lifex/ai-insights` | `lifex_ai_insights_page.dart` | [LIVE] |
@@ -297,7 +299,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 
 | Area | Route | File | Status | Icon |
 |------|-------|------|--------|------|
-| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` |
+| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` — dark bg `#0D0D22`, dark cards `#0F0F1C` (fixed white-on-white text bug) |
 | Education | `/lifex/education` | `lifex_education_page.dart` | [LIVE] | `menu_book_rounded` |
 | Spiritual | `/lifex/spiritual` | `lifex_spiritual_page.dart` | [LIVE] | `spa_rounded` — nature imagery only |
 | Finance | `/lifex/finance` | `lifex_finance_page.dart` | [LIVE] | `account_balance_wallet_rounded` |
@@ -305,7 +307,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 | Vision | `/lifex/vision` | `lifex_vision_page.dart` | [LIVE] | `rocket_launch_rounded` |
 | Family | `/lifex/family` | `lifex_family_page.dart` | [LIVE] | (family icon) |
 | Relationship | `/lifex/relationship` | `lifex_relationship_page.dart` | [LIVE] | `handshake_rounded` |
-| Social | `/lifex/social` | `lifex_social_page.dart` | [LIVE] | `people_rounded` |
+| Social | `/lifex/social` | `lifex_social_page.dart` | [LIVE] | `people_rounded` — Invite button opens friend-search bottom sheet with avatar list + invite toggle |
 
 **Content notes for Spiritual page:**
 - Meditation images use Pexels nature photos only (no yoga)
@@ -416,3 +418,8 @@ Accessible via the history icon (top-right of home hero section, replaces bell i
 | Panther dashboard intelligence grid | Done | Replaced horizontal scroll ListView with 2-column GridView — all 8 tiles visible at once |
 | Voice mode in Panther chat | Done | ChatGPT-style full-screen orb voice mode added to `panther_ai_chat_page.dart` |
 | CLAUDE.md Panther card token | Low | `chronos/CLAUDE.md` still documents `#0F0F1C` as Panther card color — update if CLAUDE.md is edited |
+| Health page white text on white bg | **Done** | Fixed: changed `_bg` from `#F5F6FA` to `#0D0D22`, `_card` from `Colors.white` to `#0F0F1C` |
+| LifeX domain orbs rainbow colors | **Done** | Fixed: all orb icons now white, rings use consistent grey instead of per-module color |
+| Social Invite button no-op | **Done** | Fixed: shows bottom sheet with searchable friend list and invite-toggle per friend |
+| Home blurry purple background | **Done** | Fixed: replaced `assets/background.png` with sharp Pexels photo via `CachedNetworkImageProvider` |
+| BlockHub no hero photo | **Done** | Fixed: added Pexels hero banner at top with gradient overlay and title |

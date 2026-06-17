@@ -14,6 +14,20 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
   final Set<String> _joinedGroups = {};
+  final Set<String> _invitedFriends = {};
+
+  static const _friendSuggestions = [
+    _Friend('Marcus Webb', '@marcusw', 'Sports & Fitness',
+        'https://images.pexels.com/photos/3768911/pexels-photo-3768911.jpeg?auto=compress&cs=tinysrgb&w=100'),
+    _Friend('Aisha Cole', '@aishac', 'Food & Dining',
+        'https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=100'),
+    _Friend('Derek Kim', '@derekk', 'Outdoor & Nature',
+        'https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=100'),
+    _Friend('Sofia Reyes', '@sofiar', 'Arts & Culture',
+        'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100'),
+    _Friend('James Okonkwo', '@jameso', 'Gaming',
+        'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100'),
+  ];
 
   static const _bg = Color(0xFF0A0608);
   static const _card = Color(0xFF130910);
@@ -385,37 +399,224 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
       height: 36,
       color: Colors.white.withValues(alpha: 0.07));
 
+  void _showInviteFriendsSheet() {
+    String searchQuery = '';
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF130910),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) {
+          final filtered = _friendSuggestions
+              .where((f) =>
+                  searchQuery.isEmpty ||
+                  f.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                  f.handle.toLowerCase().contains(searchQuery.toLowerCase()))
+              .toList();
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const Text('Invite Friends',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text('Friends on Chronos can join your plans & split bills.',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 12)),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12)),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search by name or @handle',
+                      hintStyle: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          fontSize: 13),
+                      prefixIcon: Icon(Icons.search_rounded,
+                          color: Colors.white.withValues(alpha: 0.3), size: 18),
+                    ),
+                    onChanged: (v) => setSheetState(() => searchQuery = v),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                ...filtered.map((f) {
+                  final sent = _invitedFriends.contains(f.handle);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: f.avatarUrl,
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => Container(
+                                color: _red.withValues(alpha: 0.2),
+                                child: const Icon(Icons.person_rounded,
+                                    color: Colors.white54, size: 22)),
+                            errorWidget: (_, __, ___) => Container(
+                                color: _red.withValues(alpha: 0.2),
+                                child: const Icon(Icons.person_rounded,
+                                    color: Colors.white54, size: 22)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(f.name,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
+                              Text(f.handle,
+                                  style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.4),
+                                      fontSize: 11)),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (sent) {
+                                _invitedFriends.remove(f.handle);
+                              } else {
+                                _invitedFriends.add(f.handle);
+                              }
+                            });
+                            setSheetState(() {});
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: sent
+                                  ? _red.withValues(alpha: 0.12)
+                                  : _red,
+                              borderRadius: BorderRadius.circular(12),
+                              border: sent
+                                  ? Border.all(
+                                      color: _red.withValues(alpha: 0.4))
+                                  : null,
+                            ),
+                            child: Text(
+                              sent ? 'Invited ✓' : 'Invite',
+                              style: TextStyle(
+                                  color: sent ? _red : Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: _red.withValues(alpha: 0.3), width: 1),
+                      borderRadius: BorderRadius.circular(14),
+                      color: _red.withValues(alpha: 0.06),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.share_rounded, color: _red, size: 16),
+                        SizedBox(width: 8),
+                        Text('Share Invite Link',
+                            style: TextStyle(
+                                color: _red,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildQuickActions() {
-    const actions = [
-      ('Plan Event', Icons.event_rounded, Color(0xFFF59E0B)),
-      ('Split Bill', Icons.receipt_long_rounded, Color(0xFF10B981)),
-      ('Find Group', Icons.group_add_rounded, Color(0xFF3B82F6)),
-      ('Invite', Icons.person_add_rounded, _red),
+    final actions = [
+      ('Plan Event', Icons.event_rounded, const Color(0xFFF59E0B), null),
+      ('Split Bill', Icons.receipt_long_rounded, const Color(0xFF10B981), null),
+      ('Find Group', Icons.group_add_rounded, const Color(0xFF3B82F6), null),
+      ('Invite', Icons.person_add_rounded, _red, _showInviteFriendsSheet),
     ];
     return Row(
       children: actions.map((a) {
-        final (label, icon, color) = a;
+        final (label, icon, color, onTap) = a;
         return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(
-                right: a == actions.last ? 0 : 8),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(14),
-              border:
-                  Border.all(color: color.withValues(alpha: 0.22), width: 1),
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: EdgeInsets.only(
+                  right: a == actions.last ? 0 : 8),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(14),
+                border:
+                    Border.all(color: color.withValues(alpha: 0.22), width: 1),
+              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Icon(icon, color: color, size: 20),
+                const SizedBox(height: 6),
+                Text(label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: color.withValues(alpha: 0.9),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600)),
+              ]),
             ),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(height: 6),
-              Text(label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: color.withValues(alpha: 0.9),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600)),
-            ]),
           ),
         );
       }).toList(),
@@ -1111,4 +1312,12 @@ class _Activity {
   final Color color;
   final String time;
   const _Activity(this.name, this.action, this.icon, this.color, this.time);
+}
+
+class _Friend {
+  final String name;
+  final String handle;
+  final String interest;
+  final String avatarUrl;
+  const _Friend(this.name, this.handle, this.interest, this.avatarUrl);
 }
