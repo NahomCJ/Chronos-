@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-17 (updated: Chris AI full-app navigation actions, home balance auto-refresh, BlockHub hero icon contrast fix)
+Last updated: 2026-06-18 (updated: ChrisFAB redesign — dark amber orb FAB, text sheet with gradient border, Siri-like voice overlay; triple-open wake word bug fixed)
 
 ---
 
@@ -346,7 +346,7 @@ Accessible via the history icon (top-right of home hero section, replaces bell i
 |-----------|------|--------|-------|
 | Search Page | `lib/core/pages/search_page.dart` | [LIVE] | Neutral dark theme `#08080F`, white/subtle borders — no purple |
 | Bottom Nav Bar | `lib/core/widgets/` | [LIVE] | 5 tabs, persistent across shell routes |
-| ChrisFAB | `lib/core/widgets/` | [LIVE] | Floating AI button on LifeX pages |
+| ChrisFAB | `lib/core/widgets/chris_home_fab.dart` | [LIVE] | Dark amber orb FAB; tap → gradient-border text sheet with suggestion chips; "Hey Chris" → Siri-like voice overlay with pulsing orb (amber=listening, teal=thinking, indigo=speaking); triple-open wake word bug fixed via `_wakeWordTriggered` guard |
 | Chris Action Service | `lib/core/services/chris_action_service.dart` | [LIVE] | 8 transactional actions (exchange/transfer/balance/BNPL/deposit/buy-sell-send crypto) + 21 navigation intents covering every app page |
 | Pexels Service | `lib/core/services/pexels_service.dart` | [LIVE] | Fetches Pexels video/photo URLs |
 | Token Storage Service | `lib/features/auth/data/services/token_storage_service.dart` | [LIVE] | JWT persistence |
