@@ -7,8 +7,7 @@ import '../services/chris_action_service.dart';
 import 'voice_confirmation_sheet.dart';
 
 const _teal = Color(0xFF00D4B8);
-const _tealBright = Color(0xFF80FFE8);
-const _darkCard = Color(0xFF0D0D22);
+const _sheetBg = Color(0xFF0D0D22);
 
 // ── FAB ───────────────────────────────────────────────────────────────────────
 class ChrisHomeFab extends StatefulWidget {
@@ -33,7 +32,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     super.initState();
     _glowCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
     _glowAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut),
@@ -125,64 +124,37 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           builder: (_, __) {
             final pulse = _wakeActive ? _glowAnim.value : 0.0;
             return Container(
-              width: 62,
-              height: 62,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF062B25), Color(0xFF021510)],
-                ),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: _teal.withValues(alpha: _wakeActive ? 0.90 : 0.60),
-                  width: 1.5,
+                // Outer gradient ring
+                gradient: const SweepGradient(
+                  colors: [
+                    Color(0xFFCCFFF8), // light teal / near white
+                    Color(0xFF00D4B8), // teal
+                    Color(0xFF005A4E), // dark teal
+                    Color(0xFF021510), // near black
+                    Color(0xFF08080F), // black
+                    Color(0xFFCCFFF8), // close the loop
+                  ],
+                  stops: [0.0, 0.18, 0.45, 0.72, 0.88, 1.0],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: _teal.withValues(alpha: 0.40 + 0.38 * pulse),
-                    blurRadius: 22.0 + 18.0 * pulse,
-                    spreadRadius: 1.0 + 7.0 * pulse,
-                    offset: const Offset(0, 4),
-                  ),
-                  BoxShadow(
-                    color: _teal.withValues(alpha: 0.12 + 0.10 * pulse),
-                    blurRadius: 44,
-                    spreadRadius: 10.0 + 6.0 * pulse,
+                    color: _teal.withValues(alpha: 0.22 + 0.38 * pulse),
+                    blurRadius: 12.0 + 20.0 * pulse,
+                    spreadRadius: 0.0 + 6.0 * pulse,
                   ),
                 ],
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ShaderMask(
-                    shaderCallback: (b) => const LinearGradient(
-                      colors: [_teal, _tealBright],
-                    ).createShader(b),
-                    child: const Text(
-                      'C',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
-                    ),
-                  ),
-                  if (_wakeActive)
-                    Positioned(
-                      bottom: 6,
-                      right: 6,
-                      child: Container(
-                        width: 9,
-                        height: 9,
-                        decoration: const BoxDecoration(
-                          color: _teal,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                ],
+              // Inner dark circle — creates the ring cutout
+              child: Container(
+                margin: const EdgeInsets.all(3.0),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF08080F),
+                ),
               ),
             );
           },
@@ -192,7 +164,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   }
 }
 
-// ── Chris Sheet ───────────────────────────────────────────────────────────────
+// ── Chris Chat Sheet ──────────────────────────────────────────────────────────
 class _ChrisSheet extends StatefulWidget {
   final BuildContext parentContext;
   const _ChrisSheet({required this.parentContext});
@@ -203,32 +175,29 @@ class _ChrisSheet extends StatefulWidget {
 
 class _ChrisSheetState extends State<_ChrisSheet> {
   final _ctrl = TextEditingController();
+  final _focusNode = FocusNode();
   final _speech = stt.SpeechToText();
   bool _voiceActive = false;
+  bool _hasText = false;
 
-  static const _services = [
-    (Icons.arrow_upward_rounded, 'Transfer', RouteConstants.transfer),
-    (Icons.add_rounded, 'Add Money', RouteConstants.addMoney),
-    (Icons.swap_horiz_rounded, 'Exchange', RouteConstants.exchange),
-    (Icons.wallet_rounded, 'Wallet', RouteConstants.wallet),
-    (Icons.confirmation_number_rounded, 'TickPay', RouteConstants.tickpayDashboard),
-    (Icons.hub_outlined, 'BlockHub', RouteConstants.blockHub),
-    (Icons.pie_chart_outline_rounded, 'Portfolio', RouteConstants.blockHub),
-    (Icons.candlestick_chart_outlined, 'Markets', RouteConstants.blockHub),
-    (Icons.psychology_outlined, 'Panther AI', RouteConstants.pantherAi),
-    (Icons.send_rounded, 'Send Money', RouteConstants.transfer),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _ctrl.addListener(() {
+      final has = _ctrl.text.trim().isNotEmpty;
+      if (has != _hasText) setState(() => _hasText = has);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
 
   @override
   void dispose() {
     _ctrl.dispose();
+    _focusNode.dispose();
     _speech.stop();
     super.dispose();
-  }
-
-  void _navigate(RouteConstants route) {
-    Navigator.pop(context);
-    widget.parentContext.push(route.toPath);
   }
 
   Future<void> _toggleVoice() async {
@@ -239,13 +208,17 @@ class _ChrisSheetState extends State<_ChrisSheet> {
     }
     final available = await _speech.initialize();
     if (!available) return;
-    setState(() => _voiceActive = true);
+    setState(() {
+      _voiceActive = true;
+      _ctrl.clear();
+    });
     await _speech.listen(
       onResult: (r) {
         setState(() => _ctrl.text = r.recognizedWords);
-        if (r.finalResult) {
+        if (r.finalResult && r.recognizedWords.trim().isNotEmpty) {
           setState(() => _voiceActive = false);
           _speech.stop();
+          _send(null);
         }
       },
       listenOptions: stt.SpeechListenOptions(
@@ -281,263 +254,140 @@ class _ChrisSheetState extends State<_ChrisSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      decoration: BoxDecoration(
-        color: _darkCard,
-        border: Border(
-          top: BorderSide(color: _teal.withValues(alpha: 0.30), width: 1),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      color: _sheetBg,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF062B25), Color(0xFF021510)],
-                  ),
-                  border: Border.all(
-                    color: _teal.withValues(alpha: 0.60),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _teal.withValues(alpha: 0.25),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: ShaderMask(
-                    shaderCallback: (b) => const LinearGradient(
-                      colors: [_teal, _tealBright],
-                    ).createShader(b),
-                    child: const Text(
-                      'C',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Chris',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    'Your Chronos AI assistant',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.38),
-                      fontSize: 11.5,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.10),
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.close_rounded,
-                    color: Colors.white.withValues(alpha: 0.40),
-                    size: 15,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 10,
-              childAspectRatio: 0.82,
-            ),
-            itemCount: _services.length,
-            itemBuilder: (_, i) {
-              final (icon, label, route) = _services[i];
-              return GestureDetector(
-                onTap: () => _navigate(route),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _teal.withValues(alpha: 0.10),
-                        border: Border.all(
-                          color: _teal.withValues(alpha: 0.30),
+          // Voice listening indicator
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: _voiceActive ? 48 : 0,
+            child: _voiceActive
+                ? Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _teal,
+                          ),
                         ),
-                      ),
-                      child: Icon(icon, color: _teal, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Listening…',
+                          style: TextStyle(
+                            color: _teal.withValues(alpha: 0.85),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.70),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+                  )
+                : const SizedBox.shrink(),
+          ),
+          // Input row
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    constraints: const BoxConstraints(minHeight: 48),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF131325),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: _voiceActive
+                            ? _teal.withValues(alpha: 0.55)
+                            : Colors.white.withValues(alpha: 0.09),
                       ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
+                    child: TextField(
+                      controller: _ctrl,
+                      focusNode: _focusNode,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          height: 1.4),
+                      decoration: InputDecoration(
+                        hintText: _voiceActive
+                            ? 'Speak now…'
+                            : 'Message Chris…',
+                        hintStyle: TextStyle(
+                          color: _voiceActive
+                              ? _teal.withValues(alpha: 0.60)
+                              : Colors.white.withValues(alpha: 0.28),
+                          fontSize: 15,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 13),
+                      ),
+                      maxLines: 5,
+                      minLines: 1,
+                      onSubmitted: (_) => _send(null),
+                    ),
+                  ),
                 ),
-              );
-            },
+                const SizedBox(width: 8),
+                // Mic → Send toggle
+                GestureDetector(
+                  onTap: _hasText ? () => _send(null) : _toggleVoice,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _hasText
+                          ? _teal
+                          : (_voiceActive
+                              ? _teal.withValues(alpha: 0.18)
+                              : const Color(0xFF1A1A30)),
+                      border: _hasText
+                          ? null
+                          : Border.all(
+                              color: _voiceActive
+                                  ? _teal.withValues(alpha: 0.65)
+                                  : Colors.white.withValues(alpha: 0.12),
+                            ),
+                      boxShadow: _hasText
+                          ? [
+                              BoxShadow(
+                                color: _teal.withValues(alpha: 0.35),
+                                blurRadius: 12,
+                                spreadRadius: 1,
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: Icon(
+                      _hasText
+                          ? Icons.arrow_upward_rounded
+                          : (_voiceActive
+                              ? Icons.mic_rounded
+                              : Icons.mic_none_rounded),
+                      color: _hasText
+                          ? Colors.white
+                          : (_voiceActive
+                              ? _teal
+                              : Colors.white.withValues(alpha: 0.45)),
+                      size: 22,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          _TealInput(
-            controller: _ctrl,
-            voiceActive: _voiceActive,
-            onVoiceTap: _toggleVoice,
-            onSend: _send,
-          ),
-          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 28),
+          SizedBox(height: bottom + 8),
         ],
-      ),
-    );
-  }
-}
-
-// ── Teal input bar ────────────────────────────────────────────────────────────
-class _TealInput extends StatelessWidget {
-  final TextEditingController controller;
-  final bool voiceActive;
-  final VoidCallback onVoiceTap;
-  final void Function(String?) onSend;
-
-  const _TealInput({
-    required this.controller,
-    required this.voiceActive,
-    required this.onVoiceTap,
-    required this.onSend,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white.withValues(alpha: 0.06),
-            _teal.withValues(alpha: 0.22),
-          ],
-        ),
-      ),
-      padding: const EdgeInsets.all(1.5),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.5),
-          color: const Color(0xFF0A0A1A),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                style: const TextStyle(color: Colors.white, fontSize: 14.5),
-                decoration: InputDecoration(
-                  hintText:
-                      voiceActive ? 'Listening…' : 'Ask Chris anything…',
-                  hintStyle: TextStyle(
-                    color: voiceActive
-                        ? _teal.withValues(alpha: 0.7)
-                        : Colors.white.withValues(alpha: 0.28),
-                    fontSize: 14,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
-                ),
-                onSubmitted: (_) => onSend(null),
-              ),
-            ),
-            GestureDetector(
-              onTap: onVoiceTap,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                margin: const EdgeInsets.only(right: 6, top: 6, bottom: 6),
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: voiceActive
-                      ? _teal.withValues(alpha: 0.18)
-                      : Colors.white.withValues(alpha: 0.06),
-                  border: Border.all(
-                    color: voiceActive
-                        ? _teal.withValues(alpha: 0.70)
-                        : Colors.white.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Icon(
-                  voiceActive ? Icons.mic_rounded : Icons.mic_none_rounded,
-                  color: voiceActive
-                      ? _teal
-                      : Colors.white.withValues(alpha: 0.45),
-                  size: 17,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => onSend(null),
-              child: Container(
-                margin: const EdgeInsets.only(right: 8, top: 6, bottom: 6),
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [_tealBright, _teal],
-                  ),
-                ),
-                child: const Icon(Icons.arrow_upward_rounded,
-                    color: Colors.white, size: 17),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
