@@ -6,6 +6,7 @@ import '../network/api_client.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 enum ChrisActionType {
+  // Transactional
   exchange,
   transfer,
   checkBalance,
@@ -14,10 +15,59 @@ enum ChrisActionType {
   buyCrypto,
   sellCrypto,
   sendCrypto,
-  // Navigation intents
+
+  // Core navigation
   navigateHome,
+  navigateWallet,
+  navigateHistory,
+  navigateExchange,
+  navigateTransfer,
+  navigateAddMoney,
+  navigateBankTransfer,
+  navigateFindAtm,
+  navigateProfile,
+  navigateChangePassword,
+  navigateNotifications,
+
+  // BlockHub navigation
   navigateBlockHub,
+  navigateBlockHubMarkets,
+  navigateBlockHubNft,
+  navigateBlockHubPortfolio,
+
+  // TickPay navigation
   navigateTickPay,
+  navigateTickpayDiscover,
+  navigateTickpaySearch,
+  navigateTickpayAiPicks,
+  navigateTickpayOrderHistory,
+  navigateTickpayUpcomingPayments,
+  navigateTickpayRepayNow,
+  navigateTickpayPaymentHistory,
+  navigateTickpayRewards,
+  navigateTickpayCreditOverview,
+  navigateTickpayAlerts,
+  navigateTickpayAutoPay,
+  navigateTickpayAiShop,
+  navigateTickpayActivePlans,
+  navigateTickpayAi,
+
+  // Panther AI navigation
+  navigatePantherAi,
+  navigatePantherTax,
+  navigatePantherBills,
+  navigatePantherLiabilities,
+  navigatePantherBudget,
+  navigatePantherNetWorth,
+  navigatePantherMarket,
+  navigatePantherPortfolio,
+  navigatePantherAffordability,
+  navigatePantherPaymentPlan,
+  navigatePantherProductDiscovery,
+  navigatePantherTrading,
+  navigatePantherSettings,
+
+  // LifeX navigation
   navigateLifex,
   navigateLifexHealth,
   navigateLifexFinance,
@@ -26,16 +76,12 @@ enum ChrisActionType {
   navigateLifexSpiritual,
   navigateLifexVision,
   navigateLifexFamily,
+  navigateLifexRelationship,
   navigateLifexSocial,
   navigateLifexFeed,
   navigateLifexAiInsights,
-  navigatePantherAi,
-  navigateWallet,
-  navigateProfile,
-  navigateHistory,
-  navigateExchange,
-  navigateTransfer,
-  navigateAddMoney,
+  navigateLifexExport,
+
   unknown,
 }
 
@@ -194,13 +240,101 @@ class ChrisActionService {
         return _sellCryptoPlan(intent);
       case ChrisActionType.sendCrypto:
         return _sendCryptoPlan(intent);
-      // Navigation plans
+      // Core navigation
       case ChrisActionType.navigateHome:
         return _navPlan('Home', 'Going to your dashboard', '/home');
+      case ChrisActionType.navigateWallet:
+        return _navPlan('Wallet', 'Opening your wallet', '/wallet');
+      case ChrisActionType.navigateHistory:
+        return _navPlan('Transaction History', 'Showing all your transactions', '/history');
+      case ChrisActionType.navigateExchange:
+        return _navPlan('Currency Exchange', 'Opening the exchange screen', '/exchange');
+      case ChrisActionType.navigateTransfer:
+        return _navPlan('Send Money', 'Opening the transfer screen', '/transfer');
+      case ChrisActionType.navigateAddMoney:
+        return _navPlan('Add Money', 'Opening the deposit screen', '/add-money');
+      case ChrisActionType.navigateBankTransfer:
+        return _navPlan('Bank Transfer', 'Opening direct bank transfer', '/bank-transfer');
+      case ChrisActionType.navigateFindAtm:
+        return _navPlan('Find ATM', 'Finding nearby ATMs', '/find-atm');
+      case ChrisActionType.navigateProfile:
+        return _navPlan('Profile & Settings', 'Opening your profile', '/profile');
+      case ChrisActionType.navigateChangePassword:
+        return _navPlan('Change Password', 'Opening password settings', '/profile/change-password');
+      case ChrisActionType.navigateNotifications:
+        return _navPlan('Notification Settings', 'Opening notification preferences', '/profile/notifications');
+
+      // BlockHub navigation
       case ChrisActionType.navigateBlockHub:
         return _navPlan('BlockHub', 'Opening crypto & NFT marketplace', '/blockhub');
+      case ChrisActionType.navigateBlockHubMarkets:
+        return _navPlan('Crypto Markets', 'Opening live crypto market data', '/blockhub');
+      case ChrisActionType.navigateBlockHubNft:
+        return _navPlan('NFT Marketplace', 'Opening NFT collections & trading', '/blockhub');
+      case ChrisActionType.navigateBlockHubPortfolio:
+        return _navPlan('Crypto Portfolio', 'Opening your crypto portfolio', '/blockhub');
+
+      // TickPay navigation
       case ChrisActionType.navigateTickPay:
-        return _navPlan('TickPay', 'Opening your BNPL shopping hub', '/tickpay');
+        return _navPlan('TickPay', 'Opening your BNPL shopping hub', '/tickpay-dashboard');
+      case ChrisActionType.navigateTickpayDiscover:
+        return _navPlan('TickPay Discover', 'Browsing shops & merchants', '/tickpay/discover');
+      case ChrisActionType.navigateTickpaySearch:
+        return _navPlan('TickPay Search', 'Searching for products', '/tickpay/search');
+      case ChrisActionType.navigateTickpayAiPicks:
+        return _navPlan('AI Picks', 'Viewing your personalized AI product picks', '/tickpay/ai-picks');
+      case ChrisActionType.navigateTickpayOrderHistory:
+        return _navPlan('Order History', 'Viewing your past TickPay orders', '/tickpay/order-history');
+      case ChrisActionType.navigateTickpayUpcomingPayments:
+        return _navPlan('Upcoming Payments', 'Viewing your scheduled BNPL payments', '/tickpay/upcoming-payments');
+      case ChrisActionType.navigateTickpayRepayNow:
+        return _navPlan('Repay Now', 'Opening the BNPL repayment screen', '/tickpay/repay-now');
+      case ChrisActionType.navigateTickpayPaymentHistory:
+        return _navPlan('Payment History', 'Viewing your TickPay payment history', '/tickpay/payment-history');
+      case ChrisActionType.navigateTickpayRewards:
+        return _navPlan('TickPay Rewards', 'Viewing your rewards & cashback', '/tickpay-rewards');
+      case ChrisActionType.navigateTickpayCreditOverview:
+        return _navPlan('Credit Overview', 'Viewing your credit score & summary', '/tickpay-credit-overview');
+      case ChrisActionType.navigateTickpayAlerts:
+        return _navPlan('TickPay Alerts', 'Viewing payment alerts & reminders', '/tickpay/alerts');
+      case ChrisActionType.navigateTickpayAutoPay:
+        return _navPlan('Auto Pay', 'Managing automatic BNPL payments', '/tickpay/auto-pay');
+      case ChrisActionType.navigateTickpayAiShop:
+        return _navPlan('AI Shop', 'Opening the AI-powered shopping assistant', '/tickpay/ai-shop');
+      case ChrisActionType.navigateTickpayActivePlans:
+        return _navPlan('Active Plans', 'Viewing your active BNPL plans', '/tickpay-active-plans');
+      case ChrisActionType.navigateTickpayAi:
+        return _navPlan('TickPay AI', 'Opening TickPay AI financial advisor', '/tickpay-ai');
+
+      // Panther AI navigation
+      case ChrisActionType.navigatePantherAi:
+        return _navPlan('Panther AI', 'Opening financial intelligence hub', '/panther-ai');
+      case ChrisActionType.navigatePantherTax:
+        return _navPlan('Tax Intelligence', 'Opening your AI tax analysis', '/panther/tax');
+      case ChrisActionType.navigatePantherBills:
+        return _navPlan('Bills Management', 'Opening your bills & subscriptions', '/panther/bills');
+      case ChrisActionType.navigatePantherLiabilities:
+        return _navPlan('Liabilities', 'Opening your debt & liabilities overview', '/panther/liabilities');
+      case ChrisActionType.navigatePantherBudget:
+        return _navPlan('Budget Intelligence', 'Opening your AI budget analysis', '/panther/budget');
+      case ChrisActionType.navigatePantherNetWorth:
+        return _navPlan('Net Worth', 'Opening your net worth tracker', '/panther/net-worth');
+      case ChrisActionType.navigatePantherMarket:
+        return _navPlan('Market Intelligence', 'Opening live market insights', '/market-intelligence');
+      case ChrisActionType.navigatePantherPortfolio:
+        return _navPlan('Portfolio Analysis', 'Opening your full portfolio analysis', '/full-portfolio-analysis');
+      case ChrisActionType.navigatePantherAffordability:
+        return _navPlan('Affordability Check', 'Running an AI affordability analysis', '/affordability-check');
+      case ChrisActionType.navigatePantherPaymentPlan:
+        return _navPlan('Payment Plan', 'Viewing your AI-generated payment plan', '/payment-plan');
+      case ChrisActionType.navigatePantherProductDiscovery:
+        return _navPlan('Product Discovery', 'Opening AI product recommendations', '/product-discovery');
+      case ChrisActionType.navigatePantherTrading:
+        return _navPlan('Trading Assistant', 'Opening your AI trading assistant', '/trading-assistant');
+      case ChrisActionType.navigatePantherSettings:
+        return _navPlan('Panther Settings', 'Opening Panther AI settings', '/panther-ai-settings');
+
+      // LifeX navigation
       case ChrisActionType.navigateLifex:
         return _navPlan('LifeX', 'Opening your life coaching dashboard', '/lifex');
       case ChrisActionType.navigateLifexHealth:
@@ -217,26 +351,17 @@ class ChrisActionService {
         return _navPlan('LifeX Vision', 'Opening your vision board & goals', '/lifex/vision');
       case ChrisActionType.navigateLifexFamily:
         return _navPlan('LifeX Family', 'Opening family planning module', '/lifex/family');
+      case ChrisActionType.navigateLifexRelationship:
+        return _navPlan('LifeX Relationships', 'Opening your relationship & dating module', '/lifex/relationship');
       case ChrisActionType.navigateLifexSocial:
         return _navPlan('LifeX Social', 'Opening your social & network hub', '/lifex/social');
       case ChrisActionType.navigateLifexFeed:
         return _navPlan('LifeX Feed', 'Opening your community feed', '/lifex/feed');
       case ChrisActionType.navigateLifexAiInsights:
         return _navPlan('LifeX AI Insights', 'Opening AI-powered life insights', '/lifex/ai-insights');
-      case ChrisActionType.navigatePantherAi:
-        return _navPlan('Panther AI Chat', 'Connecting you with Panther AI', '/panther/ai-chat');
-      case ChrisActionType.navigateWallet:
-        return _navPlan('Wallet', 'Opening your wallet', '/wallet');
-      case ChrisActionType.navigateProfile:
-        return _navPlan('Profile & Settings', 'Opening your profile', '/profile');
-      case ChrisActionType.navigateHistory:
-        return _navPlan('Transaction History', 'Showing all your transactions', '/history');
-      case ChrisActionType.navigateExchange:
-        return _navPlan('Currency Exchange', 'Opening the exchange screen', '/exchange');
-      case ChrisActionType.navigateTransfer:
-        return _navPlan('Send Money', 'Opening the transfer screen', '/transfer');
-      case ChrisActionType.navigateAddMoney:
-        return _navPlan('Add Money', 'Opening the deposit screen', '/add-money');
+      case ChrisActionType.navigateLifexExport:
+        return _navPlan('Export Data', 'Opening your LifeX data export', '/lifex/export');
+
       case ChrisActionType.unknown:
         return null;
     }
@@ -789,15 +914,49 @@ class ChrisActionService {
   // ── Navigation intent parser ───────────────────────────────────────────────
 
   static ChrisActionType? _parseNavigationIntent(String msg) {
-    // Navigation trigger words
     final hasNavTrigger = RegExp(
-      r'\b(go to|open|show|take me to|navigate|launch|switch to|bring up|view|see)\b',
+      r'\b(go to|open|show|take me to|navigate|launch|switch to|bring up|view|see|check|find|i want|pull up)\b',
     ).hasMatch(msg);
     if (!hasNavTrigger && !RegExp(r'\b(home|dashboard)\b').hasMatch(msg)) {
       return null;
     }
 
-    // LifeX sub-pages (check before generic lifex)
+    // ── Panther AI sub-pages (check before generic panther) ──────────────────
+    if (RegExp(r'\b(tax|irs|deduction|filing|refund)\b').hasMatch(msg)) return ChrisActionType.navigatePantherTax;
+    if (RegExp(r'\b(bill|subscription|recurring charge)\b').hasMatch(msg)) return ChrisActionType.navigatePantherBills;
+    if (RegExp(r'\b(liabilit|debt overview|what i owe)\b').hasMatch(msg)) return ChrisActionType.navigatePantherLiabilities;
+    if (RegExp(r'\b(budget|spending limit|spending plan)\b').hasMatch(msg)) return ChrisActionType.navigatePantherBudget;
+    if (RegExp(r'\b(net worth|total wealth|assets? and liab)\b').hasMatch(msg)) return ChrisActionType.navigatePantherNetWorth;
+    if (RegExp(r'\b(market|stock market|market intel|market data)\b').hasMatch(msg)) return ChrisActionType.navigatePantherMarket;
+    if (RegExp(r'\b(portfolio analysis|full portfolio|portfolio report)\b').hasMatch(msg)) return ChrisActionType.navigatePantherPortfolio;
+    if (RegExp(r'\b(afford|can i buy|affordability)\b').hasMatch(msg)) return ChrisActionType.navigatePantherAffordability;
+    if (RegExp(r'\b(payment plan|pay off plan|repayment plan)\b').hasMatch(msg)) return ChrisActionType.navigatePantherPaymentPlan;
+    if (RegExp(r'\b(product discover|product suggest|recommend|what should i buy)\b').hasMatch(msg)) return ChrisActionType.navigatePantherProductDiscovery;
+    if (RegExp(r'\b(trading assistant|trade help|trading advice)\b').hasMatch(msg)) return ChrisActionType.navigatePantherTrading;
+    if (RegExp(r'\b(panther setting|ai setting)\b').hasMatch(msg)) return ChrisActionType.navigatePantherSettings;
+
+    // ── TickPay sub-pages (check before generic tickpay) ─────────────────────
+    if (RegExp(r'\b(ai pick|recommended product|ai shop pick)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayAiPicks;
+    if (RegExp(r'\b(ai shop|shop with ai|smart shop)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayAiShop;
+    if (RegExp(r'\b(order history|past order|my order)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayOrderHistory;
+    if (RegExp(r'\b(upcoming payment|scheduled payment|next payment)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayUpcomingPayments;
+    if (RegExp(r'\b(repay|pay off|pay back|repay now)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayRepayNow;
+    if (RegExp(r'\b(payment history|paid payment|past payment)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayPaymentHistory;
+    if (RegExp(r'\b(reward|cashback|point)\b').hasMatch(msg) && _hasTickpayContext(msg)) return ChrisActionType.navigateTickpayRewards;
+    if (RegExp(r'\b(credit score|credit overview|credit summary|my credit)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayCreditOverview;
+    if (RegExp(r'\b(alert|reminder|payment alert)\b').hasMatch(msg) && _hasTickpayContext(msg)) return ChrisActionType.navigateTickpayAlerts;
+    if (RegExp(r'\b(auto pay|automatic payment|autopay)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayAutoPay;
+    if (RegExp(r'\b(active plan|current plan|my plan|bnpl plan)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayActivePlans;
+    if (RegExp(r'\b(tickpay ai|bnpl ai|tickpay advisor)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayAi;
+    if (RegExp(r'\b(discover|browse shop|explore store)\b').hasMatch(msg)) return ChrisActionType.navigateTickpayDiscover;
+    if (RegExp(r'\b(search product|find product|search shop)\b').hasMatch(msg)) return ChrisActionType.navigateTickpaySearch;
+
+    // ── BlockHub sub-pages ────────────────────────────────────────────────────
+    if (RegExp(r'\b(nft|non.fungible|digital art|nft market)\b').hasMatch(msg)) return ChrisActionType.navigateBlockHubNft;
+    if (RegExp(r'\b(crypto market|market cap|coin price|top gainer|top loser|trending coin)\b').hasMatch(msg)) return ChrisActionType.navigateBlockHubMarkets;
+    if (RegExp(r'\b(crypto portfolio|my crypto|crypto holding)\b').hasMatch(msg)) return ChrisActionType.navigateBlockHubPortfolio;
+
+    // ── LifeX sub-pages (check before generic lifex) ─────────────────────────
     if (RegExp(r'\b(health|wellness|fitness)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexHealth;
     if (RegExp(r'\b(finance|money goal|financial wellness)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFinance;
     if (RegExp(r'\b(activity|steps|workout|exercise)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexActivity;
@@ -805,16 +964,26 @@ class ChrisActionService {
     if (RegExp(r'\b(spiritual|mindful|meditat|reflect)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexSpiritual;
     if (RegExp(r'\b(vision|goal|dream|vision board)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexVision;
     if (RegExp(r'\b(family|parenting|kid)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFamily;
+    if (RegExp(r'\b(relationship|dating|partner|romance)\b').hasMatch(msg)) return ChrisActionType.navigateLifexRelationship;
     if (RegExp(r'\b(social|network|friend|community)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexSocial;
     if (RegExp(r'\b(feed|post|news)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexFeed;
     if (RegExp(r'\b(ai insight|life insight|coaching insight)\b').hasMatch(msg)) return ChrisActionType.navigateLifexAiInsights;
+    if (RegExp(r'\b(export|download data|export data|my data)\b').hasMatch(msg) && _hasLifexContext(msg)) return ChrisActionType.navigateLifexExport;
 
-    // Feature pages
+    // ── Profile sub-pages ─────────────────────────────────────────────────────
+    if (RegExp(r'\b(change password|update password|reset my password|new password)\b').hasMatch(msg)) return ChrisActionType.navigateChangePassword;
+    if (RegExp(r'\b(notification|alert setting|push notification)\b').hasMatch(msg)) return ChrisActionType.navigateNotifications;
+
+    // ── Wallet actions ────────────────────────────────────────────────────────
+    if (RegExp(r'\b(atm|find atm|nearest atm|cash machine|withdraw cash)\b').hasMatch(msg)) return ChrisActionType.navigateFindAtm;
+    if (RegExp(r'\b(bank transfer|wire transfer|ach|direct deposit)\b').hasMatch(msg)) return ChrisActionType.navigateBankTransfer;
+
+    // ── Top-level feature pages ───────────────────────────────────────────────
     if (RegExp(r'\b(lifex|life x|life coaching|coaching|life hub)\b').hasMatch(msg)) return ChrisActionType.navigateLifex;
     if (RegExp(r'\b(blockhub|block hub|crypto|nft|bitcoin|ethereum)\b').hasMatch(msg)) return ChrisActionType.navigateBlockHub;
     if (RegExp(r'\b(tickpay|tick pay|bnpl|shopping|buy now pay|installment)\b').hasMatch(msg)) return ChrisActionType.navigateTickPay;
-    if (RegExp(r'\b(panther|ai chat|chris chat|ai advisor|financial ai)\b').hasMatch(msg)) return ChrisActionType.navigatePantherAi;
-    if (RegExp(r'\b(wallet|my wallet)\b').hasMatch(msg)) return ChrisActionType.navigateWallet;
+    if (RegExp(r'\b(panther|ai chat|chris chat|ai advisor|financial ai|panther ai)\b').hasMatch(msg)) return ChrisActionType.navigatePantherAi;
+    if (RegExp(r'\b(wallet|my wallet|card)\b').hasMatch(msg)) return ChrisActionType.navigateWallet;
     if (RegExp(r'\b(profile|settings|account settings|my account)\b').hasMatch(msg)) return ChrisActionType.navigateProfile;
     if (RegExp(r'\b(history|transaction history|past transaction|all transaction)\b').hasMatch(msg)) return ChrisActionType.navigateHistory;
     if (RegExp(r'\b(exchange|fx|foreign exchange|currency)\b').hasMatch(msg)) return ChrisActionType.navigateExchange;
@@ -827,7 +996,11 @@ class ChrisActionService {
 
   static bool _hasLifexContext(String msg) =>
       RegExp(r'\b(lifex|life x|life coaching|coaching|life hub|my)\b').hasMatch(msg) ||
-      !RegExp(r'\b(go to|open|show)\b').hasMatch(msg); // standalone mentions without nav verb still count
+      !RegExp(r'\b(go to|open|show)\b').hasMatch(msg);
+
+  static bool _hasTickpayContext(String msg) =>
+      RegExp(r'\b(tickpay|tick pay|bnpl|installment|buy now)\b').hasMatch(msg) ||
+      !RegExp(r'\b(go to|open|show)\b').hasMatch(msg);
 
   static const _currencyKeywords = {
     'usd': 'USD', 'dollar': 'USD', 'dollars': 'USD', 'us dollar': 'USD',
