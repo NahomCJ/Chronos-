@@ -1,7 +1,7 @@
 {
   "outputDirectory": "chronos/build/web",
   "framework": null,
-  "buildCommand": "bash build.sh",
+  "buildCommand": "npm install && bash build.sh",
   "installCommand": "echo 'Flutter install handled in build.sh'",
   "headers": [
     {
