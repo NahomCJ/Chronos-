@@ -24,15 +24,16 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
           channel: 'stable'
           cache: true
 
+      - name: Install dependencies
+        working-directory: chronos
+        run: flutter pub get
+
       - name: Build Flutter web
-        run: |
-          cd chronos
-          flutter pub get
-          flutter build web --release
+        working-directory: chronos
+        run: flutter build web --release --no-tree-shake-icons
 
       - name: Commit web build
         run: |
@@ -42,6 +43,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to web build — skipping commit"
           else
-            git commit -m "build: auto-rebuild Flutter web for Vercel"
+            git commit -m "build: auto-rebuild Flutter web for Vercel [skip ci]"
             git push origin HEAD
           fi
