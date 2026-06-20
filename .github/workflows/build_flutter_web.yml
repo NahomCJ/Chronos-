@@ -9,6 +9,7 @@ on:
       - 'chronos/pubspec.lock'
       - 'chronos/web/**'
       - 'chronos/assets/**'
+      - '.github/workflows/build_flutter_web.yml'
   workflow_dispatch:
 
 jobs:
