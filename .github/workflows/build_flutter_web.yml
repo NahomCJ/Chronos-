@@ -1,15 +1,8 @@
 name: Build Flutter Web for Vercel
 
+# Vercel now runs the Flutter build itself (build.sh).
+# This workflow is kept for manual emergency rebuilds only.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'chronos/lib/**'
-      - 'chronos/pubspec.yaml'
-      - 'chronos/pubspec.lock'
-      - 'chronos/web/**'
-      - 'chronos/assets/**'
-      - '.github/workflows/build_flutter_web.yml'
   workflow_dispatch:
 
 jobs:
@@ -44,6 +37,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to web build — skipping commit"
           else
-            git commit -m "build: auto-rebuild Flutter web for Vercel [skip ci]"
+            git commit -m "build: manual emergency rebuild Flutter web for Vercel [skip ci]"
             git push origin HEAD
           fi
