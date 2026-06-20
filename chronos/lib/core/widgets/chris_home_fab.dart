@@ -189,14 +189,24 @@ class _StrandsPainter extends CustomPainter {
     final r = math.min(cx, cy);
 
     canvas.save();
-    canvas.clipPath(
-      Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)),
+    final circleRect = Rect.fromCircle(center: Offset(cx, cy), radius: r);
+    canvas.clipPath(Path()..addOval(circleRect));
+
+    // Glass bubble background — dark translucent base
+    canvas.drawOval(
+      circleRect,
+      Paint()..color = const Color(0xCC0D0D22),
     );
 
-    // Background
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = const Color(0xFF08080F),
+    // Subtle radial inner glow to give depth
+    canvas.drawOval(
+      circleRect,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.3, -0.4),
+          radius: 0.9,
+          colors: const [Color(0x22FFFFFF), Color(0x00000000)],
+        ).createShader(circleRect),
     );
 
     // tt mirrors `float tt = uTime * uSpeed` in the shader.
@@ -274,6 +284,16 @@ class _StrandsPainter extends CustomPainter {
     }
 
     canvas.restore();
+
+    // Glass rim highlight (top-left arc)
+    canvas.drawCircle(
+      Offset(cx, cy),
+      r - 0.5,
+      Paint()
+        ..color = const Color(0x28FFFFFF)
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke,
+    );
 
     // Teal pulse ring when wake-word is active.
     if (pulseValue > 0) {
