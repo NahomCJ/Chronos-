@@ -105,6 +105,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   void _openSheet() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       useSafeArea: true,
