@@ -294,18 +294,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          // Circular nav icons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
-                              _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
-                              _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
-                              _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          // Action buttons (Buy/Sell/Swap/Send/More)
+                          // Action buttons (Buy/Sell/Swap/Send/More) — top
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -319,6 +308,17 @@ class _BlockHubPageState extends State<BlockHubPage> {
                                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendCryptoPage()))),
                               _buildActionButton(Icons.more_horiz, 'More', isSmallScreen,
                                   onTap: () => MoreOptionsModal.show(context)),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          // Circular nav icons — bottom
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
+                              _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
+                              _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
+                              _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -603,13 +603,29 @@ class _BlockHubPageState extends State<BlockHubPage> {
             decoration: BoxDecoration(
               color: const Color(0xFFF0F0F8),
               shape: BoxShape.circle,
-              border:
-                  Border.all(color: const Color(0xFFE0E0EE), width: 1),
+              border: Border.all(color: const Color(0xFFE0E0EE), width: 1),
             ),
-            child: Icon(
-              _getCryptoIcon(asset.symbol),
-              color: const Color(0xFF4A4A6A),
-              size: 20,
+            child: ClipOval(
+              child: _coinLogos.containsKey(asset.symbol)
+                  ? CachedNetworkImage(
+                      imageUrl: _coinLogos[asset.symbol]!,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Icon(
+                        _getCryptoIcon(asset.symbol),
+                        color: const Color(0xFF4A4A6A),
+                        size: 20,
+                      ),
+                      errorWidget: (_, __, ___) => Icon(
+                        _getCryptoIcon(asset.symbol),
+                        color: const Color(0xFF4A4A6A),
+                        size: 20,
+                      ),
+                    )
+                  : Icon(
+                      _getCryptoIcon(asset.symbol),
+                      color: const Color(0xFF4A4A6A),
+                      size: 20,
+                    ),
             ),
           ),
           const SizedBox(width: 12),
