@@ -17,19 +17,45 @@ import 'chris_shopping_page.dart';
 // ---------------------------------------------------------------------------
 const _kBorder = Color(0x1AFFFFFF); // white 10%
 
-Widget _brandBadge(String asset, Color tint, Color bg) => Container(
-      width: 44,
-      height: 44,
-      padding: const EdgeInsets.all(9),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2)),
-        ],
-      ),
-      child: Image.asset(asset, color: tint, fit: BoxFit.contain),
-    );
+const _kBrandLogos = <String, String>{
+  'amazon':   'https://logo.clearbit.com/amazon.com',
+  'nike':     'https://logo.clearbit.com/nike.com',
+  'apple':    'https://logo.clearbit.com/apple.com',
+  'ikea':     'https://logo.clearbit.com/ikea.com',
+  'samsung':  'https://logo.clearbit.com/samsung.com',
+  'best buy': 'https://logo.clearbit.com/bestbuy.com',
+  'adidas':   'https://logo.clearbit.com/adidas.com',
+};
+
+Widget _brandBadge(String brand, Color bg) {
+  final key = brand.toLowerCase();
+  final url = _kBrandLogos.entries
+      .firstWhere((e) => key.contains(e.key),
+          orElse: () => const MapEntry('', ''))
+      .value;
+  return Container(
+    width: 44,
+    height: 44,
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(10),
+      boxShadow: [
+        BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2)),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: url.isNotEmpty
+          ? CachedNetworkImage(
+              imageUrl: url,
+              fit: BoxFit.contain,
+              placeholder: (_, __) => const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+              errorWidget: (_, __, ___) => const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+            )
+          : const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+    ),
+  );
+}
 
 class TickPayDashboardPage extends StatefulWidget {
   const TickPayDashboardPage({super.key});
@@ -581,11 +607,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
 
     final mockPlans = [
       (
-        _brandBadge('assets/tickpay/amazon.png', Colors.white, const Color(0xFF0F0F0F)),
+        _brandBadge('amazon', const Color(0xFF0F0F0F)),
         'Amazon', '#9012', '3 of 4 payments left', '\$599',
       ),
       (
-        _brandBadge('assets/tickpay/nike.png', Colors.white, Colors.black),
+        _brandBadge('nike', Colors.black),
         'Nike', '#8234', '2 of 3 payments left', '\$450',
       ),
     ];
@@ -633,19 +659,12 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                 ))
           else
             ...purchases.take(2).map((tx) {
-              final (icon, color) = _brandInfo(tx.merchant ?? '');
+              final merchant = tx.merchant ?? '';
+              final (_, color) = _brandInfo(merchant);
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: _buildPlanItem(
-                  logoWidget: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: color, size: 22),
-                  ),
+                  logoWidget: _brandBadge(merchant, color.withValues(alpha: 0.15)),
                   brand: tx.merchant ?? 'Purchase',
                   orderRef:
                       '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',
