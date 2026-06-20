@@ -1,4 +1,6 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -19,13 +21,15 @@ class ChrisHomeFab extends StatefulWidget {
 }
 
 class _ChrisHomeFabState extends State<ChrisHomeFab>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final _speech = stt.SpeechToText();
   bool _wakeActive = false;
   bool _wakeWordTriggered = false;
   Offset _offset = Offset.zero;
   late final AnimationController _glowCtrl;
   late final Animation<double> _glowAnim;
+  final _timeNotifier = ValueNotifier<double>(0);
+  late final Ticker _timeTicker;
 
   @override
   void initState() {
@@ -37,6 +41,9 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _glowAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut),
     );
+    _timeTicker = createTicker((elapsed) {
+      _timeNotifier.value = elapsed.inMicroseconds / 1e6;
+    })..start();
     _initWakeWord();
   }
 
@@ -98,6 +105,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   @override
   void dispose() {
     _glowCtrl.dispose();
+    _timeTicker.dispose();
+    _timeNotifier.dispose();
     _speech.stop();
     super.dispose();
   }
@@ -121,40 +130,16 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         onTap: widget.onTap ?? _openSheet,
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: AnimatedBuilder(
-          animation: _glowAnim,
+          animation: Listenable.merge([_timeNotifier, _glowAnim]),
           builder: (_, __) {
             final pulse = _wakeActive ? _glowAnim.value : 0.0;
-            return Container(
+            return SizedBox(
               width: 56,
               height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // Outer gradient ring
-                gradient: const SweepGradient(
-                  colors: [
-                    Color(0xFFCCFFF8), // light teal / near white
-                    Color(0xFF00D4B8), // teal
-                    Color(0xFF005A4E), // dark teal
-                    Color(0xFF021510), // near black
-                    Color(0xFF08080F), // black
-                    Color(0xFFCCFFF8), // close the loop
-                  ],
-                  stops: [0.0, 0.18, 0.45, 0.72, 0.88, 1.0],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _teal.withValues(alpha: 0.22 + 0.38 * pulse),
-                    blurRadius: 12.0 + 20.0 * pulse,
-                    spreadRadius: 0.0 + 6.0 * pulse,
-                  ),
-                ],
-              ),
-              // Inner dark circle — creates the ring cutout
-              child: Container(
-                margin: const EdgeInsets.all(3.0),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF08080F),
+              child: CustomPaint(
+                painter: _StrandsPainter(
+                  time: _timeNotifier.value,
+                  pulseValue: pulse,
                 ),
               ),
             );
@@ -163,6 +148,140 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
       ),
     );
   }
+}
+
+// ── Strands Painter ────────────────────────────────────────────────────────────
+// Port of the Strands WebGL shader to Flutter CustomPainter.
+// Matches the shader math: uv-space sinusoidal strands with per-pixel glow.
+class _StrandsPainter extends CustomPainter {
+  final double time;
+  final double pulseValue;
+
+  const _StrandsPainter({required this.time, this.pulseValue = 0.0});
+
+  // Matches the usage-example props with speed dialled down further.
+  static const _speed = 0.04;
+  static const _colors = [Color(0xFF7C3AED), Color(0xFF06B6D4)];
+  static const _count = 4;
+  static const _amplitude = 1.3;
+  static const _waviness = 2.0;
+  static const _thickness = 0.7;
+  static const _glow = 2.1;
+  static const _taper = 0.5;
+  static const _spread = 0.7;
+  static const _scale = 1.5;
+  static const _intensity = 0.6;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = math.min(cx, cy);
+
+    canvas.save();
+    canvas.clipPath(
+      Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)),
+    );
+
+    // Background
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = const Color(0xFF08080F),
+    );
+
+    // tt mirrors `float tt = uTime * uSpeed` in the shader.
+    final tt = time * _speed;
+
+    for (int i = 0; i < _count; i++) {
+      final fi = i.toDouble();
+      // Strand-specific parameters — same formulas as the fragment shader.
+      final ph = fi * 1.7 * _spread;
+      final freq = (2.0 + fi * 0.35) * _waviness;
+      final spd = 1.4 + fi * 1.2;
+      final color = _colors[i % _colors.length];
+
+      final path = Path();
+
+      for (int step = 0; step <= 80; step++) {
+        final t = step / 80;
+        // uvx: normalised by resolution.y then divided by scale, same as shader.
+        final uvx = (t - 0.5) / _scale;
+
+        // Envelope: cos-based taper that fades strands toward the horizontal edges.
+        final envRaw = math.cos(uvx * math.pi * 1.3);
+        final env = envRaw > 0 ? math.pow(envRaw, _taper).toDouble() : 0.0;
+
+        // Two-term sine sum — matches FRAG shader `w` calculation.
+        final w = math.sin(uvx * freq + tt * spd + ph) * 0.60
+                + math.sin(uvx * freq * 1.1 - tt * spd * 0.7 + ph * 1.7) * 0.40;
+
+        final amp = (0.1 + 0.02 * _intensity) * env * _amplitude;
+
+        // Screen mapping: x spans full canvas; y displacement scales with
+        // size.height * scale (mirroring how the shader maps uv back to pixels).
+        final screenX = t * size.width;
+        final screenY = cy + w * amp * size.height * _scale;
+
+        if (step == 0) {
+          path.moveTo(screenX, screenY);
+        } else {
+          path.lineTo(screenX, screenY);
+        }
+      }
+
+      final baseStroke = _thickness * r * 0.07;
+      final pulseBoost = 1.0 + pulseValue * 0.5;
+
+      // Three-layer glow: outer bloom → inner halo → bright core.
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = color.withValues(alpha: 0.22)
+          ..strokeWidth = baseStroke * 7 * _glow * pulseBoost
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
+
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = color.withValues(alpha: 0.60)
+          ..strokeWidth = baseStroke * 2.5
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+      );
+
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = color.withValues(alpha: 0.90)
+          ..strokeWidth = baseStroke
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+
+    canvas.restore();
+
+    // Teal pulse ring when wake-word is active.
+    if (pulseValue > 0) {
+      canvas.drawCircle(
+        Offset(cx, cy),
+        r - 1,
+        Paint()
+          ..color = _teal.withValues(alpha: 0.20 + 0.40 * pulseValue)
+          ..strokeWidth = 1.5
+          ..style = PaintingStyle.stroke
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4 + 8 * pulseValue),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_StrandsPainter old) =>
+      old.time != time || old.pulseValue != pulseValue;
 }
 
 // ── Chris Chat Sheet ──────────────────────────────────────────────────────────
@@ -255,7 +374,10 @@ class _ChrisSheetState extends State<_ChrisSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).viewInsets.bottom;
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    // When keyboard is hidden, leave 88px of clearance so the input row
+    // always clears the custom pill nav bar (~75px tall).
+    final bottomPad = keyboard > 0 ? keyboard + 8.0 : 88.0;
     return Container(
       color: _sheetBg,
       child: Column(
@@ -387,7 +509,7 @@ class _ChrisSheetState extends State<_ChrisSheet> {
               ],
             ),
           ),
-          SizedBox(height: bottom + 8),
+          SizedBox(height: bottomPad),
         ],
       ),
     );
