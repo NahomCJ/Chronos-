@@ -53,7 +53,7 @@ class CustomBottomNav extends StatelessWidget {
                 _item(Icons.home_filled, 'Home', 0),
                 _itemImage('assets/lioness 1.png', 'Panther', 1),
                 _item(Icons.hub_outlined, 'BlockHub', 2),
-                _item(Icons.spa_rounded, 'LifeX', 3),
+                _itemLifex(3),
                 _item(Icons.menu, 'More', 4),
               ],
             ),
@@ -90,6 +90,59 @@ class CustomBottomNav extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               label,
+              style: TextStyles.labelSmall.copyWith(
+                color: color,
+                fontSize: 10,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _itemLifex(int index) {
+    final active = selectedIndex == index;
+    final color = active ? _activeColor : _inactiveColor;
+    return GestureDetector(
+      onTap: () => onItemSelected(index),
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (active)
+              Container(
+                width: 3,
+                height: 3,
+                margin: const EdgeInsets.only(bottom: 3),
+                decoration: const BoxDecoration(
+                  color: _activeColor,
+                  shape: BoxShape.circle,
+                ),
+              )
+            else
+              const SizedBox(height: 4),
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Center(
+                child: Text(
+                  'X',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              'LifeX',
               style: TextStyles.labelSmall.copyWith(
                 color: color,
                 fontSize: 10,
