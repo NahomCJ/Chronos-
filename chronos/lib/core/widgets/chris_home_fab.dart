@@ -374,7 +374,10 @@ class _ChrisSheetState extends State<_ChrisSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).viewInsets.bottom;
+    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    // When keyboard is hidden, leave 88px of clearance so the input row
+    // always clears the custom pill nav bar (~75px tall).
+    final bottomPad = keyboard > 0 ? keyboard + 8.0 : 88.0;
     return Container(
       color: _sheetBg,
       child: Column(
@@ -506,7 +509,7 @@ class _ChrisSheetState extends State<_ChrisSheet> {
               ],
             ),
           ),
-          SizedBox(height: bottom + 8),
+          SizedBox(height: bottomPad),
         ],
       ),
     );
