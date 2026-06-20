@@ -14,7 +14,8 @@ const _sheetBg = Color(0xFF0D0D22);
 // ── FAB ───────────────────────────────────────────────────────────────────────
 class ChrisHomeFab extends StatefulWidget {
   final VoidCallback? onTap;
-  const ChrisHomeFab({super.key, this.onTap});
+  final double size;
+  const ChrisHomeFab({super.key, this.onTap, this.size = 56});
 
   @override
   State<ChrisHomeFab> createState() => _ChrisHomeFabState();
@@ -141,8 +142,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           builder: (_, __) {
             final pulse = _wakeActive ? _glowAnim.value : 0.0;
             return SizedBox(
-              width: 56,
-              height: 56,
+              width: widget.size,
+              height: widget.size,
               child: CustomPaint(
                 painter: _StrandsPainter(
                   time: _timeNotifier.value,

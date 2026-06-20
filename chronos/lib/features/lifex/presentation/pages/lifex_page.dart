@@ -185,22 +185,20 @@ class _LifeXPageState extends State<LifeXPage>
                         ),
                       ),
                       const Spacer(),
-                      // Retake survey button
-                      GestureDetector(
-                        onTap: () => context
-                            .push(RouteConstants.lifexOnboarding.toPath),
-                        child: Container(
-                          width: 34,
-                          height: 34,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.12),
-                            border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
-                                width: 1),
-                          ),
-                          child: const Icon(Icons.mic_rounded,
-                              color: Colors.white, size: 16),
+                      // Retake survey button — Chris FAB styled
+                      Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: 0.18),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.40),
+                              width: 1.2),
+                        ),
+                        child: ChrisHomeFab(
+                          size: 46,
+                          onTap: () => context.push(RouteConstants.lifexOnboarding.toPath),
                         ),
                       ),
                     ],

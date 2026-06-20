@@ -8,7 +8,7 @@ import '../../../../core/router/route_constants.dart';
 import '../bloc/alerts_bloc.dart';
 import '../bloc/alerts_event.dart';
 import '../bloc/alerts_state.dart';
-import '../widgets/chris_voice_orb.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 import '../../domain/entities/ai_alert.dart';
 
 class PantherAiPage extends StatefulWidget {
@@ -161,36 +161,36 @@ class _PantherAiPageState extends State<PantherAiPage>
   }
 
   Widget _buildOrbHero() {
-    return GestureDetector(
-      onTap: () => context.push(RouteConstants.pantherAiChat.toPath),
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        height: 270,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedBuilder(
-              animation: _glowCtrl,
-              builder: (_, __) => Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      _purple.withValues(alpha: 0.10 + _glowCtrl.value * 0.06),
-                      _purple.withValues(alpha: 0.03),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.55, 1.0],
-                  ),
+    return SizedBox(
+      height: 270,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: _glowCtrl,
+            builder: (_, __) => Container(
+              width: 240,
+              height: 240,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    _purple.withValues(alpha: 0.10 + _glowCtrl.value * 0.06),
+                    _purple.withValues(alpha: 0.03),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.55, 1.0],
                 ),
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const ChrisVoiceOrb(state: OrbState.idle, size: 130),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ChrisHomeFab(
+                size: 130,
+                onTap: () => context.push(RouteConstants.pantherAiChat.toPath),
+              ),
                 const SizedBox(height: 22),
                 Text(
                   'Tap to talk with Chris',
@@ -227,7 +227,6 @@ class _PantherAiPageState extends State<PantherAiPage>
             ),
           ],
         ),
-      ),
     );
   }
 
