@@ -7,6 +7,10 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
+// Chris chat is served by the Vercel serverless function (api/chat.js)
+// which holds the Anthropic API key securely server-side.
+const _kChrisChatBase = 'https://chronosapp-rosy.vercel.app';
+
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
 class PantherAiRemoteDataSource {
@@ -20,7 +24,7 @@ class PantherAiRemoteDataSource {
   // ── Chat ──────────────────────────────────────────────────────────────────
 
   Future<ChatResponseModel> sendMessage(String message) async {
-    final data = await _client.postWithBase(_kPantherBase, '/api/chris/chat', {
+    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
       'user_id': _userId,
       'message': message,
     });
