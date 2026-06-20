@@ -26,10 +26,9 @@ class TtsService {
 
   Future<void> speak(String text) async {
     if (text.isEmpty) return;
+    // System TTS is disabled until ElevenLabs API key is configured.
     if (elevenLabsApiKey != null && elevenLabsApiKey!.isNotEmpty) {
       await _speakElevenLabs(text);
-    } else {
-      await _speakFallback(text);
     }
   }
 

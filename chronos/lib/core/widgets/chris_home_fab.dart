@@ -25,6 +25,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   final _speech = stt.SpeechToText();
   bool _wakeActive = false;
   bool _wakeWordTriggered = false;
+  bool _respondingMode = false; // true while Chris is "answering" (fast strands)
   Offset _offset = Offset.zero;
   late final AnimationController _glowCtrl;
   late final Animation<double> _glowAnim;
@@ -87,7 +88,13 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
             _wakeWordTriggered = true;
             _speech.stop();
             HapticFeedback.mediumImpact();
-            if (mounted) _openSheet();
+            if (mounted) {
+              setState(() => _respondingMode = true);
+              Future.delayed(const Duration(seconds: 3), () {
+                if (mounted) setState(() => _respondingMode = false);
+              });
+              _openSheet();
+            }
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -140,6 +147,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
                 painter: _StrandsPainter(
                   time: _timeNotifier.value,
                   pulseValue: pulse,
+                  speed: _respondingMode ? 0.15 : 0.02,
                 ),
               ),
             );
@@ -156,11 +164,13 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
 class _StrandsPainter extends CustomPainter {
   final double time;
   final double pulseValue;
+  final double speed;
 
-  const _StrandsPainter({required this.time, this.pulseValue = 0.0});
-
-  // Matches the usage-example props with speed dialled down further.
-  static const _speed = 0.04;
+  const _StrandsPainter({
+    required this.time,
+    this.pulseValue = 0.0,
+    this.speed = 0.02,
+  });
   static const _colors = [Color(0xFF7C3AED), Color(0xFF06B6D4)];
   static const _count = 4;
   static const _amplitude = 1.3;
@@ -190,7 +200,7 @@ class _StrandsPainter extends CustomPainter {
     );
 
     // tt mirrors `float tt = uTime * uSpeed` in the shader.
-    final tt = time * _speed;
+    final tt = time * speed;
 
     for (int i = 0; i < _count; i++) {
       final fi = i.toDouble();
@@ -281,7 +291,7 @@ class _StrandsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_StrandsPainter old) =>
-      old.time != time || old.pulseValue != pulseValue;
+      old.time != time || old.pulseValue != pulseValue || old.speed != speed;
 }
 
 // ── Chris Chat Sheet ──────────────────────────────────────────────────────────
@@ -374,10 +384,13 @@ class _ChrisSheetState extends State<_ChrisSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboard = MediaQuery.of(context).viewInsets.bottom;
-    // When keyboard is hidden, leave 88px of clearance so the input row
-    // always clears the custom pill nav bar (~75px tall).
-    final bottomPad = keyboard > 0 ? keyboard + 8.0 : 88.0;
+    final mq = MediaQuery.of(context);
+    final keyboard = mq.viewInsets.bottom;
+    // When keyboard is hidden, clear the custom pill nav bar (~70px) plus
+    // the system safe-area inset so nothing is hidden behind it.
+    final bottomPad = keyboard > 0
+        ? keyboard + 8.0
+        : mq.padding.bottom + 90.0;
     return Container(
       color: _sheetBg,
       child: Column(
