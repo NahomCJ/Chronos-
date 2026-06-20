@@ -1,20 +1,14 @@
 #!/usr/bin/env bash
-# Vercel build script — downloads Flutter, builds Flutter web app.
-# Runs inside Vercel's build container (Amazon Linux 2 / Node.js env).
+# Vercel build script — clones Flutter stable and builds the Flutter web app.
 set -euo pipefail
 
-FLUTTER_VERSION="3.29.3"
-FLUTTER_TAR="flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
-FLUTTER_URL="https://storage.googleapis.com/flutter-infra-release/releases/stable/linux/${FLUTTER_TAR}"
 FLUTTER_DIR="$HOME/flutter"
 
 echo "==> Checking for Flutter..."
 if [ ! -d "$FLUTTER_DIR/bin" ]; then
-  echo "==> Downloading Flutter ${FLUTTER_VERSION}..."
-  curl -fsSL "$FLUTTER_URL" -o /tmp/flutter.tar.xz
-  echo "==> Extracting Flutter..."
-  tar xf /tmp/flutter.tar.xz -C "$HOME"
-  rm /tmp/flutter.tar.xz
+  echo "==> Cloning Flutter (stable)..."
+  git clone https://github.com/flutter/flutter.git \
+    --branch stable --depth 1 "$FLUTTER_DIR"
 else
   echo "==> Flutter already present at $FLUTTER_DIR"
 fi
