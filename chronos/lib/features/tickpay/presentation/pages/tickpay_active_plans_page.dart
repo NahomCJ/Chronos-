@@ -86,7 +86,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: const Color(0xFF1A0A2E),
+            color: const Color(0xFF0D0D1A),
             child: SafeArea(
               bottom: false,
               child: Column(
@@ -183,7 +183,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF2D1B4E), Color(0xFF1A0A2E)],
+            colors: [Color(0xFF2D1B4E), const Color(0xFF0D0D1A)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -454,7 +454,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
       child: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1A0A2E),
+          backgroundColor: const Color(0xFF0D0D1A),
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
