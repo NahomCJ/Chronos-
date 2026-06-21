@@ -76,12 +76,12 @@ class NftDetailPage extends StatelessWidget {
             ),
             // NFT image
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Stack(
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 240,
+                    height: 180,
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(16),
@@ -164,7 +164,7 @@ class NftDetailPage extends StatelessWidget {
             'Holographic #9012',
             style: TextStyles.titleLarge.copyWith(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -231,7 +231,7 @@ class NftDetailPage extends StatelessWidget {
                       '3.5 ETH',
                       style: TextStyles.titleLarge.copyWith(
                         color: Colors.white,
-                        fontSize: 26,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -284,7 +284,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -307,7 +307,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),

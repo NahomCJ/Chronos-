@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
 
 class LifeXOnboardingPage extends StatefulWidget {
   const LifeXOnboardingPage({super.key});
@@ -12,7 +13,6 @@ class LifeXOnboardingPage extends StatefulWidget {
 class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
     with TickerProviderStateMixin {
   late AnimationController _pulseCtrl;
-  late AnimationController _floatCtrl;
 
   List<String> _currentOptions = [];
   bool _isTyping = false;
@@ -24,8 +24,14 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
   String _debt = '';
   String _debtRange = '';
   String _moneyRel = '';
+  String _savingsGoal = '';
   String _active = '';
+  String _sleepQuality = '';
+  String _stressLevel = '';
   String _relationship = '';
+  String _socialLife = '';
+  String _spiritualPractice = '';
+  String _learningHabit = '';
   String _priority = '';
 
   @override
@@ -35,17 +41,12 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
       vsync: this,
       duration: const Duration(milliseconds: 2600),
     )..repeat(reverse: true);
-    _floatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4200),
-    )..repeat(reverse: true);
     WidgetsBinding.instance.addPostFrameCallback((_) => _startSurvey());
   }
 
   @override
   void dispose() {
     _pulseCtrl.dispose();
-    _floatCtrl.dispose();
     super.dispose();
   }
 
@@ -117,29 +118,71 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
       case 3:
         _moneyRel = answer;
         _step++;
-        await _showTyping(800);
-        _setMessage("Do you stay active or work out?");
-        _showOptions(['Yes, regularly', 'Here and there', 'Not really']);
+        await _showTyping(700);
+        _setMessage("Do you have a savings goal right now?");
+        _showOptions(['Yes, specific amount', 'Vaguely, yes', 'Not really', 'Just getting by']);
         break;
       case 4:
+        _savingsGoal = answer;
+        _step++;
+        await _showTyping(800);
+        _setMessage("How's your physical activity level?");
+        _showOptions(['I work out regularly', 'A few times a week', 'Occasionally', 'Mostly sedentary']);
+        break;
+      case 5:
         _active = answer;
         _step++;
         await _showTyping(700);
-        _setMessage("Are you in a relationship?");
-        _showOptions(['Yes', 'Single', 'Prefer not to say']);
+        _setMessage("How would you rate your sleep quality lately?");
+        _showOptions(['Great — 7–9 hrs', 'Decent but inconsistent', 'Pretty bad', 'I barely sleep']);
         break;
-      case 5:
+      case 6:
+        _sleepQuality = answer;
+        _step++;
+        await _showTyping(800);
+        _setMessage("On a scale of feelings — how stressed are you day to day?");
+        _showOptions(['Pretty calm', 'Some stress, manageable', 'Consistently stressed', 'Overwhelmed']);
+        break;
+      case 7:
+        _stressLevel = answer;
+        _step++;
+        await _showTyping(700);
+        _setMessage("Are you in a relationship right now?");
+        _showOptions(['Yes, happy', 'Yes, it's complicated', 'Single', 'Prefer not to say']);
+        break;
+      case 8:
         _relationship = answer;
         _step++;
         await _showTyping(800);
-        _setMessage("Last one — what's the one area you most want to get a handle on?");
+        _setMessage("How's your social life? Do you feel connected?");
+        _showOptions(['Very connected', 'A few close people', 'Mostly isolated', 'Working on it']);
+        break;
+      case 9:
+        _socialLife = answer;
+        _step++;
+        await _showTyping(700);
+        _setMessage("Do you have any spiritual or mindfulness practice?");
+        _showOptions(['Yes, daily', 'Occasionally', 'Not really', 'Open to exploring']);
+        break;
+      case 10:
+        _spiritualPractice = answer;
+        _step++;
+        await _showTyping(800);
+        _setMessage("Are you actively learning something new — a skill, course, or book?");
+        _showOptions(['Yes, consistently', 'Here and there', 'Not right now', 'Thinking about it']);
+        break;
+      case 11:
+        _learningHabit = answer;
+        _step++;
+        await _showTyping(800);
+        _setMessage("Last one — what's the one area you most want to work on?");
         _showOptions(['My money & finances', 'My health & energy', 'My goals & future', 'My relationships']);
         break;
-      case 6:
+      case 12:
         _priority = answer;
         _step++;
         await _showTyping(1200);
-        _setMessage("That's all I need for now. Based on what you've shared, here's where you stand.");
+        _setMessage("That's everything I need. You've given me a real picture of where you are.");
         await Future.delayed(const Duration(milliseconds: 1400));
         await _showTyping(600);
         _setMessage("I'll guide you from here — one step at a time. No overwhelm. 🙌");
@@ -263,133 +306,7 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
   }
 
   Widget _buildOrb() {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_pulseCtrl, _floatCtrl]),
-      builder: (_, __) {
-        final p = _pulseCtrl.value;
-        final f = _floatCtrl.value;
-        return SizedBox(
-          width: 220,
-          height: 220,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Outer ambient glow
-              Container(
-                width: 220 + p * 18,
-                height: 220 + p * 18,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      const Color(0xFF3B82F6)
-                          .withValues(alpha: 0.06 + p * 0.04),
-                      const Color(0xFF8B5CF6).withValues(alpha: 0.03),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-              // Mid glow ring
-              Container(
-                width: 186 + p * 8,
-                height: 186 + p * 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      const Color(0xFF6366F1)
-                          .withValues(alpha: 0.12 + p * 0.06),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-              // Main sphere
-              ClipOval(
-                child: SizedBox(
-                  width: 162 + p * 4,
-                  height: 162 + p * 4,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Blue base
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFF60A5FA),
-                              Color(0xFF2563EB),
-                              Color(0xFF1E3A8A),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Purple floating blob
-                      Positioned(
-                        right: -22 + f * 16,
-                        bottom: -16 + f * 22,
-                        child: Container(
-                          width: 122,
-                          height: 122,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF8B5CF6)
-                                .withValues(alpha: 0.76),
-                          ),
-                        ),
-                      ),
-                      // Teal accent blob
-                      Positioned(
-                        left: -12 + f * 10,
-                        top: 18 + f * 12,
-                        child: Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF14B8A6)
-                                .withValues(alpha: 0.46),
-                          ),
-                        ),
-                      ),
-                      // White specular highlight
-                      Positioned(
-                        top: 18 - f * 4,
-                        left: 36 + f * 4,
-                        child: Container(
-                          width: 50,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            color: Colors.white.withValues(alpha: 0.28),
-                          ),
-                        ),
-                      ),
-                      // Inner white reflection
-                      Positioned(
-                        top: 46 - f * 6,
-                        left: 28 + f * 2,
-                        child: Container(
-                          width: 22,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white.withValues(alpha: 0.14),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    return ChrisHomeFab(size: 130);
   }
 
   Widget _buildMessageText() {
