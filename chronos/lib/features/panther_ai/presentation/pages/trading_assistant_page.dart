@@ -26,21 +26,27 @@ class _TradingAssistantPageState extends State<TradingAssistantPage> {
     return Scaffold(
       backgroundColor: _background,
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMarketOverviewStrip(),
-            const SizedBox(height: 20),
-            _buildActiveSignalsSection(),
-            const SizedBox(height: 20),
-            _buildMarketConditionsSection(),
-            const SizedBox(height: 20),
-            _buildChrisRecommendationCard(),
-            const SizedBox(height: 32),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildMarketOverviewStrip(),
+                const SizedBox(height: 20),
+                _buildActiveSignalsSection(),
+                const SizedBox(height: 20),
+                _buildMarketConditionsSection(),
+                const SizedBox(height: 20),
+                _buildChrisRecommendationCard(),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

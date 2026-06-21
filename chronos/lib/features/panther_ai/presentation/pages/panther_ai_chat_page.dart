@@ -203,8 +203,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
         },
         child: Scaffold(
           backgroundColor: _bg,
-          body: SafeArea(
-            child: _isVoiceMode ? _buildVoiceView() : _buildTextView(),
+          body: Stack(
+            children: [
+              Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+              SafeArea(
+                child: _isVoiceMode ? _buildVoiceView() : _buildTextView(),
+              ),
+            ],
           ),
         ),
       ),

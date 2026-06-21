@@ -97,25 +97,31 @@ class _LiabilitiesIntelligencePageState
           ),
         ],
       ),
-      body: AnimatedBuilder(
-        animation: _anim,
-        builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSummaryCard(),
-              const SizedBox(height: 24),
-              _buildDonutChart(),
-              const SizedBox(height: 24),
-              _buildDebtList(),
-              const SizedBox(height: 24),
-              _buildPaydownStrategy(),
-              const SizedBox(height: 24),
-              _buildChrisInsight(),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          AnimatedBuilder(
+            animation: _anim,
+            builder: (_, __) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSummaryCard(),
+                  const SizedBox(height: 24),
+                  _buildDonutChart(),
+                  const SizedBox(height: 24),
+                  _buildDebtList(),
+                  const SizedBox(height: 24),
+                  _buildPaydownStrategy(),
+                  const SizedBox(height: 24),
+                  _buildChrisInsight(),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -25,7 +25,11 @@ class ExchangeSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A14),
-      body: SafeArea(
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.70))),
+          SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -309,6 +313,8 @@ class ExchangeSuccessPage extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+        ],
       ),
     );
   }

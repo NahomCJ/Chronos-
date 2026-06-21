@@ -44,23 +44,29 @@ class _TickPayAiPageState extends State<TickPayAiPage>
       value: _spendingBloc,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F6FA),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              _buildTabBar(),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabCtrl,
-                  children: [
-                    _buildHomeTab(),
-                    _buildPlansTab(),
-                    _buildRewardsTab(),
-                  ],
-                ),
+        body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildHeader(context),
+                  _buildTabBar(),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabCtrl,
+                      children: [
+                        _buildHomeTab(),
+                        _buildPlansTab(),
+                        _buildRewardsTab(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

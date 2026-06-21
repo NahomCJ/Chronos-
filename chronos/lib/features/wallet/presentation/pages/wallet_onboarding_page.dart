@@ -86,9 +86,11 @@ class _WalletOnboardingPageState extends State<WalletOnboardingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0B1E),
+      backgroundColor: const Color(0xFF0A0A14),
       body: Stack(
         children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.70))),
           // Background radial glow
           AnimatedBuilder(
             animation: _floatAnim,

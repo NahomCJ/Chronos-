@@ -82,25 +82,31 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
       ),
-      body: AnimatedBuilder(
-        animation: _anim,
-        builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPeriodToggle(),
-              const SizedBox(height: 20),
-              _buildOverviewCard(),
-              const SizedBox(height: 24),
-              _buildRingProgress(),
-              const SizedBox(height: 24),
-              _buildCategoryList(),
-              const SizedBox(height: 24),
-              _buildChrisInsight(),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          AnimatedBuilder(
+            animation: _anim,
+            builder: (_, __) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPeriodToggle(),
+                  const SizedBox(height: 20),
+                  _buildOverviewCard(),
+                  const SizedBox(height: 24),
+                  _buildRingProgress(),
+                  const SizedBox(height: 24),
+                  _buildCategoryList(),
+                  const SizedBox(height: 24),
+                  _buildChrisInsight(),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

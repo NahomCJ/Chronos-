@@ -102,24 +102,30 @@ class _BillsManagementPageState extends State<BillsManagementPage>
           ),
         ],
       ),
-      body: AnimatedBuilder(
-        animation: _anim,
-        builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              _buildSummaryCard(),
-              const SizedBox(height: 24),
-              _buildCategoryBars(),
-              const SizedBox(height: 24),
-              _buildUpcomingBills(),
-              const SizedBox(height: 24),
-              _buildAutoPayCard(),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          AnimatedBuilder(
+            animation: _anim,
+            builder: (_, __) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  _buildSummaryCard(),
+                  const SizedBox(height: 24),
+                  _buildCategoryBars(),
+                  const SizedBox(height: 24),
+                  _buildUpcomingBills(),
+                  const SizedBox(height: 24),
+                  _buildAutoPayCard(),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

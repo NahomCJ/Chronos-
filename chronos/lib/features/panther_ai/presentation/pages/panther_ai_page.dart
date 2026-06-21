@@ -76,18 +76,24 @@ class _PantherAiPageState extends State<PantherAiPage>
       value: _alertsBloc,
       child: Scaffold(
         backgroundColor: _bg,
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(child: _buildHeader()),
-              SliverToBoxAdapter(child: _buildOrbHero()),
-              SliverToBoxAdapter(child: _buildStoriesSection()),
-              SliverToBoxAdapter(child: _buildLifeXCard()),
-              SliverToBoxAdapter(child: _buildQuickActions()),
-              SliverToBoxAdapter(child: _buildIntelligence()),
-              const SliverToBoxAdapter(child: SizedBox(height: 120)),
-            ],
-          ),
+        body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+            SafeArea(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: _buildHeader()),
+                  SliverToBoxAdapter(child: _buildOrbHero()),
+                  SliverToBoxAdapter(child: _buildStoriesSection()),
+                  SliverToBoxAdapter(child: _buildLifeXCard()),
+                  SliverToBoxAdapter(child: _buildQuickActions()),
+                  SliverToBoxAdapter(child: _buildIntelligence()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
