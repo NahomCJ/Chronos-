@@ -115,8 +115,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         return Scaffold(
           body: Stack(
             children: [
-              Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
-              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+              Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
               Positioned.fill(
                 child: Image.network(
                   'https://images.pexels.com/photos/5741419/pexels-photo-5741419.jpeg?auto=compress&cs=tinysrgb&w=1280',
