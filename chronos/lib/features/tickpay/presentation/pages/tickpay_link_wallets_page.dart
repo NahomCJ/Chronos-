@@ -15,7 +15,7 @@ class _TickPayLinkWalletsPageState extends State<TickPayLinkWalletsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D12),
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
           Positioned.fill(

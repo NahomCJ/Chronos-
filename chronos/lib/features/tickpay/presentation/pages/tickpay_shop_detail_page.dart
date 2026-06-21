@@ -82,7 +82,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
     return SliverAppBar(
       expandedHeight: 180,
       pinned: true,
-      backgroundColor: const Color(0xFF1A0A2E),
+      backgroundColor: const Color(0xFF0D0D1A),
       leading: GestureDetector(
         onTap: () => context.pop(),
         child: Container(
@@ -199,12 +199,12 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                     horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF1A0A2E)
+                      ? const Color(0xFF0D0D1A)
                       : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF1A0A2E)
+                        ? const Color(0xFF0D0D1A)
                         : const Color(0xFFDDDDDD),
                   ),
                 ),

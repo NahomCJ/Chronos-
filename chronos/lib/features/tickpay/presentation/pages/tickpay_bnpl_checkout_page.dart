@@ -32,7 +32,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       body: Column(
         children: [
           Container(
-            color: const Color(0xFF1A0A2E),
+            color: const Color(0xFF0D0D1A),
             child: SafeArea(
               bottom: false,
               child: _buildHeader(context),
@@ -541,7 +541,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A0A2E),
+              backgroundColor: const Color(0xFF0D0D1A),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(

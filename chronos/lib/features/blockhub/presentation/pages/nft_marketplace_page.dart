@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/custom_bottom_nav.dart';
 
 class NftMarketplacePage extends StatefulWidget {
   const NftMarketplacePage({super.key});
@@ -19,6 +23,21 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 90),
+        child: const ChrisHomeFab(),
+      ),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: 2,
+        onItemSelected: (i) {
+          switch (i) {
+            case 0: context.go(RouteConstants.home.toPath); break;
+            case 1: context.go(RouteConstants.pantherAi.toPath); break;
+            case 2: context.go(RouteConstants.blockHub.toPath); break;
+            case 3: context.go(RouteConstants.lifex.toPath); break;
+          }
+        },
+      ),
       body: Stack(
         children: [
           Positioned.fill(child: ColoredBox(color: Colors.black)),
@@ -326,7 +345,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             scrollDirection: Axis.horizontal,
             itemCount: collections.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) => _buildTrendingCard(collections[i]),
+            itemBuilder: (context, i) => _TapScale(child: _buildTrendingCard(collections[i])),
           ),
         ),
       ],
@@ -629,11 +648,11 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
         Row(
           children: [
             Expanded(
-              child: _buildDropCard('Chromatic Dreams', '2.5 ETH', false),
+              child: _TapScale(child: _buildDropCard('Chromatic Dreams', '2.5 ETH', false)),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildDropCard('Geometric Visions', '1.8 ETH', false),
+              child: _TapScale(child: _buildDropCard('Geometric Visions', '1.8 ETH', false)),
             ),
           ],
         ),
@@ -911,19 +930,19 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
         Row(
           children: [
             Expanded(
-              child: _buildImageDropCard(
+              child: _TapScale(child: _buildImageDropCard(
                 'Abstract Dimensions',
                 '0.95 ETH',
                 'assets/home_bg1.png',
-              ),
+              )),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildImageDropCard(
+              child: _TapScale(child: _buildImageDropCard(
                 'Crypto Punks Legacy',
                 '5.2 ETH',
                 'assets/home_bg2.png',
-              ),
+              )),
             ),
           ],
         ),
@@ -1076,4 +1095,51 @@ class _TopVolumeItem {
     this.volume,
     this.change,
   );
+}
+
+class _TapScale extends StatefulWidget {
+  final Widget child;
+  const _TapScale({required this.child});
+
+  @override
+  State<_TapScale> createState() => _TapScaleState();
+}
+
+class _TapScaleState extends State<_TapScale>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+      lowerBound: 0.93,
+      upperBound: 1.0,
+      value: 1.0,
+    );
+    _scale = _ctrl;
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.reverse(),
+      onTapUp: (_) => _ctrl.forward(),
+      onTapCancel: () => _ctrl.forward(),
+      child: AnimatedBuilder(
+        animation: _scale,
+        builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
+        child: widget.child,
+      ),
+    );
+  }
 }

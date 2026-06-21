@@ -9,7 +9,7 @@ import '../bloc/tickpay_account_state.dart';
 class TickPayCreditOverviewPage extends StatelessWidget {
   const TickPayCreditOverviewPage({super.key});
 
-  static const _kDark = Color(0xFF1A0A2E);
+  static const _kDark = const Color(0xFF0D0D1A);
   static const _kLight = Color(0xFFF8F9FA);
 
   @override
@@ -418,7 +418,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A0A2E),
+              backgroundColor: const Color(0xFF0D0D1A),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -436,7 +436,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF1A0A2E),
+              foregroundColor: const Color(0xFF0D0D1A),
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: Color(0xFFCCCCCC)),
               shape: RoundedRectangleBorder(

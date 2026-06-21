@@ -45,7 +45,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
               'assets/tickpay/background.png',
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) =>
-                  Container(color: const Color(0xFF1A0A2E)),
+                  Container(color: const Color(0xFF0D0D1A)),
             ),
           ),
           Positioned.fill(
@@ -487,7 +487,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                         );
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A0A2E),
+              backgroundColor: const Color(0xFF0D0D1A),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
