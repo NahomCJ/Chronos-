@@ -556,7 +556,6 @@ class _PopularCountriesSection extends StatelessWidget {
     ('🇨🇦', 'Canada', 'CAD'),
     ('🇦🇺', 'Australia', 'AUD'),
     ('🇯🇵', 'Japan', 'JPY'),
-    ('🇳🇬', 'Nigeria', 'NGN'),
   ];
 
   @override

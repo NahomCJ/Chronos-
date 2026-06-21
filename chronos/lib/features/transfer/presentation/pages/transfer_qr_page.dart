@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class TransferQrPage extends StatefulWidget {
   const TransferQrPage({super.key, this.initialTab = 0});
@@ -15,6 +17,8 @@ class _TransferQrPageState extends State<TransferQrPage>
     with SingleTickerProviderStateMixin {
   late TabController _tab;
   late AnimationController _scanAnim;
+  MobileScannerController? _cameraCtrl;
+  bool _scanned = false;
 
   static const _qrData = 'chronos://pay/user/alexander_hubert_001';
 
@@ -26,12 +30,53 @@ class _TransferQrPageState extends State<TransferQrPage>
     _scanAnim = AnimationController(
         vsync: this, duration: const Duration(seconds: 2))
       ..repeat();
+    _tab.addListener(() {
+      if (_tab.index == 1) {
+        _startCamera();
+      } else {
+        _stopCamera();
+      }
+    });
+    if (widget.initialTab == 1) _startCamera();
+  }
+
+  void _startCamera() {
+    _cameraCtrl ??= MobileScannerController(
+      detectionSpeed: DetectionSpeed.normal,
+      facing: CameraFacing.back,
+    );
+    setState(() => _scanned = false);
+  }
+
+  void _stopCamera() {
+    _cameraCtrl?.stop();
+  }
+
+  void _onDetect(BarcodeCapture capture) {
+    if (_scanned) return;
+    final code = capture.barcodes.firstOrNull?.rawValue;
+    if (code == null) return;
+    _scanned = true;
+    _cameraCtrl?.stop();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ScanResultSheet(
+        code: code,
+        onDismiss: () {
+          Navigator.pop(context);
+          setState(() => _scanned = false);
+          _cameraCtrl?.start();
+        },
+      ),
+    );
   }
 
   @override
   void dispose() {
     _tab.dispose();
     _scanAnim.dispose();
+    _cameraCtrl?.dispose();
     super.dispose();
   }
 
@@ -256,11 +301,16 @@ class _TransferQrPageState extends State<TransferQrPage>
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Container(color: const Color(0xFF111122)),
-                    // Simulated camera noise pattern
-                    CustomPaint(
-                        painter: _CameraTexturePainter()),
-                    // Corner frame
+                    if (_cameraCtrl != null)
+                      MobileScanner(
+                        controller: _cameraCtrl!,
+                        onDetect: _onDetect,
+                        errorBuilder: (_, error, __) => _CameraErrorView(
+                            error: error.errorDetails?.message ?? 'Camera error'),
+                      )
+                    else
+                      Container(color: const Color(0xFF111122)),
+                    // Corner frame overlay
                     CustomPaint(painter: _ScanFramePainter()),
                     // Animated scan line
                     AnimatedBuilder(
@@ -296,45 +346,148 @@ class _TransferQrPageState extends State<TransferQrPage>
                         ),
                       ),
                     ),
-                    // Center hint
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 80),
-                          Icon(Icons.qr_code_2_rounded,
-                              color:
-                                  Colors.white.withValues(alpha: 0.15),
-                              size: 64),
-                          const SizedBox(height: 8),
-                          Text('Align QR code here',
-                              style: TextStyle(
-                                  color:
-                                      Colors.white.withValues(alpha: 0.3),
-                                  fontSize: 12)),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 24),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Text(
-            'Camera permission required for QR scanning.\nEnsure Chronos has camera access in Settings.',
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
-                fontSize: 11,
-                height: 1.5),
-            textAlign: TextAlign.center,
+        const SizedBox(height: 16),
+        if (!kIsWeb)
+          IconButton(
+            onPressed: () => _cameraCtrl?.toggleTorch(),
+            icon: const Icon(Icons.flash_on_rounded,
+                color: Colors.white54, size: 26),
+            tooltip: 'Toggle flashlight',
+          ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Camera error view
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CameraErrorView extends StatelessWidget {
+  const _CameraErrorView({required this.error});
+  final String error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFF111122),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.camera_alt_rounded,
+                  color: Colors.white38, size: 48),
+              const SizedBox(height: 12),
+              const Text('Camera access needed',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600)),
+              const SizedBox(height: 6),
+              Text(error,
+                  style: const TextStyle(
+                      color: Colors.white54, fontSize: 12),
+                  textAlign: TextAlign.center),
+            ],
           ),
         ),
-        const SizedBox(height: 32),
-      ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Scan result sheet
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ScanResultSheet extends StatelessWidget {
+  const _ScanResultSheet({required this.code, required this.onDismiss});
+  final String code;
+  final VoidCallback onDismiss;
+
+  String get _displayName {
+    if (code.startsWith('chronos://pay/user/')) {
+      return code.replaceFirst('chronos://pay/user/', '').replaceAll('_', ' ');
+    }
+    return code;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFF0F0F1E),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 36, height: 4,
+            decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(2)),
+          ),
+          const SizedBox(height: 24),
+          Container(
+            width: 64, height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF14B8A6).withValues(alpha: 0.15),
+            ),
+            child: const Icon(Icons.qr_code_2_rounded,
+                color: Color(0xFF14B8A6), size: 32),
+          ),
+          const SizedBox(height: 16),
+          const Text('QR Code Detected',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          Text(_displayName,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontSize: 14),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 28),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onDismiss,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF14B8A6),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                elevation: 0,
+              ),
+              child: const Text('Send Money',
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton(
+            onPressed: onDismiss,
+            child: Text('Scan Again',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 14)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -389,24 +542,6 @@ class _ScanFramePainter extends CustomPainter {
         false, paint);
     canvas.drawLine(
         Offset(x - r, y), Offset(x - r - len, y), paint);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
-}
-
-class _CameraTexturePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rng = math.Random(42);
-    final paint = Paint()..style = PaintingStyle.fill;
-    for (int i = 0; i < 800; i++) {
-      final x = rng.nextDouble() * size.width;
-      final y = rng.nextDouble() * size.height;
-      paint.color = Colors.white
-          .withValues(alpha: rng.nextDouble() * 0.03);
-      canvas.drawCircle(Offset(x, y), 1, paint);
-    }
   }
 
   @override
