@@ -17,22 +17,31 @@ class _TransferContactsPageState extends State<TransferContactsPage> {
 
   static const _contacts = [
     _Contact('Alexander Hubert', '+1 (415) 555-0182', 'A',
-        Color(0xFF3B82F6)),
+        Color(0xFF3B82F6),
+        'https://randomuser.me/api/portraits/men/32.jpg'),
     _Contact('Sarah Mitchell', '+1 (415) 555-0247', 'S',
-        Color(0xFF8B5CF6)),
+        Color(0xFF8B5CF6),
+        'https://randomuser.me/api/portraits/women/44.jpg'),
     _Contact('Michael Torres', '+1 (415) 555-0391', 'M',
-        Color(0xFF10B981)),
+        Color(0xFF10B981),
+        'https://randomuser.me/api/portraits/men/55.jpg'),
     _Contact('Emma Johnson', '+1 (415) 555-0458', 'E',
-        Color(0xFFF59E0B)),
+        Color(0xFFF59E0B),
+        'https://randomuser.me/api/portraits/women/68.jpg'),
     _Contact('Benjamin Clark', '+1 (415) 555-0512', 'B',
-        Color(0xFFEF4444)),
+        Color(0xFFEF4444),
+        'https://randomuser.me/api/portraits/men/12.jpg'),
     _Contact('Julia Anderson', '+1 (415) 555-0673', 'J',
-        Color(0xFFEC4899)),
-    _Contact('Daniel Lee', '+1 (415) 555-0784', 'D', Color(0xFF06B6D4)),
+        Color(0xFFEC4899),
+        'https://randomuser.me/api/portraits/women/17.jpg'),
+    _Contact('Daniel Lee', '+1 (415) 555-0784', 'D', Color(0xFF06B6D4),
+        'https://randomuser.me/api/portraits/men/71.jpg'),
     _Contact('Olivia Brown', '+1 (415) 555-0829', 'O',
-        Color(0xFF84CC16)),
+        Color(0xFF84CC16),
+        'https://randomuser.me/api/portraits/women/29.jpg'),
     _Contact('Noah Wilson', '+1 (415) 555-0943', 'N',
-        Color(0xFFF97316)),
+        Color(0xFFF97316),
+        'https://randomuser.me/api/portraits/men/88.jpg'),
   ];
 
   List<_Contact> get _filtered => _query.isEmpty
@@ -202,22 +211,7 @@ class _TransferContactsPageState extends State<TransferContactsPage> {
         return ListTile(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-          leading: Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                  colors: [c.color, c.color.withValues(alpha: 0.6)]),
-            ),
-            child: Center(
-              child: Text(c.initial,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600)),
-            ),
-          ),
+          leading: _Avatar(contact: c, size: 46),
           title: Text(c.name,
               style: const TextStyle(
                   color: Colors.white,
@@ -241,11 +235,50 @@ class _TransferContactsPageState extends State<TransferContactsPage> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _Contact {
-  const _Contact(this.name, this.phone, this.initial, this.color);
+  const _Contact(this.name, this.phone, this.initial, this.color, this.avatarUrl);
   final String name;
   final String phone;
   final String initial;
   final Color color;
+  final String avatarUrl;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Avatar widget
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.contact, required this.size});
+  final _Contact contact;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: Image.network(
+        contact.avatarUrl,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+                colors: [contact.color, contact.color.withValues(alpha: 0.6)]),
+          ),
+          child: Center(
+            child: Text(contact.initial,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -290,24 +323,7 @@ class _SendSheet extends StatelessWidget {
             const SizedBox(height: 20),
             Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(colors: [
-                      contact.color,
-                      contact.color.withValues(alpha: 0.6)
-                    ]),
-                  ),
-                  child: Center(
-                    child: Text(contact.initial,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ),
+                _Avatar(contact: contact, size: 44),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
