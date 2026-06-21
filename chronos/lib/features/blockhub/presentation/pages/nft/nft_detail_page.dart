@@ -138,7 +138,7 @@ class NftDetailPage extends StatelessWidget {
           image: const AssetImage('assets/background.png'),
           fit: BoxFit.cover,
           alignment: Alignment.topCenter,
-          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.58), BlendMode.darken),
+          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.15), BlendMode.darken),
         ),
       ),
       padding: EdgeInsets.fromLTRB(

@@ -152,7 +152,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
             child: Image.asset('assets/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.6)),
+            child: Container(color: Colors.black.withValues(alpha: 0.15)),
           ),
           SafeArea(
             child: LayoutBuilder(

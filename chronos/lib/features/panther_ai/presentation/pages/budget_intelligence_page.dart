@@ -85,7 +85,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
       body: Stack(
         children: [
           Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.15))),
           AnimatedBuilder(
             animation: _anim,
             builder: (_, __) => SingleChildScrollView(
