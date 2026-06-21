@@ -148,7 +148,7 @@ class _LifeXOnboardingPageState extends State<LifeXOnboardingPage>
         _step++;
         await _showTyping(700);
         _setMessage("Are you in a relationship right now?");
-        _showOptions(['Yes, happy', 'Yes, it's complicated', 'Single', 'Prefer not to say']);
+        _showOptions(['Yes, happy', "Yes, it's complicated", 'Single', 'Prefer not to say']);
         break;
       case 8:
         _relationship = answer;
