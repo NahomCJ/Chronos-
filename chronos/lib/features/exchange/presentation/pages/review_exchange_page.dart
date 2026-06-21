@@ -336,6 +336,7 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                   const SizedBox(height: 100),
                 ],
               ),
+            ),
           ),
         ],
       ),
