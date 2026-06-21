@@ -45,7 +45,11 @@ class ThemeSettingsPage extends StatelessWidget {
             ),
             centerTitle: false,
           ),
-          body: Padding(
+          body: Stack(
+              children: [
+                Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+                Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+                Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             child: GridView.builder(
               itemCount: AppThemes.all.length,
@@ -82,6 +86,8 @@ class ThemeSettingsPage extends StatelessWidget {
               },
             ),
           ),
+              ],
+            ),
         );
       },
     );

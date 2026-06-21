@@ -139,7 +139,7 @@ class _CryptoMarketsPageState extends State<CryptoMarketsPage> {
         children: [
           // Background Image
           Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
 
           SafeArea(
             child: Column(

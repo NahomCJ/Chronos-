@@ -42,7 +42,11 @@ class _RiskDisclosurePageState extends State<RiskDisclosurePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      body: SafeArea(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            SafeArea(
         child: Column(
           children: [
             _buildHeader(context),
@@ -68,6 +72,8 @@ class _RiskDisclosurePageState extends State<RiskDisclosurePage> {
           ],
         ),
       ),
+          ],
+        ),
     );
   }
 

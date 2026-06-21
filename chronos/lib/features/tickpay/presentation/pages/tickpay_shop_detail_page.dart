@@ -27,7 +27,11 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: CustomScrollView(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            CustomScrollView(
             slivers: [
               _buildSliverHeader(context),
               SliverToBoxAdapter(child: _buildStoreInfo()),
@@ -75,6 +79,8 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
               const SliverToBoxAdapter(child: SizedBox(height: 80)),
             ],
           ),
+          ],
+        ),
     );
   }
 

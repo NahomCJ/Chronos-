@@ -86,6 +86,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return Scaffold(
           body: Stack(
             children: [
+              Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
               Positioned.fill(
                 child: Image.network(
                   'https://images.pexels.com/photos/5741419/pexels-photo-5741419.jpeg?auto=compress&cs=tinysrgb&w=1280',

@@ -19,7 +19,11 @@ class TickPayCreditOverviewPage extends StatelessWidget {
         final account = state is TickpayAccountLoaded ? state : null;
         return Scaffold(
           backgroundColor: _kLight,
-          body: Column(
+          body: Stack(
+              children: [
+                Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+                Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+                Column(
             children: [
               Container(
                 color: _kDark,
@@ -49,6 +53,8 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               ),
             ],
           ),
+              ],
+            ),
         );
       },
     );
