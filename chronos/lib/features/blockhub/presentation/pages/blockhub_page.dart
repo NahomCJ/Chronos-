@@ -394,6 +394,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ],
           ),
         ),
+        ],
+      ),
     );
   }
 
