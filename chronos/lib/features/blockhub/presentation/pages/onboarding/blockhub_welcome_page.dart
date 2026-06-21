@@ -66,6 +66,8 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
       body: Stack(
         fit: StackFit.expand,
         children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
           // Video background
           if (_videoReady)
             AnimatedOpacity(

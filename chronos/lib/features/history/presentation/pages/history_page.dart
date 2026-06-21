@@ -127,13 +127,19 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       backgroundColor: _bg,
       extendBodyBehindAppBar: false,
-      body: Column(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            Column(
         children: [
           _buildGlassHeader(context),
           _buildCategoryBar(),
           Expanded(child: _buildList()),
         ],
       ),
+          ],
+        ),
     );
   }
 

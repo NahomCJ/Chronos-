@@ -107,7 +107,7 @@ class _TransferContactsPageState extends State<TransferContactsPage> {
                   Image.asset('assets/background.png', fit: BoxFit.cover)),
           Positioned.fill(
               child: Container(
-                  color: Colors.black.withValues(alpha: 0.15))),
+                  color: Colors.black.withValues(alpha: 0.45))),
           SafeArea(
             child: Column(
               children: [

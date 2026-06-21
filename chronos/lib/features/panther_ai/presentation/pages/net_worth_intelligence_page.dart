@@ -121,7 +121,7 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       body: Stack(
         children: [
           Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.15))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
           AnimatedBuilder(
             animation: _anim,
             builder: (_, __) => SingleChildScrollView(

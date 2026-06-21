@@ -55,7 +55,7 @@ class _ExchangePageState extends State<ExchangePage> {
         children: [
           // Background image
           Image.asset('assets/background.png', fit: BoxFit.cover),
-          Container(color: Colors.black.withValues(alpha: 0.15)),
+          Container(color: Colors.black.withValues(alpha: 0.45)),
 
           SafeArea(
             child: Column(

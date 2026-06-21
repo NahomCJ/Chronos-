@@ -82,7 +82,11 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -109,6 +113,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
           ),
         ],
       ),
+          ],
+        ),
     );
   }
 

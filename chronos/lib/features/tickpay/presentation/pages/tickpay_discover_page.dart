@@ -185,7 +185,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
             child: Image.asset('assets/tickpay/background.png', fit: BoxFit.cover),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.15)),
+            child: Container(color: Colors.black.withValues(alpha: 0.45)),
           ),
           Column(
             children: [

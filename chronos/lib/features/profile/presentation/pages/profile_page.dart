@@ -73,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Image.asset('assets/background.png', fit: BoxFit.cover),
                 ),
                 Positioned.fill(
-                  child: Container(color: Colors.black.withValues(alpha: 0.15)),
+                  child: Container(color: Colors.black.withValues(alpha: 0.45)),
                 ),
                 // Content
                 SafeArea(

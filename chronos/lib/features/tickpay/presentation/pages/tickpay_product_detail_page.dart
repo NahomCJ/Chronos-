@@ -36,7 +36,11 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: _buildBottomCta(context),
-      body: CustomScrollView(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
           SliverToBoxAdapter(
@@ -60,6 +64,8 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
           ),
         ],
       ),
+          ],
+        ),
     );
   }
 

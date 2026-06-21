@@ -34,7 +34,11 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            Column(
         children: [
           // ── Dark header ───────────────────────────────────────────────────
           Container(
@@ -51,6 +55,8 @@ class _TickPaySearchPageState extends State<TickPaySearchPage> {
           Expanded(child: _buildList(context)),
         ],
       ),
+          ],
+        ),
     );
   }
 

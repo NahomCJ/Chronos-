@@ -8,7 +8,11 @@ class TickPayNotificationsPage extends StatelessWidget {
     _Notif(
       icon: Icons.attach_money,
       title: 'Payment Due Soon',
-      body: 'Amazon payment of \$149.75 is due',
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            'Amazon payment of \$149.75 is due',
       unread: false,
     ),
     _Notif(
@@ -17,6 +21,8 @@ class TickPayNotificationsPage extends StatelessWidget {
       body: 'Save 30% on electronics at Best Buy',
       unread: true,
     ),
+          ],
+        ),
     _Notif(
       icon: Icons.check_circle_outline,
       title: 'Purchase Approved',

@@ -36,7 +36,11 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
+      body: Stack(
+          children: [
+            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+            Column(
         children: [
           Container(
             color: const Color(0xFF1A0A2E),
@@ -61,6 +65,8 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
           ),
         ],
       ),
+          ],
+        ),
     );
   }
 
