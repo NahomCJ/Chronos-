@@ -25,23 +25,29 @@ class _PortfolioIntelligencePageState extends State<PortfolioIntelligencePage> {
     return Scaffold(
       backgroundColor: _background,
       appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeroCard(),
-            const SizedBox(height: 20),
-            _buildAllocationSection(),
-            const SizedBox(height: 20),
-            _buildPerformanceSection(),
-            const SizedBox(height: 20),
-            _buildHoldingsSection(),
-            const SizedBox(height: 20),
-            _buildChrisInsightCard(),
-            const SizedBox(height: 32),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeroCard(),
+                const SizedBox(height: 20),
+                _buildAllocationSection(),
+                const SizedBox(height: 20),
+                _buildPerformanceSection(),
+                const SizedBox(height: 20),
+                _buildHoldingsSection(),
+                const SizedBox(height: 20),
+                _buildChrisInsightCard(),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

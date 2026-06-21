@@ -9,29 +9,35 @@ class MarketIntelligencePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    _buildMarketMoodCard(),
-                    const SizedBox(height: 22),
-                    _buildAffectsPortfolio(),
-                    const SizedBox(height: 22),
-                    _buildTopMovers(),
-                    const SizedBox(height: 40),
-                  ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        _buildMarketMoodCard(),
+                        const SizedBox(height: 22),
+                        _buildAffectsPortfolio(),
+                        const SizedBox(height: 22),
+                        _buildTopMovers(),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

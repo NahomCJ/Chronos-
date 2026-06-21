@@ -163,7 +163,11 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
           }
         },
       ),
-      body: SafeArea(
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.70))),
+          SafeArea(
         child: Column(
           children: [
             _buildHeader(),
@@ -180,6 +184,8 @@ class _AddMoneyPageState extends State<AddMoneyPage> {
             const SizedBox(height: 12),
           ],
         ),
+      ),
+        ],
       ),
     );
   }

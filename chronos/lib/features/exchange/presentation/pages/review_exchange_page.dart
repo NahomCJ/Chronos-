@@ -87,7 +87,11 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A14),
-      body: SafeArea(
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.70))),
+          SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -332,7 +336,8 @@ class _ReviewExchangePageState extends State<ReviewExchangePage> {
                   const SizedBox(height: 100),
                 ],
               ),
-            ),
+          ),
+        ],
       ),
     );
   }

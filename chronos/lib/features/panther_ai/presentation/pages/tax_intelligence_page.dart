@@ -101,28 +101,34 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
           ),
         ],
       ),
-      body: AnimatedBuilder(
-        animation: _anim,
-        builder: (_, __) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              _buildSummaryCard(),
-              const SizedBox(height: 24),
-              _buildPieChart(),
-              const SizedBox(height: 24),
-              _buildBreakdownSection(),
-              const SizedBox(height: 24),
-              _buildDeductionsSection(),
-              const SizedBox(height: 24),
-              _buildChrisInsight(),
-              const SizedBox(height: 24),
-              _buildQuarterlyTimeline(),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          AnimatedBuilder(
+            animation: _anim,
+            builder: (_, __) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  _buildSummaryCard(),
+                  const SizedBox(height: 24),
+                  _buildPieChart(),
+                  const SizedBox(height: 24),
+                  _buildBreakdownSection(),
+                  const SizedBox(height: 24),
+                  _buildDeductionsSection(),
+                  const SizedBox(height: 24),
+                  _buildChrisInsight(),
+                  const SizedBox(height: 24),
+                  _buildQuarterlyTimeline(),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

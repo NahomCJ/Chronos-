@@ -164,12 +164,16 @@ class _BlockHubPageState extends State<BlockHubPage> {
     final hp = isSmallScreen ? 16.0 : 20.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFF0A0A14),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
       ),
-      body: SingleChildScrollView(
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.65))),
+          SingleChildScrollView(
         child: Column(
           children: [
             // ── Hero Photo (header → wallet boxes → nav icons → action btns) ──
@@ -676,6 +680,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
               ),
             ],
           ),
+        ],
+      ),
         ],
       ),
     );
