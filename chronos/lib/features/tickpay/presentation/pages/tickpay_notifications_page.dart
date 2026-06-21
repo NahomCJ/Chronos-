@@ -8,11 +8,7 @@ class TickPayNotificationsPage extends StatelessWidget {
     _Notif(
       icon: Icons.attach_money,
       title: 'Payment Due Soon',
-      body: Stack(
-          children: [
-            Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
-            'Amazon payment of \$149.75 is due',
+      body: 'Amazon payment of \$149.75 is due',
       unread: false,
     ),
     _Notif(
@@ -21,8 +17,6 @@ class TickPayNotificationsPage extends StatelessWidget {
       body: 'Save 30% on electronics at Best Buy',
       unread: true,
     ),
-          ],
-        ),
     _Notif(
       icon: Icons.check_circle_outline,
       title: 'Purchase Approved',
@@ -52,24 +46,30 @@ class TickPayNotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.transparent,
+      body: Stack(
         children: [
-          Container(
-            color: const Color(0xFF1A0A2E),
-            child: SafeArea(
-              bottom: false,
-              child: _buildHeader(context),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              itemCount: _items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (_, i) => _buildNotifCard(_items[i]),
-            ),
+          Positioned.fill(child: Image.asset('assets/background.png', fit: BoxFit.cover)),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.45))),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: const Color(0xFF1A0A2E),
+                child: SafeArea(
+                  bottom: false,
+                  child: _buildHeader(context),
+                ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  itemCount: _items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (_, i) => _buildNotifCard(_items[i]),
+                ),
+              ),
+            ],
           ),
         ],
       ),
