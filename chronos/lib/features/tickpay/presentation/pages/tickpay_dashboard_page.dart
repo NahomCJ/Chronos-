@@ -27,20 +27,22 @@ const _kBrandLogos = <String, String>{
   'adidas':   'https://logo.clearbit.com/adidas.com',
 };
 
-Widget _brandBadge(String brand, Color bg) {
+// Always use white background so dark/coloured logos are visible
+Widget _brandBadge(String brand, [Color bg = Colors.white]) {
   final key = brand.toLowerCase();
-  final url = _kBrandLogos.entries
-      .firstWhere((e) => key.contains(e.key),
-          orElse: () => const MapEntry('', ''))
-      .value;
+  final entry = _kBrandLogos.entries.firstWhere(
+    (e) => key.contains(e.key),
+    orElse: () => const MapEntry('', ''),
+  );
+  final url = entry.value;
   return Container(
     width: 44,
     height: 44,
     decoration: BoxDecoration(
-      color: bg,
+      color: Colors.white,
       borderRadius: BorderRadius.circular(10),
       boxShadow: [
-        BoxShadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6, offset: const Offset(0, 2)),
+        BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 6, offset: const Offset(0, 2)),
       ],
     ),
     child: ClipRRect(
@@ -49,12 +51,24 @@ Widget _brandBadge(String brand, Color bg) {
           ? CachedNetworkImage(
               imageUrl: url,
               fit: BoxFit.contain,
-              placeholder: (_, __) => const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
-              errorWidget: (_, __, ___) => const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+              placeholder: (_, __) => _brandFallbackIcon(key),
+              errorWidget: (_, __, ___) => _brandFallbackIcon(key),
             )
-          : const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 22),
+          : _brandFallbackIcon(key),
     ),
   );
+}
+
+Widget _brandFallbackIcon(String key) {
+  if (key.contains('amazon')) {
+    return Container(color: Colors.white,
+      child: const Icon(Icons.shopping_cart, color: Color(0xFFFF9900), size: 26));
+  }
+  if (key.contains('nike')) {
+    return Container(color: Colors.white,
+      child: const Icon(Icons.check_circle, color: Colors.black87, size: 26));
+  }
+  return const Icon(Icons.shopping_bag_outlined, color: Color(0xFF8B5CF6), size: 22);
 }
 
 class TickPayDashboardPage extends StatefulWidget {
@@ -510,7 +524,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
       (Icons.shopping_bag_outlined, 'Shop', RouteConstants.tickpayDiscover.toPath, false),
-      (Icons.auto_awesome_rounded, 'AI Shop', RouteConstants.tickpayAiShop.toPath, true),
+      (Icons.auto_awesome_rounded, 'AI Search', RouteConstants.tickpayDiscover.toPath, true),
       (Icons.payment_outlined, 'Pay', RouteConstants.tickpayRepayNow.toPath, false),
       (Icons.receipt_long_outlined, 'Purchases', RouteConstants.tickpayOrderHistory.toPath, false),
       (Icons.replay_outlined, 'Repayments', RouteConstants.tickpayUpcomingPayments.toPath, false),
@@ -607,11 +621,11 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
 
     final mockPlans = [
       (
-        _brandBadge('amazon', const Color(0xFF0F0F0F)),
+        _brandBadge('amazon'),
         'Amazon', '#9012', '3 of 4 payments left', '\$599',
       ),
       (
-        _brandBadge('nike', Colors.black),
+        _brandBadge('nike'),
         'Nike', '#8234', '2 of 3 payments left', '\$450',
       ),
     ];
@@ -664,7 +678,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: _buildPlanItem(
-                  logoWidget: _brandBadge(merchant, color.withValues(alpha: 0.15)),
+                  logoWidget: _brandBadge(merchant),
                   brand: tx.merchant ?? 'Purchase',
                   orderRef:
                       '#${tx.id.substring(tx.id.length > 6 ? tx.id.length - 6 : 0)}',

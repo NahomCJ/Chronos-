@@ -199,7 +199,10 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                     children: [
                       _buildTopBar(context),
                       _buildSearchBar(context),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+                      // AI results preview strip inside the dark header
+                      if (_isAiMode) _buildAiPreviewStrip(),
+                      if (_isAiMode) const SizedBox(height: 12),
                       if (!_isAiMode) _buildCategoriesRow(context),
                       if (!_isAiMode) const SizedBox(height: 16),
                     ],
@@ -214,7 +217,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                    child: _isAiMode ? _buildAiResults() : _buildDefaultContent(),
+                    child: _buildDefaultContent(),
                   ),
                 ),
               ),
@@ -347,6 +350,107 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
     );
   }
 
+  Widget _buildAiPreviewStrip() {
+    if (_searching) {
+      return const SizedBox(
+        height: 120,
+        child: Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+      );
+    }
+    if (_aiResults.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Text(
+          'No results for "${_ctrl.text}" — try another search',
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          child: Row(
+            children: [
+              const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 14),
+              const SizedBox(width: 6),
+              Text(
+                '${_aiResults.length} results — best prices for "${_ctrl.text}"',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 130,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: _aiResults.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, i) => _aiPreviewCard(_aiResults[i]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _aiPreviewCard(TProduct product) {
+    return GestureDetector(
+      onTap: () => _selectProduct(product),
+      child: Container(
+        width: 110,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+              child: Image.network(
+                product.imageUrl,
+                width: 110,
+                height: 70,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 110, height: 70,
+                  color: Colors.white.withValues(alpha: 0.08),
+                  child: const Icon(Icons.image, color: Colors.white38, size: 30),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(7, 5, 7, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 2),
+                  Text(product.price,
+                      style: const TextStyle(color: Color(0xFFFFD700), fontSize: 11, fontWeight: FontWeight.bold)),
+                  if (product.bnpl.isNotEmpty)
+                    Text(product.bnpl,
+                        style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 9)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategoriesRow(BuildContext context) {
     return SizedBox(
       height: 90,
@@ -403,192 +507,6 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildAiResults() {
-    if (_searching) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFF8B5CF6)));
-    }
-    if (_aiResults.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.search_off, color: Color(0xFFAAAAAA), size: 48),
-            const SizedBox(height: 12),
-            Text(
-              'No results for "${_ctrl.text}"',
-              style: const TextStyle(color: Color(0xFF888888), fontSize: 15),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Try a different search term',
-              style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 13),
-            ),
-          ],
-        ),
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
-          child: Row(
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 13),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_aiResults.length} results found',
-                style: const TextStyle(
-                  color: Color(0xFF111111),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.72,
-            ),
-            itemCount: _aiResults.length,
-            itemBuilder: (context, i) => _aiProductCard(_aiResults[i]),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _aiProductCard(TProduct product) {
-    return GestureDetector(
-      onTap: () => _selectProduct(product),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.07),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                    child: Image.network(
-                      product.imageUrl,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: const Color(0xFFF0F0F0),
-                        child: const Icon(Icons.image, color: Color(0xFFCCCCCC), size: 40),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(product.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 2),
-                      Text(product.price,
-                          style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold)),
-                      if (product.bnpl.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(product.bnpl,
-                            style: const TextStyle(
-                                color: Color(0xFF8B5CF6),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500)),
-                      ],
-                      const SizedBox(height: 6),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8B5CF6),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'Buy with BNPL',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text('AI',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-              ),
-            ),
-            if (product.discount > 0)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF2D87),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text('-${(product.discount * 100).toInt()}%',
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-                ),
-              ),
-          ],
-        ),
       ),
     );
   }
