@@ -340,13 +340,18 @@ model BankingProfile {
   frozen      Boolean       @default(false)
 
   // Plaid Identity Verification (KYC)
-  plaidIdvId     String? // Plaid identity_verification_id
-  plaidStatus    String? // Plaid-side status (active, success, failed, etc.)
+  plaidIdvId     String?
+  plaidStatus    String?
 
   // Plaid Auth (bank account linking for ACH deposits)
-  plaidAccessToken String? // Plaid access token — encrypt at rest in production
-  plaidItemId      String? // Plaid item ID for the linked institution
-  plaidAccountId   String? // Selected Plaid account ID for ACH
+  plaidAccessToken String?
+  plaidItemId      String?
+  plaidAccountId   String?
+
+  // Unit BaaS
+  unitCustomerId        String?
+  unitApplicationId     String?
+  unitApplicationStatus String?
 
   submittedAt     DateTime?
   approvedAt      DateTime?
@@ -356,8 +361,72 @@ model BankingProfile {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id])
-  accounts Account[]
+  user         User          @relation(fields: [userId], references: [id])
+  accounts     Account[]
+  unitAccounts UnitAccount[]
+  unitCards    UnitCard[]
+  unitTransfers UnitTransfer[]
+}
+
+// ==========================
+// UNIT BAAS MODELS
+// ==========================
+
+model UnitAccount {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String   @unique
+  routingNumber    String
+  accountNumber    String
+  depositProduct   String   @default("checking")
+  balance          Int      @default(0) // stored in cents
+  status           String   @default("open")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitCards      UnitCard[]
+  unitTransfers  UnitTransfer[]
+
+  @@index([bankingProfileId])
+}
+
+model UnitCard {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String
+  unitCardId       String   @unique
+  last4            String
+  type             String   @default("VIRTUAL")
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitAccount    UnitAccount    @relation(fields: [unitAccountId], references: [unitAccountId])
+
+  @@index([bankingProfileId])
+  @@index([unitAccountId])
+}
+
+model UnitTransfer {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String
+  unitTransferId   String   @unique
+  type             String   // ACH | WIRE | BOOK
+  direction        String   @default("Debit")
+  amount           Int      // in cents
+  description      String?
+  status           String   @default("pending")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitAccount    UnitAccount    @relation(fields: [unitAccountId], references: [unitAccountId])
+
+  @@index([bankingProfileId])
+  @@index([unitAccountId])
 }
 
 enum AccountStatus {
