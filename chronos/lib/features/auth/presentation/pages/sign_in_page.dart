@@ -46,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
               // Background
               Positioned.fill(
                 child: Image.network(
-                  'https://images.pexels.com/photos/5741419/pexels-photo-5741419.jpeg?auto=compress&cs=tinysrgb&w=1280',
+                  'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
                   filterQuality: FilterQuality.high,
@@ -55,20 +55,7 @@ class _SignInPageState extends State<SignInPage> {
                   errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0D1117)),
                 ),
               ),
-              Positioned.fill(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0x22000000),
-                        Color(0x99000000),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
               SafeArea(
                 child: Padding(
                   padding: Constants.paddingHorizontalMedium,
