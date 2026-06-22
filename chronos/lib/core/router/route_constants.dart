@@ -3,6 +3,7 @@ enum RouteConstants {
   onboarding,
   signUp,
   signIn,
+  personalInfo,
   home,
   transfer,
   selectMethod,
@@ -112,6 +113,8 @@ extension RouteConstantsX on RouteConstants {
         return '/signup';
       case RouteConstants.signIn:
         return '/signin';
+      case RouteConstants.personalInfo:
+        return '/personal-info';
       case RouteConstants.home:
         return '/home';
       case RouteConstants.transfer:
@@ -312,6 +315,8 @@ extension RouteConstantsX on RouteConstants {
         return 'signup';
       case RouteConstants.signIn:
         return 'signin';
+      case RouteConstants.personalInfo:
+        return 'personal-info';
       case RouteConstants.home:
         return 'home';
       case RouteConstants.transfer:

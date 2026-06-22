@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/home_page.dart';
 import '../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/phone_auth_page.dart';
+import '../../features/auth/presentation/pages/personal_info_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/sign_up_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
@@ -176,6 +177,11 @@ final GoRouter router = GoRouter(
       path: RouteConstants.phoneAuth.toPath,
       name: RouteConstants.phoneAuth.name,
       builder: (context, state) => const PhoneAuthRoute(),
+    ),
+    GoRoute(
+      path: RouteConstants.personalInfo.toPath,
+      name: RouteConstants.personalInfo.name,
+      builder: (context, state) => const PersonalInfoPage(),
     ),
 
     // ── Detail / flow pages (no bottom nav) ──────────────────────────────
