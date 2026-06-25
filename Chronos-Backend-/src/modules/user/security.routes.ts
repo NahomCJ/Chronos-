@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { enable2FA, verify2FA, sendNotification, getHistory } from '../../controllers/security.controller';
+import { enable2FA, verify2FA, sendNotification, getHistory } from './security.controller';
 
 const router = Router();
 

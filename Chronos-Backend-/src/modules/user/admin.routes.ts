@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUsers, lockAccount, getAuditLogs, impersonate } from '../controllers/admin.controller';
+import { getUsers, lockAccount, getAuditLogs, impersonate } from './admin.service';
 
 const router = Router();
 

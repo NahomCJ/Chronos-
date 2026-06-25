@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../pages/wallet_analytics_page.dart';
 
@@ -61,6 +63,12 @@ class FeaturesSection extends StatelessWidget {
           icon: Icons.send_outlined,
           title: 'Withdraw Funds',
           onTap: () {},
+        ),
+        const SizedBox(height: 12),
+        _buildFeatureItem(
+          icon: Icons.account_balance,
+          title: 'Unit Banking',
+          onTap: () => context.go(RouteConstants.unitBanking.toPath),
         ),
       ],
     );

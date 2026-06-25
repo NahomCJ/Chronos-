@@ -94,6 +94,7 @@ import '../../features/profile/presentation/pages/theme_settings_page.dart';
 import '../../features/profile/presentation/pages/change_password_page.dart';
 import '../../features/profile/presentation/pages/notification_settings_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
+import '../../features/unit_banking/presentation/pages/unit_banking_page.dart';
 import '../theme/theme_cubit.dart';
 import '../pages/search_page.dart';
 import '../../features/lifex/presentation/pages/lifex_page.dart';
@@ -724,6 +725,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.history.toPath,
       name: RouteConstants.history.toName,
       builder: (_, __) => const HistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.unitBanking.toPath,
+      name: RouteConstants.unitBanking.toName,
+      builder: (_, __) => const UnitBankingPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

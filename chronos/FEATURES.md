@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-18 (updated: ChrisFAB redesign — dark amber orb FAB, text sheet with gradient border, Siri-like voice overlay; triple-open wake word bug fixed)
+Last updated: 2026-06-25 (updated: Unit Banking feature added — accounts, cards, transfers via Unit BaaS; fixed backend import errors from Thom22's Unit integration)
 
 ---
 
@@ -119,6 +119,26 @@ Path: `lib/features/wallet/`
 | Wallet Onboarding | `/wallet-onboarding` | `wallet_onboarding_page.dart` | [LIVE] |
 | Find ATM | `/find-atm` | `find_atm_page.dart` | [LIVE] |
 | Analytics | — | `wallet_analytics_page.dart` | [LIVE] |
+
+---
+
+## Unit Banking Feature
+
+Path: `lib/features/unit_banking/`
+
+Integration with Unit (Banking-as-a-Service). Wired to `/api/unit/*` backend endpoints added by the Unit BaaS integration (Thom22).
+
+| Screen | Route | File | Status |
+|--------|-------|------|--------|
+| Unit Banking | `/unit-banking` | `unit_banking_page.dart` | [LIVE] |
+
+**API Endpoints:**
+- `GET /api/unit/accounts` — list banking accounts
+- `GET /api/unit/cards` — list debit cards
+- `GET /api/unit/transfers` — list transfers
+- `POST /api/unit/accounts` — open a new account
+- `POST /api/unit/cards/:id/freeze` — freeze card
+- `POST /api/unit/cards/:id/unfreeze` — unfreeze card
 
 ---
 
