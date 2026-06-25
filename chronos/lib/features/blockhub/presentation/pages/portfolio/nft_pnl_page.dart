@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
@@ -20,8 +21,10 @@ class _NftPnlPageState extends State<NftPnlPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
           ),
           SafeArea(
             child: Column(
@@ -37,8 +40,6 @@ class _NftPnlPageState extends State<NftPnlPage> {
                         _buildTotalCard(),
                         const SizedBox(height: 14),
                         _buildFilterTabs(),
-                        const SizedBox(height: 14),
-                        _buildPantherInsight(),
                         const SizedBox(height: 14),
                         _buildNftPnlList(),
                         const SizedBox(height: 20),
@@ -210,54 +211,6 @@ class _NftPnlPageState extends State<NftPnlPage> {
                 ),
               );
             }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildPantherInsight() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Panther Insight',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '1 NFT is currently below acquisition price. Consider holding or averaging down.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 11,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

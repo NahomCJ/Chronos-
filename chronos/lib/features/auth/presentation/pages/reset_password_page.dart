@@ -86,11 +86,32 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return Scaffold(
           body: Stack(
             children: [
+              Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
               Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
+                child: Image.network(
+                  'https://images.pexels.com/photos/5741419/pexels-photo-5741419.jpeg?auto=compress&cs=tinysrgb&w=1280',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  filterQuality: FilterQuality.high,
+                  loadingBuilder: (_, child, progress) =>
+                      progress == null ? child : Container(color: const Color(0xFF0D1117)),
+                  errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0D1117)),
+                ),
               ),
               Positioned.fill(
-                child: Container(color: Colors.black.withOpacity(0.6)),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0x22000000),
+                        Color(0x99000000),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               SafeArea(
                 child: SingleChildScrollView(
@@ -243,7 +264,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         prefixIcon: Icon(icon, color: Colors.white70),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         errorMaxLines: 2,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

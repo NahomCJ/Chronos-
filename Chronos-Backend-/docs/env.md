@@ -44,10 +44,18 @@ Get them from [Plaid Dashboard → Team Settings → Keys](https://dashboard.pla
 
 | Variable | Required for BlockHub | Description |
 |----------|-----------------------|-------------|
-| `PAXOS_API_URL` | Yes | `https://api.sandbox.paxos.com/v2` for sandbox |
-| `PAXOS_CLIENT_ID` | Yes | Paxos OAuth client ID |
+| `PAXOS_ENV` | No | `sandbox` (default) / `production`. Controls OAuth and API base URLs. |
+| `PAXOS_API_URL` | No | Optional override. Defaults to `https://api.sandbox.paxos.com/v2` in sandbox. |
+| `PAXOS_CLIENT_ID` | Yes | Paxos OAuth client ID. If missing, server boots, prices fall back to CoinGecko, and trading returns 503. |
 | `PAXOS_CLIENT_SECRET` | Yes | Paxos OAuth client secret |
-| `PAXOS_PROFILE_ID` | Yes | Your platform's Paxos profile ID |
+| `PAXOS_PROFILE_ID` | Yes | Platform Paxos profile ID |
+| `PAXOS_SETTLEMENT_PROFILE_ID` | Yes for transfers | Settlement profile used for internal credit/debit transfer tests |
+| `PAXOS_SCOPES` | No | OAuth scopes. Defaults include profile, trading, identity, transfer read, and internal transfer write scopes. |
+| `PAXOS_SANDBOX_RUN_TRADES` | No | Set `true` only when running `npm run test:paxos:sandbox` and you want the command to place a small sandbox buy/sell loop. |
+| `PAXOS_SANDBOX_RUN_TRANSFERS` | No | Set `true` only when running `npm run test:paxos:sandbox` and you want internal settlement transfer checks. |
+| `PAXOS_SANDBOX_TRADE_AMOUNT_USD` | No | Defaults to `5.00` for the gated sandbox trade loop. |
+
+`npm run test:paxos:sandbox` exits with a skip message unless `PAXOS_CLIENT_ID`, `PAXOS_CLIENT_SECRET`, and `PAXOS_PROFILE_ID` are present. With credentials present, it validates OAuth, balances, prices for all supported assets, and transfer listing. Trade and transfer mutations require the explicit flags above.
 
 ---
 
@@ -59,6 +67,8 @@ Get them from [Plaid Dashboard → Team Settings → Keys](https://dashboard.pla
 | `SPREAD_RATE` | No | `0.002` | Spread (0.2%) |
 | `DAILY_TRADE_LIMIT_STANDARD` | No | `10000` | Daily USD trading limit for standard tier |
 | `DAILY_TRADE_LIMIT_VERIFIED_PLUS` | No | `50000` | Daily USD trading limit for verified_plus tier |
+| `PAXOS_ORDER_POLL_INTERVAL_MS` | No | `2000` | Poll interval for sandbox order fill checks |
+| `PAXOS_ORDER_POLL_ATTEMPTS` | No | `15` | Max order polling attempts before timeout |
 
 ---
 

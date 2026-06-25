@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
 import 'sell/sell_btc_page.dart';
 
@@ -33,9 +33,8 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
       body: Stack(
         children: [
           // Background Image
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
 
           // Content
           SafeArea(
@@ -83,7 +82,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                           Text(
                             'BTC',
                             style: TextStyles.bodySmall.copyWith(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -228,7 +227,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                               color:
                                   isSelected
                                       ? Colors.white
-                                      : Colors.white.withOpacity(0.6),
+                                      : Colors.white.withValues(alpha: 0.6),
                               fontWeight:
                                   isSelected
                                       ? FontWeight.w600
@@ -301,14 +300,14 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                     decoration: BoxDecoration(
                       color:
                           isSelected
-                              ? Colors.white.withOpacity(0.2)
+                              ? Colors.white.withValues(alpha: 0.2)
                               : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color:
                             isSelected
-                                ? Colors.white.withOpacity(0.3)
-                                : Colors.white.withOpacity(0.1),
+                                ? Colors.white.withValues(alpha: 0.3)
+                                : Colors.white.withValues(alpha: 0.1),
                       ),
                     ),
                     child: Text(
@@ -317,7 +316,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                         color:
                             isSelected
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.7),
+                                : Colors.white.withValues(alpha: 0.7),
                         fontWeight:
                             isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
@@ -334,7 +333,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           height: 200,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
           ),
           child: CustomPaint(painter: BitcoinChartPainter()),
@@ -385,68 +384,8 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
         Text(
           'The first decentralized cryptocurrency, created by Satoshi Nakamoto.',
           style: TextStyles.bodyMedium.copyWith(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             height: 1.5,
-          ),
-        ),
-
-        const SizedBox(height: 32),
-
-        // Panther AI Analysis
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.psychology, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Panther AI Analysis',
-                    style: TextStyles.titleSmall.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Bitcoin volatility increased by 8% today. Consider smaller position sizes and dollar-cost averaging for entry.',
-                style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withOpacity(0.9),
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Text(
-                    'View Full Analysis',
-                    style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ],
-              ),
-            ],
           ),
         ),
 
@@ -476,7 +415,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           height: 350,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(12),
           ),
           child: CustomPaint(painter: AdvancedChartPainter()),
@@ -521,9 +460,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +480,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           Text(
             description,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 11,
             ),
             maxLines: 2,
@@ -559,7 +498,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -594,14 +533,14 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Text(
             'Bitcoin is the world\'s first decentralized cryptocurrency, created in 2009 by the pseudonymous Satoshi Nakamoto. It operates on a peer-to-peer network without central authority, using blockchain technology to secure transactions.',
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -625,9 +564,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -661,9 +600,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -693,9 +632,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -725,7 +664,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             width: 4,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               shape: BoxShape.circle,
             ),
           ),
@@ -733,7 +672,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             child: Text(
               text,
               style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 height: 1.5,
               ),
             ),
@@ -750,7 +689,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 12,
           ),
         ),
@@ -859,13 +798,13 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
         color:
             isSelected
                 ? const Color(0xFF7C3AED)
-                : Colors.white.withOpacity(0.1),
+                : Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color:
               isSelected
                   ? const Color(0xFF7C3AED)
-                  : Colors.white.withOpacity(0.2),
+                  : Colors.white.withValues(alpha: 0.2),
         ),
       ),
       child: Text(
@@ -888,9 +827,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -899,10 +838,10 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.white.withOpacity(0.7), size: 20),
+            child: Icon(icon, color: Colors.white.withValues(alpha: 0.7), size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -922,20 +861,20 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                     Text(
                       source,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
                     ),
                     Text(
-                      ' • ',
+                      ' â€¢ ',
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
                       date,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 11,
                       ),
                     ),
@@ -945,7 +884,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                 Text(
                   description,
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                   maxLines: 2,
@@ -968,15 +907,15 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Icon(
             Icons.calendar_today,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -997,7 +936,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                     Text(
                       date,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 12,
                       ),
                     ),
@@ -1008,7 +947,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: tagColor.withOpacity(0.2),
+                        color: tagColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1091,9 +1030,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF7C3AED).withOpacity(0.2),
+            color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1108,7 +1047,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                 child: Text(
                   'These assets are frequently traded together or belong to the same sector, offering diversification opportunities.',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -1134,9 +1073,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -1145,7 +1084,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.2),
+              color: iconColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(Icons.currency_bitcoin, color: iconColor, size: 20),
@@ -1166,7 +1105,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                 Text(
                   symbol,
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                     fontSize: 12,
                   ),
                 ),
@@ -1274,9 +1213,9 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF3B82F6).withOpacity(0.2),
+            color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1292,13 +1231,13 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
               Text(
                 'Order book data provided by liquidity partners.',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
               Text(
                 'Spread: \$128.50',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -1318,7 +1257,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           child: Text(
             'Price',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 10,
             ),
           ),
@@ -1327,7 +1266,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           child: Text(
             'Size',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 10,
             ),
             textAlign: TextAlign.right,
@@ -1337,7 +1276,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
           child: Text(
             'Total',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 10,
             ),
             textAlign: TextAlign.right,
@@ -1411,7 +1350,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             child: Text(
               order[1],
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: 10,
               ),
               textAlign: TextAlign.right,
@@ -1421,7 +1360,7 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
             child: Text(
               order[2],
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: 10,
               ),
               textAlign: TextAlign.right,
@@ -1449,7 +1388,7 @@ class AdvancedChartPainter extends CustomPainter {
     final barWidth = size.width / 25;
     for (int i = 0; i < 25; i++) {
       final height = (size.height * 0.3) * (0.3 + (i % 5) * 0.15);
-      volumePaint.color = Colors.purple.withOpacity(0.3);
+      volumePaint.color = Colors.purple.withValues(alpha: 0.3);
 
       canvas.drawRect(
         Rect.fromLTWH(
@@ -1494,8 +1433,8 @@ class BitcoinChartPainter extends CustomPainter {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF10B981).withOpacity(0.3),
-              const Color(0xFF10B981).withOpacity(0.05),
+              const Color(0xFF10B981).withValues(alpha: 0.3),
+              const Color(0xFF10B981).withValues(alpha: 0.05),
             ],
           ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 

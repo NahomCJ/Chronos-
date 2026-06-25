@@ -6,29 +6,35 @@ class CardCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: PageView(
-        controller: PageController(viewportFraction: 0.85),
-        children: [
-          _buildCard(
-            cardName: '',
-            cardType: 'Virtual Card',
-            cardNumber: '**** 7777',
-            expiryDate: 'EXP: 04/26',
-            balance: '\$1,250.50',
-            backgroundImage: 'assets/image2.png',
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Standard debit card ratio 1.586:1; each card takes 85% of available width
+        final cardHeight = constraints.maxWidth * 0.85 / 1.586;
+        return SizedBox(
+          height: cardHeight,
+          child: PageView(
+            controller: PageController(viewportFraction: 0.85),
+            children: [
+              _buildCard(
+                cardName: '',
+                cardType: 'Virtual Card',
+                cardNumber: '**** 7777',
+                expiryDate: 'EXP: 04/26',
+                balance: '\$1,250.50',
+                backgroundImage: 'assets/image2.png',
+              ),
+              _buildCard(
+                cardName: '',
+                cardType: 'Debit Card',
+                cardNumber: '**** 8888',
+                expiryDate: 'EXP: 08/27',
+                balance: '\$3,450.25',
+                backgroundImage: 'assets/image1.jpg',
+              ),
+            ],
           ),
-          _buildCard(
-            cardName: '',
-            cardType: 'Debit Card',
-            cardNumber: '**** 8888',
-            expiryDate: 'EXP: 08/27',
-            balance: '\$3,450.25',
-            backgroundImage: 'assets/image1.jpg',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -56,11 +62,9 @@ class CardCarousel extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
-            // Background Image
             Positioned.fill(
               child: Image.asset(backgroundImage, fit: BoxFit.cover),
             ),
-            // Dark overlay for better text readability
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -75,7 +79,6 @@ class CardCarousel extends StatelessWidget {
                 ),
               ),
             ),
-            // Card Content
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -87,7 +90,7 @@ class CardCarousel extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(padding: EdgeInsets.only(top: 8)),
+                          const Padding(padding: EdgeInsets.only(top: 8)),
                           Text(
                             cardName,
                             style: TextStyles.titleMedium.copyWith(
@@ -104,10 +107,7 @@ class CardCarousel extends StatelessWidget {
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),

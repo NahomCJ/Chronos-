@@ -1,7 +1,7 @@
 import prisma from "../../../config/prisma";
 
 export async function getHomeSummary(userId: string) {
-  const [account, tickPay] = await Promise.all([
+  const [account, tickPay, coreTransactions] = await Promise.all([
     prisma.account.findFirst({
       where: { userId },
       include: {
@@ -17,6 +17,18 @@ export async function getHomeSummary(userId: string) {
       where: { userId },
       select: { creditLimit: true, balance: true, available: true, status: true },
     }),
+    prisma.coreTransaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        ledgerEntries: {
+          where: { wallet: { account: { userId } } },
+          take: 1,
+          select: { direction: true, amount: true, currency: true },
+        },
+      },
+    }),
   ]);
 
   const wallets = (account?.wallets ?? []).map((w) => {
@@ -27,23 +39,82 @@ export async function getHomeSummary(userId: string) {
     return { currency: w.currency, type: w.type, balance };
   });
 
-  const totalBalance = wallets.reduce((sum, w) => sum + w.balance, 0);
+  const accountBalance = wallets.reduce((sum, w) => sum + w.balance, 0);
+  const tickPayUsed = tickPay ? parseFloat(tickPay.balance.toString()) : 0;
 
-  const tickPayUsed = tickPay
-    ? parseFloat(tickPay.balance.toString())
-    : 0;
+  // Map recent transactions — positive amount = credit, negative = debit
+  const recentTransactions = coreTransactions.map((tx) => {
+    const ledger = tx.ledgerEntries[0];
+    const amt = ledger ? parseFloat(ledger.amount.toString()) : 0;
+    const isCredit = ledger?.direction === "CREDIT";
+    return {
+      id: tx.id,
+      type: tx.type,
+      amount: isCredit ? amt : -amt,
+      currency: ledger?.currency ?? "USD",
+      status: tx.status,
+      createdAt: tx.createdAt.toISOString(),
+      description: (tx as any).reference ?? null,
+    };
+  });
+
+  // Spending by category — current calendar month debits
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const ledgerDebits = await prisma.ledgerEntry.findMany({
+    where: {
+      wallet: { account: { userId } },
+      direction: "DEBIT",
+      createdAt: { gte: startOfMonth },
+    },
+    select: {
+      amount: true,
+      category: true,
+      transaction: { select: { type: true } },
+    },
+  });
+
+  const txTypeLabel: Record<string, string> = {
+    PURCHASE: "Shopping",
+    PAYMENT: "Bills",
+    WITHDRAWAL: "Cash Out",
+    REPAYMENT: "Repayments",
+    TRANSFER: "Transfers",
+  };
+  const categoryLabel: Record<string, string> = {
+    TRANSFER: "Transfers",
+    FEE: "Fees",
+    FX: "Exchange",
+    ADJUSTMENT: "Adjustments",
+  };
+
+  const byCategory: Record<string, number> = {};
+  let totalSpent = 0;
+  for (const entry of ledgerDebits) {
+    const txType = (entry.transaction as any)?.type ?? "";
+    const label =
+      txTypeLabel[txType] ??
+      categoryLabel[(entry as any).category] ??
+      "Other";
+    const amt = parseFloat(entry.amount.toString());
+    byCategory[label] = (byCategory[label] ?? 0) + amt;
+    totalSpent += amt;
+  }
 
   return {
-    totalBalance,
+    accountBalance,
+    totalSpent: parseFloat(totalSpent.toFixed(2)),
+    recentTransactions,
+    byCategory,
     currency: "USD",
     wallets,
     netWorth: {
-      cash: totalBalance,
+      cash: accountBalance,
       tickPay: tickPayUsed,
       aiPortfolio: 0,
       blockHub: 0,
       investments: 0,
-      total: totalBalance - tickPayUsed,
+      total: accountBalance - tickPayUsed,
     },
   };
 }

@@ -36,7 +36,19 @@ class NftDetailPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(
                 children: [
-                  Icon(Icons.menu, color: Colors.grey[700], size: 24),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back,
+                          color: Colors.black87, size: 20),
+                    ),
+                  ),
                   Expanded(
                     child: Column(
                       children: [
@@ -64,12 +76,12 @@ class NftDetailPage extends StatelessWidget {
             ),
             // NFT image
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Stack(
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 240,
+                    height: 180,
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.circular(16),
@@ -120,12 +132,13 @@ class NftDetailPage extends StatelessWidget {
   Widget _buildDarkBody(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.black,
         image: DecorationImage(
-          image: AssetImage('assets/background.png'),
+          image: const AssetImage('assets/background.png'),
           fit: BoxFit.cover,
           alignment: Alignment.topCenter,
+          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.45), BlendMode.darken),
         ),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -151,7 +164,7 @@ class NftDetailPage extends StatelessWidget {
             'Holographic #9012',
             style: TextStyles.titleLarge.copyWith(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -218,7 +231,7 @@ class NftDetailPage extends StatelessWidget {
                       '3.5 ETH',
                       style: TextStyles.titleLarge.copyWith(
                         color: Colors.white,
-                        fontSize: 26,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -271,7 +284,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -294,7 +307,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),

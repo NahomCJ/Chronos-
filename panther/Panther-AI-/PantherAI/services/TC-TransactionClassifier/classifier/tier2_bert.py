@@ -1,8 +1,14 @@
 import os
 import re
-import torch
 import logging
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
+
+try:
+    import torch
+    from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
+except ImportError:
+    torch = None
+    DistilBertTokenizerFast = None
+    DistilBertForSequenceClassification = None
 
 # Setup logger
 logger = logging.getLogger("BertClassifier")
@@ -18,6 +24,9 @@ class BertClassifier:
         """
         Initializes the classifier by loading the model and tokenizer.
         """
+        if torch is None or DistilBertTokenizerFast is None or DistilBertForSequenceClassification is None:
+            raise ImportError("torch and transformers are required for BertClassifier")
+
         if model_path is None:
             # Check environment variable first, then fallback to default
             model_path = os.getenv("PANTHER_MODEL_PATH")
@@ -75,8 +84,17 @@ class BertClassifier:
         Classifies a single transaction description.
         Returns: (subcategory_id, confidence_score)
         """
+        subcategory, confidence, _probabilities = self.classify_with_probabilities(text)
+        return subcategory, confidence
+
+    def classify_with_probabilities(self, text: str) -> tuple[str, float, list[float]]:
+        """
+        Classifies a transaction and returns the full softmax distribution.
+
+        Returns: (subcategory_id, top_probability, probabilities)
+        """
         if not text or not str(text).strip():
-            return "sub_general_misc", 0.0
+            return "sub_general_misc", 0.0, []
 
         try:
             clean_text = self._normalize_text(text)
@@ -104,11 +122,11 @@ class BertClassifier:
                 subcategory = self.id2label.get(label_id, "sub_general_misc")
                 confidence = conf.item()
 
-                return subcategory, confidence
+                return subcategory, confidence, probs.squeeze(0).detach().cpu().tolist()
 
         except Exception as e:
             logger.error(f"Classification error for text '{text}': {e}", exc_info=True)
-            return "sub_general_misc", 0.0
+            return "sub_general_misc", 0.0, []
 
 
 if __name__ == "__main__":

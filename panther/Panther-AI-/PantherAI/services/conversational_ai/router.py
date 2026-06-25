@@ -4,7 +4,7 @@ services/conversational_ai/router.py
 Query domain router (B5). Classifies a user message into one of 5 domains.
 
 Domains:
-  banking     — balance, bills, transfers, cash flow, spending, transactions
+  banking     — balance, bills, transfers, debt, liabilities, cash flow, spending
   crypto      — portfolio, holdings, prices, P&L, trades
   investment  — advice, risk tolerance, goals, allocation, financial planning
   marketplace — product search, TickPay, checkout, buying products
@@ -35,7 +35,9 @@ _PROMPT = """\
 Classify the user's message into exactly one domain.
 
 Domains:
-- banking: balance, bills, transfers, cash flow, spending, transactions, payments
+- banking: balance, bills, transfers, debt, liabilities, credit cards, loans,
+  mortgages, DTI, cash flow, spending, transactions, payments, income, payroll,
+  salary, wages, payday, tax, Self Assessment, HMRC, net worth, financial health
 - crypto: portfolio, holdings, Bitcoin, Ethereum, crypto prices, trades, DeFi
 - investment: investment advice, risk tolerance, goals, ETFs, stocks, allocation, retirement
 - marketplace: buy products, search products, checkout, TickPay, shop, order items
@@ -43,6 +45,10 @@ Domains:
 
 Examples:
 "What's my balance?" → banking
+"What do I owe?" → banking
+"Is my credit card utilization high?" → banking
+"When do I get paid?" → banking
+"Do I need to worry about tax?" → banking
 "How much BTC do I have?" → crypto
 "Should I invest in ETFs?" → investment
 "Buy me Nike Air Max shoes" → marketplace
@@ -96,6 +102,51 @@ def _rule_based_route(text: str) -> Domain:
     lower = text.lower()
 
     scores: dict[str, int] = {
+        "banking": sum(
+            k in lower
+            for k in {
+                "balance",
+                "bill",
+                "transfer",
+                "cash flow",
+                "cashflow",
+                "spending",
+                "transaction",
+                "payment",
+                "afford",
+                "debt",
+                "liabilit",
+                "owe",
+                "credit card",
+                "card debt",
+                "utilization",
+                "apr",
+                "loan",
+                "student loan",
+                "auto loan",
+                "personal loan",
+                "mortgage",
+                "pmi",
+                "dti",
+                "debt-to-income",
+                "income",
+                "payroll",
+                "salary",
+                "wage",
+                "payday",
+                "paid",
+                "earn",
+                "tax",
+                "self assessment",
+                "hmrc",
+                "net worth",
+                "wealth",
+                "financial health",
+                "health score",
+                "how am i doing",
+                "full picture",
+            }
+        ),
         "crypto": sum(
             k in lower
             for k in {
@@ -123,7 +174,6 @@ def _rule_based_route(text: str) -> Domain:
                 "risk tolerance",
                 "goal",
                 "retire",
-                "wealth",
                 "financial plan",
                 "diversif",
             }
@@ -142,14 +192,6 @@ def _rule_based_route(text: str) -> Domain:
                 "clothes",
                 "amazon",
                 "nike",
-                "laptop",
-                "phone",
-                "find me",
-                "search for",
-                "look for",
-                "headphone",
-                "tv",
-                "tablet",
             }
         ),
     }
@@ -157,6 +199,11 @@ def _rule_based_route(text: str) -> Domain:
     top_score = max(scores.values())
     if top_score == 0:
         return "banking"
+
+    if scores["banking"] > 0 and any(
+        scores[domain] > 0 for domain in {"crypto", "investment", "marketplace"}
+    ):
+        return "unified"
 
     top_domains = [d for d, s in scores.items() if s == top_score]
     if len(top_domains) > 1:

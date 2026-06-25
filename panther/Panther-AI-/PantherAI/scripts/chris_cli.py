@@ -1,7 +1,7 @@
 """
-scripts/kevin_cli.py
+scripts/chris_cli.py
 =====================
-Interactive CLI to chat with Kevin through the terminal.
+Interactive CLI to chat with Chris through the terminal.
 
 Features:
   - User selection menu at startup (pulls from banking mock data)
@@ -10,7 +10,7 @@ Features:
   - Commands: /clear, /user, /history, /quit
 
 Usage:
-    python scripts/kevin_cli.py
+    python scripts/chris_cli.py
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from services.banking.mock_api import LOCAL_MOCK_DATA
-from services.conversational_ai.kevin import kevin_chat
+from services.conversational_ai.chris import chris_chat
 
 
 # ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ def process_message(
     user_id: str, message: str, history: list[dict]
 ) -> tuple[dict[str, Any], list[dict]]:
     """
-    Sends a message to Kevin and returns (result, updated_history).
+    Sends a message to Chris and returns (result, updated_history).
 
     Raises ValueError if user_id is unknown.
     """
@@ -114,7 +114,7 @@ def process_message(
         {"user_id": user_id, "message": message, "history_length": len(history)},
     )
 
-    result = kevin_chat(
+    result = chris_chat(
         user_id, message, conversation_history=history, history_user_id=user_id
     )
 
@@ -226,7 +226,7 @@ def run_chat_loop(user_id: str) -> None:
     """Main chat loop. Handles input, commands, and message processing."""
     history: list[dict] = []
 
-    print(f"\n{Color.BOLD}Kevin CLI — Chronos Financial Assistant{Color.RESET}")
+    print(f"\n{Color.BOLD}Chris CLI — Chronos Financial Assistant{Color.RESET}")
     print(f"{Color.DIM}User: {user_id} | Type /help for commands{Color.RESET}")
     print(f"{Color.DIM}{'─' * 60}{Color.RESET}")
 
@@ -254,7 +254,7 @@ def run_chat_loop(user_id: str) -> None:
             print(f"{Color.RED}[error] {e}{Color.RESET}")
             continue
 
-        print(f"\n{Color.GREEN}{Color.BOLD}Kevin > {Color.RESET}{result['response']}")
+        print(f"\n{Color.GREEN}{Color.BOLD}Chris > {Color.RESET}{result['response']}")
 
 
 # ---------------------------------------------------------------------------

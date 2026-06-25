@@ -728,29 +728,28 @@ GET /api/ai/blockhub/portfolio
 
 ## BlockHub API
 
-**Base URL**: `http://blockhub-env.us-east-1.elasticbeanstalk.com`
+**Base URL**: Chronos Backend, same host as the main API
 
-BlockHub is a separate NestJS service for crypto trading and NFT minting. It shares the same JWT — log in via the main API and use the same token here.
+BlockHub crypto trading is mounted in the Chronos Express API for the backend-only Paxos sandbox sprint. It shares the same JWT — log in via the main API and use the same token here.
 
 All endpoints require `Authorization: Bearer <jwt>` unless marked public.
 
 ### Market Prices (public)
 
 ```
-GET /market/prices              → All supported asset prices (BTC, ETH, SOL, UNI, AAVE, LINK, ...)
-GET /market/prices/:asset       → Price for a single asset, e.g. /market/prices/BTC
+GET /api/v1/crypto/price/:asset → Price for a single asset, e.g. /api/v1/crypto/price/BTC
 ```
 
 Response:
 ```json
-{ "BTC": 68420.50, "ETH": 3510.20, "SOL": 178.90, ... }
+{ "asset": "BTC", "market": "BTCUSD", "price": 68420.50, "source": "paxos" }
 ```
 
 ### Crypto Portfolio
 
 ```
-GET /api/v1/portfolio           → Holdings with live PnL per asset
-GET /api/v1/transactions        → Trade history
+GET /api/v1/crypto              → Wallet status, Paxos balances, holdings, supported assets
+GET /api/v1/crypto/history      → Trade history plus Paxos transfer references
 ```
 
 Query params for transactions: `?page=1&limit=20&asset=BTC&from=2026-01-01&to=2026-04-30`
@@ -758,18 +757,18 @@ Query params for transactions: `?page=1&limit=20&asset=BTC&from=2026-01-01&to=20
 ### Crypto Trading
 
 ```
-POST /api/v1/trade/buy          → Buy crypto with USD
-POST /api/v1/trade/sell         → Sell crypto for USD
+POST /api/v1/crypto/buy         → Buy crypto with USD
+POST /api/v1/crypto/sell        → Sell crypto for USD
 ```
 
 Buy body:
 ```json
-{ "asset": "BTC", "amountUsd": 100, "walletId": "..." }
+{ "asset": "BTC", "amount_usd": 5 }
 ```
 
 Sell body:
 ```json
-{ "asset": "ETH", "quantity": 0.05, "walletId": "..." }
+{ "asset": "ETH", "amount_crypto": 0.05 }
 ```
 
 ### NFT — Browse
@@ -1002,8 +1001,11 @@ aws elasticbeanstalk update-environment \
 | `JWT_SECRET` | 64-byte hex string |
 | `DATABASE_URL` | `postgresql://chronos:...@chronosdb...` |
 | `REDIS_URL` | Redis URL (optional — NFT minting queue; app starts without it) |
+| `PAXOS_ENV` | `sandbox` or `production` |
 | `PAXOS_CLIENT_ID` | Paxos API credentials |
 | `PAXOS_CLIENT_SECRET` | Paxos API credentials |
+| `PAXOS_PROFILE_ID` | Platform Paxos profile ID for sandbox smoke tests |
+| `PAXOS_SETTLEMENT_PROFILE_ID` | Optional settlement profile for internal transfer checks |
 
 ### Main API Environment Variables to Set
 

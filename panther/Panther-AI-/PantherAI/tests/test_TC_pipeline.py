@@ -1,26 +1,17 @@
-import os
-import sys
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
-# Add PantherAI/TC-TransactionClassifier and project root to path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_dir, ".."))
-tc_path = os.path.join(project_root, "PantherAI", "TC-TransactionClassifier")
-
-if tc_path not in sys.path:
-    sys.path.append(tc_path)
-if project_root not in sys.path:
-    sys.path.append(project_root)
-
-from pipeline import TransactionClassifierPipeline
-from tier1_regex import RegexClassifier
-from tier2_bert import BertClassifier
+from classifier.pipeline import TransactionClassifierPipeline
+from classifier.tier0_cache import clear_cache
+from classifier.tier1_regex import RegexClassifier
+from classifier.tier2_bert import BertClassifier
 from tests.fixtures.mini_regex_dict import MERCHANT_DICTIONARY, KEYWORD_RULES
 
 
 class TestPipeline(unittest.TestCase):
     def setUp(self):
+        clear_cache()
+
         # 1. Initialize a lightweight RegexClassifier with mini dictionary
         self.mock_regex = RegexClassifier(
             merchant_dict=MERCHANT_DICTIONARY, keyword_rules=KEYWORD_RULES
@@ -31,7 +22,7 @@ class TestPipeline(unittest.TestCase):
 
         # 3. Initialize pipeline with injected components
         self.pipeline = TransactionClassifierPipeline(
-            tier1=self.mock_regex, tier2=self.mock_bert, confidence_threshold=0.6
+            tier1=self.mock_regex, tier2=self.mock_bert, margin_threshold=0.3
         )
 
     def test_regex_precedence(self):
@@ -51,7 +42,11 @@ class TestPipeline(unittest.TestCase):
     def test_model_fallback(self):
         """Test that Model is used when Regex fails."""
         # Setup BERT response
-        self.mock_bert.classify.return_value = ("sub_subscriptions", 0.85)
+        self.mock_bert.classify_with_probabilities.return_value = (
+            "sub_subscriptions",
+            0.85,
+            [0.85, 0.10, 0.05],
+        )
 
         # "NETFLIX" is NOT in mini_regex_dict
         result = self.pipeline.predict("NETFLIX.COM")
@@ -59,19 +54,59 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(result["subcategory"], "sub_subscriptions")
         self.assertEqual(result["source"], "Model")
         self.assertEqual(result["confidence"], 0.85)
-        # Verify BERT WAS called
-        self.mock_bert.classify.assert_called_once_with("NETFLIX.COM")
+        self.mock_bert.classify_with_probabilities.assert_called_once_with("NETFLIX.COM")
 
     def test_low_confidence_handling(self):
-        """Test handling of predictions below the confidence threshold."""
-        # Setup BERT with low confidence
-        self.mock_bert.classify.return_value = ("sub_general_misc", 0.45)
+        """Test handling of predictions with a thin top-1/top-2 margin."""
+        self.mock_bert.classify_with_probabilities.return_value = (
+            "sub_general_misc",
+            0.65,
+            [0.65, 0.52, 0.10],
+        )
 
         result = self.pipeline.predict("STUFF 12345")
 
         self.assertEqual(result["subcategory"], "sub_general_misc")
         self.assertEqual(result["source"], "Low Confidence")
-        self.assertEqual(result["confidence"], 0.45)
+        self.assertEqual(result["confidence"], 0.65)
+
+    def test_cache_hit_skips_model(self):
+        """Second call for the same normalized merchant returns from Tier 0."""
+        self.mock_bert.classify_with_probabilities.return_value = (
+            "sub_subscriptions",
+            0.85,
+            [0.85, 0.10, 0.05],
+        )
+
+        first = self.pipeline.predict("NETFLIX.COM #1234")
+        second = self.pipeline.predict("NETFLIX.COM #1234")
+
+        self.assertEqual(first["source"], "Model")
+        self.assertEqual(second["source"], "Model")
+        self.mock_bert.classify_with_probabilities.assert_called_once_with(
+            "NETFLIX.COM #1234"
+        )
+
+    def test_low_confidence_queues_tier3_when_transaction_context_present(self):
+        self.mock_bert.classify_with_probabilities.return_value = (
+            "sub_general_misc",
+            0.55,
+            [0.55, 0.45],
+        )
+
+        with patch("classifier.pipeline.enqueue_low_confidence_transaction") as enqueue:
+            result = self.pipeline.predict(
+                "UNKNOWN MERCHANT",
+                transaction_id="txn_123",
+                user_id="user_marcus",
+            )
+
+        self.assertEqual(result["source"], "Low Confidence")
+        enqueue.assert_called_once_with(
+            transaction_id="txn_123",
+            user_id="user_marcus",
+            description="UNKNOWN MERCHANT",
+        )
 
     def test_empty_input(self):
         """Test behavior with empty or whitespace input."""

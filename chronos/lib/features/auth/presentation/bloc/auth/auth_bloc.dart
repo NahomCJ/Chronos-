@@ -157,7 +157,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ForgotPasswordOtpSubmitted event,
     Emitter<AuthState> emit,
   ) async {
-    // No network call — OTP is validated by the server on reset
+    // No network call  OTP is validated by the server on reset
     emit(ForgotPasswordOtpVerified(email: event.email, otp: event.otp));
   }
 

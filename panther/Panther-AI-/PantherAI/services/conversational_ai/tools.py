@@ -1,7 +1,7 @@
 """
 services/conversational_ai/tools.py
 =====================================
-All tools Kevin can call, organized by domain.
+All tools Chris can call, organized by domain.
 
 TOOL_DEFINITIONS: Full list of OpenAI-compatible schemas.
 TOOLS_BY_DOMAIN: Filtered subsets for each routing domain.
@@ -10,43 +10,13 @@ execute_tool(): Dispatcher that routes tool calls to the right service.
 
 from __future__ import annotations
 
-import calendar
-import re
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date, datetime
 from typing import Any
 
 from services.banking.mock_api import get_balance, get_transactions, get_upcoming_bills
+from services.income.ingestion import bracket_annual_income
 from services.risk_assessment.risk_assesment import assess_payment_risk
-
-_MONTH_NAMES = {name.lower(): i for i, name in enumerate(calendar.month_name) if name}
-_MONTH_ABBR  = {name.lower(): i for i, name in enumerate(calendar.month_abbr) if name}
-
-
-def _resolve_month(month_arg: str | None) -> tuple[int, int]:
-    """
-    Converts a month argument to (year, month) integers.
-
-    Accepts: None/'current', 'last', month name ('April'), 'YYYY-MM'.
-    Returns today's month if unrecognised.
-    """
-    today = date.today()
-    if not month_arg or month_arg.lower() == "current":
-        return today.year, today.month
-    if month_arg.lower() == "last":
-        first = today.replace(day=1) - timedelta(days=1)
-        return first.year, first.month
-    # YYYY-MM
-    m = re.fullmatch(r"(\d{4})-(\d{2})", month_arg.strip())
-    if m:
-        return int(m.group(1)), int(m.group(2))
-    # Month name or abbreviation
-    lower = month_arg.lower().strip()
-    num = _MONTH_NAMES.get(lower) or _MONTH_ABBR.get(lower[:3])
-    if num:
-        year = today.year if num <= today.month else today.year - 1
-        return year, num
-    return today.year, today.month
 
 
 # ---------------------------------------------------------------------------
@@ -119,20 +89,17 @@ _BANKING_TOOLS: list[dict[str, Any]] = [
         "function": {
             "name": "get_spending_summary",
             "description": (
-                "Get a summary of the user's spending for a given month. "
-                "Returns total spent, income, transaction count, and recent transactions. "
+                "Get a summary of the user's spending for the current month. "
+                "Returns total spent, transaction count, and recent transactions. "
                 "Call this when the user asks about their spending, expenses, or "
-                "how much they spent in a specific month."
+                "how much they've spent this month."
             ),
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "month": {
-                        "type": "string",
-                        "description": (
-                            "Month to summarize. Accepts: 'current', 'last', a month name "
-                            "('April', 'March'), or 'YYYY-MM' format. Defaults to 'current'."
-                        ),
+                    "days_back": {
+                        "type": "integer",
+                        "description": "Number of days to look back. Defaults to 30.",
                     },
                 },
                 "required": [],
@@ -175,64 +142,6 @@ _BANKING_TOOLS: list[dict[str, Any]] = [
                 "type": "object",
                 "properties": {},
                 "required": [],
-            },
-        },
-    },
-]
-
-_MARKETPLACE_TOOLS: list[dict[str, Any]] = [
-    {
-        "type": "function",
-        "function": {
-            "name": "search_products",
-            "description": (
-                "Search for products matching a natural-language query within a budget. "
-                "Returns ranked results with BNPL eligibility for the user. "
-                "Call this when the user wants to find, buy, or shop for a product."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "Natural-language product search, e.g. 'Nike Air Max under $200'.",
-                    },
-                    "budget": {
-                        "type": "number",
-                        "description": "Optional price ceiling in USD. Omit if user did not specify one.",
-                    },
-                },
-                "required": ["query"],
-            },
-        },
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "check_bnpl_for_product",
-            "description": (
-                "Check whether the user can afford a specific product on BNPL installments. "
-                "Returns risk score, eligibility, and maximum safe installment count. "
-                "Call this when the user asks 'can I buy X on BNPL', 'what's my BNPL limit for Y', "
-                "or after search_products to give a BNPL recommendation."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "product_name": {
-                        "type": "string",
-                        "description": "Name of the product being evaluated.",
-                    },
-                    "price": {
-                        "type": "number",
-                        "description": "Price of the product in USD.",
-                    },
-                    "num_payments": {
-                        "type": "integer",
-                        "description": "Number of installments to check. Defaults to 3.",
-                    },
-                },
-                "required": ["product_name", "price"],
             },
         },
     },
@@ -292,15 +201,161 @@ _CRYPTO_TOOLS: list[dict[str, Any]] = [
     },
 ]
 
-# All tools available to Kevin
-TOOL_DEFINITIONS: list[dict[str, Any]] = _BANKING_TOOLS + _CRYPTO_TOOLS + _MARKETPLACE_TOOLS
+DEBT_TOOLS: list[dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_credit_card_analysis",
+            "description": (
+                "Analyzes the user's credit card balances, utilization rate, APR, "
+                "and payment timeline. Use when the user asks about credit cards, "
+                "credit score impact, or card debt."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_loan_analysis",
+            "description": (
+                "Returns details on student, auto, and personal loans including "
+                "balance, rate, and payoff timeline."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_mortgage_analysis",
+            "description": (
+                "Returns mortgage data including balance, LTV proxy, PMI status, "
+                "and payoff date."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_dti_ratio",
+            "description": (
+                "Returns the user's debt-to-income ratio across all debt types. "
+                "Use when the user asks about overall debt burden or financial health."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+]
+
+INCOME_TOOLS: list[dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_income_stability",
+            "description": (
+                "Returns the user's income stability score, income range, and trend. "
+                "Use when the user asks about earnings, pay, income, salary, wages, "
+                "or payday."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_paycheck_plan",
+            "description": (
+                "Returns a pay period plan: upcoming bills, remaining balance, daily "
+                "spend budget, and overdraft risk. Use when the user asks how much "
+                "they can spend, when bills are due, when they get paid, or how long "
+                "their money will last."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_tax_awareness",
+            "description": (
+                "Returns tax awareness flags based on income patterns. Use when the "
+                "user asks about tax, Self Assessment, HMRC, or year-end finances. "
+                "Flags only; never calculate tax owed."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+]
+
+NET_WORTH_TOOLS: list[dict[str, Any]] = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_net_worth",
+            "description": (
+                "Returns current net worth across all connected accounts. "
+                "Use when the user asks about net worth, total wealth, or "
+                "overall financial position. The response includes data "
+                "completeness and missing sources."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_financial_health_score",
+            "description": (
+                "Returns Panther's internal Financial Health Score (0-100) "
+                "across 5 pillars. Use when the user asks how they're doing "
+                "overall or wants a financial health check. Always include the "
+                "score_disclaimer in the user-facing response."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_net_worth_trend",
+            "description": (
+                "Returns historical net worth trend over a specified period. "
+                "Use when the user asks if they're making progress or getting "
+                "better financially. Historical trends only; do not project "
+                "future net worth."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "period": {
+                        "type": "string",
+                        "enum": ["30d", "90d", "365d"],
+                        "description": "Historical period to analyze.",
+                    },
+                },
+                "required": [],
+            },
+        },
+    },
+]
+
+# All tools available to Chris
+TOOL_DEFINITIONS: list[dict[str, Any]] = (
+    _BANKING_TOOLS + _CRYPTO_TOOLS + DEBT_TOOLS + INCOME_TOOLS + NET_WORTH_TOOLS
+)
 
 # Domain-filtered subsets (B5 routing integration)
 TOOLS_BY_DOMAIN: dict[str, list[dict[str, Any]]] = {
-    "banking": _BANKING_TOOLS,
+    "banking": _BANKING_TOOLS + DEBT_TOOLS + INCOME_TOOLS + NET_WORTH_TOOLS,
     "crypto": _CRYPTO_TOOLS,
-    "investment": _BANKING_TOOLS + _CRYPTO_TOOLS,  # Advisor needs both to assess full picture
-    "marketplace": _BANKING_TOOLS + _MARKETPLACE_TOOLS,  # TickPay: affordability + product search
+    "investment": _BANKING_TOOLS
+    + _CRYPTO_TOOLS
+    + DEBT_TOOLS
+    + INCOME_TOOLS
+    + NET_WORTH_TOOLS,
+    "marketplace": _BANKING_TOOLS + DEBT_TOOLS + INCOME_TOOLS + NET_WORTH_TOOLS,
     "unified": TOOL_DEFINITIONS,
 }
 
@@ -310,7 +365,9 @@ TOOLS_BY_DOMAIN: dict[str, list[dict[str, Any]]] = {
 # ---------------------------------------------------------------------------
 
 
-def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dict[str, Any]:
+def execute_tool(
+    tool_name: str, user_id: str, arguments: dict[str, Any]
+) -> dict[str, Any]:
     """
     Dispatches a tool call to the corresponding service.
 
@@ -359,29 +416,17 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
         }
 
     elif tool_name == "get_spending_summary":
-        year, month = _resolve_month(arguments.get("month"))
-        _, last_day = calendar.monthrange(year, month)
-        month_start = date(year, month, 1)
-        month_end = date(year, month, last_day)
-        days_back = (date.today() - month_start).days + 1
-
-        txns = get_transactions(user_id, days_back=days_back)
-        # Filter to the exact calendar month
-        txns = [
-            t for t in txns
-            if month_start <= date.fromisoformat(t["date"]) <= month_end
-        ]
+        days = arguments.get("days_back", 30)
+        txns = get_transactions(user_id, days_back=days)
         spending = [t for t in txns if t["amount"] < 0]
         total = sum(abs(t["amount"]) for t in spending)
         income = sum(t["amount"] for t in txns if t["amount"] > 0)
-        month_label = f"{calendar.month_name[month]} {year}"
         return {
             "total_spent": round(total, 2),
             "total_income": round(income, 2),
             "transaction_count": len(spending),
-            "period_label": month_label,
-            "month": month,
-            "year": year,
+            "period_days": days,
+            "period_label": f"Last {days} days",
             "recent_transactions": spending[:10],
         }
 
@@ -414,6 +459,7 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
         spending = [t for t in txns_90 if t["amount"] < 0]
 
         today = date.today()
+
         # Bucket into month offsets: 0=current, 1=last, 2=two ago
         def month_offset(txn_date: str) -> int:
             d = date.fromisoformat(txn_date)
@@ -454,47 +500,66 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
             "count": len(recurring),
         }
 
-    # --- Marketplace tools (D7) ---
-    elif tool_name == "search_products":
-        from services.marketplace.product_search_agent import parse_and_search
-        from services.marketplace.bnpl_filter import apply_bnpl_filter
+    # --- Debt / liabilities tools ---
+    elif tool_name == "get_credit_card_analysis":
+        from services.liabilities.credit_card import analyze_credit_cards
 
-        query = arguments["query"]
-        budget = arguments.get("budget")
-        # Embed budget in the query string if passed separately
-        if budget and f"${budget}" not in query and str(budget) not in query:
-            query = f"{query} under ${budget}"
+        result = analyze_credit_cards(user_id)
+        result["disclaimer"] = "This is an analysis of your data, not debt advice."
+        return result
 
-        results = parse_and_search(query, max_results=10)
-        tagged = apply_bnpl_filter(results, user_id)
-        return {
-            "query": query,
-            "results": tagged,
-            "count": len(tagged),
-        }
+    elif tool_name == "get_loan_analysis":
+        from services.liabilities.loans import analyze_loans
 
-    elif tool_name == "check_bnpl_for_product":
-        from services.bnpl_risk_scoring.bnpl_risk_scoring import calculate_bnpl_risk_score
-        from services.marketplace.bnpl_filter import _find_max_safe_installments
+        result = analyze_loans(user_id)
+        result["disclaimer"] = "This is an analysis of your data, not debt advice."
+        return result
 
-        product_name = arguments["product_name"]
-        price = arguments["price"]
-        num_payments = arguments.get("num_payments", 3)
+    elif tool_name == "get_mortgage_analysis":
+        from services.liabilities.mortgage import analyze_mortgage
 
-        score_result = calculate_bnpl_risk_score(user_id, price, num_payments)
-        max_safe = _find_max_safe_installments(user_id, price)
+        result = analyze_mortgage(user_id)
+        result["disclaimer"] = "This is an analysis of your data, not debt advice."
+        return result
 
-        return {
-            "product_name": product_name,
-            "price": price,
-            "num_payments_checked": num_payments,
-            "risk_score": score_result["score"],
-            "risk_level": score_result["risk_level"].value if hasattr(score_result["risk_level"], "value") else score_result["risk_level"],
-            "bnpl_eligible": score_result["risk_level"] != "HIGH" and str(score_result["risk_level"]) != "HIGH",
-            "max_safe_installments": max_safe,
-            "risk_factors": score_result["risk_factors"],
-            "recommendation": score_result["recommendation"],
-        }
+    elif tool_name == "get_dti_ratio":
+        from services.liabilities.dti_calculator import calculate_dti
+
+        result = calculate_dti(user_id)
+        result["disclaimer"] = "This is an analysis of your data, not debt advice."
+        return result
+
+    # --- Net worth / financial health tools ---
+    elif tool_name == "get_net_worth":
+        from services.net_worth import calculate_net_worth
+
+        return calculate_net_worth(user_id)
+
+    elif tool_name == "get_financial_health_score":
+        from services.net_worth import calculate_health_score
+
+        return calculate_health_score(user_id)
+
+    elif tool_name == "get_net_worth_trend":
+        from services.net_worth import get_net_worth_trend
+
+        return get_net_worth_trend(user_id, arguments.get("period", "90d"))
+
+    # --- Income tools ---
+    elif tool_name == "get_income_stability":
+        from services.income.stability import analyze_income_stability
+
+        return _sanitize_income_result(analyze_income_stability(user_id))
+
+    elif tool_name == "get_paycheck_plan":
+        from services.income.paycheck_planner import get_paycheck_plan
+
+        return _sanitize_income_result(get_paycheck_plan(user_id))
+
+    elif tool_name == "get_tax_awareness":
+        from services.income.tax_awareness import get_tax_awareness
+
+        return _sanitize_income_result(get_tax_awareness(user_id))
 
     # --- Crypto / BlockHub tools ---
     elif tool_name == "get_portfolio":
@@ -515,3 +580,39 @@ def execute_tool(tool_name: str, user_id: str, arguments: dict[str, Any]) -> dic
 
     else:
         return {"error": f"Unknown tool: {tool_name}"}
+
+
+_INCOME_AMOUNT_FIELDS = {
+    "average_monthly_income",
+    "estimated_monthly_income",
+    "gross_monthly_income",
+    "last_income_amount",
+    "monthly_income",
+}
+
+_ANNUAL_INCOME_AMOUNT_FIELDS = {
+    "estimated_annual_income",
+    "annual_income",
+}
+
+
+def _sanitize_income_result(value: Any) -> Any:
+    """Removes exact income values before tool output reaches Chris's prompt."""
+    if isinstance(value, dict):
+        sanitized: dict[str, Any] = {}
+        for key, item in value.items():
+            if key in _INCOME_AMOUNT_FIELDS and isinstance(item, (int, float)):
+                sanitized[f"{key}_range"] = bracket_annual_income(float(item) * 12)
+                continue
+            if key in _ANNUAL_INCOME_AMOUNT_FIELDS and isinstance(item, (int, float)):
+                sanitized[f"{key}_range"] = bracket_annual_income(float(item))
+                continue
+            if key == "income_events":
+                continue
+            sanitized[key] = _sanitize_income_result(item)
+        return sanitized
+    if isinstance(value, list):
+        return [_sanitize_income_result(item) for item in value]
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    return value

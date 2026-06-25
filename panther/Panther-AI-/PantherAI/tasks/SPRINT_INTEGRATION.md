@@ -14,7 +14,7 @@ Read `tasks/ONBOARDING_FULLSTACK.md` first. Everything in this file assumes you 
 
 No integration code until these four tickets are reported to Martín.
 
-### [ ] D-1: Identify the mobile team and communication channel
+### [/] D-1: Identify the mobile team and communication channel
 
 **Why:** Martín currently has zero contact with mobile dev team. Cannot plan integration without knowing who (if anyone) is on the other side.
 
@@ -27,9 +27,15 @@ No integration code until these four tickets are reported to Martín.
 - Document in this ticket: team lead name, channel name, first sync scheduled (or "no team exists" with evidence).
 - Daily report mentions the outcome.
 
+**Discovery update — 2026-04-30:**
+- Mobile team lead: not identified from repo context.
+- Channel: not available from repo context.
+- Evidence checked: `NahomCJ/Panther-AI-`, `NahomCJ/Panther-`, and `NahomCJ/Chronos-Backend-`.
+- Blocker: Nahom or Martín must confirm whether a mobile team exists and where syncs should happen.
+
 ---
 
-### [ ] D-2: Audit the mobile app repository
+### [x] D-2: Audit the mobile app repository
 
 **Why:** We don't know if the repo exists, what stack it uses, or whether any integration has been attempted before. You cannot integrate against an unknown target.
 
@@ -43,9 +49,17 @@ No integration code until these four tickets are reported to Martín.
 - Report in this ticket: repo URL, stack, lines of code (rough), current state (greenfield / in-progress / abandoned), list of any existing HTTP clients.
 - If no repo exists: recommend a stack to Martín with a one-paragraph rationale.
 
+**Discovery update — 2026-04-30:**
+- Repo URL: no mobile source repo found in the three provided repos.
+- Current state: greenfield from the mobile app perspective.
+- Stack evidence: Notion export mentions "Flutter Mobile App"; no `pubspec.yaml`, React Native, Expo, iOS, or Android app source exists in the provided repos.
+- Existing HTTP clients: none found for mobile.
+- Recommendation: scaffold Flutter. One codebase targets iOS/Android and matches the existing mobile planning note.
+- Full report: `docs/mobile_integration/DISCOVERY_REPORT.md`.
+
 ---
 
-### [ ] D-3: Align working contract with the mobile team
+### [/] D-3: Align working contract with the mobile team
 
 **Why:** Parallel work without a contract causes merge conflicts, duplicated code, and wasted sprints.
 
@@ -61,9 +75,16 @@ No integration code until these four tickets are reported to Martín.
 - A short written agreement exists (can be a Slack pinned message or a markdown file in the mobile repo).
 - Martín has acknowledged it.
 
+**Discovery update — 2026-04-30:**
+- Draft contract exists at `docs/mobile_integration/API_CONTRACT.md`.
+- HTTP client owner: full-stack integration owner until a mobile team is identified.
+- Backend owner: Martín.
+- Source of truth: `http://localhost:8000/docs`; this sprint file is secondary.
+- Blocker: Martín has not acknowledged the contract yet.
+
 ---
 
-### [ ] D-4: Report findings and get green light on stack
+### [/] D-4: Report findings and get green light on stack
 
 **Why:** Everything downstream depends on the answers from D-1, D-2, D-3. Martín needs to sign off before Phase 2 begins.
 
@@ -76,13 +97,20 @@ No integration code until these four tickets are reported to Martín.
 - Summary posted.
 - Martín has responded with "green light, proceed to I-1" or given a corrective instruction.
 
+**Discovery update — 2026-04-30:**
+- Summary prepared in `docs/mobile_integration/DISCOVERY_REPORT.md`.
+- Recommended stack: Flutter.
+- Recommended backend contract: Panther FastAPI `/api/...` endpoints for this sprint.
+- Known conflict: `Chronos-Backend-` production API uses JWT and `/api/ai/...`; keep mobile calls behind `apiClient` so this can migrate later.
+- Blocker: this still needs to be posted to `#dev-updates` and acknowledged by Martín.
+
 ---
 
 ## Phase 2 — Integration (day 4 onward)
 
 Do not start until D-4 is approved.
 
-### [ ] I-1: Build typed HTTP client + placeholder auth layer
+### [/] I-1: Build typed HTTP client + placeholder auth layer
 
 **Why:** Every other integration ticket depends on this. One place for base URL, headers, error handling, and the eventual JWT migration.
 
@@ -98,9 +126,17 @@ Do not start until D-4 is approved.
 - Unit test: mocked 500 response produces a typed error, not a crash.
 - PR merged to mobile main.
 
+**Progress update — 2026-04-30:**
+- Local mobile repo scaffolded at `../Chronos-Mobile`.
+- `lib/core/network/api_client.dart` owns base URL, headers, timeout, typed errors, and endpoint methods.
+- Placeholder auth is injected once with `X-User-Id: user_marcus`.
+- Unit test exists for mocked 500 typed error.
+- Verification: `flutter test` passes locally with SDK at `../flutter-sdk`.
+- Verification: `flutter analyze` reports no issues.
+
 ---
 
-### [ ] I-2: Payment authorization flow
+### [/] I-2: Payment authorization flow
 
 **Endpoint:** `POST /api/authorize-payment`
 **Capability:** Given a merchant + amount, returns whether the user can afford it, with BNPL risk context.
@@ -120,9 +156,15 @@ Do not start until D-4 is approved.
 - Screenshot or Loom attached to daily report.
 - Ticket checked.
 
+**Progress update — 2026-04-30:**
+- `apiClient.authorizePayment()` exists.
+- "Can I buy this?" screen exists at `../Chronos-Mobile/lib/features/payment/payment_screen.dart`.
+- UI handles standard and BNPL requests, response display, loading, and error states.
+- Blocker: end-to-end simulator/backend verification still needs the Panther backend running locally.
+
 ---
 
-### [ ] I-3: Kevin chat assistant
+### [/] I-3: Kevin chat assistant
 
 **Endpoint:** `POST /api/kevin/chat`
 **Capability:** Conversational Q&A with tool calling (check balance, list bills, assess affordability).
@@ -146,9 +188,16 @@ Do not start until D-4 is approved.
 - Screenshot or Loom attached.
 - Ticket checked.
 
+**Progress update — 2026-04-30:**
+- `apiClient.kevinChat()` exists.
+- Chat screen exists at `../Chronos-Mobile/lib/features/kevin/kevin_chat_screen.dart`.
+- The client always sends `user_id` and `history_user_id` as the same current user.
+- Tools-called indicator is visible after Kevin responds.
+- Blocker: three-turn and offline-Ollama verification still need local backend run.
+
 ---
 
-### [ ] I-4: Transactions list + feedback loop
+### [/] I-4: Transactions list + feedback loop
 
 **Endpoints:**
 - `GET /api/transactions?user_id=...&days=...` — list
@@ -172,6 +221,13 @@ Do not start until D-4 is approved.
 - Error state tested: PATCH with invalid category → UI shows error, does not crash.
 - Screenshot or Loom attached.
 - Ticket checked.
+
+**Progress update — 2026-04-30:**
+- `apiClient.listTransactions()`, `getTransaction()`, and `patchTransactionCategory()` exist.
+- Transaction list and detail screens exist under `../Chronos-Mobile/lib/features/transactions/`.
+- The category picker uses the 44-subcategory taxonomy from the Panther classifier.
+- PATCH uses optimistic UI update and rolls back on typed API error.
+- Blocker: persistence and invalid-category verification still need local backend run.
 
 ---
 

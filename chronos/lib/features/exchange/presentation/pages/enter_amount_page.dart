@@ -29,7 +29,9 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
   String _amount = '0';
   bool _isRateLocked = false;
   final double _exchangeRate = 0.9234;
+  // ignore: unused_field
   final double _fee = 0.00;
+  // ignore: unused_field
   final double _balance = 2100.75;
 
   String get _convertedAmount {
@@ -79,7 +81,7 @@ class _EnterAmountPageState extends State<EnterAmountPage> {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
 
           // Dark Overlay

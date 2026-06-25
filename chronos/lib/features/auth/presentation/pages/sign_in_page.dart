@@ -45,17 +45,17 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               // Background
               Positioned.fill(
-                child: Image.asset(
-                  'assets/auth_bg_img.png',
+                child: Image.network(
+                  'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
                   fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
                   filterQuality: FilterQuality.high,
+                  loadingBuilder: (_, child, progress) =>
+                      progress == null ? child : Container(color: const Color(0xFF0D1117)),
+                  errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0D1117)),
                 ),
               ),
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.25),
-                ),
-              ),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
               SafeArea(
                 child: Padding(
                   padding: Constants.paddingHorizontalMedium,
@@ -107,7 +107,7 @@ class _SignInPageState extends State<SignInPage> {
                             child: Text(
                               'or',
                               style: TextStyles.labelLarge.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                             ),
                           ),

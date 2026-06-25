@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
@@ -54,17 +54,15 @@ class _SelectMethodPageState extends State<SelectMethodPage>
       scale,
       1.1,
     ); // Cap scaling for large screens
-    final bool isSmallScreen = size.width < 360;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.4)),
+            child: Container(color: Colors.black.withValues(alpha: 0.45)),
           ),
           SafeArea(
             child: Column(
@@ -194,8 +192,8 @@ class _SelectMethodPageState extends State<SelectMethodPage>
               padding: EdgeInsets.all(16 * scale),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12 * scale),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
-                color: Colors.white.withOpacity(0.05),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
               child: Row(
                 children: [

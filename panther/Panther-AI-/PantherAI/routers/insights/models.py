@@ -241,3 +241,40 @@ class WarningsHistoryResponse(BaseModel):
     risk_summary: RiskSummary
     warnings: list[WarningEntry]
     calendar_heatmap: list[CalendarHeatmapEntry]
+
+
+# ---------------------------------------------------------------------------
+# Cashflow Forecast
+# ---------------------------------------------------------------------------
+
+
+class CashflowPoint(BaseModel):
+    date: str
+    projected_balance: float
+
+
+class CashflowForecastResponse(BaseModel):
+    projected_balance_series: list[CashflowPoint]
+    overdraft_risk: Literal["HIGH", "MEDIUM", "LOW"]
+    days_until_projected_zero: int
+    income_spike_expected: bool
+    confidence: Literal["high", "low"]
+
+
+# ---------------------------------------------------------------------------
+# Subscriptions
+# ---------------------------------------------------------------------------
+
+
+class SubscriptionCharge(BaseModel):
+    merchant: str
+    amount: float
+    frequency: Literal["weekly", "monthly", "quarterly", "annual"]
+    next_charge_date: Optional[str] = None
+    months_active: int
+    unused_for_30_days: bool = False
+
+
+class SubscriptionsResponse(BaseModel):
+    subscriptions: list[SubscriptionCharge]
+    monthly_total: float

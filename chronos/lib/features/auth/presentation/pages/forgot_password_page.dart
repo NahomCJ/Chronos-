@@ -115,12 +115,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         return Scaffold(
           body: Stack(
             children: [
-              Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
-              ),
-              Positioned.fill(
-                child: Container(color: Colors.black.withOpacity(0.6)),
-              ),
+              Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
               SafeArea(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -226,7 +222,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     backgroundColor:
                                         _otpController.text.length == 6
                                             ? CColor.primaryButton
-                                            : Colors.white.withOpacity(0.1),
+                                            : Colors.white.withValues(alpha: 0.1),
                                     foregroundColor:
                                         _otpController.text.length == 6
                                             ? Colors.white
@@ -307,7 +303,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         hintStyle: const TextStyle(color: Colors.white60),
         prefixIcon: Icon(icon, color: Colors.white70),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

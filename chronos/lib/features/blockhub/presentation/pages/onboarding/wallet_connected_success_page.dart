@@ -1,437 +1,324 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../../core/theme/text_theme.dart';
 
-class WalletConnectedSuccessPage extends StatelessWidget {
+class WalletConnectedSuccessPage extends StatefulWidget {
   const WalletConnectedSuccessPage({super.key});
 
-  Future<void> _completeSetup(BuildContext context) async {
+  @override
+  State<WalletConnectedSuccessPage> createState() =>
+      _WalletConnectedSuccessPageState();
+}
+
+class _WalletConnectedSuccessPageState
+    extends State<WalletConnectedSuccessPage>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseCtrl;
+  late AnimationController _confettiCtrl;
+  late AnimationController _slideCtrl;
+  late Animation<double> _slideAnim;
+
+  static const _bg = Color(0xFF06060E);
+  static const _amber = Color(0xFFF59E0B);
+  static const _green = Color(0xFF22C55E);
+  static const _teal = Color(0xFF14B8A6);
+
+  final _confettiItems = List.generate(
+    20,
+    (i) => _ConfettiItem(
+      x: Random().nextDouble(),
+      y: Random().nextDouble() * -1,
+      color: [
+        const Color(0xFFF59E0B),
+        const Color(0xFF22C55E),
+        const Color(0xFF3B82F6),
+        const Color(0xFF8B5CF6),
+        const Color(0xFF14B8A6),
+      ][i % 5],
+      size: 6.0 + Random().nextDouble() * 8,
+      speed: 0.3 + Random().nextDouble() * 0.7,
+    ),
+  );
+
+  Future<void> _completeSetup() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('blockhub_wallet_setup_completed', true);
-
-    if (context.mounted) {
-      // Pop all onboarding pages back to the shell's BlockHubPage
-      Navigator.of(
-        context,
-        rootNavigator: true,
-      ).popUntil((route) => route.isFirst);
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true)
+          .popUntil((route) => route.isFirst);
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+
+    _confettiCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+
+    _slideCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
+
+    _slideAnim =
+        CurvedAnimation(parent: _slideCtrl, curve: Curves.easeOutCubic);
+  }
+
+  @override
+  void dispose() {
+    _pulseCtrl.dispose();
+    _confettiCtrl.dispose();
+    _slideCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final isSmallScreen = screenSize.width < 400;
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: _bg,
       body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
+          children: [
+            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
+            SafeArea(
+        child: Stack(
+          children: [
+            // Confetti
+            AnimatedBuilder(
+              animation: _confettiCtrl,
+              builder: (_, __) => CustomPaint(
+                size: MediaQuery.of(context).size,
+                painter: _ConfettiPainter(
+                    items: _confettiItems, progress: _confettiCtrl.value),
+              ),
+            ),
 
-          SafeArea(
-            child: Column(
+            // Content
+            Column(
               children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'BlockHub',
-                        style: TextStyles.titleLarge.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isSmallScreen ? 18 : 20,
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 36),
-                    ],
-                  ),
-                ),
-
-                // Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 40),
-
-                        // Success Icon
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF10B981),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        Text(
-                          'You\'re All Set!',
-                          style: TextStyles.headlineMedium.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: isSmallScreen ? 24 : 28,
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Text(
-                          'Welcome to BlockHub. Your\nadvanced account is ready.',
-                          textAlign: TextAlign.center,
-                          style: TextStyles.bodyMedium.copyWith(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: isSmallScreen ? 14 : 15,
-                            height: 1.5,
-                          ),
-                        ),
-
-                        const SizedBox(height: 40),
-
-                        // Feature Cards
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildFeatureCard(
-                                icon: Icons.trending_up,
-                                title: 'Trade',
-                                subtitle: 'Buy, sell & swap assets',
-                                isSmallScreen: isSmallScreen,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildFeatureCard(
-                                icon: Icons.pie_chart,
-                                title: 'Portfolio',
-                                subtitle: 'Track your holdings',
-                                isSmallScreen: isSmallScreen,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildFeatureCard(
-                                icon: Icons.psychology,
-                                title: 'AI Insights',
-                                subtitle: 'Panther-powered\nanalysis',
-                                isSmallScreen: isSmallScreen,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildFeatureCard(
-                                icon: Icons.security,
-                                title: 'Security',
-                                subtitle: 'Multi-layer protection',
-                                isSmallScreen: isSmallScreen,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Account Summary
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.1),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Account Summary',
-                                style: TextStyles.titleMedium.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 16 : 18,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Experience',
-                                        style: TextStyles.bodySmall.copyWith(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          fontSize: isSmallScreen ? 12 : 13,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'advanced',
-                                        style: TextStyles.bodyMedium.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: isSmallScreen ? 14 : 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Wallet',
-                                        style: TextStyles.bodySmall.copyWith(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          fontSize: isSmallScreen ? 12 : 13,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'BlockHub',
-                                        style: TextStyles.bodyMedium.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: isSmallScreen ? 14 : 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Security Tips
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.1),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Security Tips',
-                                style: TextStyles.titleMedium.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: isSmallScreen ? 16 : 18,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              _buildSecurityTip(
-                                'Enable 2FA for maximum security',
-                                isSmallScreen,
-                              ),
-                              _buildSecurityTip(
-                                'Start with small trades to learn the platform',
-                                isSmallScreen,
-                              ),
-                              _buildSecurityTip(
-                                'Keep your recovery phrase safe and offline',
-                                isSmallScreen,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 32),
-                      ],
+                const Spacer(),
+                _buildSuccessOrb(),
+                const SizedBox(height: 32),
+                AnimatedBuilder(
+                  animation: _slideAnim,
+                  builder: (_, __) => Opacity(
+                    opacity: _slideAnim.value,
+                    child: Transform.translate(
+                      offset: Offset(0, 30 * (1 - _slideAnim.value)),
+                      child: _buildContent(),
                     ),
                   ),
                 ),
-
-                // Bottom Buttons
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      // Go to Dashboard Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: OutlinedButton(
-                          onPressed: () => _completeSetup(context),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            'Go to Dashboard',
-                            style: TextStyles.titleMedium.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Explore Markets Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () => _completeSetup(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
-                            foregroundColor: Colors.black,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            'Explore Markets',
-                            style: TextStyles.titleMedium.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const Spacer(),
+                _buildBottomSection(),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+          ],
+        ),
     );
   }
 
-  Widget _buildFeatureCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool isSmallScreen,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 14 : 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            icon,
-            color: const Color(0xFFF59E0B),
-            size: isSmallScreen ? 28 : 32,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: isSmallScreen ? 14 : 15,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.6),
-              fontSize: isSmallScreen ? 11 : 12,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSecurityTip(String text, bool isSmallScreen) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 6),
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF59E0B),
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: isSmallScreen ? 12 : 13,
-                height: 1.4,
+  Widget _buildSuccessOrb() {
+    return AnimatedBuilder(
+      animation: _pulseCtrl,
+      builder: (_, __) {
+        final glow = 0.3 + _pulseCtrl.value * 0.4;
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer pulse ring
+            Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _green.withValues(alpha: 0.04 + _pulseCtrl.value * 0.06),
               ),
             ),
+            Container(
+              width: 130,
+              height: 130,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _green.withValues(alpha: 0.08 + _pulseCtrl.value * 0.08),
+              ),
+            ),
+            // Core circle
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    _green.withValues(alpha: 0.5),
+                    _green.withValues(alpha: 0.15),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: _green.withValues(alpha: glow),
+                      blurRadius: 30,
+                      spreadRadius: 4),
+                ],
+              ),
+              child: const Icon(Icons.check_rounded,
+                  color: Colors.white, size: 48),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        children: [
+          const Text('Wallet Connected!',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5)),
+          const SizedBox(height: 12),
+          Text(
+            'You\'re all set. Your blockchain wallet is live and ready to trade, collect and grow.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.5),
+                fontSize: 15,
+                height: 1.6),
           ),
+          const SizedBox(height: 28),
+          _buildCapabilityRow(),
         ],
       ),
     );
   }
+
+  Widget _buildCapabilityRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _capabilityBadge(Icons.currency_bitcoin_rounded, 'Trade', _amber),
+        const SizedBox(width: 14),
+        _capabilityBadge(Icons.collections_rounded, 'NFTs', _teal),
+        const SizedBox(width: 14),
+        _capabilityBadge(Icons.psychology_rounded, 'AI Intel', const Color(0xFF8B5CF6)),
+      ],
+    );
+  }
+
+  Widget _capabilityBadge(IconData icon, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 0.8),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 5),
+          Text(label,
+              style: TextStyle(
+                  color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomSection() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: _completeSetup,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: _green,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      color: _green.withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6)),
+                ],
+              ),
+              child: const Text('Enter BlockHub',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800)),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Your assets are secured by military-grade encryption',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.25), fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConfettiItem {
+  final double x;
+  final double y;
+  final Color color;
+  final double size;
+  final double speed;
+  const _ConfettiItem(
+      {required this.x,
+      required this.y,
+      required this.color,
+      required this.size,
+      required this.speed});
+}
+
+class _ConfettiPainter extends CustomPainter {
+  final List<_ConfettiItem> items;
+  final double progress;
+  const _ConfettiPainter({required this.items, required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final item in items) {
+      final y = (item.y + progress * item.speed * 1.5) % 1.2;
+      final x = item.x * size.width;
+      final yPos = y * size.height;
+      if (yPos < 0 || yPos > size.height) continue;
+
+      canvas.drawRect(
+        Rect.fromCenter(
+            center: Offset(x, yPos),
+            width: item.size,
+            height: item.size * 0.5),
+        Paint()
+          ..color = item.color.withValues(alpha: 0.7)
+          ..style = PaintingStyle.fill,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ConfettiPainter old) => old.progress != progress;
 }

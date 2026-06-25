@@ -26,7 +26,7 @@ import fxRoutes from "../modules/core/fx/fx.routes";
 import walletRoutes from "../modules/core/wallet/wallet.routes";
 import kycRoutes from "../modules/core/kyc/kyc.routes";
 import transactionRoutes from "../modules/core/transactions/transaction.route";
-import r from "../modules/crypto/routes/crypto.routes";
+import cryptoRoutes from "../modules/crypto/routes/crypto.routes";
 import depositRoutes from "../modules/core/deposit/deposit.routes";
 // import cryptoRoutes from "../modules/crypto/routes/crypto.routes";
 import aiRoutes from "../modules/ai/ai.routes";
@@ -34,12 +34,14 @@ import homeRoutes from "../modules/core/home/home.routes";
 import notificationRoutes from "../modules/core/notifications/notifications.routes";
 import onboardingRoutes from "../modules/core/onboarding/onboarding.routes";
 import unitRoutes from "../modules/core/unit/unit.routes";
+import userProfileRoutes from "../modules/user/user-profile.routes";
 
 const router = Router();
 
 // Mount API v1
 router.use("/v1/auth", authRoutes);
 router.use("/v1/transfer", transferRoutes);
+router.use("/v1/crypto", cryptoRoutes);
 router.use('/core/accounts', accountRoutes);
 
 // router.use("/v1/cards", cardRoutes);
@@ -81,4 +83,5 @@ router.use("/home", homeRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/onboarding", onboardingRoutes);
 router.use("/unit", unitRoutes);
+router.use("/v1/users", userProfileRoutes);
 export default router;

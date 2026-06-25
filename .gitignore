@@ -21,6 +21,9 @@ artifacts/
 
 # Flutter / Dart
 build/
+!chronos/build/
+!chronos/build/web
+!chronos/build/web/**
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -41,3 +44,4 @@ newman-report.html
 *.bin
 *.pkl
 *.parquet
+.claude/

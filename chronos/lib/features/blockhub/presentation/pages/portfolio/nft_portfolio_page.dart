@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'nft_analytics_page.dart';
@@ -19,8 +20,10 @@ class _NftPortfolioPageState extends State<NftPortfolioPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
           ),
           SafeArea(
             child: SingleChildScrollView(
@@ -34,8 +37,6 @@ class _NftPortfolioPageState extends State<NftPortfolioPage> {
                   _buildPortfolioValueCard(),
                   const SizedBox(height: 16),
                   _buildStatChips(),
-                  const SizedBox(height: 16),
-                  _buildPantherInsight(),
                   const SizedBox(height: 16),
                   _buildTabButtons(),
                   const SizedBox(height: 22),
@@ -213,54 +214,6 @@ class _NftPortfolioPageState extends State<NftPortfolioPage> {
               color: valueColor ?? Colors.white,
               fontSize: 13,
               fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPantherInsight() {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.35),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
-            size: 18,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Panther Insight',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  'NFTs now represent 38% of your crypto exposure. Consider diversification.',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
-              ],
             ),
           ),
         ],

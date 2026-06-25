@@ -50,7 +50,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
         body: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset('assets/background.png', fit: BoxFit.cover),
+              child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
             ),
             SafeArea(
               child: Column(
@@ -317,7 +317,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Using sample products — $errorMessage',
+                'Using sample products: $errorMessage',
                 style: TextStyles.bodySmall.copyWith(
                     color: Colors.orange, fontSize: 11),
               ),

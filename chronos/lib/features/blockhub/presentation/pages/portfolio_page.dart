@@ -6,7 +6,6 @@ import '../../domain/entities/blockhub_entities.dart';
 import '../bloc/portfolio/portfolio_bloc.dart';
 import '../bloc/portfolio/portfolio_event.dart';
 import '../bloc/portfolio/portfolio_state.dart';
-import 'risk_analysis_page.dart';
 
 class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
@@ -69,9 +68,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            Positioned.fill(
-              child: Image.asset('assets/background.png', fit: BoxFit.cover),
-            ),
+            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
             SafeArea(
               child: BlocBuilder<PortfolioBloc, PortfolioState>(
                 builder: (context, state) {
@@ -97,8 +95,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
                         _buildAssetAllocation(isSmallScreen, holdings),
                         const SizedBox(height: 24),
                         _buildYourHoldings(isSmallScreen, holdings),
-                        const SizedBox(height: 24),
-                        _buildRiskAnalysis(context, isSmallScreen),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -158,7 +154,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
   Widget _buildTotalValueSection(bool isSmallScreen, double? totalValue) {
     final displayValue = totalValue != null
         ? '\$${totalValue.toStringAsFixed(2)}'
-        : '\$—';
+        : '\$-';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -372,10 +368,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 120,
+              height: 160,
               child: CustomPaint(
                 painter: PerformanceChartPainter(),
-                size: const Size(double.infinity, 120),
+                size: const Size(double.infinity, 160),
               ),
             ),
           ],
@@ -671,114 +667,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
     );
   }
 
-  Widget _buildRiskAnalysis(BuildContext context, bool isSmallScreen) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-        decoration: BoxDecoration(
-          color: const Color(0xFF4C1D95).withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Panther Risk Analysis',
-                  style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: isSmallScreen ? 15 : 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Text(
-                  'Risk Score',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: isSmallScreen ? 13 : 14,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '68/',
-                  style: TextStyles.headlineMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 24 : 28,
-                  ),
-                ),
-                Text(
-                  '100',
-                  style: TextStyles.titleLarge.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontWeight: FontWeight.w500,
-                    fontSize: isSmallScreen ? 18 : 20,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Medium Risk',
-              style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFF59E0B),
-                fontWeight: FontWeight.w600,
-                fontSize: isSmallScreen ? 11 : 12,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Your portfolio shows moderate concentration risk. Consider diversifying across more assets to reduce volatility exposure.',
-              style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.9),
-                height: 1.4,
-                fontSize: isSmallScreen ? 12 : 13,
-              ),
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RiskAnalysisPage(),
-                  ),
-                );
-              },
-              child: Row(
-                children: [
-                  Text(
-                    'View Detailed Analysis',
-                    style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: isSmallScreen ? 12 : 13,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class PortfolioAsset {
@@ -806,23 +694,105 @@ class PortfolioAsset {
 }
 
 class PerformanceChartPainter extends CustomPainter {
+  // Sample portfolio data points (value in $k)
+  static const _data = [18.2, 19.5, 17.8, 20.1, 21.4, 19.9, 22.3, 23.1, 22.8, 24.5];
+  static const _labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = const Color(0xFF10B981)
-          ..strokeWidth = 2
-          ..style = PaintingStyle.stroke;
+    const teal = Color(0xFF10B981);
+    const labelColor = Color(0x99FFFFFF);
+    const topPad = 24.0;
+    const bottomPad = 20.0;
+    const sidePad = 8.0;
+    final chartH = size.height - topPad - bottomPad;
+    final chartW = size.width - sidePad * 2;
 
-    final path = Path();
-    path.moveTo(0, size.height * 0.8);
-    path.lineTo(size.width * 0.2, size.height * 0.6);
-    path.lineTo(size.width * 0.4, size.height * 0.4);
-    path.lineTo(size.width * 0.6, size.height * 0.3);
-    path.lineTo(size.width * 0.8, size.height * 0.2);
-    path.lineTo(size.width, size.height * 0.1);
+    final minV = _data.reduce((a, b) => a < b ? a : b) - 1;
+    final maxV = _data.reduce((a, b) => a > b ? a : b) + 1;
+    final range = maxV - minV;
 
-    canvas.drawPath(path, paint);
+    // Map data to pixel coordinates
+    List<Offset> pts = [];
+    for (int i = 0; i < _data.length; i++) {
+      final x = sidePad + chartW * i / (_data.length - 1);
+      final y = topPad + chartH * (1 - (_data[i] - minV) / range);
+      pts.add(Offset(x, y));
+    }
+
+    // Gradient fill under the curve
+    final fillPath = Path();
+    fillPath.moveTo(pts.first.dx, size.height - bottomPad);
+    fillPath.lineTo(pts.first.dx, pts.first.dy);
+    for (int i = 0; i < pts.length - 1; i++) {
+      final cp1 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i].dy);
+      final cp2 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i + 1].dy);
+      fillPath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i + 1].dx, pts[i + 1].dy);
+    }
+    fillPath.lineTo(pts.last.dx, size.height - bottomPad);
+    fillPath.close();
+
+    canvas.drawPath(
+      fillPath,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [teal.withValues(alpha: 0.30), teal.withValues(alpha: 0.0)],
+        ).createShader(Rect.fromLTWH(0, topPad, size.width, chartH)),
+    );
+
+    // Smooth line
+    final linePath = Path();
+    linePath.moveTo(pts.first.dx, pts.first.dy);
+    for (int i = 0; i < pts.length - 1; i++) {
+      final cp1 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i].dy);
+      final cp2 = Offset((pts[i].dx + pts[i + 1].dx) / 2, pts[i + 1].dy);
+      linePath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, pts[i + 1].dx, pts[i + 1].dy);
+    }
+    canvas.drawPath(
+      linePath,
+      Paint()
+        ..color = teal
+        ..strokeWidth = 2.0
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
+
+    // Data point dots + value labels on every other point
+    final dotPaint = Paint()..color = teal;
+    final bgPaint = Paint()..color = const Color(0xFF0D0D1A);
+    final labelStyle = const TextStyle(
+      color: labelColor,
+      fontSize: 9,
+      fontWeight: FontWeight.w500,
+    );
+    final monthStyle = const TextStyle(
+      color: labelColor,
+      fontSize: 8,
+    );
+
+    for (int i = 0; i < pts.length; i++) {
+      // Dot
+      canvas.drawCircle(pts[i], 3, bgPaint);
+      canvas.drawCircle(pts[i], 2, dotPaint);
+
+      // Value label above every other point
+      if (i % 2 == 0) {
+        final valTp = TextPainter(
+          text: TextSpan(text: '\$${_data[i].toStringAsFixed(1)}k', style: labelStyle),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        valTp.paint(canvas, Offset(pts[i].dx - valTp.width / 2, pts[i].dy - 16));
+      }
+
+      // Month label at bottom
+      final mTp = TextPainter(
+        text: TextSpan(text: _labels[i], style: monthStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      mTp.paint(canvas, Offset(pts[i].dx - mTp.width / 2, size.height - bottomPad + 4));
+    }
   }
 
   @override

@@ -6,7 +6,7 @@ HTTP client for the BlockHub Node.js backend (B6).
 Provides portfolio holdings, current prices, and P&L data.
 Falls back to mock data in development when the backend is unreachable.
 
-Sync wrappers are used so they can be called from Kevin's sync tool loop.
+Sync wrappers are used so they can be called from Chris's sync tool loop.
 
 Environment:
     BLOCKHUB_URL           — default: http://localhost:3002

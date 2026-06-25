@@ -1008,10 +1008,21 @@ def get_balance(user_id: str) -> float:
     # 2. Try Supabase
     sb = _get_supabase()
     if sb:
-        res = sb.table("accounts").select("balance").eq("user_id", user_id).execute()
-        if res.data:
-            return float(res.data[0]["balance"])
-        raise ValueError(f"Unknown user: {user_id}")
+        try:
+            res = sb.table("accounts").select("balance").eq("user_id", user_id).execute()
+            if res.data:
+                return float(res.data[0]["balance"])
+            raise ValueError(f"Unknown user: {user_id}")
+        except ValueError:
+            raise
+        except Exception as e:
+            log.failure(
+                "get_balance",
+                error_type=type(e).__name__,
+                message=str(e),
+                user_id=user_id,
+                detail="Supabase query failed, falling back to local mock",
+            )
 
     # 3. Local mock fallback
     if user_id not in LOCAL_MOCK_DATA:
@@ -1034,24 +1045,33 @@ def get_upcoming_bills(user_id: str, days_ahead: int = 7) -> List[Dict[str, Any]
     """
     sb = _get_supabase()
     if sb:
-        res = (
-            sb.table("bills")
-            .select("name, amount, due_day")
-            .eq("user_id", user_id)
-            .execute()
-        )
-        upcoming = []
-        for bill in res.data:
-            due_in = _days_until(bill["due_day"])
-            if due_in <= days_ahead:
-                upcoming.append(
-                    {
-                        "name": bill["name"],
-                        "amount": float(bill["amount"]),
-                        "due_in_days": due_in,
-                    }
-                )
-        return upcoming
+        try:
+            res = (
+                sb.table("bills")
+                .select("name, amount, due_day")
+                .eq("user_id", user_id)
+                .execute()
+            )
+            upcoming = []
+            for bill in res.data:
+                due_in = _days_until(bill["due_day"])
+                if due_in <= days_ahead:
+                    upcoming.append(
+                        {
+                            "name": bill["name"],
+                            "amount": float(bill["amount"]),
+                            "due_in_days": due_in,
+                        }
+                    )
+            return upcoming
+        except Exception as e:
+            log.failure(
+                "get_upcoming_bills",
+                error_type=type(e).__name__,
+                message=str(e),
+                user_id=user_id,
+                detail="Supabase query failed, falling back to local mock",
+            )
 
     all_bills = LOCAL_MOCK_DATA.get(user_id, {}).get("bills", [])
     return [b for b in all_bills if b["due_in_days"] <= days_ahead]
@@ -1172,14 +1192,23 @@ def count_active_bnpls(user_id: str) -> int:
     """
     sb = _get_supabase()
     if sb:
-        res = (
-            sb.table("bnpls")
-            .select("id", count="exact")
-            .eq("user_id", user_id)
-            .neq("status", "completed")
-            .execute()
-        )
-        return res.count or 0
+        try:
+            res = (
+                sb.table("bnpls")
+                .select("id", count="exact")
+                .eq("user_id", user_id)
+                .neq("status", "completed")
+                .execute()
+            )
+            return res.count or 0
+        except Exception as e:
+            log.failure(
+                "count_active_bnpls",
+                error_type=type(e).__name__,
+                message=str(e),
+                user_id=user_id,
+                detail="Supabase query failed, falling back to local mock",
+            )
     return LOCAL_MOCK_DATA.get(user_id, {}).get("active_bnpls", 0)
 
 
@@ -1192,14 +1221,23 @@ def get_active_bnpl_amount(user_id: str) -> float:
     """
     sb = _get_supabase()
     if sb:
-        res = (
-            sb.table("bnpls")
-            .select("remaining_amount")
-            .eq("user_id", user_id)
-            .neq("status", "completed")
-            .execute()
-        )
-        return sum(row["remaining_amount"] for row in (res.data or []))
+        try:
+            res = (
+                sb.table("bnpls")
+                .select("remaining_amount")
+                .eq("user_id", user_id)
+                .neq("status", "completed")
+                .execute()
+            )
+            return sum(row["remaining_amount"] for row in (res.data or []))
+        except Exception as e:
+            log.failure(
+                "get_active_bnpl_amount",
+                error_type=type(e).__name__,
+                message=str(e),
+                user_id=user_id,
+                detail="Supabase query failed, falling back to local mock",
+            )
     return LOCAL_MOCK_DATA.get(user_id, {}).get("active_bnpl_amount", 0.0)
 
 
@@ -1212,14 +1250,23 @@ def count_late_bnpl_payments(user_id: str) -> int:
     """
     sb = _get_supabase()
     if sb:
-        res = (
-            sb.table("bnpls")
-            .select("id", count="exact")
-            .eq("user_id", user_id)
-            .eq("status", "late")
-            .execute()
-        )
-        return res.count or 0
+        try:
+            res = (
+                sb.table("bnpls")
+                .select("id", count="exact")
+                .eq("user_id", user_id)
+                .eq("status", "late")
+                .execute()
+            )
+            return res.count or 0
+        except Exception as e:
+            log.failure(
+                "count_late_bnpl_payments",
+                error_type=type(e).__name__,
+                message=str(e),
+                user_id=user_id,
+                detail="Supabase query failed, falling back to local mock",
+            )
     return LOCAL_MOCK_DATA.get(user_id, {}).get("late_bnpl_payments", 0)
 
 

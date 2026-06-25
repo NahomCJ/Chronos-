@@ -1,108 +1,159 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:video_player/video_player.dart';
 import '../../../../core/router/route_constants.dart';
-import '../../../../core/theme/text_theme.dart';
-import '../constants/tickpay_colors.dart';
-import '../widgets/widgets.dart';
+import '../utils/tickpay_media.dart';
 
-/// Entry screen of the TickPay onboarding flow ("Shop Smart. Pay Later.").
-class TickpayWelcomePage extends StatelessWidget {
-  const TickpayWelcomePage({super.key});
+class TickPayWelcomePage extends StatefulWidget {
+  const TickPayWelcomePage({super.key});
+
+  @override
+  State<TickPayWelcomePage> createState() => _TickPayWelcomePageState();
+}
+
+class _TickPayWelcomePageState extends State<TickPayWelcomePage> {
+  late final VideoPlayerController _videoCtrl;
+  bool _videoReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _videoCtrl = VideoPlayerController.networkUrl(
+      Uri.parse(TickPayMedia.welcomeVideo),
+    )..initialize().then((_) {
+        if (!mounted) return;
+        setState(() => _videoReady = true);
+        _videoCtrl
+          ..setLooping(true)
+          ..setVolume(0)
+          ..play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _videoCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TickpayColors.pureBlack,
-      body: TickpayBackground(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Spacer(flex: 2),
-                const Center(child: _BrandPill()),
-                const Spacer(flex: 2),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyles.displayMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                      height: 1.1,
-                    ),
-                    children: const [
-                      TextSpan(
-                        text: 'Shop Smart.\n',
-                        style: TextStyle(color: TickpayColors.textOnDark),
-                      ),
-                      TextSpan(
-                        text: 'Pay Later.',
-                        style: TextStyle(color: Color(0xFFC9B6F0)),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Experience the future of shopping with AI-powered '
-                  'recommendations and flexible payment options tailored '
-                  'just for you.',
-                  style: TextStyles.bodyLarge.copyWith(
-                    color: TickpayColors.textMutedDark,
-                    height: 1.5,
-                  ),
-                ),
-                const Spacer(flex: 3),
-                TickpayPrimaryButton(
-                  label: 'Get Started',
-                  onPressed: () => context.push(
-                    RouteConstants.tickpayLinkWallets.toPath,
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BrandPill extends StatelessWidget {
-  const _BrandPill();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: TickpayColors.glassFill,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: TickpayColors.glassBorder),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      body: Stack(
+        fit: StackFit.expand,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF2D7E), Color(0xFFFF5C8A)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
+          // ── Background ────────────────────────────────────────────────────
+          if (_videoReady)
+            FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _videoCtrl.value.size.width,
+                height: _videoCtrl.value.size.height,
+                child: VideoPlayer(_videoCtrl),
               ),
-              borderRadius: BorderRadius.circular(12),
+            )
+          else
+            CachedNetworkImage(
+              imageUrl: TickPayMedia.welcomePhoto,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              placeholder: (_, __) => Container(color: const Color(0xFF1A0A2E)),
+              errorWidget: (_, __, ___) =>
+                  Container(color: const Color(0xFF1A0A2E)),
             ),
-            child: const Icon(Icons.task_alt, color: Colors.white, size: 22),
+
+          // ── Gradient overlay  transparent top, black bottom fade ────────
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.5),
+                ],
+                stops: const [0.0, 0.45, 1.0],
+              ),
+            ),
           ),
-          const SizedBox(width: 12),
-          Text(
-            'TickPay',
-            style: TextStyles.headlineSmall.copyWith(
-              color: TickpayColors.textOnDark,
-              fontWeight: FontWeight.bold,
+
+          // ── Content ───────────────────────────────────────────────────────
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 52),
+                  const Text(
+                    'WELCOME TO',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFFFF2D87), Color(0xFFFF6EB4)],
+                    ).createShader(bounds),
+                    child: const Text(
+                      'TickPay',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Shop now. Pay smarter.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.65),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => context
+                          .push(RouteConstants.tickpayVerification.toPath),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Get Started',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No credit check required • 0% interest',
+                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ],

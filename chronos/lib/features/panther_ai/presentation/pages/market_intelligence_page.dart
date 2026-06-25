@@ -8,12 +8,11 @@ class MarketIntelligencePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFFF5F6FA),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
-          ),
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -51,9 +50,17 @@ class MarketIntelligencePage extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF3F4F6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back, color: Color(0xFF374151), size: 20),
+              ),
             ),
           ),
           Column(
@@ -61,7 +68,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Market Intelligence',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A2E),
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -69,7 +76,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Real-time AI analysis',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF6B7080),
                   fontSize: 12,
                 ),
               ),
@@ -84,9 +91,16 @@ class MarketIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,7 +111,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Market Mood',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF6B7080),
                   fontSize: 12,
                 ),
               ),
@@ -105,7 +119,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Bullish',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A2E),
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
@@ -114,7 +128,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Volatility',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF6B7080),
                   fontSize: 12,
                 ),
               ),
@@ -122,7 +136,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'Medium-High',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: const Color(0xFF1A1A2E),
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -152,7 +166,7 @@ class MarketIntelligencePage extends StatelessWidget {
               Text(
                 'AI Confidence',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF6B7080),
                   fontSize: 11,
                 ),
               ),
@@ -179,7 +193,7 @@ class MarketIntelligencePage extends StatelessWidget {
         Text(
           'Affects Your Portfolio',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF1A1A2E),
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -205,11 +219,11 @@ class MarketIntelligencePage extends StatelessWidget {
         const SizedBox(height: 10),
         _buildAlertCard(
           Icons.warning_amber_rounded,
-          const Color(0xFFFACC15),
+          const Color(0xFFF59E0B),
           'AMC earnings tomorrow',
           'Token may react to earnings report',
           'Watch closely • Feb 4, 9:00 AM',
-          const Color(0xFFFACC15),
+          const Color(0xFFF59E0B),
         ),
       ],
     );
@@ -226,9 +240,16 @@ class MarketIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +261,7 @@ class MarketIntelligencePage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.15),
+                  color: iconColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
@@ -253,7 +274,7 @@ class MarketIntelligencePage extends StatelessWidget {
                     Text(
                       title,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF1A1A2E),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -262,7 +283,7 @@ class MarketIntelligencePage extends StatelessWidget {
                     Text(
                       subtitle,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.55),
+                        color: const Color(0xFF6B7080),
                         fontSize: 12.5,
                         height: 1.4,
                       ),
@@ -288,8 +309,8 @@ class MarketIntelligencePage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFFF3F4F6),
+                    foregroundColor: const Color(0xFF374151),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -300,7 +321,7 @@ class MarketIntelligencePage extends StatelessWidget {
                     'View asset',
                     style: TextStyles.labelMedium.copyWith(
                       fontSize: 13,
-                      color: Colors.white,
+                      color: const Color(0xFF374151),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -311,15 +332,13 @@ class MarketIntelligencePage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFFF3F4F6),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
-                  ),
+                  border: Border.all(color: const Color(0xFFE8EAF0)),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.notifications_off_outlined,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: Color(0xFF6B7080),
                   size: 18,
                 ),
               ),
@@ -337,7 +356,7 @@ class MarketIntelligencePage extends StatelessWidget {
         Text(
           'Top Movers',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF1A1A2E),
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -346,9 +365,16 @@ class MarketIntelligencePage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: const Color(0xFFE8EAF0)),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             children: [
@@ -427,7 +453,7 @@ class MarketIntelligencePage extends StatelessWidget {
                     Text(
                       name,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF1A1A2E),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -435,7 +461,7 @@ class MarketIntelligencePage extends StatelessWidget {
                     Text(
                       price,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: const Color(0xFF6B7080),
                         fontSize: 12,
                       ),
                     ),
@@ -466,8 +492,8 @@ class MarketIntelligencePage extends StatelessWidget {
           ),
         ),
         if (!isLast)
-          Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+          const Divider(
+            color: Color(0xFFE8EAF0),
             height: 1,
             thickness: 0.5,
             indent: 14,

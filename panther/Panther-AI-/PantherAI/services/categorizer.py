@@ -17,7 +17,6 @@ Usage:
 import importlib
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 # ---------------------------------------------------------------------------
 # Load TC-TransactionClassifier via importlib (hyphen-safe)
@@ -29,6 +28,7 @@ if str(_CLASSIFIER_DIR.parent) not in sys.path:
 
 _classifier_module = importlib.import_module("classifier.pipeline")
 TransactionClassifierPipeline = _classifier_module.TransactionClassifierPipeline
+_tier3_module = importlib.import_module("classifier.tier3_queue")
 
 # Singleton — loaded once at module import time
 _pipeline: TransactionClassifierPipeline | None = None
@@ -45,7 +45,12 @@ def _get_pipeline() -> TransactionClassifierPipeline:
 # Public API
 # ---------------------------------------------------------------------------
 
-def categorize(merchant_name: str) -> dict:
+def categorize(
+    merchant_name: str,
+    transaction_id: str | None = None,
+    user_id: str | None = None,
+    queue_tier3: bool = True,
+) -> dict:
     """
     Categorizes a transaction by merchant name using the 3-tier pipeline.
 
@@ -60,4 +65,22 @@ def categorize(merchant_name: str) -> dict:
         }
     """
     pipeline = _get_pipeline()
-    return pipeline.predict(merchant_name)
+    return pipeline.predict(
+        merchant_name,
+        transaction_id=transaction_id,
+        user_id=user_id,
+        queue_tier3=queue_tier3,
+    )
+
+
+def enqueue_low_confidence(
+    transaction_id: str,
+    user_id: str,
+    merchant_name: str,
+) -> None:
+    """Queues a persisted low-confidence transaction for Tier 3 classification."""
+    _tier3_module.enqueue_low_confidence_transaction(
+        transaction_id=transaction_id,
+        user_id=user_id,
+        description=merchant_name,
+    )

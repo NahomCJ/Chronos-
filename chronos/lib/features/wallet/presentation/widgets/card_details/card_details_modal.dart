@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'authentication_modal.dart';
@@ -11,7 +11,7 @@ class CardDetailsModal extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => const CardDetailsModal(),
     );
   }
@@ -28,19 +28,19 @@ class CardDetailsModal extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.35,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
+              color: Colors.white.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.25)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.35),
+                  color: Colors.black.withValues(alpha: 0.35),
                   blurRadius: 30,
                   offset: const Offset(0, 16),
                 ),
               ],
             ),
 
-            /// ✅ Buttons centered vertically & horizontally
+            /// âœ… Buttons centered vertically & horizontally
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -52,8 +52,8 @@ class CardDetailsModal extends StatelessWidget {
                       Navigator.of(context).pop();
                       AuthenticationModal.show(context);
                     },
-                    backgroundColor: Colors.white.withOpacity(0.15),
-                    borderColor: Colors.white.withOpacity(0.35),
+                    backgroundColor: Colors.white.withValues(alpha: 0.15),
+                    borderColor: Colors.white.withValues(alpha: 0.35),
                   ),
                 ),
 
@@ -90,7 +90,7 @@ class CardDetailsModal extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width:
-            MediaQuery.of(context).size.width * 0.75, // 👈 horizontal increase
+            MediaQuery.of(context).size.width * 0.75, // ðŸ‘ˆ horizontal increase
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
         decoration: BoxDecoration(
           color: backgroundColor,

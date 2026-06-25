@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -44,15 +43,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
     return BlocProvider.value(
       value: _spendingBloc,
       child: Scaffold(
-        backgroundColor: const Color(0xFF080812),
+        backgroundColor: const Color(0xFFF5F6FA),
         body: Stack(
           children: [
-            Positioned.fill(
-              child: Image.asset('assets/background.png', fit: BoxFit.cover),
-            ),
-            Positioned.fill(
-              child: Container(color: const Color(0xFF080812).withValues(alpha: 0.82)),
-            ),
+            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
             SafeArea(
               child: Column(
                 children: [
@@ -88,12 +83,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             onTap: () => context.pop(),
             child: Container(
               width: 34, height: 34,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 0.7),
+                color: Color(0xFFF3F4F6),
               ),
-              child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 14),
+              child: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF374151), size: 14),
             ),
           ),
           const SizedBox(width: 10),
@@ -110,7 +104,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('TickPay', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+                Text('TickPay', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 18, fontWeight: FontWeight.w700)),
                 Text('Buy Now, Pay Later · 0% APR', style: TextStyle(color: Color(0xFF20C55D), fontSize: 11, fontWeight: FontWeight.w500)),
               ],
             ),
@@ -124,24 +118,18 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   }
 
   Widget _chip(IconData icon, String label, Color color) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: color.withValues(alpha: 0.25), width: 0.6),
-          ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(icon, color: color, size: 12),
-            const SizedBox(width: 4),
-            Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600)),
-          ]),
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 0.6),
       ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, color: color, size: 12),
+        const SizedBox(width: 4),
+        Text(label, style: TextStyle(color: const Color(0xFF374151), fontSize: 10, fontWeight: FontWeight.w600)),
+      ]),
     );
   }
 
@@ -150,34 +138,35 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   Widget _buildTabBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.09), width: 0.6),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-            child: TabBar(
-              controller: _tabCtrl,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: const LinearGradient(colors: [Color(0xFF20C55D), Color(0xFF0A8E42)]),
-              ),
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white38,
-              labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-              dividerColor: Colors.transparent,
-              tabs: const [
-                Tab(text: 'Overview'),
-                Tab(text: 'My Plans'),
-                Tab(text: 'Rewards'),
-              ],
-            ),
+          ],
+        ),
+        child: TabBar(
+          controller: _tabCtrl,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: const LinearGradient(colors: [Color(0xFF20C55D), Color(0xFF0A8E42)]),
           ),
+          labelColor: Colors.white,
+          unselectedLabelColor: const Color(0xFF6B7080),
+          labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          dividerColor: Colors.transparent,
+          tabs: const [
+            Tab(text: 'Overview'),
+            Tab(text: 'My Plans'),
+            Tab(text: 'Rewards'),
+          ],
         ),
       ),
     );
@@ -232,8 +221,8 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             Image.network(
               PexelsService.photoUrl(3769747, w: 800, h: 360),
               fit: BoxFit.cover,
-              loadingBuilder: (_, child, p) => p == null ? child : Container(color: const Color(0xFF141428)),
-              errorBuilder: (_, __, ___) => Container(color: const Color(0xFF141428)),
+              loadingBuilder: (_, child, p) => p == null ? child : Container(color: const Color(0xFF1A3D2B)),
+              errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A3D2B)),
             ),
             Container(
               decoration: BoxDecoration(
@@ -241,8 +230,8 @@ class _TickPayAiPageState extends State<TickPayAiPage>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF0A8E42).withValues(alpha: 0.75),
-                    const Color(0xFF080812).withValues(alpha: 0.85),
+                    const Color(0xFF0A8E42).withValues(alpha: 0.80),
+                    const Color(0xFF064022).withValues(alpha: 0.88),
                   ],
                 ),
               ),
@@ -320,7 +309,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             child: Icon(a.$1, color: a.$3, size: 22),
           ),
           const SizedBox(height: 6),
-          Text(a.$2, style: TextStyle(color: Colors.white.withValues(alpha: 0.65), fontSize: 11, fontWeight: FontWeight.w500)),
+          Text(a.$2, style: const TextStyle(color: Color(0xFF374151), fontSize: 11, fontWeight: FontWeight.w500)),
         ]),
       )).toList(),
     );
@@ -344,9 +333,9 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           const SizedBox(width: 12),
           const Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Payment Due Soon', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+              Text('Payment Due Soon', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
               SizedBox(height: 2),
-              Text('Nike payment of \$87.50 is due on Jun 15', style: TextStyle(color: Colors.white54, fontSize: 11)),
+              Text('Nike payment of \$87.50 is due on Jun 15', style: TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
             ]),
           ),
           GestureDetector(
@@ -368,169 +357,170 @@ class _TickPayAiPageState extends State<TickPayAiPage>
 
   Widget _buildActivePlanCard(String name, String provider, int paid, int total, String totalAmt, String nextAmt, Color accent, String imageUrl) {
     final progress = paid / total;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 56, height: 56,
-                  child: Image.network(imageUrl, fit: BoxFit.cover,
-                    loadingBuilder: (_, child, p) => p == null ? child : Container(color: const Color(0xFF1A1A2E)),
-                    errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A1A2E)),
-                  ),
-                ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              width: 56, height: 56,
+              child: Image.network(imageUrl, fit: BoxFit.cover,
+                loadingBuilder: (_, child, p) => p == null ? child : Container(color: const Color(0xFFE8EAF0)),
+                errorBuilder: (_, __, ___) => Container(color: const Color(0xFFE8EAF0)),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                        Text(totalAmt, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('$provider · $paid of $total payments made', style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 10)),
-                        Text('Next: $nextAmt', style: TextStyle(color: accent, fontSize: 10, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Container(
-                        height: 5,
-                        color: Colors.white.withValues(alpha: 0.08),
-                        child: FractionallySizedBox(
-                          alignment: Alignment.centerLeft,
-                          widthFactor: progress,
-                          child: ColoredBox(color: accent),
-                        ),
-                      ),
-                    ),
+                    Text(name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
+                    Text(totalAmt, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w700)),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.25), size: 18),
-            ],
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('$provider · $paid of $total payments made', style: const TextStyle(color: Color(0xFF6B7080), fontSize: 10)),
+                    Text('Next: $nextAmt', style: TextStyle(color: accent, fontSize: 10, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Container(
+                    height: 5,
+                    color: const Color(0xFFE8EAF0),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: progress,
+                      child: ColoredBox(color: accent),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+          const SizedBox(width: 8),
+          const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF), size: 18),
+        ],
       ),
     );
   }
 
   Widget _buildChrisInsight(SpendingSummary? summary) {
     final totalSpent = summary != null ? '\$${summary.totalSpent.toStringAsFixed(0)}' : '\$1,240';
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFF9B59F5).withValues(alpha: 0.10), const Color(0xFF4A00E0).withValues(alpha: 0.06)],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF7C6EF0).withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF7C6EF0).withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: [Color(0xFF9B59F5), Color(0xFF4A00E0)]),
             ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF9B59F5).withValues(alpha: 0.2)),
+            child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 18),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 36, height: 36,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(colors: [Color(0xFF9B59F5), Color(0xFF4A00E0)]),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Chris's Take", style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 4),
+                Text(
+                  "You spent $totalSpent this month. You have 3 active plans. Stacking more could hurt your score. Consider paying off the Zara plan first.",
+                  style: const TextStyle(color: Color(0xFF6B7080), fontSize: 12, height: 1.5),
                 ),
-                child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 18),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Chris's Take", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 4),
-                    Text(
-                      "You spent $totalSpent this month. You have 3 active plans — stacking more could hurt your score. Consider paying off the Zara plan first.",
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12, height: 1.5),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () => context.push(RouteConstants.affordabilityCheck.toPath),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C6EF0).withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF7C6EF0).withValues(alpha: 0.25), width: 0.6),
                     ),
-                    const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () => context.push(RouteConstants.affordabilityCheck.toPath),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF9B59F5).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0xFF9B59F5).withValues(alpha: 0.3), width: 0.6),
-                        ),
-                        child: const Text('Check Affordability', style: TextStyle(color: Color(0xFF9B59F5), fontSize: 11, fontWeight: FontWeight.w600)),
-                      ),
-                    ),
-                  ],
+                    child: const Text('Check Affordability', style: TextStyle(color: Color(0xFF7C6EF0), fontSize: 11, fontWeight: FontWeight.w600)),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildRemindersToggle() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Row(children: [
-            const Icon(Icons.notifications_outlined, color: Colors.white54, size: 18),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("Payment Reminders", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                Text("We'll remind you before each payment is due", style: TextStyle(color: Colors.white38, fontSize: 10)),
-              ]),
-            ),
-            Transform.scale(
-              scale: 0.8,
-              child: Switch(
-                value: _remindersOn,
-                onChanged: (v) => setState(() => _remindersOn = v),
-                activeColor: const Color(0xFF20C55D),
-                activeTrackColor: const Color(0xFF20C55D).withValues(alpha: 0.3),
-                inactiveThumbColor: Colors.white38,
-                inactiveTrackColor: Colors.white12,
-              ),
-            ),
+        ],
+      ),
+      child: Row(children: [
+        const Icon(Icons.notifications_outlined, color: Color(0xFF6B7080), size: 18),
+        const SizedBox(width: 12),
+        const Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("Payment Reminders", style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
+            Text("We'll remind you before each payment is due", style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 10)),
           ]),
         ),
-      ),
+        Transform.scale(
+          scale: 0.8,
+          child: Switch(
+            value: _remindersOn,
+            onChanged: (v) => setState(() => _remindersOn = v),
+            activeColor: const Color(0xFF20C55D),
+            activeTrackColor: const Color(0xFF20C55D).withValues(alpha: 0.3),
+            inactiveThumbColor: const Color(0xFF9CA3AF),
+            inactiveTrackColor: const Color(0xFFE8EAF0),
+          ),
+        ),
+      ]),
     );
   }
 
@@ -639,96 +629,98 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   }
 
   Widget _summaryBox(String label, String value, Color color) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.2), width: 0.6),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          child: Column(children: [
-            Text(value, style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 2),
-            Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 9, fontWeight: FontWeight.w500)),
-          ]),
-        ),
+        ],
       ),
+      child: Column(children: [
+        Text(value, style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 9, fontWeight: FontWeight.w500)),
+      ]),
     );
   }
 
   Widget _buildDetailedPlan(String name, String provider, int paid, int total, double totalAmt, double nextAmt, String dueDate, String imageUrl, Color accent) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          child: Column(children: [
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: SizedBox(width: 56, height: 56,
-                    child: Image.network(imageUrl, fit: BoxFit.cover,
-                      loadingBuilder: (_, c, p) => p == null ? c : Container(color: const Color(0xFF1A1A2E)),
-                      errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A1A2E)),
-                    ),
-                  ),
+        ],
+      ),
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(width: 56, height: 56,
+                child: Image.network(imageUrl, fit: BoxFit.cover,
+                  loadingBuilder: (_, c, p) => p == null ? c : Container(color: const Color(0xFFE8EAF0)),
+                  errorBuilder: (_, __, ___) => Container(color: const Color(0xFFE8EAF0)),
                 ),
-                const SizedBox(width: 12),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                  Text('$provider · $paid of $total payments made', style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
-                  const SizedBox(height: 8),
-                  ClipRRect(borderRadius: BorderRadius.circular(4),
-                    child: Container(height: 5, color: Colors.white.withValues(alpha: 0.08),
-                      child: FractionallySizedBox(alignment: Alignment.centerLeft, widthFactor: paid / total,
-                        child: ColoredBox(color: accent)),
-                    ),
-                  ),
-                ])),
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                  Text('\$${totalAmt.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
-                  Text('total', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 9)),
-                ]),
-              ]),
+              ),
             ),
-            Container(height: 0.5, color: Colors.white.withValues(alpha: 0.07)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Row(children: [
-                  const Icon(Icons.calendar_today_rounded, size: 12, color: Colors.white38),
-                  const SizedBox(width: 5),
-                  Text('Due $dueDate', style: const TextStyle(color: Colors.white54, fontSize: 11)),
-                ]),
-                Text('Next: \$${nextAmt.toStringAsFixed(2)}', style: TextStyle(color: accent, fontSize: 12, fontWeight: FontWeight.w700)),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.5),
-                    ),
-                    child: Text('Pay Now', style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.w700)),
-                  ),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
+              Text('$provider · $paid of $total payments made', style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
+              const SizedBox(height: 8),
+              ClipRRect(borderRadius: BorderRadius.circular(4),
+                child: Container(height: 5, color: const Color(0xFFE8EAF0),
+                  child: FractionallySizedBox(alignment: Alignment.centerLeft, widthFactor: paid / total,
+                    child: ColoredBox(color: accent)),
                 ),
-              ]),
+              ),
+            ])),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Text('\$${totalAmt.toStringAsFixed(2)}', style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w700)),
+              const Text('total', style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 9)),
+            ]),
+          ]),
+        ),
+        const Divider(height: 1, thickness: 0.5, color: Color(0xFFE8EAF0)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(children: [
+              const Icon(Icons.calendar_today_rounded, size: 12, color: Color(0xFF9CA3AF)),
+              const SizedBox(width: 5),
+              Text('Due $dueDate', style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
+            ]),
+            Text('Next: \$${nextAmt.toStringAsFixed(2)}', style: TextStyle(color: accent, fontSize: 12, fontWeight: FontWeight.w700)),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.5),
+                ),
+                child: Text('Pay Now', style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.w700)),
+              ),
             ),
           ]),
         ),
-      ),
+      ]),
     );
   }
 
@@ -746,8 +738,8 @@ class _TickPayAiPageState extends State<TickPayAiPage>
         ),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(name, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
-          Text(date, style: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 10)),
+          Text(name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 12, fontWeight: FontWeight.w500)),
+          Text(date, style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10)),
         ])),
         Text(amount, style: const TextStyle(color: Color(0xFF20C55D), fontSize: 13, fontWeight: FontWeight.w600)),
       ]),
@@ -770,14 +762,14 @@ class _TickPayAiPageState extends State<TickPayAiPage>
         ),
         const SizedBox(width: 12),
         const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('On-time Payment Bonus', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text('On-time Payment Bonus', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w700)),
           SizedBox(height: 3),
-          Text('Make 5 on-time payments for bonus cashback', style: TextStyle(color: Colors.white54, fontSize: 11)),
+          Text('Make 5 on-time payments for bonus cashback', style: TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
           SizedBox(height: 8),
           ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)),
             child: LinearProgressIndicator(
               value: 0.6, minHeight: 5,
-              backgroundColor: Color(0x22FFFFFF),
+              backgroundColor: Color(0xFFE8EAF0),
               valueColor: AlwaysStoppedAnimation(Color(0xFFDC8F4A)),
             ),
           ),
@@ -828,13 +820,13 @@ class _TickPayAiPageState extends State<TickPayAiPage>
         width: double.infinity,
         child: Stack(fit: StackFit.expand, children: [
           Image.network(PexelsService.photoUrl(1536619, w: 800, h: 360), fit: BoxFit.cover,
-            loadingBuilder: (_, c, p) => p == null ? c : Container(color: const Color(0xFF141428)),
-            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF141428)),
+            loadingBuilder: (_, c, p) => p == null ? c : Container(color: const Color(0xFF6B3A1F)),
+            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF6B3A1F)),
           ),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [const Color(0xFFDC8F4A).withValues(alpha: 0.7), Colors.black.withValues(alpha: 0.75)],
+                colors: [const Color(0xFFDC8F4A).withValues(alpha: 0.75), const Color(0xFF3D1F00).withValues(alpha: 0.82)],
               ),
             ),
           ),
@@ -867,70 +859,72 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   }
 
   Widget _rewardTile(IconData icon, String title, String desc, Color color) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE8EAF0)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          child: Row(children: [
-            Container(width: 36, height: 36, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 18)),
-            const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-              Text(desc, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
-            ])),
-            Text('+pts', style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
-          ]),
-        ),
+        ],
       ),
+      child: Row(children: [
+        Container(width: 36, height: 36, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
+          child: Icon(icon, color: color, size: 18)),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(desc, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
+        ])),
+        Text('+pts', style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
+      ]),
     );
   }
 
   Widget _redeemOption(String title, String value, String cost, Color color) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.18)),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A1A2E).withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          child: Row(children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-              Text(value, style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w800)),
-            ])),
-            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text(cost, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)]),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text('Redeem', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
-              ),
-            ]),
-          ]),
-        ),
+        ],
       ),
+      child: Row(children: [
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(value, style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w800)),
+        ])),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text(cost, style: const TextStyle(color: Color(0xFF6B7080), fontSize: 11)),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)]),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Text('Redeem', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+          ),
+        ]),
+      ]),
     );
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   Widget _sectionLabel(String label) {
-    return Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+    return Text(label, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
   }
 }

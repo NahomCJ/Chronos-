@@ -13,17 +13,11 @@ FLOW:
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from supabase import create_client
-
-import plaid
-from plaid.model.link_token_create_request import LinkTokenCreateRequest
-from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
-from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 
 from services.banking.plaid_client import get_plaid_client, PLAID_PRODUCTS, PLAID_COUNTRY_CODES
 
@@ -31,8 +25,26 @@ load_dotenv()
 
 router = APIRouter(prefix="/api/plaid", tags=["plaid"])
 
-# Supabase client
-supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+_supabase = None
+
+
+def _get_supabase():
+    global _supabase
+    if _supabase is not None:
+        return _supabase
+    if not os.getenv("SUPABASE_URL") or not os.getenv("SUPABASE_KEY"):
+        raise HTTPException(status_code=500, detail="Supabase is not configured")
+    try:
+        from supabase import create_client
+    except ImportError as exc:
+        raise HTTPException(status_code=500, detail="Supabase SDK is not installed") from exc
+    _supabase = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+    return _supabase
+
+
+def _plaid_detail(exc: Exception) -> str:
+    body = getattr(exc, "body", None)
+    return str(body or exc)
 
 
 # ---------------------------------------------------------------------------
@@ -70,10 +82,15 @@ def create_link_token(request: CreateLinkTokenRequest):
     client = get_plaid_client()
 
     try:
+        from plaid.model.country_code import CountryCode
+        from plaid.model.link_token_create_request import LinkTokenCreateRequest
+        from plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser
+        from plaid.model.products import Products
+
         plaid_request = LinkTokenCreateRequest(
-            products=PLAID_PRODUCTS,
+            products=[Products(product) for product in PLAID_PRODUCTS],
             client_name="Chronos",
-            country_codes=PLAID_COUNTRY_CODES,
+            country_codes=[CountryCode(code) for code in PLAID_COUNTRY_CODES],
             language="en",
             user=LinkTokenCreateRequestUser(client_user_id=request.user_id),
         )
@@ -84,8 +101,8 @@ def create_link_token(request: CreateLinkTokenRequest):
             expiration=str(response["expiration"]),
         )
 
-    except plaid.ApiException as e:
-        raise HTTPException(status_code=400, detail=f"Plaid error: {e.body}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Plaid error: {_plaid_detail(e)}")
 
 
 # ---------------------------------------------------------------------------
@@ -104,7 +121,11 @@ def exchange_token(request: ExchangeTokenRequest):
     client = get_plaid_client()
 
     try:
-        # Exchange public_token → access_token
+        from plaid.model.item_public_token_exchange_request import (
+            ItemPublicTokenExchangeRequest,
+        )
+
+        # Exchange public_token -> access_token
         exchange_request = ItemPublicTokenExchangeRequest(public_token=request.public_token)
         exchange_response = client.item_public_token_exchange(exchange_request)
 
@@ -112,7 +133,7 @@ def exchange_token(request: ExchangeTokenRequest):
         item_id      = exchange_response["item_id"]
 
         # Upsert into Supabase (replace if user already has a token)
-        supabase.table("plaid_tokens").upsert({
+        _get_supabase().table("plaid_tokens").upsert({
             "user_id":      request.user_id,
             "access_token": access_token,
             "item_id":      item_id,
@@ -126,5 +147,5 @@ def exchange_token(request: ExchangeTokenRequest):
             item_id=item_id,
         )
 
-    except plaid.ApiException as e:
-        raise HTTPException(status_code=400, detail=f"Plaid error: {e.body}")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Plaid error: {_plaid_detail(e)}")

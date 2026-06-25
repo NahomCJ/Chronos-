@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class TTabBar {
   static TabBarThemeData theme(ColorScheme scheme) {
@@ -12,7 +12,7 @@ class TTabBar {
         ),
       ),
       overlayColor: WidgetStatePropertyAll(
-        scheme.primary.withOpacity(0.08),
+        scheme.primary.withValues(alpha: 0.08),
       ),
       dividerColor: scheme.outlineVariant,
     );

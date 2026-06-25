@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'constants.dart'; 
 
 class DDrawer {
@@ -13,7 +13,7 @@ class DDrawer {
           width: Constants.borderWidthThin,
         ),
       ),
-      scrimColor: scheme.scrim.withOpacity(0.6),
+      scrimColor: scheme.scrim.withValues(alpha: 0.6),
       width: 200,
     );
   }

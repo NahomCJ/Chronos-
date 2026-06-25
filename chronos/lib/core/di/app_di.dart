@@ -8,6 +8,8 @@ import '../../features/exchange/di/exchange_di.dart';
 import '../../features/panther_ai/di/panther_ai_di.dart';
 import '../../features/blockhub/di/blockhub_di.dart';
 import '../../features/tickpay/di/tickpay_di.dart';
+import '../../features/profile/di/profile_di.dart';
+import '../theme/theme_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -20,4 +22,6 @@ Future<void> initAppDi() async {
   initPantherAiDi(sl);
   initBlockhubDi(sl);
   initTickpayDi(sl);
+  initProfileDi(sl);
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
 }

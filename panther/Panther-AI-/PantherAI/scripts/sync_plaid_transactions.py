@@ -8,7 +8,7 @@ WHY THIS EXISTS:
   get_transactions() calls Plaid live every time, which is fine for MVP.
   This script is for batch syncing — useful for:
     - Keeping Supabase up-to-date as a cache
-    - Kevin (the chatbot) querying transaction history without hitting Plaid every message
+    - Chris (the chatbot) querying transaction history without hitting Plaid every message
     - Future: webhook handler when Plaid pushes new transactions
 
 USAGE:

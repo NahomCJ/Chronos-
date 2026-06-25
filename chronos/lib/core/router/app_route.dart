@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/home_page.dart';
 import '../../features/auth/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/phone_auth_page.dart';
+import '../../features/auth/presentation/pages/personal_info_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/sign_up_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
@@ -19,6 +20,7 @@ import '../../features/transfer/presentation/pages/pin_entry_page.dart';
 import '../../features/transfer/presentation/pages/add_money_page.dart';
 import '../../features/transfer/presentation/pages/bank_transfer_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
+import '../../features/wallet/presentation/pages/wallet_onboarding_page.dart';
 import '../../features/wallet/presentation/pages/find_atm_page.dart';
 import '../../features/exchange/presentation/pages/exchange_page.dart';
 import '../../features/exchange/presentation/pages/select_currency_page.dart';
@@ -57,18 +59,62 @@ import '../../features/panther_ai/presentation/pages/market_intelligence_page.da
 import '../../features/tickpay/presentation/pages/tickpay_welcome_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_verification_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_link_wallets_page.dart';
-import '../../features/tickpay/presentation/pages/tickpay_completion_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_dashboard_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_credit_overview_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_active_plans_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_notifications_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_rewards_page.dart';
 import '../../features/tickpay/presentation/pages/tickpay_shortcuts_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_setup_complete_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_discover_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_search_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_ai_picks_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_product_detail_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_shop_detail_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_bnpl_checkout_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_order_confirmed_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_order_history_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_upcoming_payments_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_repay_now_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_payment_history_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_alerts_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_auto_pay_page.dart';
+import '../../features/tickpay/presentation/pages/tickpay_ai_shop_page.dart';
+import '../../features/tickpay/presentation/utils/tickpay_media.dart';
 import '../widgets/custom_bottom_nav.dart';
 import 'route_constants.dart';
 import '../di/app_di.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/bloc/auth/auth_bloc.dart';
+import '../../features/transfer/presentation/bloc/transfer_bloc.dart';
+import '../../features/tickpay/presentation/bloc/tickpay_account_cubit.dart';
+import '../../features/profile/presentation/bloc/profile_cubit.dart';
+import '../../features/profile/presentation/pages/profile_page.dart' as profile_page;
+import '../../features/profile/presentation/pages/theme_settings_page.dart';
+import '../../features/profile/presentation/pages/change_password_page.dart';
+import '../../features/profile/presentation/pages/notification_settings_page.dart';
+import '../../features/history/presentation/pages/history_page.dart';
+import '../theme/theme_cubit.dart';
+import '../pages/search_page.dart';
+import '../../features/lifex/presentation/pages/lifex_page.dart';
+import '../../features/lifex/presentation/pages/lifex_onboarding_page.dart';
+import '../../features/lifex/presentation/pages/lifex_health_page.dart';
+import '../../features/lifex/presentation/pages/lifex_education_page.dart';
+import '../../features/lifex/presentation/pages/lifex_spiritual_page.dart';
+import '../../features/lifex/presentation/pages/lifex_finance_page.dart';
+import '../../features/lifex/presentation/pages/lifex_activity_page.dart';
+import '../../features/lifex/presentation/pages/lifex_vision_page.dart';
+import '../../features/lifex/presentation/pages/lifex_family_page.dart';
+import '../../features/lifex/presentation/pages/lifex_relationship_page.dart';
+import '../../features/lifex/presentation/pages/lifex_social_page.dart';
+import '../../features/lifex/presentation/pages/lifex_feed_page.dart';
+import '../../features/lifex/presentation/pages/lifex_ai_insights_page.dart';
+import '../../features/lifex/presentation/pages/lifex_export_page.dart';
+import '../../features/panther_ai/presentation/pages/tax_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/bills_management_page.dart';
+import '../../features/panther_ai/presentation/pages/liabilities_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/budget_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/net_worth_intelligence_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -132,6 +178,11 @@ final GoRouter router = GoRouter(
       name: RouteConstants.phoneAuth.name,
       builder: (context, state) => const PhoneAuthRoute(),
     ),
+    GoRoute(
+      path: RouteConstants.personalInfo.toPath,
+      name: RouteConstants.personalInfo.name,
+      builder: (context, state) => const PersonalInfoPage(),
+    ),
 
     // ── Detail / flow pages (no bottom nav) ──────────────────────────────
     GoRoute(
@@ -170,10 +221,13 @@ final GoRouter router = GoRouter(
       name: RouteConstants.transferConfirmation.name,
       builder: (context, state) {
         final extra = state.extra as Map<String, String>?;
-        return TransferConfirmationPage(
-          amount: extra?['amount'] ?? '0',
-          recipientName: extra?['recipientName'] ?? 'Alex Johnson',
-          method: extra?['method'] ?? 'Chronos User',
+        return BlocProvider(
+          create: (_) => sl<TransferBloc>(),
+          child: TransferConfirmationPage(
+            amount: extra?['amount'] ?? '0',
+            recipientName: extra?['recipientName'] ?? 'Alex Johnson',
+            method: extra?['method'] ?? 'Chronos User',
+          ),
         );
       },
     ),
@@ -213,6 +267,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.wallet.toPath,
       name: RouteConstants.wallet.name,
       builder: (context, state) => const WalletPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.walletOnboarding.toPath,
+      name: RouteConstants.walletOnboarding.name,
+      builder: (context, state) => const WalletOnboardingPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -397,61 +457,171 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayWelcome.toPath,
       name: RouteConstants.tickpayWelcome.name,
-      builder: (context, state) => const TickpayWelcomePage(),
+      builder: (context, state) => const TickPayWelcomePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayVerification.toPath,
       name: RouteConstants.tickpayVerification.name,
-      builder: (context, state) => const TickpayVerificationPage(),
+      builder: (context, state) => const TickPayVerificationPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayLinkWallets.toPath,
       name: RouteConstants.tickpayLinkWallets.name,
-      builder: (context, state) => const TickpayLinkWalletsPage(),
+      builder: (context, state) => const TickPayLinkWalletsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayCompletion.toPath,
       name: RouteConstants.tickpayCompletion.name,
-      builder: (context, state) => const TickpayCompletionPage(),
+      builder: (context, state) => const TickPaySetupCompletePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayDashboard.toPath,
       name: RouteConstants.tickpayDashboard.name,
-      builder: (context, state) => const TickpayDashboardPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayDashboardPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayCreditOverview.toPath,
       name: RouteConstants.tickpayCreditOverview.name,
-      builder: (context, state) => const TickpayCreditOverviewPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayCreditOverviewPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayActivePlans.toPath,
       name: RouteConstants.tickpayActivePlans.name,
-      builder: (context, state) => const TickpayActivePlansPage(),
+      builder: (context, state) => const TickPayActivePlansPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayNotifications.toPath,
       name: RouteConstants.tickpayNotifications.name,
-      builder: (context, state) => const TickpayNotificationsPage(),
+      builder: (context, state) => const TickPayNotificationsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayRewards.toPath,
       name: RouteConstants.tickpayRewards.name,
-      builder: (context, state) => const TickpayRewardsPage(),
+      builder: (context, state) => const TickPayRewardsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.tickpayShortcuts.toPath,
       name: RouteConstants.tickpayShortcuts.name,
       builder: (context, state) => const TickpayShortcutsPage(),
+    ),
+    // ── New TickPay screens ───────────────────────────────────────────────
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpaySetupComplete.toPath,
+      name: RouteConstants.tickpaySetupComplete.name,
+      builder: (context, state) => const TickPaySetupCompletePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayDiscover.toPath,
+      name: RouteConstants.tickpayDiscover.name,
+      builder: (context, state) => const TickPayDiscoverPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpaySearch.toPath,
+      name: RouteConstants.tickpaySearch.name,
+      builder: (context, state) => const TickPaySearchPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAiPicks.toPath,
+      name: RouteConstants.tickpayAiPicks.name,
+      builder: (context, state) => const TickPayAiPicksPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayProductDetail.toPath,
+      name: RouteConstants.tickpayProductDetail.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, String>?;
+        return TickPayProductDetailPage(
+          name: extra?['name'] ?? 'iPhone 15 Pro',
+          price: extra?['price'] ?? '\$999',
+          asset: extra?['asset'] ?? TickPayMedia.iphone15Pro,
+        );
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayShopDetail.toPath,
+      name: RouteConstants.tickpayShopDetail.name,
+      builder: (context, state) => const TickPayShopDetailPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayBnplCheckout.toPath,
+      name: RouteConstants.tickpayBnplCheckout.name,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>(),
+        child: const TickPayBnplCheckoutPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayOrderConfirmed.toPath,
+      name: RouteConstants.tickpayOrderConfirmed.name,
+      builder: (context, state) => const TickPayOrderConfirmedPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayOrderHistory.toPath,
+      name: RouteConstants.tickpayOrderHistory.name,
+      builder: (context, state) => const TickPayOrderHistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayUpcomingPayments.toPath,
+      name: RouteConstants.tickpayUpcomingPayments.name,
+      builder: (context, state) => const TickPayUpcomingPaymentsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayRepayNow.toPath,
+      name: RouteConstants.tickpayRepayNow.name,
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<TickpayAccountCubit>()..loadAccount(),
+        child: const TickPayRepayNowPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayPaymentHistory.toPath,
+      name: RouteConstants.tickpayPaymentHistory.name,
+      builder: (context, state) => const TickPayPaymentHistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAlerts.toPath,
+      name: RouteConstants.tickpayAlerts.name,
+      builder: (context, state) => const TickPayAlertsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAutoPay.toPath,
+      name: RouteConstants.tickpayAutoPay.name,
+      builder: (context, state) => const TickPayAutoPayPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.tickpayAiShop.toPath,
+      name: RouteConstants.tickpayAiShop.name,
+      builder: (context, state) => const TickPayAiShopPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -485,6 +655,36 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.taxIntelligence.toPath,
+      name: RouteConstants.taxIntelligence.name,
+      builder: (context, state) => const TaxIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.billsManagement.toPath,
+      name: RouteConstants.billsManagement.name,
+      builder: (context, state) => const BillsManagementPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.liabilitiesIntelligence.toPath,
+      name: RouteConstants.liabilitiesIntelligence.name,
+      builder: (context, state) => const LiabilitiesIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.budgetIntelligence.toPath,
+      name: RouteConstants.budgetIntelligence.name,
+      builder: (context, state) => const BudgetIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.netWorthIntelligence.toPath,
+      name: RouteConstants.netWorthIntelligence.name,
+      builder: (context, state) => const NetWorthIntelligencePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
       path: RouteConstants.pantherAiSettings.toPath,
       name: RouteConstants.pantherAiSettings.name,
       builder: (context, state) => const PantherAiSettingsPage(),
@@ -495,6 +695,114 @@ final GoRouter router = GoRouter(
       name: RouteConstants.pantherAiChat.name,
       builder: (context, state) => const PantherAiChatPage(),
     ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.profile.toPath,
+      name: RouteConstants.profile.name,
+      builder: (context, state) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => sl<ProfileCubit>()..loadProfile()),
+          BlocProvider(create: (_) => sl<AuthBloc>()),
+        ],
+        child: const profile_page.ProfilePage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.changePassword.toPath,
+      name: RouteConstants.changePassword.name,
+      builder: (context, state) => const ChangePasswordPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.notificationSettings.toPath,
+      name: RouteConstants.notificationSettings.name,
+      builder: (context, state) => const NotificationSettingsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.history.toPath,
+      name: RouteConstants.history.toName,
+      builder: (_, __) => const HistoryPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/search',
+      builder: (context, state) => const SearchPage(),
+    ),
+    // ── LifeX detail pages (no bottom nav) ───────────────────────────────────
+    GoRoute(
+      path: RouteConstants.lifexOnboarding.toPath,
+      name: RouteConstants.lifexOnboarding.name,
+      builder: (context, state) => const LifeXOnboardingPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexHealth.toPath,
+      name: RouteConstants.lifexHealth.name,
+      builder: (context, state) => const LifeXHealthPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexEducation.toPath,
+      name: RouteConstants.lifexEducation.name,
+      builder: (context, state) => const LifeXEducationPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexSpiritual.toPath,
+      name: RouteConstants.lifexSpiritual.name,
+      builder: (context, state) => const LifeXSpiritualPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexFinance.toPath,
+      name: RouteConstants.lifexFinance.name,
+      builder: (context, state) => const LifeXFinancePage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexActivity.toPath,
+      name: RouteConstants.lifexActivity.name,
+      builder: (context, state) => const LifeXActivityPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexVision.toPath,
+      name: RouteConstants.lifexVision.name,
+      builder: (context, state) => const LifeXVisionPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexFamily.toPath,
+      name: RouteConstants.lifexFamily.name,
+      builder: (context, state) => const LifeXFamilyPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexRelationship.toPath,
+      name: RouteConstants.lifexRelationship.name,
+      builder: (context, state) => const LifeXRelationshipPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexSocial.toPath,
+      name: RouteConstants.lifexSocial.name,
+      builder: (context, state) => const LifeXSocialPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexFeed.toPath,
+      name: RouteConstants.lifexFeed.name,
+      builder: (context, state) => const LifeXFeedPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexAiInsights.toPath,
+      name: RouteConstants.lifexAiInsights.name,
+      builder: (context, state) => const LifeXAiInsightsPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.lifexExport.toPath,
+      name: RouteConstants.lifexExport.name,
+      builder: (context, state) => const LifeXExportPage(),
+    ),
+    GoRoute(
+      path: '/theme-settings',
+      builder: (context, state) => BlocProvider.value(
+        value: sl<ThemeCubit>(),
+        child: const ThemeSettingsPage(),
+      ),
+    ),
 
     // ── Shell: only the 3 main tabs get the bottom nav ────────────────────
     ShellRoute(
@@ -502,14 +810,7 @@ final GoRouter router = GoRouter(
       builder: (context, state, child) {
         return Scaffold(
           backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset('assets/background.png', fit: BoxFit.cover),
-              ),
-              child,
-            ],
-          ),
+          body: child,
           extendBody: true,
           bottomNavigationBar: CustomBottomNav(
             selectedIndex: _calculateSelectedIndex(state.matchedLocation),
@@ -523,6 +824,9 @@ final GoRouter router = GoRouter(
                   break;
                 case 2:
                   context.go(RouteConstants.blockHub.toPath);
+                  break;
+                case 3:
+                  context.go(RouteConstants.lifex.toPath);
                   break;
               }
             },
@@ -545,6 +849,11 @@ final GoRouter router = GoRouter(
           name: RouteConstants.blockHub.name,
           builder: (context, state) => const BlockHubPage(),
         ),
+        GoRoute(
+          path: RouteConstants.lifex.toPath,
+          name: RouteConstants.lifex.name,
+          builder: (context, state) => const LifeXPage(),
+        ),
       ],
     ),
   ],
@@ -553,5 +862,6 @@ final GoRouter router = GoRouter(
 int _calculateSelectedIndex(String location) {
   if (location.startsWith(RouteConstants.pantherAi.toPath)) return 1;
   if (location.startsWith(RouteConstants.blockHub.toPath)) return 2;
+  if (location.startsWith(RouteConstants.lifex.toPath)) return 3;
   return 0;
 }

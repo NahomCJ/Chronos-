@@ -1,13 +1,13 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/preset_colors.dart';
 import '../bloc/transfer_bloc.dart';
 import '../bloc/transfer_event.dart';
+import '../bloc/transfer_state.dart';
 
 class TransferConfirmationPage extends StatefulWidget {
   final String amount;
@@ -84,25 +84,14 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
   }
 
   void _handleSuccess() {
+    if (_isSuccess) return;
     setState(() => _isSuccess = true);
-    // Fire the backend transfer
     context.read<TransferBloc>().add(TransferSubmitted(
           amount: double.tryParse(widget.amount) ?? 0.0,
           recipientName: widget.recipientName,
           method: widget.method,
         ));
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        context.go(
-          RouteConstants.transferSuccess.toPath,
-          extra: {
-            'amount': widget.amount,
-            'recipientName': widget.recipientName,
-            'method': widget.method,
-          },
-        );
-      }
-    });
+    // Navigation happens via BlocListener on TransferSuccess/Failure
   }
 
   void _onConfirmLongPressStart(LongPressStartDetails details) {
@@ -124,9 +113,28 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.I<TransferBloc>(),
-      child: Builder(builder: (ctx) => _buildBody(ctx)),
+    return BlocListener<TransferBloc, TransferState>(
+      listener: (context, state) {
+        if (state is TransferSuccess) {
+          context.go(
+            RouteConstants.transferSuccess.toPath,
+            extra: {
+              'amount': widget.amount,
+              'recipientName': widget.recipientName,
+              'method': widget.method,
+            },
+          );
+        } else if (state is TransferFailure) {
+          setState(() => _isSuccess = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      },
+      child: _buildBody(context),
     );
   }
 
@@ -141,10 +149,10 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.6)),
+            child: Container(color: Colors.black.withValues(alpha: 0.45)),
           ),
           SafeArea(
             child: LayoutBuilder(
@@ -253,7 +261,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
       width: double.infinity,
       padding: EdgeInsets.all(20 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -300,7 +308,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
     return Container(
       padding: EdgeInsets.all(16 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -387,7 +395,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
           height: 32 * scale,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             border: Border.all(color: Colors.white24),
           ),
           alignment: Alignment.center,
@@ -408,7 +416,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
     return Container(
       padding: EdgeInsets.all(16 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16 * scale),
         border: Border.all(color: Colors.white12),
       ),
@@ -485,7 +493,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
             width: double.infinity,
             height: 54 * scale,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12 * scale),
               border: Border.all(color: Colors.white24),
             ),
@@ -495,7 +503,7 @@ class _TransferConfirmationPageState extends State<TransferConfirmationPage>
                   widthFactor: _progressController.value,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: CColor.primaryButton.withOpacity(0.4),
+                      color: CColor.primaryButton.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(12 * scale),
                     ),
                   ),

@@ -1,3 +1,4 @@
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'sell_btc_review_page.dart';
@@ -44,9 +45,11 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           // Background Image
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
           ),
 
           // Content
@@ -158,7 +161,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                           Text(
                             'Limit Price (USD)',
                             style: TextStyles.bodyMedium.copyWith(
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                               fontSize: isSmallScreen ? 14 : 16,
                             ),
                           ),
@@ -171,10 +174,10 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                               vertical: 16,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Row(
@@ -226,7 +229,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                         _handleContinueToReview();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.9),
+                        backgroundColor: Colors.white.withValues(alpha: 0.9),
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -257,7 +260,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
       height: 8,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive ? Colors.red : Colors.white.withOpacity(0.3),
+        color: isActive ? Colors.red : Colors.white.withValues(alpha: 0.3),
       ),
     );
   }
@@ -268,7 +271,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
         height: 2,
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.red : Colors.white.withOpacity(0.3),
+          color: isActive ? Colors.red : Colors.white.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(1),
         ),
       ),
@@ -288,10 +291,10 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? Colors.red : Colors.white.withOpacity(0.2),
+            color: isSelected ? Colors.red : Colors.white.withValues(alpha: 0.2),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -305,7 +308,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color:
-                      isSelected ? Colors.red : Colors.white.withOpacity(0.5),
+                      isSelected ? Colors.red : Colors.white.withValues(alpha: 0.5),
                   width: 2,
                 ),
               ),
@@ -343,7 +346,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                   Text(
                     description,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                       height: 1.3,
                     ),

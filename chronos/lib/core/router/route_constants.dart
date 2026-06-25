@@ -3,6 +3,7 @@ enum RouteConstants {
   onboarding,
   signUp,
   signIn,
+  personalInfo,
   home,
   transfer,
   selectMethod,
@@ -17,6 +18,7 @@ enum RouteConstants {
   addMoney,
   bankTransfer,
   wallet,
+  walletOnboarding,
   findAtm,
   exchange,
   selectCurrency,
@@ -44,6 +46,7 @@ enum RouteConstants {
   tickpayVerification,
   tickpayLinkWallets,
   tickpayCompletion,
+  tickpaySetupComplete,
   tickpayDashboard,
   tickpayCreditOverview,
   tickpayActivePlans,
@@ -51,6 +54,21 @@ enum RouteConstants {
   tickpayRewards,
   tickpayShortcuts,
   tickPayAi,
+  // New TickPay screens
+  tickpayDiscover,
+  tickpaySearch,
+  tickpayAiPicks,
+  tickpayProductDetail,
+  tickpayShopDetail,
+  tickpayBnplCheckout,
+  tickpayOrderConfirmed,
+  tickpayOrderHistory,
+  tickpayUpcomingPayments,
+  tickpayRepayNow,
+  tickpayPaymentHistory,
+  tickpayAlerts,
+  tickpayAutoPay,
+  tickpayAiShop,
   fullPortfolioAnalysis,
   paymentPlan,
   productDiscovery,
@@ -58,6 +76,30 @@ enum RouteConstants {
   marketIntelligence,
   pantherAiSettings,
   pantherAiChat,
+  taxIntelligence,
+  billsManagement,
+  liabilitiesIntelligence,
+  budgetIntelligence,
+  netWorthIntelligence,
+  history,
+  profile,
+  changePassword,
+  notificationSettings,
+  // LifeX routes
+  lifex,
+  lifexOnboarding,
+  lifexHealth,
+  lifexEducation,
+  lifexSpiritual,
+  lifexFinance,
+  lifexActivity,
+  lifexVision,
+  lifexFamily,
+  lifexRelationship,
+  lifexSocial,
+  lifexFeed,
+  lifexAiInsights,
+  lifexExport,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -71,6 +113,8 @@ extension RouteConstantsX on RouteConstants {
         return '/signup';
       case RouteConstants.signIn:
         return '/signin';
+      case RouteConstants.personalInfo:
+        return '/personal-info';
       case RouteConstants.home:
         return '/home';
       case RouteConstants.transfer:
@@ -99,6 +143,8 @@ extension RouteConstantsX on RouteConstants {
         return '/bank-transfer';
       case RouteConstants.wallet:
         return '/wallet';
+      case RouteConstants.walletOnboarding:
+        return '/wallet-onboarding';
       case RouteConstants.findAtm:
         return '/find-atm';
       case RouteConstants.exchange:
@@ -166,6 +212,36 @@ extension RouteConstantsX on RouteConstants {
         return '/tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return '/tickpay-ai';
+      case RouteConstants.tickpaySetupComplete:
+        return '/tickpay/setup-complete';
+      case RouteConstants.tickpayDiscover:
+        return '/tickpay/discover';
+      case RouteConstants.tickpaySearch:
+        return '/tickpay/search';
+      case RouteConstants.tickpayAiPicks:
+        return '/tickpay/ai-picks';
+      case RouteConstants.tickpayProductDetail:
+        return '/tickpay/product-detail';
+      case RouteConstants.tickpayShopDetail:
+        return '/tickpay/shop-detail';
+      case RouteConstants.tickpayBnplCheckout:
+        return '/tickpay/bnpl-checkout';
+      case RouteConstants.tickpayOrderConfirmed:
+        return '/tickpay/order-confirmed';
+      case RouteConstants.tickpayOrderHistory:
+        return '/tickpay/order-history';
+      case RouteConstants.tickpayUpcomingPayments:
+        return '/tickpay/upcoming-payments';
+      case RouteConstants.tickpayRepayNow:
+        return '/tickpay/repay-now';
+      case RouteConstants.tickpayPaymentHistory:
+        return '/tickpay/payment-history';
+      case RouteConstants.tickpayAlerts:
+        return '/tickpay/alerts';
+      case RouteConstants.tickpayAutoPay:
+        return '/tickpay/auto-pay';
+      case RouteConstants.tickpayAiShop:
+        return '/tickpay/ai-shop';
       case RouteConstants.fullPortfolioAnalysis:
         return '/full-portfolio-analysis';
       case RouteConstants.paymentPlan:
@@ -180,6 +256,52 @@ extension RouteConstantsX on RouteConstants {
         return '/panther-ai-settings';
       case RouteConstants.pantherAiChat:
         return '/panther-ai-chat';
+      case RouteConstants.profile:
+        return '/profile';
+      case RouteConstants.changePassword:
+        return '/profile/change-password';
+      case RouteConstants.notificationSettings:
+        return '/profile/notifications';
+      case RouteConstants.lifex:
+        return '/lifex';
+      case RouteConstants.lifexOnboarding:
+        return '/lifex/onboarding';
+      case RouteConstants.lifexHealth:
+        return '/lifex/health';
+      case RouteConstants.lifexEducation:
+        return '/lifex/education';
+      case RouteConstants.lifexSpiritual:
+        return '/lifex/spiritual';
+      case RouteConstants.lifexFinance:
+        return '/lifex/finance';
+      case RouteConstants.lifexActivity:
+        return '/lifex/activity';
+      case RouteConstants.lifexVision:
+        return '/lifex/vision';
+      case RouteConstants.lifexFamily:
+        return '/lifex/family';
+      case RouteConstants.lifexRelationship:
+        return '/lifex/relationship';
+      case RouteConstants.lifexSocial:
+        return '/lifex/social';
+      case RouteConstants.lifexFeed:
+        return '/lifex/feed';
+      case RouteConstants.lifexAiInsights:
+        return '/lifex/ai-insights';
+      case RouteConstants.lifexExport:
+        return '/lifex/export';
+      case RouteConstants.taxIntelligence:
+        return '/panther/tax';
+      case RouteConstants.billsManagement:
+        return '/panther/bills';
+      case RouteConstants.liabilitiesIntelligence:
+        return '/panther/liabilities';
+      case RouteConstants.budgetIntelligence:
+        return '/panther/budget';
+      case RouteConstants.netWorthIntelligence:
+        return '/panther/net-worth';
+      case RouteConstants.history:
+        return '/history';
     }
   }
 
@@ -193,6 +315,8 @@ extension RouteConstantsX on RouteConstants {
         return 'signup';
       case RouteConstants.signIn:
         return 'signin';
+      case RouteConstants.personalInfo:
+        return 'personal-info';
       case RouteConstants.home:
         return 'home';
       case RouteConstants.transfer:
@@ -221,6 +345,8 @@ extension RouteConstantsX on RouteConstants {
         return 'bank-transfer';
       case RouteConstants.wallet:
         return 'wallet';
+      case RouteConstants.walletOnboarding:
+        return 'wallet-onboarding';
       case RouteConstants.findAtm:
         return 'find-atm';
       case RouteConstants.exchange:
@@ -288,6 +414,36 @@ extension RouteConstantsX on RouteConstants {
         return 'tickpay-shortcuts';
       case RouteConstants.tickPayAi:
         return 'tickpay-ai';
+      case RouteConstants.tickpaySetupComplete:
+        return 'tickpay-setup-complete';
+      case RouteConstants.tickpayDiscover:
+        return 'tickpay-discover';
+      case RouteConstants.tickpaySearch:
+        return 'tickpay-search';
+      case RouteConstants.tickpayAiPicks:
+        return 'tickpay-ai-picks';
+      case RouteConstants.tickpayProductDetail:
+        return 'tickpay-product-detail';
+      case RouteConstants.tickpayShopDetail:
+        return 'tickpay-shop-detail';
+      case RouteConstants.tickpayBnplCheckout:
+        return 'tickpay-bnpl-checkout';
+      case RouteConstants.tickpayOrderConfirmed:
+        return 'tickpay-order-confirmed';
+      case RouteConstants.tickpayOrderHistory:
+        return 'tickpay-order-history';
+      case RouteConstants.tickpayUpcomingPayments:
+        return 'tickpay-upcoming-payments';
+      case RouteConstants.tickpayRepayNow:
+        return 'tickpay-repay-now';
+      case RouteConstants.tickpayPaymentHistory:
+        return 'tickpay-payment-history';
+      case RouteConstants.tickpayAlerts:
+        return 'tickpay-alerts';
+      case RouteConstants.tickpayAutoPay:
+        return 'tickpay-auto-pay';
+      case RouteConstants.tickpayAiShop:
+        return 'tickpay-ai-shop';
       case RouteConstants.fullPortfolioAnalysis:
         return 'full-portfolio-analysis';
       case RouteConstants.paymentPlan:
@@ -302,6 +458,52 @@ extension RouteConstantsX on RouteConstants {
         return 'panther-ai-settings';
       case RouteConstants.pantherAiChat:
         return 'panther-ai-chat';
+      case RouteConstants.profile:
+        return 'profile';
+      case RouteConstants.changePassword:
+        return 'change-password';
+      case RouteConstants.notificationSettings:
+        return 'notification-settings';
+      case RouteConstants.lifex:
+        return 'lifex';
+      case RouteConstants.lifexOnboarding:
+        return 'lifex-onboarding';
+      case RouteConstants.lifexHealth:
+        return 'lifex-health';
+      case RouteConstants.lifexEducation:
+        return 'lifex-education';
+      case RouteConstants.lifexSpiritual:
+        return 'lifex-spiritual';
+      case RouteConstants.lifexFinance:
+        return 'lifex-finance';
+      case RouteConstants.lifexActivity:
+        return 'lifex-activity';
+      case RouteConstants.lifexVision:
+        return 'lifex-vision';
+      case RouteConstants.lifexFamily:
+        return 'lifex-family';
+      case RouteConstants.lifexRelationship:
+        return 'lifex-relationship';
+      case RouteConstants.lifexSocial:
+        return 'lifex-social';
+      case RouteConstants.lifexFeed:
+        return 'lifex-feed';
+      case RouteConstants.lifexAiInsights:
+        return 'lifex-ai-insights';
+      case RouteConstants.lifexExport:
+        return 'lifex-export';
+      case RouteConstants.taxIntelligence:
+        return 'tax-intelligence';
+      case RouteConstants.billsManagement:
+        return 'bills-management';
+      case RouteConstants.liabilitiesIntelligence:
+        return 'liabilities-intelligence';
+      case RouteConstants.budgetIntelligence:
+        return 'budget-intelligence';
+      case RouteConstants.netWorthIntelligence:
+        return 'net-worth-intelligence';
+      case RouteConstants.history:
+        return 'history';
     }
   }
 }

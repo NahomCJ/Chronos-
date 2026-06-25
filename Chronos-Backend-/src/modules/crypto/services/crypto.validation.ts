@@ -1,18 +1,33 @@
 import { z } from "zod";
+import { SUPPORTED_CRYPTO_ASSETS } from "./crypto.paxos.service";
 
-export const QuoteRequestSchema = z.object({
-  userId: z.string().uuid(),
-  side: z.enum(["BUY", "SELL"]),
-  base: z.string().toUpperCase().min(2).max(10),   // e.g., BTC
-  quote: z.string().toUpperCase().min(2).max(10),  // e.g., USDC
-  amount: z.number().positive(),                   // base amount (for BUY: receive base; SELL: sell base)
-  maxSlippageBps: z.number().int().min(5).max(1000).default(50), // 0.50% default
+export const AssetSchema = z
+  .string()
+  .trim()
+  .transform((value) => value.toUpperCase())
+  .refine((value) => SUPPORTED_CRYPTO_ASSETS.includes(value as any), {
+    message: `asset must be one of: ${SUPPORTED_CRYPTO_ASSETS.join(", ")}`,
+  });
+
+export const BuyRequestSchema = z.object({
+  asset: AssetSchema,
+  amount_usd: z.number().positive().min(5),
 });
 
-export const ExecuteRequestSchema = z.object({
-  userId: z.string().uuid(),
-  quoteId: z.string().uuid(),
-  idempotencyKey: z.string().min(8),
-  walletId: z.string().uuid().optional(), // optional for custodial default
-  paymentSource: z.enum(["CUSTODIAL_WALLET", "NONCUSTODIAL_WALLET", "CARD", "TICKPAY"]).default("CUSTODIAL_WALLET"),
+export const SellRequestSchema = z.object({
+  asset: AssetSchema,
+  amount_crypto: z.number().positive(),
 });
+
+export const HistoryQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(25),
+  asset: AssetSchema.optional(),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+  cursor: z.string().optional(),
+});
+
+export type BuyRequest = z.infer<typeof BuyRequestSchema>;
+export type SellRequest = z.infer<typeof SellRequestSchema>;
+export type HistoryQuery = z.infer<typeof HistoryQuerySchema>;

@@ -1,3 +1,4 @@
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 
@@ -26,9 +27,11 @@ class SellBtcSuccessPage extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           // Background Image
           Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
           ),
 
           // Content
@@ -45,7 +48,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withValues(alpha: 0.2),
                       border: Border.all(color: Colors.red, width: 2),
                     ),
                     child: const Icon(Icons.check, color: Colors.red, size: 40),
@@ -70,7 +73,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                     'Your Bitcoin has been sold\nsuccessfully',
                     textAlign: TextAlign.center,
                     style: TextStyles.bodyLarge.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: isSmallScreen ? 16 : 18,
                       height: 1.4,
                     ),
@@ -83,9 +86,9 @@ class SellBtcSuccessPage extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [
@@ -115,7 +118,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                             Text(
                               'Status',
                               style: TextStyles.bodyMedium.copyWith(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -125,7 +128,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.2),
+                                color: Colors.red.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(color: Colors.red, width: 1),
                               ),
@@ -162,7 +165,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.9),
+                            backgroundColor: Colors.white.withValues(alpha: 0.9),
                             foregroundColor: Colors.black,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -196,7 +199,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             side: BorderSide(
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                               width: 1,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -223,7 +226,7 @@ class SellBtcSuccessPage extends StatelessWidget {
                     'Your updated balance will be reflected in your portfolio',
                     textAlign: TextAlign.center,
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                   ),
@@ -245,7 +248,7 @@ class SellBtcSuccessPage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodyMedium.copyWith(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 14,
           ),
         ),

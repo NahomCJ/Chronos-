@@ -1,180 +1,125 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/text_theme.dart';
+import 'package:video_player/video_player.dart';
 import 'risk_disclosure_page.dart';
 
-class BlockHubWelcomePage extends StatelessWidget {
+class BlockHubWelcomePage extends StatefulWidget {
   const BlockHubWelcomePage({super.key});
+
+  @override
+  State<BlockHubWelcomePage> createState() => _BlockHubWelcomePageState();
+}
+
+class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
+    with SingleTickerProviderStateMixin {
+  late final VideoPlayerController _videoCtrl;
+  late AnimationController _animCtrl;
+  bool _videoReady = false;
+
+  static const _bg = Color(0xFF06060E);
+  static const _lightGray = Color(0xFFE5E5E5);
+  static const _nearWhite = Color(0xFFF8F8F8);
+
+  static const _videoUrl =
+      'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4';
+
+  static const _features = [
+    _Feature(Icons.currency_bitcoin_rounded, 'Crypto Trading',
+        'Buy, sell and swap digital assets instantly'),
+    _Feature(Icons.collections_rounded, 'NFT Gallery',
+        'Mint, collect and trade unique digital art'),
+    _Feature(Icons.psychology_rounded, 'Panther AI',
+        'AI-powered signals and market intelligence'),
+    _Feature(Icons.account_balance_wallet_rounded, 'Multi-Chain Wallet',
+        'Ethereum, Polygon, Arbitrum & Base support'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..forward();
+
+    _videoCtrl = VideoPlayerController.networkUrl(Uri.parse(_videoUrl))
+      ..initialize().then((_) {
+        if (!mounted) return;
+        setState(() => _videoReady = true);
+        _videoCtrl
+          ..setLooping(true)
+          ..setVolume(0)
+          ..play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _animCtrl.dispose();
+    _videoCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: _bg,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/background.png', fit: BoxFit.cover),
+          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
+          // Video background
+          if (_videoReady)
+            AnimatedOpacity(
+              opacity: _videoReady ? 0.3 : 0.0,
+              duration: const Duration(milliseconds: 600),
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _videoCtrl.value.size.width,
+                  height: _videoCtrl.value.size.height,
+                  child: VideoPlayer(_videoCtrl),
+                ),
+              ),
+            ),
+
+          // Gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _bg.withValues(alpha: 0.7),
+                  _bg.withValues(alpha: 0.85),
+                  _bg,
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ),
+            ),
           ),
-          SingleChildScrollView(
+
+          // Content
+          SafeArea(
             child: Column(
               children: [
-                // ── White top section ──────────────────────────────────────────
-                Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-                  child: SafeArea(
-                    bottom: false,
+                _buildTopBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
-                        // Header
-                        Text(
-                          'BlockHub',
-                          style: TextStyles.titleLarge.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 22,
-                          ),
-                        ),
-                        const SizedBox(height: 22),
-                        // Title — two lines
-                        Text(
-                          'Trade smarter',
-                          textAlign: TextAlign.center,
-                          style: TextStyles.headlineMedium.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 26,
-                          ),
-                        ),
-                        Text(
-                          'Own your assets.',
-                          textAlign: TextAlign.center,
-                          style: TextStyles.headlineMedium.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 26,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        // Description
-                        Text(
-                          'Trade crypto & tokenized assets with AI-powered insights from Panther. Secure, regulated, and built for the future.',
-                          textAlign: TextAlign.center,
-                          style: TextStyles.bodyMedium.copyWith(
-                            color: Colors.grey[600],
-                            fontSize: 15,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 22),
-                        // Badges: 2 on top row, 1 centered below
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _badge(Icons.shield_outlined, 'Regulated'),
-                            const SizedBox(width: 12),
-                            _badge(Icons.auto_awesome, 'AI-Powered'),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        _badge(Icons.lock_outline, 'Custodial'),
+                        _buildHero(),
+                        const SizedBox(height: 40),
+                        _buildFeatures(),
+                        const SizedBox(height: 40),
+                        _buildStatsRow(),
                       ],
                     ),
                   ),
                 ),
-                // ── Dark section: crypto cards ─────────────────────────────────
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    image: DecorationImage(
-                      image: AssetImage('assets/background.png'),
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                    ),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                  child: _cryptoGrid(),
-                ),
-                // ── Buttons ────────────────────────────────────────────────────
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    image: DecorationImage(
-                      image: AssetImage('assets/background.png'),
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                    ),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed:
-                              () => Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const RiskDisclosurePage(),
-                                ),
-                              ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[400],
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Get Started',
-                                style: TextStyles.labelLarge.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              const Icon(
-                                Icons.arrow_forward,
-                                size: 18,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            side: const BorderSide(color: Colors.white),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Text(
-                            'Learn More',
-                            style: TextStyles.labelLarge.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildBottomCta(context),
               ],
             ),
           ),
@@ -183,246 +128,276 @@ class BlockHubWelcomePage extends StatelessWidget {
     );
   }
 
-  Widget _badge(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(50),
-      ),
+  Widget _buildTopBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: const Color(0xFFDC8F4A), size: 17),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+                border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white, size: 16),
             ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _lightGray.withValues(alpha: 0.08),
+              border: Border.all(
+                  color: _lightGray.withValues(alpha: 0.2), width: 0.8),
+            ),
+            child: Icon(Icons.hub_rounded,
+                color: _lightGray.withValues(alpha: 0.8), size: 18),
+          ),
+          const SizedBox(width: 8),
+          const Text('BlockHub',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800)),
+          const Spacer(),
+          TextButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RiskDisclosurePage()),
+            ),
+            child: Text('Skip',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.45), fontSize: 13)),
           ),
         ],
       ),
     );
   }
 
-  Widget _cryptoGrid() {
-    final cards = [
-      _CryptoData(
-        'BTC',
-        'Bitcoin',
-        '\$52,291',
-        '+0.25%',
-        true,
-        const Color(0xFFF59E0B),
+  Widget _buildHero() {
+    return AnimatedBuilder(
+      animation: _animCtrl,
+      builder: (_, __) => Opacity(
+        opacity: (_animCtrl.value * 2).clamp(0.0, 1.0),
+        child: Transform.translate(
+          offset: Offset(0, 30 * (1 - _animCtrl.value)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _lightGray.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: _lightGray.withValues(alpha: 0.2), width: 0.8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _lightGray.withValues(alpha: 0.7))),
+                    const SizedBox(width: 6),
+                    Text('POWERED BY PANTHER AI',
+                        style: TextStyle(
+                            color: _lightGray.withValues(alpha: 0.85),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.2)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text('The crypto hub\nyou\'ve been\nwaiting for.',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 38,
+                      fontWeight: FontWeight.w800,
+                      height: 1.1,
+                      letterSpacing: -0.5)),
+              const SizedBox(height: 16),
+              Text(
+                'Trade crypto, collect NFTs and get AI-powered market intelligence — all in one place.',
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.55),
+                    fontSize: 15,
+                    height: 1.6),
+              ),
+            ],
+          ),
+        ),
       ),
-      _CryptoData(
-        'SOL',
-        'Solana',
-        '\$14,291',
-        '-0.25%',
-        false,
-        const Color(0xFF9945FF),
-      ),
-      _CryptoData(
-        'ITC',
-        'Litecoin',
-        '\$8,291',
-        '-0.25%',
-        false,
-        const Color(0xFF345D9D),
-      ),
-      _CryptoData(
-        'ETH',
-        'Ethereum',
-        '\$28,291',
-        '+0.25%',
-        true,
-        const Color(0xFF627EEA),
-      ),
-    ];
+    );
+  }
+
+  Widget _buildFeatures() {
     return Column(
+      children: _features.asMap().entries.map((e) {
+        final delay = e.key * 0.1;
+        return AnimatedBuilder(
+          animation: _animCtrl,
+          builder: (_, __) {
+            final t = ((_animCtrl.value - delay) / 0.6).clamp(0.0, 1.0);
+            return Opacity(
+              opacity: t,
+              child: Transform.translate(
+                offset: Offset(20 * (1 - t), 0),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: _buildFeatureTile(e.value),
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildFeatureTile(_Feature f) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+            color: Colors.white.withValues(alpha: 0.07), width: 0.8),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _lightGray.withValues(alpha: 0.08),
+            ),
+            child: Icon(f.icon,
+                color: _lightGray.withValues(alpha: 0.75), size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(f.title,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600)),
+                const SizedBox(height: 3),
+                Text(f.subtitle,
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 12)),
+              ],
+            ),
+          ),
+          Icon(Icons.arrow_forward_ios_rounded,
+              color: Colors.white.withValues(alpha: 0.2), size: 14),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    return Row(
       children: [
-        Row(
-          children: [
-            Expanded(child: _cryptoCard(cards[0])),
-            const SizedBox(width: 12),
-            Expanded(child: _cryptoCard(cards[1])),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _cryptoCard(cards[2])),
-            const SizedBox(width: 12),
-            Expanded(child: _cryptoCard(cards[3])),
-          ],
-        ),
-        const SizedBox(height: 20),
+        _statBox('50+', 'Cryptocurrencies'),
+        const SizedBox(width: 12),
+        _statBox('Multi-Chain', 'Wallet Support'),
+        const SizedBox(width: 12),
+        _statBox('AI-First', 'Intelligence'),
       ],
     );
   }
 
-  Widget _cryptoCard(_CryptoData d) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+  Widget _statBox(String value, String label) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: _lightGray.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: _lightGray.withValues(alpha: 0.12), width: 0.8),
+        ),
+        child: Column(
+          children: [
+            Text(value,
+                style: TextStyle(
+                    color: _nearWhite,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800)),
+            const SizedBox(height: 3),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.4),
+                    fontSize: 9,
+                    height: 1.3)),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildBottomCta(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: d.color.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    d.symbol[0],
-                    style: TextStyle(
-                      color: d.color,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RiskDisclosurePage()),
+            ),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 6)),
+                ],
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      d.symbol,
-                      style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
-                    Text(
-                      d.name,
-                      style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                d.isPositive ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color:
-                    d.isPositive
-                        ? const Color(0xFF10B981)
-                        : const Color(0xFFEF4444),
-                size: 20,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            d.price,
-            style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
+              child: const Text('Get Started',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800)),
             ),
           ),
-          const SizedBox(height: 3),
-          Text(
-            d.change,
-            style: TextStyles.bodySmall.copyWith(
-              color:
-                  d.isPositive
-                      ? const Color(0xFF10B981)
-                      : const Color(0xFFEF4444),
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 28,
-            child: CustomPaint(
-              painter: _MiniChartPainter(d.isPositive),
-              size: const Size(double.infinity, 28),
-            ),
-          ),
+          const SizedBox(height: 12),
+          Text('By continuing you agree to our Terms & Privacy Policy',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.25), fontSize: 11)),
         ],
       ),
     );
   }
 }
 
-class _CryptoData {
-  final String symbol, name, price, change;
-  final bool isPositive;
-  final Color color;
-  const _CryptoData(
-    this.symbol,
-    this.name,
-    this.price,
-    this.change,
-    this.isPositive,
-    this.color,
-  );
-}
-
-class _MiniChartPainter extends CustomPainter {
-  final bool isPositive;
-  _MiniChartPainter(this.isPositive);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color =
-              isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444)
-          ..strokeWidth = 1.5
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round;
-
-    final pts =
-        isPositive
-            ? [0.7, 0.5, 0.6, 0.4, 0.5, 0.3, 0.2]
-            : [0.3, 0.5, 0.4, 0.6, 0.5, 0.7, 0.8];
-    final xStep = size.width / (pts.length - 1);
-    final path = Path();
-    for (int i = 0; i < pts.length; i++) {
-      final x = i * xStep;
-      final y = size.height * pts[i];
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        final px = (i - 1) * xStep;
-        final py = size.height * pts[i - 1];
-        path.cubicTo((px + x) / 2, py, (px + x) / 2, y, x, y);
-      }
-    }
-    canvas.drawPath(path, paint);
-
-    // End dot
-    final lastX = (pts.length - 1) * xStep;
-    final lastY = size.height * pts.last;
-    canvas.drawCircle(
-      Offset(lastX, lastY),
-      3,
-      Paint()
-        ..color =
-            isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter old) => false;
+class _Feature {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  const _Feature(this.icon, this.title, this.subtitle);
 }
