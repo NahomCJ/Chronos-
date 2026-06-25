@@ -33,6 +33,7 @@ import aiRoutes from "../modules/ai/ai.routes";
 import homeRoutes from "../modules/core/home/home.routes";
 import notificationRoutes from "../modules/core/notifications/notifications.routes";
 import onboardingRoutes from "../modules/core/onboarding/onboarding.routes";
+import unitRoutes from "../modules/core/unit/unit.routes";
 import userProfileRoutes from "../modules/user/user-profile.routes";
 
 const router = Router();
@@ -81,5 +82,6 @@ router.use("/ai", aiRoutes);
 router.use("/home", homeRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/onboarding", onboardingRoutes);
+router.use("/unit", unitRoutes);
 router.use("/v1/users", userProfileRoutes);
 export default router;
