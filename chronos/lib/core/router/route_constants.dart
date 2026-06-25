@@ -100,6 +100,7 @@ enum RouteConstants {
   lifexFeed,
   lifexAiInsights,
   lifexExport,
+  unitBanking,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -302,6 +303,8 @@ extension RouteConstantsX on RouteConstants {
         return '/panther/net-worth';
       case RouteConstants.history:
         return '/history';
+      case RouteConstants.unitBanking:
+        return '/unit-banking';
     }
   }
 
@@ -504,6 +507,8 @@ extension RouteConstantsX on RouteConstants {
         return 'net-worth-intelligence';
       case RouteConstants.history:
         return 'history';
+      case RouteConstants.unitBanking:
+        return 'unit-banking';
     }
   }
 }
