@@ -11,8 +11,6 @@ import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
 import 'markets_page.dart';
 import 'trade_page.dart';
-import 'portfolio_page.dart';
-import 'panther_ai_insights_page.dart';
 import 'nft/nft_marketplace_page.dart';
 
 // ── Coin data model ────────────────────────────────────────────────────────────
@@ -312,17 +310,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
                                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendCryptoPage()))),
                               _buildActionButton(Icons.more_horiz, 'More', isSmallScreen,
                                   onTap: () => MoreOptionsModal.show(context)),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          // Circular nav icons — bottom
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildCircleNav(Icons.bar_chart_rounded, 'Markets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketsPage()))),
-                              _buildCircleNav(Icons.swap_horiz_rounded, 'Trade', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TradePage()))),
-                              _buildCircleNav(Icons.pie_chart_rounded, 'Portfolio', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PortfolioPage()))),
-                              _buildCircleNav(Icons.psychology_rounded, 'AI Hub', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PantherAiInsightsPage()))),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -893,28 +880,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
                 style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w700)),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildCircleNav(IconData icon, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 52, height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.40)),
-            ),
-            child: Icon(icon, color: Colors.white, size: 22),
-          ),
-          const SizedBox(height: 6),
-          Text(label,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 10, fontWeight: FontWeight.w500)),
-        ],
       ),
     );
   }

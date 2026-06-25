@@ -19,7 +19,8 @@ class FluidGlass extends StatelessWidget {
     this.showShadow = true,
   });
 
-  /// Dark-background variant: subtle white tint on deep dark pages.
+  /// Dark-background variant: subtle dark gradient on deep dark / bg-image pages.
+  /// The dark tint improves text legibility without killing the glass effect.
   const FluidGlass.dark({
     super.key,
     required this.child,
@@ -28,8 +29,8 @@ class FluidGlass extends StatelessWidget {
     this.padding,
     this.showBorder = true,
     this.showShadow = true,
-  })  : tintColor = const Color(0xFFFFFFFF),
-        tintOpacity = 0.09;
+  })  : tintColor = const Color(0xFF000000),
+        tintOpacity = 0.22;
 
   /// Light-background variant: frosted white on light pages.
   const FluidGlass.light({
