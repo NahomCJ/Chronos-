@@ -1,4 +1,5 @@
 import prisma from "../../../../config/prisma";
+import { debitWalletForSpend } from "./spiritual.payments";
 
 export class SpiritualService {
   async dashboard(userId: string) {
@@ -65,5 +66,115 @@ export class SpiritualService {
       cur.setDate(cur.getDate() - 1);
     }
     return streak;
+  }
+
+  // ── Giving: donations to charities ──────────────────────────────────────
+  async donate(
+    userId: string,
+    data: { charityName: string; category?: string; amount: number; currency?: string; recurring?: boolean; frequency?: string }
+  ) {
+    const currency = data.currency ?? "USD";
+    const transactionId = await debitWalletForSpend(userId, data.amount, currency, "DONATION");
+    return prisma.donation.create({
+      data: {
+        userId,
+        charityName: data.charityName,
+        category: data.category,
+        amount: data.amount,
+        currency,
+        recurring: data.recurring ?? false,
+        frequency: data.frequency,
+        transactionId,
+        status: "SUCCESS",
+      },
+    });
+  }
+
+  async listDonations(userId: string) {
+    return prisma.donation.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+  }
+
+  // ── Crowdfunding: contributions to campaigns ────────────────────────────
+  async contribute(
+    userId: string,
+    data: { campaignTitle: string; campaignCategory?: string; amount: number; currency?: string }
+  ) {
+    const currency = data.currency ?? "USD";
+    const transactionId = await debitWalletForSpend(userId, data.amount, currency, "DONATION");
+    return prisma.campaignContribution.create({
+      data: {
+        userId,
+        campaignTitle: data.campaignTitle,
+        campaignCategory: data.campaignCategory,
+        amount: data.amount,
+        currency,
+        transactionId,
+        status: "SUCCESS",
+      },
+    });
+  }
+
+  async listContributions(userId: string) {
+    return prisma.campaignContribution.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+  }
+
+  // ── Spiritual trips ──────────────────────────────────────────────────────
+  async bookTrip(
+    userId: string,
+    data: { tripTitle: string; destination?: string; travelers?: number; totalAmount: number; currency?: string }
+  ) {
+    const currency = data.currency ?? "USD";
+    const transactionId = await debitWalletForSpend(userId, data.totalAmount, currency, "PURCHASE");
+    return prisma.tripBooking.create({
+      data: {
+        userId,
+        tripTitle: data.tripTitle,
+        destination: data.destination,
+        travelers: data.travelers ?? 1,
+        totalAmount: data.totalAmount,
+        currency,
+        transactionId,
+        status: "SUCCESS",
+      },
+    });
+  }
+
+  async listTripBookings(userId: string) {
+    return prisma.tripBooking.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+  }
+
+  // ── Spiritual shop (ecommerce) ───────────────────────────────────────────
+  async checkout(
+    userId: string,
+    data: { items: Array<{ name: string; price: number; qty: number }>; currency?: string }
+  ) {
+    const currency = data.currency ?? "USD";
+    const totalAmount = data.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const transactionId = await debitWalletForSpend(userId, totalAmount, currency, "PURCHASE");
+    return prisma.spiritualOrder.create({
+      data: {
+        userId,
+        items: data.items,
+        totalAmount,
+        currency,
+        transactionId,
+        status: "SUCCESS",
+      },
+    });
+  }
+
+  async listOrders(userId: string) {
+    return prisma.spiritualOrder.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+  }
+
+  // ── Faith (captured at onboarding, drives event/product filtering) ──────
+  async getFaith(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { faith: true } });
+    return { faith: user?.faith ?? null };
+  }
+
+  async setFaith(userId: string, faith: string) {
+    const user = await prisma.user.update({ where: { id: userId }, data: { faith }, select: { faith: true } });
+    return user;
   }
 }

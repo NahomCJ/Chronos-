@@ -26,6 +26,7 @@ import '../domain/usecases/reset_password.dart';
 import '../presentation/bloc/auth/auth_bloc.dart';
 import '../presentation/bloc/onboarding/onboarding_bloc.dart';
 import '../../../core/network/api_client.dart';
+import '../../lifex/data/lifex_service.dart';
 
 Future<void> initAuthDi(GetIt sl) async {
   final sharedPreferences = await SharedPreferences.getInstance();
@@ -58,6 +59,10 @@ Future<void> initAuthDi(GetIt sl) async {
     sl.registerLazySingleton<ApiClient>(
       () => ApiClient(client: sl(), tokenStorage: sl()),
     );
+  }
+
+  if (!sl.isRegistered<LifeXService>()) {
+    sl.registerLazySingleton<LifeXService>(() => LifeXService(sl()));
   }
 
   if (!kIsWeb && !sl.isRegistered<FirebaseAuthRemoteDataSourceImpl>()) {
