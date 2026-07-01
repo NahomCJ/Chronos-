@@ -129,9 +129,9 @@ class _OrbPainter extends CustomPainter {
 
   (double, double, double) _stateParams(OrbState s) {
     return switch (s) {
-      OrbState.idle => (0.8, 0.03, 0.05),
-      OrbState.thinking => (2.0, 0.07, 0.12),
-      OrbState.speaking => (4.0, 0.12, 0.20),
+      OrbState.idle => (0.8, 0.03, 0.09),
+      OrbState.thinking => (2.0, 0.07, 0.20),
+      OrbState.speaking => (4.0, 0.12, 0.34),
     };
   }
 

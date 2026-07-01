@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-06-25 (updated: Unit Banking feature added — accounts, cards, transfers via Unit BaaS; fixed backend import errors from Thom22's Unit integration)
+Last updated: 2026-07-01 (updated: Exchange flow collapsed to a single page — removed duplicate Enter Amount/Review Exchange steps, CTA renamed "Exchange Now"; Chris voice orb wave amplitude increased)
 
 ---
 
@@ -102,10 +102,10 @@ Path: `lib/features/exchange/`
 |--------|-------|------|--------|
 | Exchange | `/exchange` | `exchange_page.dart` | [LIVE] |
 | Select Currency | `/select-currency` | `select_currency_page.dart` | [LIVE] |
-| Enter Amount | `/enter-exchange-amount` | `enter_amount_page.dart` | [LIVE] |
-| Review | `/review-exchange` | `review_exchange_page.dart` | [LIVE] |
 | Processing | `/exchange-processing` | `exchange_processing_page.dart` | [LIVE] |
 | Success | `/exchange-success` | `exchange_success_page.dart` | [LIVE] |
+
+Exchange is now a single-page flow: amount entry, currency pick, and execute all happen on `exchange_page.dart` — the button dispatches quote+execute back-to-back on `ExchangeBloc`, then routes straight to Success. `enter_amount_page.dart` and `review_exchange_page.dart` (and their `/enter-exchange-amount`, `/review-exchange` routes) were removed as duplicate amount-entry/review steps. The CTA is now "Exchange Now" instead of "Review Exchange".
 
 ---
 
@@ -332,6 +332,9 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 **Content notes for Spiritual page:**
 - Meditation images use Pexels nature photos only (no yoga)
 - IDs in use: forest `1761279`, ocean `355465`, starry night `1252890`, mountain `2775196`, sunrise `994605`
+- Rebuilt from a meditation-app-first layout into 5 tabs: Practice (meditation/gratitude/goals, unchanged), Giving (charity donations + crowdfunding campaigns), Trips (spiritual pilgrimages/retreats), Shop (ecommerce for devotional goods), Events (faith-based event calendar, informational). Removed the third-party Mindfulness Apps (Calm/Headspace) tile and the old Anchor tab.
+- Charity/campaign/trip/product/event catalogs are mock/curated data in the page (Pexels images) — the actual money movement (donate, contribute, book, checkout) calls real backend endpoints under `/api/lifex/spiritual/*` (`donations`, `campaigns/contribute`, `trips/book`, `shop/checkout`) which debit the user's real wallet via the same ledger mechanism `TransferService` uses.
+- `LifeXService` (`lib/features/lifex/data/lifex_service.dart`) is now registered in DI (`auth_di.dart`) — it previously existed but was never wired to GetIt.
 
 ---
 

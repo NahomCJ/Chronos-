@@ -108,9 +108,61 @@ export class HealthController {
   };
 
   // ---------------- Gyms ----------------
-  gyms = async (_req: Request, res: Response) => {
-    const gyms = await service.listGyms();
+  gyms = async (req: Request, res: Response) => {
+    const city = typeof req.query.city === "string" ? req.query.city : undefined;
+    const gyms = await service.listGyms(city);
     res.json(gyms);
+  };
+
+  // ---------------- Insurance Marketplace ----------------
+  enrollInsurance = async (req: any, res: Response) => {
+    const { provider, planName, coverageType, monthlyPremium } = req.body;
+    if (!provider || !planName || !coverageType || monthlyPremium === undefined) {
+      res.status(400).json({ error: "provider, planName, coverageType and monthlyPremium are required" });
+      return;
+    }
+    res.status(201).json(await service.enrollInsurance(req.user.id, { provider, planName, coverageType, monthlyPremium: Number(monthlyPremium) }));
+  };
+
+  myInsurance = async (req: any, res: Response) => {
+    res.json(await service.myInsurance(req.user.id));
+  };
+
+  // ---------------- Nutrition Partners ----------------
+  connectNutritionPartner = async (req: any, res: Response) => {
+    const { partnerName, category } = req.body;
+    if (!partnerName) { res.status(400).json({ error: "partnerName is required" }); return; }
+    res.status(201).json(await service.connectNutritionPartner(req.user.id, { partnerName, category }));
+  };
+
+  myNutritionConnections = async (req: any, res: Response) => {
+    res.json(await service.myNutritionConnections(req.user.id));
+  };
+
+  // ---------------- Wearables ----------------
+  wearableProviders = async (_req: Request, res: Response) => {
+    res.json(service.listWearableProviders());
+  };
+
+  connectWearable = async (req: any, res: Response) => {
+    const { provider } = req.body;
+    if (!provider) { res.status(400).json({ error: "provider is required" }); return; }
+    res.status(201).json(await service.connectWearable(req.user.id, provider));
+  };
+
+  myWearableConnections = async (req: any, res: Response) => {
+    res.json(await service.myWearableConnections(req.user.id));
+  };
+
+  syncWearableMetrics = async (req: any, res: Response) => {
+    const { provider, metrics } = req.body;
+    if (!provider || !Array.isArray(metrics)) { res.status(400).json({ error: "provider and metrics are required" }); return; }
+    res.status(201).json(await service.syncWearableMetrics(req.user.id, provider, metrics));
+  };
+
+  // ---------------- Insights ----------------
+  insights = async (req: any, res: Response) => {
+    res.json(await service.getInsights(req.user.id));
   };
 
   // ---------------- Notifications ----------------

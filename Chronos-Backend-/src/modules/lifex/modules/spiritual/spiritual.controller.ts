@@ -61,4 +61,74 @@ export class SpiritualController {
     const streak = await service.streak(req.user.id);
     res.json({ streak });
   };
+
+  donate = async (req: any, res: Response) => {
+    const { charityName, category, amount, currency, recurring, frequency } = req.body;
+    if (!charityName || !amount) { res.status(400).json({ error: "charityName and amount are required" }); return; }
+    try {
+      const donation = await service.donate(req.user.id, { charityName, category, amount: Number(amount), currency, recurring, frequency });
+      res.status(201).json(donation);
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  };
+
+  listDonations = async (req: any, res: Response) => {
+    res.json(await service.listDonations(req.user.id));
+  };
+
+  contribute = async (req: any, res: Response) => {
+    const { campaignTitle, campaignCategory, amount, currency } = req.body;
+    if (!campaignTitle || !amount) { res.status(400).json({ error: "campaignTitle and amount are required" }); return; }
+    try {
+      const contribution = await service.contribute(req.user.id, { campaignTitle, campaignCategory, amount: Number(amount), currency });
+      res.status(201).json(contribution);
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  };
+
+  listContributions = async (req: any, res: Response) => {
+    res.json(await service.listContributions(req.user.id));
+  };
+
+  bookTrip = async (req: any, res: Response) => {
+    const { tripTitle, destination, travelers, totalAmount, currency } = req.body;
+    if (!tripTitle || !totalAmount) { res.status(400).json({ error: "tripTitle and totalAmount are required" }); return; }
+    try {
+      const booking = await service.bookTrip(req.user.id, { tripTitle, destination, travelers: travelers ? Number(travelers) : undefined, totalAmount: Number(totalAmount), currency });
+      res.status(201).json(booking);
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  };
+
+  listTripBookings = async (req: any, res: Response) => {
+    res.json(await service.listTripBookings(req.user.id));
+  };
+
+  checkout = async (req: any, res: Response) => {
+    const { items, currency } = req.body;
+    if (!Array.isArray(items) || items.length === 0) { res.status(400).json({ error: "items are required" }); return; }
+    try {
+      const order = await service.checkout(req.user.id, { items, currency });
+      res.status(201).json(order);
+    } catch (e: any) {
+      res.status(400).json({ error: e.message });
+    }
+  };
+
+  listOrders = async (req: any, res: Response) => {
+    res.json(await service.listOrders(req.user.id));
+  };
+
+  getFaith = async (req: any, res: Response) => {
+    res.json(await service.getFaith(req.user.id));
+  };
+
+  setFaith = async (req: any, res: Response) => {
+    const { faith } = req.body;
+    if (!faith) { res.status(400).json({ error: "faith is required" }); return; }
+    res.json(await service.setFaith(req.user.id, faith));
+  };
 }

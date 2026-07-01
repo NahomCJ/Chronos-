@@ -204,6 +204,9 @@ enum LedgerCategory {
   FEE
   FX
   ADJUSTMENT
+  DONATION
+  PURCHASE
+  HSA
 }
 
 enum FxOrderStatus {
@@ -248,6 +251,7 @@ model User {
   role            Role      @default(USER)
   tier            String    @default("standard")
   userLevel       UserLevel @default(BEGINNER)
+  faith           String? // captured during onboarding, used by LifeX Spiritual
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -937,6 +941,7 @@ model HealthMetric {
   metricType String
   value      Float
   unit       String
+  source     String   @default("manual") // manual, apple_health, fitbit, garmin, google_fit
   recordedAt DateTime @default(now())
 }
 
@@ -996,11 +1001,55 @@ model WellnessProgram {
 }
 
 model GymPartner {
-  id       String @id @default(uuid())
-  name     String
-  location String
-  offer    String
-  qrCode   String
+  id              String  @id @default(uuid())
+  name            String
+  location        String
+  city            String? // e.g. "New York", "San Francisco"
+  offer           String
+  discountPercent Float?
+  referralUrl     String?
+  imageUrl        String?
+  qrCode          String
+}
+
+// Insurance/nutrition catalogs are mock/curated content on the client (same
+// convention as Spiritual's charities/campaigns/trips/products) — enrollment
+// and connection records denormalize the catalog fields the client sent
+// rather than joining to a seeded catalog table.
+
+model InsuranceEnrollment {
+  id             String   @id @default(uuid())
+  userId         String
+  provider       String
+  planName       String
+  coverageType   String // health, dental, vision, life
+  monthlyPremium Float
+  status         String   @default("ACTIVE")
+  enrolledAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+model NutritionConnection {
+  id          String   @id @default(uuid())
+  userId      String
+  partnerName String
+  category    String?
+  status      String   @default("CONNECTED")
+  connectedAt DateTime @default(now())
+
+  @@unique([userId, partnerName])
+}
+
+model WearableConnection {
+  id          String    @id @default(uuid())
+  userId      String
+  provider    String // apple_health, fitbit, garmin, google_fit
+  status      String    @default("CONNECTED")
+  connectedAt DateTime  @default(now())
+  lastSyncAt  DateTime?
+
+  @@unique([userId, provider])
 }
 
 model Habit {
@@ -1519,6 +1568,69 @@ model SpiritualGoal {
   status      String   @default("ACTIVE")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Donations, crowdfunding, trips, and the ecommerce store are mock/curated
+// catalogs on the client (like TickPay's product catalog) — these models only
+// record the real wallet debit for each transaction, denormalizing the
+// catalog fields the client sent rather than joining to a catalog table.
+
+model Donation {
+  id            String        @id @default(uuid())
+  userId        String
+  charityName   String
+  category      String?
+  amount        Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  recurring     Boolean       @default(false)
+  frequency     String? // monthly, weekly
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model CampaignContribution {
+  id              String        @id @default(uuid())
+  userId          String
+  campaignTitle   String
+  campaignCategory String?
+  amount          Decimal       @db.Decimal(30, 8)
+  currency        String        @default("USD")
+  transactionId   String?
+  status          PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model TripBooking {
+  id            String        @id @default(uuid())
+  userId        String
+  tripTitle     String
+  destination   String?
+  travelers     Int           @default(1)
+  totalAmount   Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model SpiritualOrder {
+  id            String        @id @default(uuid())
+  userId        String
+  items         Json
+  totalAmount   Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
 
   @@index([userId])
 }

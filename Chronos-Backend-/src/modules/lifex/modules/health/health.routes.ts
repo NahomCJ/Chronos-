@@ -32,6 +32,20 @@ router.get("/habits", requireAuth, ctrl.listHabits);
 router.post("/habit", requireAuth, ctrl.logHabit);
 
 router.get("/gyms", requireAuth, ctrl.gyms);
+
+router.post("/insurance/enroll", requireAuth, ctrl.enrollInsurance);
+router.get("/insurance/mine", requireAuth, ctrl.myInsurance);
+
+router.post("/nutrition-partners/connect", requireAuth, ctrl.connectNutritionPartner);
+router.get("/nutrition-partners/mine", requireAuth, ctrl.myNutritionConnections);
+
+router.get("/wearables/providers", requireAuth, ctrl.wearableProviders);
+router.post("/wearables/connect", requireAuth, ctrl.connectWearable);
+router.get("/wearables/mine", requireAuth, ctrl.myWearableConnections);
+router.post("/wearables/sync", requireAuth, ctrl.syncWearableMetrics);
+
+router.get("/insights", requireAuth, ctrl.insights);
+
 router.get("/notifications", requireAuth, ctrl.notifications);
 
 export default router;
