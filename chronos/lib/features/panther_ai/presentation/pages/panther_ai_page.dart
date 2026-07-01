@@ -9,6 +9,7 @@ import '../bloc/alerts_bloc.dart';
 import '../bloc/alerts_event.dart';
 import '../bloc/alerts_state.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/app_background.dart';
 import '../../domain/entities/ai_alert.dart';
 
 class PantherAiPage extends StatefulWidget {
@@ -46,7 +47,7 @@ class _PantherAiPageState extends State<PantherAiPage>
   void initState() {
     super.initState();
     _alertsBloc = GetIt.I<AlertsBloc>();
-    _alertsBloc.add(const AlertsLoadRequested());
+    _alertsBloc.add(const AlertsGenerateRequested());
 
     _glowCtrl = AnimationController(
       vsync: this,
@@ -76,24 +77,20 @@ class _PantherAiPageState extends State<PantherAiPage>
       value: _alertsBloc,
       child: Scaffold(
         backgroundColor: _bg,
-        body: Stack(
-          children: [
-            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(child: _buildHeader()),
-                  SliverToBoxAdapter(child: _buildOrbHero()),
-                  SliverToBoxAdapter(child: _buildStoriesSection()),
-                  SliverToBoxAdapter(child: _buildLifeXCard()),
-                  SliverToBoxAdapter(child: _buildQuickActions()),
-                  SliverToBoxAdapter(child: _buildIntelligence()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
-                ],
-              ),
+        body: AppBackground(
+          child: SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeader()),
+                SliverToBoxAdapter(child: _buildOrbHero()),
+                SliverToBoxAdapter(child: _buildStoriesSection()),
+                SliverToBoxAdapter(child: _buildLifeXCard()),
+                SliverToBoxAdapter(child: _buildQuickActions()),
+                SliverToBoxAdapter(child: _buildIntelligence()),
+                const SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -530,40 +527,68 @@ class _PantherAiPageState extends State<PantherAiPage>
     );
   }
 
+  Widget _buildAlertsBanner() {
+    return BlocBuilder<AlertsBloc, AlertsState>(
+      builder: (context, state) {
+        if (state is! AlertsLoaded || state.alerts.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final alert = state.alerts.first;
+        final color = switch (alert.type) {
+          'FRAUD' => const Color(0xFFEF4444),
+          'BNPL_RISK' => const Color(0xFFF59E0B),
+          _ => const Color(0xFF3B82F6),
+        };
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.notifications_active_rounded, color: color, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(alert.title,
+                          style: TextStyle(
+                              color: color, fontSize: 13, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 4),
+                      Text(alert.message,
+                          style: TextStyles.bodySmall.copyWith(
+                              color: _textSecondary, fontSize: 12, height: 1.4)),
+                      if (state.alerts.length > 1) ...[
+                        const SizedBox(height: 6),
+                        Text('+${state.alerts.length - 1} more heads-up from Chris',
+                            style: TextStyle(
+                                color: color.withValues(alpha: 0.8),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600)),
+                      ],
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _alertsBloc.add(AlertDismissRequested(alert.id)),
+                  child: Icon(Icons.close_rounded, color: color.withValues(alpha: 0.6), size: 18),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildIntelligence() {
-    final tiles = [
-      _IntelData(
-        icon: Icons.account_balance_wallet_outlined,
-        title: 'Portfolio',
-        value: '\$45,890',
-        change: '+12.4%',
-        changeColor: _green,
-        onTap: () => context.push(RouteConstants.portfolioIntelligence.toPath),
-      ),
-      _IntelData(
-        icon: Icons.show_chart_rounded,
-        title: 'Trading',
-        value: '4 signals',
-        change: '87% conf.',
-        changeColor: _purple,
-        onTap: () => context.push(RouteConstants.tradingAssistant.toPath),
-      ),
-      _IntelData(
-        icon: Icons.payment_rounded,
-        title: 'TickPay',
-        value: '\$420 safe',
-        change: 'This month',
-        changeColor: _green,
-        onTap: () => context.push(RouteConstants.tickPayAi.toPath),
-      ),
-      _IntelData(
-        icon: Icons.receipt_long_rounded,
-        title: 'Taxes',
-        value: '\$4,200',
-        change: 'Apr 15 due',
-        changeColor: const Color(0xFFF59E0B),
-        onTap: () => context.push(RouteConstants.taxIntelligence.toPath),
-      ),
+    final moneyHealth = [
       _IntelData(
         icon: Icons.receipt_rounded,
         title: 'Bills',
@@ -574,7 +599,7 @@ class _PantherAiPageState extends State<PantherAiPage>
       ),
       _IntelData(
         icon: Icons.credit_card_off_rounded,
-        title: 'Liabilities',
+        title: 'Debts',
         value: '\$318.8k',
         change: '-\$8.4k paid',
         changeColor: _green,
@@ -598,6 +623,44 @@ class _PantherAiPageState extends State<PantherAiPage>
       ),
     ];
 
+    final grow = [
+      _IntelData(
+        icon: Icons.account_balance_wallet_outlined,
+        title: 'Portfolio',
+        value: '\$45,890',
+        change: '+12.4%',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.portfolioIntelligence.toPath),
+      ),
+      _IntelData(
+        icon: Icons.show_chart_rounded,
+        title: 'Trading',
+        value: '4 signals',
+        change: '87% conf.',
+        changeColor: _purple,
+        onTap: () => context.push(RouteConstants.tradingAssistant.toPath),
+      ),
+    ];
+
+    final payments = [
+      _IntelData(
+        icon: Icons.payment_rounded,
+        title: 'TickPay',
+        value: '\$420 safe',
+        change: 'This month',
+        changeColor: _green,
+        onTap: () => context.push(RouteConstants.tickPayAi.toPath),
+      ),
+      _IntelData(
+        icon: Icons.receipt_long_rounded,
+        title: 'Taxes',
+        value: '\$4,200',
+        change: 'Apr 15 due',
+        changeColor: const Color(0xFFF59E0B),
+        onTap: () => context.push(RouteConstants.taxIntelligence.toPath),
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -609,6 +672,32 @@ class _PantherAiPageState extends State<PantherAiPage>
               color: _textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        _buildAlertsBanner(),
+        _buildIntelSection('Money Health', moneyHealth),
+        const SizedBox(height: 20),
+        _buildIntelSection('Grow', grow),
+        const SizedBox(height: 20),
+        _buildIntelSection('Payments', payments),
+      ],
+    );
+  }
+
+  Widget _buildIntelSection(String title, List<_IntelData> tiles) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: Text(
+            title,
+            style: TextStyles.bodySmall.copyWith(
+              color: _textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
             ),
           ),
         ),

@@ -202,7 +202,7 @@ Path: `lib/features/panther_ai/`
 
 | Screen | Route | File | Status |
 |--------|-------|------|--------|
-| Panther AI Dashboard | `/panther-ai` | `panther_ai_page.dart` | [LIVE] |
+| Panther AI Dashboard | `/panther-ai` | `panther_ai_page.dart` | [LIVE] | Intelligence section reorganized into 3 labeled groups (Money Health: Bills/Debts/Budget/Net Worth, Grow: Portfolio/Trading, Payments: TickPay/Taxes) instead of one flat 8-icon grid. Added a live "heads up" banner above it wired to `AlertsBloc`/`AlertsGenerateRequested`, which was already built end-to-end but never rendered on this page. |
 | Panther AI Chat | `/panther-ai-chat` | `panther_ai_chat_page.dart` | [LIVE] | Text + Voice mode toggle; voice mode shows full-screen purple orb |
 | Panther AI Settings | `/panther-ai-settings` | `panther_ai_settings_page.dart` | [LIVE] |
 | Market Intelligence | `/market-intelligence` | `market_intelligence_page.dart` | [LIVE] |
@@ -319,7 +319,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 
 | Area | Route | File | Status | Icon |
 |------|-------|------|--------|------|
-| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` — dark bg `#0D0D22`, dark cards `#0F0F1C` (fixed white-on-white text bug) |
+| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` — dark bg `#0D0D22`, dark cards `#0F0F1C` (fixed white-on-white text bug). Rebuilt around HSA management, an insurance marketplace, NY/SF gym partnerships, and wearable/nutrition-partner connections — calorie/step tracking is now a small "Today's Vitals" strip on Overview instead of the headline. HSA deposit/withdraw, insurance enrollment, wearable connect+sync, and nutrition-partner connect all call real `/api/lifex/health/*` endpoints; insurance/gym/nutrition catalogs are mock/curated content on the client. |
 | Education | `/lifex/education` | `lifex_education_page.dart` | [LIVE] | `menu_book_rounded` |
 | Spiritual | `/lifex/spiritual` | `lifex_spiritual_page.dart` | [LIVE] | `spa_rounded` — nature imagery only |
 | Finance | `/lifex/finance` | `lifex_finance_page.dart` | [LIVE] | `account_balance_wallet_rounded` |
@@ -335,6 +335,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 - Rebuilt from a meditation-app-first layout into 5 tabs: Practice (meditation/gratitude/goals, unchanged), Giving (charity donations + crowdfunding campaigns), Trips (spiritual pilgrimages/retreats), Shop (ecommerce for devotional goods), Events (faith-based event calendar, informational). Removed the third-party Mindfulness Apps (Calm/Headspace) tile and the old Anchor tab.
 - Charity/campaign/trip/product/event catalogs are mock/curated data in the page (Pexels images) — the actual money movement (donate, contribute, book, checkout) calls real backend endpoints under `/api/lifex/spiritual/*` (`donations`, `campaigns/contribute`, `trips/book`, `shop/checkout`) which debit the user's real wallet via the same ledger mechanism `TransferService` uses.
 - `LifeXService` (`lib/features/lifex/data/lifex_service.dart`) is now registered in DI (`auth_di.dart`) — it previously existed but was never wired to GetIt.
+- Onboarding now asks faith: `personal_info_page.dart` has a 4th step ("Chris wants to know you better") with a faith chip picker, feeding the same `faith` field via `LifeXService.setFaith()` (best-effort — this page doesn't submit the rest of its fields to the backend yet either).
 
 ---
 
@@ -347,7 +348,13 @@ Path: `lib/features/profile/`
 | Profile | `/profile` | `profile_page.dart` | [LIVE] |
 | Change Password | `/profile/change-password` | `change_password_page.dart` | [LIVE] |
 | Notification Settings | `/profile/notifications` | `notification_settings_page.dart` | [LIVE] |
-| Theme Settings | — | `theme_settings_page.dart` | [LIVE] |
+| Theme Settings | — | `theme_settings_page.dart` | [LIVE] | Added a "Custom Background" section — search Pexels for a photo or video and apply it as the app-wide background via `BackgroundCubit`. Persisted locally and synced to the user's profile (`backgroundUrl`/`backgroundMediaType` on `User`, `PATCH /api/v1/users/me`). |
+
+**App-wide background system** [PARTIAL — infrastructure done, most pages not yet migrated]:
+- `lib/core/theme/background_cubit.dart` — `BackgroundCubit` (registered in `app_di.dart`, provided at the app root in `main.dart` alongside `ThemeCubit`) holds the selected background and keeps local (`SharedPreferences`) + backend in sync.
+- `lib/core/widgets/app_background.dart` — `AppBackground({child, overlayOpacity})` replaces the old per-page pattern of a hardcoded Pexels photo + dark overlay `Container`, rendering the user's chosen photo or video (looping, muted) instead, with the same overlay treatment. Falls back to the same default photo every page used to hardcode when nothing's been chosen yet.
+- Migrated: `panther_ai_page.dart`, `exchange_page.dart`.
+- **Not yet migrated**: ~121 other pages still hardcode `Image.network('...pexels-photo-30004067...')` + a dark overlay `Container` directly (grep `pexels-photo-30004067` across `lib/` to find them). Swapping each to `AppBackground(child: SafeArea(...))` is mechanical but was too large a surface to safely hand-edit in one pass without a compiler in this environment — planned as a follow-up.
 
 ---
 

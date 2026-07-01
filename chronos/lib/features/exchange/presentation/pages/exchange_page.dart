@@ -9,6 +9,7 @@ import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../../../../core/widgets/fluid_glass.dart';
+import '../../../../core/widgets/app_background.dart';
 import '../bloc/exchange_bloc.dart';
 import '../bloc/exchange_event.dart';
 import '../bloc/exchange_state.dart';
@@ -118,14 +119,9 @@ class _ExchangePageState extends State<ExchangePage> {
           }
         },
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image
-          Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          Container(color: Colors.black.withValues(alpha: 0.45)),
-
-          SafeArea(
+      body: AppBackground(
+        overlayOpacity: 0.45,
+        child: SafeArea(
             child: Column(
               children: [
                 // Header
@@ -381,9 +377,8 @@ class _ExchangePageState extends State<ExchangePage> {
               ],
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      );
   }
 
   Widget _buildCurrencyRow({

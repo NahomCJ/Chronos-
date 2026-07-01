@@ -14,9 +14,15 @@ export async function getProfile(req: Request, res: Response): Promise<void> {
 
 export async function patchProfile(req: Request, res: Response): Promise<void> {
   const userId = (req as any).user?.id as string;
-  const { firstName, lastName, phone } = req.body;
+  const { firstName, lastName, phone, backgroundUrl, backgroundMediaType } = req.body;
   try {
-    const updated = await updateUserProfile(userId, { firstName, lastName, phone });
+    const updated = await updateUserProfile(userId, {
+      firstName,
+      lastName,
+      phone,
+      backgroundUrl,
+      backgroundMediaType,
+    });
     res.status(200).json(updated);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Failed to update profile";

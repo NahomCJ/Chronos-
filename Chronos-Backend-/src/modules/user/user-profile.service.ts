@@ -13,6 +13,8 @@ export async function getUserProfile(userId: string) {
       tier: true,
       userLevel: true,
       createdAt: true,
+      backgroundUrl: true,
+      backgroundMediaType: true,
     },
   });
 
@@ -53,6 +55,8 @@ export async function getUserProfile(userId: string) {
     tier: user.tier,
     userLevel: user.userLevel,
     memberSince: user.createdAt.toISOString(),
+    backgroundUrl: user.backgroundUrl ?? null,
+    backgroundMediaType: user.backgroundMediaType ?? null,
     stats: {
       balance: Math.max(balance, 0),
       transactionCount: txCount,
@@ -62,7 +66,13 @@ export async function getUserProfile(userId: string) {
 
 export async function updateUserProfile(
   userId: string,
-  data: { firstName?: string; lastName?: string; phone?: string }
+  data: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    backgroundUrl?: string;
+    backgroundMediaType?: string;
+  }
 ) {
   const updated = await prisma.user.update({
     where: { id: userId },
@@ -70,6 +80,8 @@ export async function updateUserProfile(
       ...(data.firstName && { firstName: data.firstName }),
       ...(data.lastName && { lastName: data.lastName }),
       ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.backgroundUrl !== undefined && { backgroundUrl: data.backgroundUrl }),
+      ...(data.backgroundMediaType !== undefined && { backgroundMediaType: data.backgroundMediaType }),
     },
     select: {
       id: true,
@@ -81,6 +93,8 @@ export async function updateUserProfile(
       tier: true,
       userLevel: true,
       createdAt: true,
+      backgroundUrl: true,
+      backgroundMediaType: true,
     },
   });
   return updated;
