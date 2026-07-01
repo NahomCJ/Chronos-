@@ -38,6 +38,8 @@ class LifeXService {
       _api.post('/api/lifex/health/wearables/connect', {'provider': provider});
   Future<List<dynamic>> myWearableConnections() =>
       _api.getList('/api/lifex/health/wearables/mine');
+  Future<Map<String, dynamic>> syncWearableMetrics(Map<String, dynamic> body) =>
+      _api.post('/api/lifex/health/wearables/sync', body);
   Future<List<dynamic>> healthInsights() =>
       _api.getList('/api/lifex/health/insights');
 

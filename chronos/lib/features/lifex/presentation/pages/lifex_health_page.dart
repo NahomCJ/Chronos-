@@ -1,8 +1,9 @@
 import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../data/lifex_service.dart';
 
 class LifeXHealthPage extends StatefulWidget {
   const LifeXHealthPage({super.key});
@@ -14,90 +15,162 @@ class LifeXHealthPage extends StatefulWidget {
 class _LifeXHealthPageState extends State<LifeXHealthPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
-  bool _appleHealthConnected = false;
-  bool _googleFitConnected = false;
+  late final LifeXService _api;
+  bool _busy = false;
+
+  Map<String, dynamic>? _hsa;
+  List<dynamic> _insights = [];
+  List<dynamic> _myInsurance = [];
+  List<dynamic> _myNutrition = [];
+  List<dynamic> _myWearables = [];
 
   static const _bg = Color(0xFF0D0D22);
   static const _card = Color(0xFF0F0F1C);
   static const _teal = Color(0xFF14B8A6);
-  static const _tealDark = Color(0xFF0F766E);
 
-  final _metrics = [
-    _Metric('Heart Rate', '72', 'bpm', Icons.favorite_rounded,
-        Color(0xFFEF4444), 0.72),
-    _Metric('Steps', '7,430', '/10k', Icons.directions_walk_rounded,
-        Color(0xFF14B8A6), 0.74),
-    _Metric('Sleep', '7.2', 'hrs', Icons.bedtime_rounded,
-        Color(0xFF8B5CF6), 0.72),
-    _Metric('Calories', '1,840', 'kcal', Icons.local_fire_department_rounded,
-        Color(0xFFF59E0B), 0.61),
-    _Metric('Water', '1.8', 'L/day', Icons.water_drop_rounded,
-        Color(0xFF3B82F6), 0.60),
-    _Metric('BMI', '22.4', 'score', Icons.monitor_weight_rounded,
-        Color(0xFF10B981), 0.78),
+  static const _metrics = [
+    _Metric('Steps', '7,430', '/10k', Icons.directions_walk_rounded, Color(0xFF14B8A6)),
+    _Metric('Heart Rate', '72', 'bpm', Icons.favorite_rounded, Color(0xFFEF4444)),
+    _Metric('Sleep', '7.2', 'hrs', Icons.bedtime_rounded, Color(0xFF8B5CF6)),
   ];
 
-  final _habits = [
-    _Habit('Morning Run', true, Icons.directions_run_rounded),
-    _Habit('Vitamins', true, Icons.medication_rounded),
-    _Habit('Meditation', false, Icons.self_improvement_rounded),
-    _Habit('8 glasses water', true, Icons.water_drop_rounded),
-    _Habit('No sugar', false, Icons.no_food_rounded),
+  static const _insurancePlans = [
+    _InsurancePlan('Chronos Basic Health', 'UnitedHealth', 'health', 145, '\$1,500 deductible · PPO', Icons.local_hospital_rounded, Color(0xFF3B82F6)),
+    _InsurancePlan('Chronos Family Plus', 'Blue Cross', 'health', 320, '\$500 deductible · Family PPO', Icons.family_restroom_rounded, Color(0xFF14B8A6)),
+    _InsurancePlan('SmileCare Dental', 'Delta Dental', 'dental', 28, 'Preventive + major coverage', Icons.sentiment_satisfied_rounded, Color(0xFFF59E0B)),
+    _InsurancePlan('ClearView Vision', 'VSP', 'vision', 12, 'Annual exam + frames allowance', Icons.visibility_rounded, Color(0xFF8B5CF6)),
   ];
 
   static const _gyms = [
-    _Gym('Planet Fitness', '\$24/mo', '0.4 mi', '4.1',
-        Icons.fitness_center_rounded, Color(0xFF6366F1),
-        'Basic cardio, open 24hrs. Best for habit-building on a budget.'),
-    _Gym('LA Fitness', '\$32/mo', '0.9 mi', '4.3',
-        Icons.pool_rounded, Color(0xFF14B8A6),
-        'Pool, classes, basketball. Best value for mid-tier access.'),
-    _Gym('Equinox', '\$185/mo', '1.2 mi', '4.8',
-        Icons.spa_rounded, Color(0xFFF59E0B),
-        'Premium: spa, sauna, elite trainers. Worth it only if you go 4x+/week.'),
+    _Gym('Equinox Flatiron', 'New York', '15% partner discount', 4.8, Icons.fitness_center_rounded, Color(0xFF6366F1)),
+    _Gym('Chelsea Piers Fitness', 'New York', '10% partner discount', 4.5, Icons.pool_rounded, Color(0xFF14B8A6)),
+    _Gym('Equinox SoMa', 'San Francisco', '15% partner discount', 4.7, Icons.fitness_center_rounded, Color(0xFF6366F1)),
+    _Gym('Crunch Fitness Castro', 'San Francisco', '20% partner discount', 4.3, Icons.sports_rounded, Color(0xFFF59E0B)),
   ];
 
-  static const _trainers = [
-    _Trainer('Marcus Webb', 'Strength & HIIT', '\$65/hr', '4.9',
-        'https://images.pexels.com/photos/3768911/pexels-photo-3768911.jpeg?auto=compress&cs=tinysrgb&w=200'),
-    _Trainer('Aisha Cole', 'Weight Loss & Mobility', '\$55/hr', '4.8',
-        'https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=200'),
-    _Trainer('Derek Kim', 'Bodybuilding & Nutrition', '\$80/hr', '4.9',
-        'https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=200'),
-  ];
-
-  static const _supplements = [
-    _Supplement('Whey Protein', 'Build & recover faster', '\$38/mo',
-        Icons.fitness_center_rounded, Color(0xFF14B8A6)),
-    _Supplement('Creatine', 'Strength + endurance', '\$14/mo',
-        Icons.bolt_rounded, Color(0xFF6366F1)),
-    _Supplement('Omega-3', 'Heart + joint health', '\$18/mo',
-        Icons.water_drop_rounded, Color(0xFF3B82F6)),
-    _Supplement('Vitamin D3 + K2', 'Immunity + bones', '\$12/mo',
-        Icons.wb_sunny_rounded, Color(0xFFF59E0B)),
-  ];
-
-  static const _healthApps = [
-    _HealthApp('MyFitnessPal', 'Food & calorie logging', 'Free',
-        Icons.restaurant_menu_rounded, Color(0xFF10B981)),
-    _HealthApp('Strava', 'Run & ride tracking', 'Free',
-        Icons.directions_run_rounded, Color(0xFFEF4444)),
-    _HealthApp('Whoop', 'Recovery & HRV', '\$30/mo',
-        Icons.monitor_heart_rounded, Color(0xFF8B5CF6)),
-    _HealthApp('Noom', 'Behavioral weight loss', '\$59/mo',
-        Icons.psychology_rounded, Color(0xFF6366F1)),
+  static const _nutritionPartners = [
+    _NutritionPartner('MyFitnessPal', 'Food & calorie logging', 'calorie-tracking', Icons.restaurant_menu_rounded, Color(0xFF10B981)),
+    _NutritionPartner('Noom', 'Behavioral weight loss coaching', 'coaching', Icons.psychology_rounded, Color(0xFF6366F1)),
+    _NutritionPartner('Lose It!', 'Meal planning & tracking', 'meal-planning', Icons.local_dining_rounded, Color(0xFFF59E0B)),
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 3, vsync: this);
+    _api = GetIt.I<LifeXService>();
+    _tabs = TabController(length: 4, vsync: this);
+    _loadAll();
   }
 
   @override
   void dispose() {
     _tabs.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadAll() async {
+    try {
+      final results = await Future.wait([
+        _api.getHsa(),
+        _api.healthInsights(),
+        _api.myInsurance(),
+        _api.myNutritionConnections(),
+        _api.myWearableConnections(),
+      ]);
+      if (!mounted) return;
+      setState(() {
+        _hsa = results[0] as Map<String, dynamic>?;
+        _insights = results[1] as List<dynamic>;
+        _myInsurance = results[2] as List<dynamic>;
+        _myNutrition = results[3] as List<dynamic>;
+        _myWearables = results[4] as List<dynamic>;
+      });
+    } catch (_) {
+      // Degrade gracefully — page still works with mock catalogs if the
+      // backend is unreachable.
+    }
+  }
+
+  void _showSnack(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: isError ? const Color(0xFFEF4444) : _teal,
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  Future<void> _runAction(Future<void> Function() action, String successMessage) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+      _showSnack(successMessage);
+      await _loadAll();
+    } catch (e) {
+      _showSnack('That didn\'t go through: $e', isError: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _showHsaSheet({required bool isDeposit}) {
+    final ctrl = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          child: Container(
+            color: _card,
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(isDeposit ? 'Deposit to HSA' : 'Withdraw from HSA',
+                    style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: ctrl,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    prefixText: '\$ ',
+                    prefixStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.white.withValues(alpha: 0.05),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final amount = double.tryParse(ctrl.text);
+                      if (amount == null || amount <= 0) return;
+                      Navigator.pop(context);
+                      _runAction(
+                        () => isDeposit ? _api.depositHsa(amount) : _api.withdrawHsa(amount),
+                        isDeposit ? 'Deposited \$${amount.toStringAsFixed(0)} to your HSA.' : 'Withdrew \$${amount.toStringAsFixed(0)} from your HSA.',
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _teal,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: const Text('Confirm', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -111,35 +184,33 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
       body: NestedScrollView(
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
-            expandedHeight: 260,
+            expandedHeight: 180,
             pinned: true,
             backgroundColor: _bg,
             leading: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
-                ),
-                child: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
             bottom: TabBar(
               controller: _tabs,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               tabs: const [
                 Tab(text: 'Overview'),
-                Tab(text: 'Ecosystem'),
-                Tab(text: 'Nutrition'),
+                Tab(text: 'Insurance'),
+                Tab(text: 'Gyms'),
+                Tab(text: 'Connected Apps'),
               ],
               labelColor: _teal,
               unselectedLabelColor: Colors.white54,
               indicatorColor: _teal,
               indicatorSize: TabBarIndicatorSize.label,
-              labelStyle:
-                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
         ],
@@ -147,8 +218,9 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
           controller: _tabs,
           children: [
             _buildOverviewTab(),
-            _buildEcosystemTab(),
-            _buildNutritionTab(),
+            _buildInsuranceTab(),
+            _buildGymsTab(),
+            _buildConnectedAppsTab(),
           ],
         ),
       ),
@@ -156,114 +228,89 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   }
 
   Widget _buildHero() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        CachedNetworkImage(
-          imageUrl:
-              'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=900',
-          fit: BoxFit.cover,
-          placeholder: (_, __) =>
-              Container(color: _teal.withValues(alpha: 0.2)),
-          errorWidget: (_, __, ___) =>
-              Container(color: _teal.withValues(alpha: 0.2)),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [_teal.withValues(alpha: 0.25), _bg],
         ),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.2),
-                _bg.withValues(alpha: 0.95),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 56,
-          left: 20,
-          right: 20,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: _teal.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _teal.withValues(alpha: 0.5), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.favorite_rounded, color: _teal, size: 12),
-                    const SizedBox(width: 6),
-                    Text('HEALTH & WELLNESS',
-                        style: TextStyle(
-                            color: _teal,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 56),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: _teal.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: _teal.withValues(alpha: 0.5), width: 1),
               ),
-              const SizedBox(height: 10),
-              Text('Your Health\nEconomy',
-                  style: TextStyles.displaySmall.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 30,
-                      height: 1.1)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ── Overview Tab ─────────────────────────────────────────────
-
-  Widget _buildOverviewTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHealthScore(),
-          const SizedBox(height: 20),
-          _buildHealthSpendingCard(),
-          const SizedBox(height: 20),
-          _buildDataIntegrationBanner(),
-          const SizedBox(height: 24),
-          _sectionTitle('Today\'s Metrics'),
-          const SizedBox(height: 14),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.5,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.health_and_safety_rounded, color: _teal, size: 12),
+                  const SizedBox(width: 6),
+                  Text('HEALTH & COVERAGE',
+                      style: TextStyle(color: _teal, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
+                ],
+              ),
             ),
-            itemCount: _metrics.length,
-            itemBuilder: (_, i) => _MetricCard(metric: _metrics[i]),
-          ),
-          const SizedBox(height: 24),
-          _sectionTitle('Today\'s Habits'),
-          const SizedBox(height: 14),
-          ..._habits.map((h) => _HabitTile(habit: h)),
-          const SizedBox(height: 24),
-          _buildChrisInsight(),
-        ],
+            const SizedBox(height: 10),
+            Text('Your Health\nAccount',
+                style: TextStyles.displaySmall.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.w800, fontSize: 28, height: 1.1)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHealthScore() {
+  // ── Overview: HSA + tailored guidance + a small vitals strip ──────────
+
+  Widget _buildOverviewTab() {
+    final balance = (_hsa?['balance'] as num?)?.toDouble() ?? 0.0;
+    final contributions = (_hsa?['contributions'] as num?)?.toDouble() ?? 0.0;
+
+    return RefreshIndicator(
+      onRefresh: _loadAll,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHsaCard(balance, contributions),
+            const SizedBox(height: 20),
+            if (_insights.isNotEmpty) ...[
+              _sectionTitle('Chris\'s Guidance'),
+              const SizedBox(height: 14),
+              ..._insights.map((i) => _InsightCard(insight: i as Map<String, dynamic>)),
+              const SizedBox(height: 20),
+            ],
+            _sectionTitle('Today\'s Vitals'),
+            const SizedBox(height: 6),
+            Text('A quick glance — full tracking lives in Connected Apps.',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+            const SizedBox(height: 14),
+            Row(
+              children: _metrics
+                  .map((m) => Expanded(child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: _MetricChip(metric: m),
+                      )))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHsaCard(double balance, double contributions) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
@@ -274,83 +321,55 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                _teal.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.03),
-              ],
+              colors: [_teal.withValues(alpha: 0.18), Colors.white.withValues(alpha: 0.03)],
             ),
             borderRadius: BorderRadius.circular(20),
-            border:
-                Border.all(color: _teal.withValues(alpha: 0.25), width: 1),
+            border: Border.all(color: _teal.withValues(alpha: 0.25), width: 1),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                alignment: Alignment.center,
+              Row(
                 children: [
-                  SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: CircularProgressIndicator(
-                      value: 0.84,
-                      strokeWidth: 7,
-                      backgroundColor:
-                          Colors.white.withValues(alpha: 0.08),
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(_teal),
-                      strokeCap: StrokeCap.round,
+                  const Icon(Icons.savings_rounded, color: _teal, size: 20),
+                  const SizedBox(width: 8),
+                  const Text('Health Savings Account',
+                      style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text('\$${balance.toStringAsFixed(2)}',
+                  style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800)),
+              Text('\$${contributions.toStringAsFixed(2)} contributed all-time',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _busy ? null : () => _showHsaSheet(isDeposit: true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _teal,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: const Text('Deposit', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('84',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800)),
-                      Text('/ 100',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.45),
-                              fontSize: 10)),
-                    ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _busy ? null : () => _showHsaSheet(isDeposit: false),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: _teal.withValues(alpha: 0.5)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      child: Text('Withdraw', style: TextStyle(color: _teal, fontWeight: FontWeight.w700)),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Health Score',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 4),
-                    Text(
-                        'Hydration + sleep are your two unlocks. Fix those and you clear 90.',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
-                            fontSize: 12,
-                            height: 1.45)),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _teal,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text('Full Report',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
@@ -358,818 +377,304 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
     );
   }
 
-  Widget _buildHealthSpendingCard() {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
-      ),
+  // ── Insurance Marketplace ─────────────────────────────────────
+
+  Widget _buildInsuranceTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.account_balance_wallet_rounded,
-                  color: _teal, size: 16),
-              const SizedBox(width: 8),
-              const Text('Health Spending — June',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700)),
-              const Spacer(),
-              const Text('\$312/mo',
-                  style: TextStyle(
-                      color: _teal,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _spendRow('Gym Membership', '\$32', 0.10, const Color(0xFF14B8A6)),
-          const SizedBox(height: 8),
-          _spendRow('Supplements', '\$82', 0.26, const Color(0xFF6366F1)),
-          const SizedBox(height: 8),
-          _spendRow(
-              'Health Insurance', '\$145', 0.47, const Color(0xFF3B82F6)),
-          const SizedBox(height: 8),
-          _spendRow('Copays & Rx', '\$53', 0.17, const Color(0xFFF59E0B)),
+          _sectionTitle('Insurance Marketplace'),
+          const SizedBox(height: 6),
+          Text('Compare plans and enroll — Chris tailors picks to your profile over time.',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
           const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _teal.withValues(alpha: 0.07),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.lightbulb_rounded, color: _teal, size: 14),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                      'Your supplement spend is 2.4× the avg for your age group. Chris found a bundle that cuts this to \$54/mo.',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.65),
-                          fontSize: 11.5,
-                          height: 1.4)),
+          ..._insurancePlans.map((p) => _InsurancePlanCard(
+                plan: p,
+                enrolled: _myInsurance.any((e) => e['planName'] == p.name),
+                busy: _busy,
+                onEnroll: () => _runAction(
+                  () => _api.enrollInsurance({
+                    'provider': p.provider,
+                    'planName': p.name,
+                    'coverageType': p.coverageType,
+                    'monthlyPremium': p.monthlyPremium,
+                  }),
+                  'Enrolled in ${p.name}.',
                 ),
-              ],
-            ),
-          ),
+              )),
         ],
       ),
     );
   }
 
-  Widget _spendRow(String label, String amount, double pct, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
-            const Spacer(),
-            Text(amount,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-        const SizedBox(height: 5),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: pct,
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 4,
-          ),
-        ),
+  // ── Gym Partnerships ──────────────────────────────────────────
+
+  Widget _buildGymsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('Gym Partnerships'),
+          const SizedBox(height: 6),
+          Text('New York & San Francisco partner gyms with a Chronos discount.',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          ..._gyms.map((g) => _GymCard(
+                gym: g,
+                onRefer: () => _showSnack('Referral applied — show this at ${g.name} front desk for ${g.discount}.'),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // ── Connected Apps: wearables + nutrition partners ────────────
+
+  Widget _buildConnectedAppsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle('Fitness Trackers & Smartwatches'),
+          const SizedBox(height: 6),
+          Text('Connect once — Chris pulls your metrics automatically after that.',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          ..._wearableProviders.map((w) {
+            final connection = _myWearables.firstWhere(
+              (c) => c['provider'] == w.id,
+              orElse: () => null,
+            );
+            return _WearableTile(
+              provider: w,
+              connected: connection != null,
+              busy: _busy,
+              onConnect: () => _runAction(() => _api.connectWearable(w.id), '${w.name} connected.'),
+              onSync: connection == null
+                  ? null
+                  : () => _runAction(
+                      () => _syncSampleMetrics(w.id),
+                      'Synced the latest metrics from ${w.name}.',
+                    ),
+            );
+          }),
+          const SizedBox(height: 24),
+          _sectionTitle('Nutrition & Diet Partners'),
+          const SizedBox(height: 6),
+          Text('Follow a diet plan through a partner app — we track your progress here too.',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
+          const SizedBox(height: 14),
+          ..._nutritionPartners.map((p) => _NutritionPartnerTile(
+                partner: p,
+                connected: _myNutrition.any((c) => c['partnerName'] == p.name),
+                busy: _busy,
+                onConnect: () => _runAction(
+                  () => _api.connectNutritionPartner({'partnerName': p.name, 'category': p.category}),
+                  'Connected to ${p.name}.',
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  // No live device SDK integration yet — pushes a realistic-looking sample
+  // reading through the same sync endpoint a real device integration would
+  // use, so the rest of the pipeline (HealthMetric storage, insights) is
+  // exercised end-to-end.
+  Future<void> _syncSampleMetrics(String provider) async {
+    final now = DateTime.now().toIso8601String();
+    await _api.syncWearableMetrics({
+      'provider': provider,
+      'metrics': [
+        {'metricType': 'steps', 'value': 6200 + (DateTime.now().millisecond % 3000), 'unit': 'count', 'recordedAt': now},
+        {'metricType': 'heart_rate', 'value': 68 + (DateTime.now().second % 12), 'unit': 'bpm', 'recordedAt': now},
+        {'metricType': 'sleep', 'value': 6.5 + (DateTime.now().second % 3), 'unit': 'hrs', 'recordedAt': now},
       ],
-    );
+    });
   }
 
-  Widget _buildDataIntegrationBanner() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Connect Your Health Apps',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700)),
-          const SizedBox(height: 4),
-          Text(
-              'Chris gets smarter with your real data — steps, sleep, heart rate.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 12,
-                  height: 1.4)),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(
-                      () => _appleHealthConnected = !_appleHealthConnected),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: _appleHealthConnected
-                          ? const Color(0xFFEF4444).withValues(alpha: 0.15)
-                          : Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: _appleHealthConnected
-                              ? const Color(0xFFEF4444).withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.1),
-                          width: 1),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(Icons.favorite_rounded,
-                            color: _appleHealthConnected
-                                ? const Color(0xFFEF4444)
-                                : Colors.white.withValues(alpha: 0.3),
-                            size: 22),
-                        const SizedBox(height: 6),
-                        Text('Apple Health',
-                            style: TextStyle(
-                                color: _appleHealthConnected
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.4),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600)),
-                        Text(
-                            _appleHealthConnected ? 'Connected' : 'Tap to connect',
-                            style: TextStyle(
-                                color: _appleHealthConnected
-                                    ? const Color(0xFFEF4444)
-                                    : Colors.white.withValues(alpha: 0.3),
-                                fontSize: 10)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(
-                      () => _googleFitConnected = !_googleFitConnected),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: _googleFitConnected
-                          ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                          : Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: _googleFitConnected
-                              ? const Color(0xFF10B981).withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.1),
-                          width: 1),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(Icons.directions_run_rounded,
-                            color: _googleFitConnected
-                                ? const Color(0xFF10B981)
-                                : Colors.white.withValues(alpha: 0.3),
-                            size: 22),
-                        const SizedBox(height: 6),
-                        Text('Google Fit',
-                            style: TextStyle(
-                                color: _googleFitConnected
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.4),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600)),
-                        Text(
-                            _googleFitConnected ? 'Connected' : 'Tap to connect',
-                            style: TextStyle(
-                                color: _googleFitConnected
-                                    ? const Color(0xFF10B981)
-                                    : Colors.white.withValues(alpha: 0.3),
-                                fontSize: 10)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+  static const _wearableProviders = [
+    _WearableProvider('apple_health', 'Apple Health', Icons.watch_rounded, Color(0xFFEF4444)),
+    _WearableProvider('fitbit', 'Fitbit', Icons.monitor_heart_rounded, Color(0xFF14B8A6)),
+    _WearableProvider('garmin', 'Garmin', Icons.timer_rounded, Color(0xFF3B82F6)),
+    _WearableProvider('google_fit', 'Google Fit', Icons.directions_run_rounded, Color(0xFF10B981)),
+  ];
+
+  Widget _sectionTitle(String title) {
+    return Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+  }
+}
+
+// ── Data models ────────────────────────────────────────────────────
+
+class _Metric {
+  final String label, value, unit;
+  final IconData icon;
+  final Color color;
+  const _Metric(this.label, this.value, this.unit, this.icon, this.color);
+}
+
+class _InsurancePlan {
+  final String name, provider, coverageType, description;
+  final double monthlyPremium;
+  final IconData icon;
+  final Color color;
+  const _InsurancePlan(this.name, this.provider, this.coverageType, this.monthlyPremium, this.description, this.icon, this.color);
+}
+
+class _Gym {
+  final String name, city, discount;
+  final double rating;
+  final IconData icon;
+  final Color color;
+  const _Gym(this.name, this.city, this.discount, this.rating, this.icon, this.color);
+}
+
+class _NutritionPartner {
+  final String name, description, category;
+  final IconData icon;
+  final Color color;
+  const _NutritionPartner(this.name, this.description, this.category, this.icon, this.color);
+}
+
+class _WearableProvider {
+  final String id, name;
+  final IconData icon;
+  final Color color;
+  const _WearableProvider(this.id, this.name, this.icon, this.color);
+}
+
+// ── Widgets ────────────────────────────────────────────────────────
+
+class _InsightCard extends StatelessWidget {
+  final Map<String, dynamic> insight;
+  const _InsightCard({required this.insight});
+
+  Color get _color {
+    switch (insight['severity']) {
+      case 'warning':
+        return const Color(0xFFF59E0B);
+      case 'good':
+        return const Color(0xFF10B981);
+      default:
+        return const Color(0xFF14B8A6);
+    }
   }
 
-  Widget _buildChrisInsight() {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+        color: const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _color.withValues(alpha: 0.25), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(Icons.auto_awesome_rounded, color: _color, size: 16),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(insight['message'] as String? ?? '',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12.5, height: 1.4)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricChip extends StatelessWidget {
+  final _Metric metric;
+  const _MetricChip({required this.metric});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: metric.color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Column(
+        children: [
+          Icon(metric.icon, color: metric.color, size: 18),
+          const SizedBox(height: 6),
+          Text(metric.value, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+          Text('${metric.label} ${metric.unit}',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 9), textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+}
+
+class _InsurancePlanCard extends StatelessWidget {
+  final _InsurancePlan plan;
+  final bool enrolled;
+  final bool busy;
+  final VoidCallback onEnroll;
+  const _InsurancePlanCard({required this.plan, required this.enrolled, required this.busy, required this.onEnroll});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: plan.color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Row(
+        children: [
           Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _tealDark.withValues(alpha: 0.2),
-              border:
-                  Border.all(color: _teal.withValues(alpha: 0.4), width: 1),
-            ),
-            child: const Icon(Icons.auto_awesome_rounded,
-                color: _teal, size: 16),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: plan.color.withValues(alpha: 0.12)),
+            child: Icon(plan.icon, color: plan.color, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Chris says',
-                    style: TextStyle(
-                        color: _teal,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700)),
-                const SizedBox(height: 4),
-                Text(
-                    'Your steps dropped 23% this week. A 10-min walk at 1PM fits your calendar gap. That alone would push your weekly average past the metabolic risk threshold of 8,000 steps.',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
-                        fontSize: 13,
-                        height: 1.5)),
-                const SizedBox(height: 12),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 7),
-                    decoration: BoxDecoration(
-                      color: _teal,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text('Add Walk to Calendar',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ),
+                Text(plan.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                Text('${plan.provider} · ${plan.description}',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Ecosystem Tab ─────────────────────────────────────────────
-
-  Widget _buildEcosystemTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionTitle('Gyms Near You'),
-          const SizedBox(height: 6),
-          Text(
-              'Ranked by value-to-cost ratio for your fitness goal.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
-          const SizedBox(height: 14),
-          ..._gyms.map((g) => _GymCard(gym: g)),
-          const SizedBox(height: 24),
-          _sectionTitle('Personal Trainers'),
-          const SizedBox(height: 6),
-          Text('Verified. Session packages bookable through Chronos.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
-          const SizedBox(height: 14),
-          ..._trainers.map((t) => _TrainerCard(trainer: t)),
-          const SizedBox(height: 24),
-          _sectionTitle('Supplement Stack'),
-          const SizedBox(height: 6),
-          Text('Personalized to your goal: build muscle, improve energy.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
-          const SizedBox(height: 14),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.6,
-            ),
-            itemCount: _supplements.length,
-            itemBuilder: (_, i) => _SupplementCard(supp: _supplements[i]),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: _teal.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(14),
-              border:
-                  Border.all(color: _teal.withValues(alpha: 0.2), width: 1),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.shopping_cart_rounded, color: _teal, size: 16),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Monthly stack total: \$82',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600)),
-                      Text(
-                          'Subscribe through Chronos and save 15% — \$69.70/mo',
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.5),
-                              fontSize: 11)),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _teal,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text('Bundle',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          _sectionTitle('Health Apps'),
-          const SizedBox(height: 6),
-          Text(
-              'Chris pulls data from these to personalize your plan.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 12)),
-          const SizedBox(height: 14),
-          ..._healthApps.map((a) => _HealthAppTile(app: a)),
-        ],
-      ),
-    );
-  }
-
-  // ── Nutrition Tab ─────────────────────────────────────────────
-
-  Widget _buildNutritionTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildFoodSpendCard(),
-          const SizedBox(height: 24),
-          _buildCalorieRing(),
-          const SizedBox(height: 24),
-          _sectionTitle('Macros Today'),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                  child: macroCard('Protein', '142g', '/ 160g',
-                      const Color(0xFF14B8A6), 0.89)),
-              const SizedBox(width: 12),
-              Expanded(
-                  child: macroCard('Carbs', '180g', '/ 220g',
-                      const Color(0xFF6366F1), 0.82)),
-              const SizedBox(width: 12),
-              Expanded(
-                  child: macroCard('Fats', '48g', '/ 65g',
-                      const Color(0xFFF59E0B), 0.74)),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _sectionTitle('Meals Today'),
-          const SizedBox(height: 14),
-          ...[
-            _Meal('Breakfast', '520 kcal', '7:30 AM',
-                Icons.breakfast_dining_rounded),
-            _Meal('Lunch', '680 kcal', '12:45 PM',
-                Icons.lunch_dining_rounded),
-            _Meal('Snack', '180 kcal', '3:30 PM', Icons.apple_rounded),
-          ].map((m) => _MealTile(meal: m)),
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: _teal.withValues(alpha: 0.3), width: 1),
-                borderRadius: BorderRadius.circular(16),
-                color: _teal.withValues(alpha: 0.06),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_rounded, color: _teal, size: 18),
-                  const SizedBox(width: 8),
-                  Text('Log a Meal',
-                      style: TextStyle(
-                          color: _teal,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600)),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFoodSpendCard() {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text('Food Spend — June',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700)),
-              const Spacer(),
-              const Text('\$520',
-                  style: TextStyle(
-                      color: Color(0xFFF59E0B),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text('vs \$480 last month (+8.3%)',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
-          const SizedBox(height: 14),
-          _spendRow('Groceries', '\$310', 0.60, const Color(0xFF14B8A6)),
-          const SizedBox(height: 8),
-          _spendRow('Dining Out', '\$165', 0.32, const Color(0xFFEF4444)),
-          const SizedBox(height: 8),
-          _spendRow('Delivery Apps', '\$45', 0.09, const Color(0xFFF59E0B)),
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-                'Cooking 2 more meals at home each week saves ~\$85/mo — that\'s \$1,020/yr toward your emergency fund.',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 12,
-                    height: 1.4)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalorieRing() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(18),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
-      ),
-      child: Row(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: CircularProgressIndicator(
-                  value: 0.61,
-                  strokeWidth: 9,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFFF59E0B)),
-                  strokeCap: StrokeCap.round,
-                ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.local_fire_department_rounded,
-                      color: Color(0xFFF59E0B), size: 20),
-                  const Text('1,840',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800)),
-                  Text('kcal',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.45),
-                          fontSize: 10)),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Calories Today',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text('1,840 / 3,000 kcal',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 12)),
-                const SizedBox(height: 12),
-                _miniBar('Consumed', 1840, 3000, const Color(0xFFF59E0B)),
-                const SizedBox(height: 6),
-                _miniBar('Burned', 420, 600, const Color(0xFF14B8A6)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _miniBar(String label, int val, int max, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    fontSize: 10)),
-            const Spacer(),
-            Text('$val / $max',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-        const SizedBox(height: 4),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: val / max,
-            backgroundColor: Colors.white.withValues(alpha: 0.08),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 4,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _sectionTitle(String title) {
-    return Text(title,
-        style: const TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
-  }
-}
-
-// ── Data models ───────────────────────────────────────────────────────────────
-
-class _Metric {
-  final String label, value, unit;
-  final IconData icon;
-  final Color color;
-  final double progress;
-  const _Metric(
-      this.label, this.value, this.unit, this.icon, this.color, this.progress);
-}
-
-class _Habit {
-  final String name;
-  final bool done;
-  final IconData icon;
-  const _Habit(this.name, this.done, this.icon);
-}
-
-class _Gym {
-  final String name, price, distance, rating, description;
-  final IconData icon;
-  final Color color;
-  const _Gym(this.name, this.price, this.distance, this.rating, this.icon,
-      this.color, this.description);
-}
-
-class _Trainer {
-  final String name, specialty, rate, rating, imageUrl;
-  const _Trainer(
-      this.name, this.specialty, this.rate, this.rating, this.imageUrl);
-}
-
-class _Supplement {
-  final String name, benefit, price;
-  final IconData icon;
-  final Color color;
-  const _Supplement(
-      this.name, this.benefit, this.price, this.icon, this.color);
-}
-
-class _HealthApp {
-  final String name, description, price;
-  final IconData icon;
-  final Color color;
-  const _HealthApp(
-      this.name, this.description, this.price, this.icon, this.color);
-}
-
-class _Meal {
-  final String name, calories, time;
-  final IconData icon;
-  const _Meal(this.name, this.calories, this.time, this.icon);
-}
-
-// ── Widgets ───────────────────────────────────────────────────────────────────
-
-class _MetricCard extends StatelessWidget {
-  final _Metric metric;
-  const _MetricCard({required this.metric});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: metric.color.withValues(alpha: 0.2), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(metric.icon, color: metric.color, size: 16),
-              const Spacer(),
-              Text(metric.unit,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.35),
-                      fontSize: 10)),
-            ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(metric.value,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800)),
-              Text(metric.label,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      fontSize: 11)),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: LinearProgressIndicator(
-                  value: metric.progress,
-                  backgroundColor: metric.color.withValues(alpha: 0.12),
-                  valueColor: AlwaysStoppedAnimation<Color>(metric.color),
-                  minHeight: 3,
+              Text('\$${plan.monthlyPremium.toStringAsFixed(0)}/mo',
+                  style: TextStyle(color: plan.color, fontSize: 14, fontWeight: FontWeight.w800)),
+              GestureDetector(
+                onTap: (busy || enrolled) ? null : onEnroll,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: enrolled ? Colors.white.withValues(alpha: 0.08) : plan.color,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(enrolled ? 'Enrolled' : 'Enroll',
+                      style: TextStyle(
+                          color: enrolled ? Colors.white70 : Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _HabitTile extends StatefulWidget {
-  final _Habit habit;
-  const _HabitTile({required this.habit});
-
-  @override
-  State<_HabitTile> createState() => _HabitTileState();
-}
-
-class _HabitTileState extends State<_HabitTile> {
-  late bool _done;
-
-  @override
-  void initState() {
-    super.initState();
-    _done = widget.habit.done;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => setState(() => _done = !_done),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F0F1C),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-              color: _done
-                  ? const Color(0xFF14B8A6).withValues(alpha: 0.3)
-                  : Colors.white.withValues(alpha: 0.06),
-              width: 1),
-        ),
-        child: Row(
-          children: [
-            Icon(widget.habit.icon,
-                color: _done
-                    ? const Color(0xFF14B8A6)
-                    : Colors.white.withValues(alpha: 0.3),
-                size: 18),
-            const SizedBox(width: 12),
-            Text(widget.habit.name,
-                style: TextStyle(
-                    color: _done
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.5),
-                    fontSize: 14)),
-            const Spacer(),
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _done
-                    ? const Color(0xFF14B8A6)
-                    : Colors.white.withValues(alpha: 0.08),
-                border: Border.all(
-                    color: _done
-                        ? const Color(0xFF14B8A6)
-                        : Colors.white.withValues(alpha: 0.15),
-                    width: 1),
-              ),
-              child: _done
-                  ? const Icon(Icons.check_rounded,
-                      color: Colors.white, size: 13)
-                  : null,
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -1177,7 +682,8 @@ class _HabitTileState extends State<_HabitTile> {
 
 class _GymCard extends StatelessWidget {
   final _Gym gym;
-  const _GymCard({required this.gym});
+  final VoidCallback onRefer;
+  const _GymCard({required this.gym, required this.onRefer});
 
   @override
   Widget build(BuildContext context) {
@@ -1189,180 +695,39 @@ class _GymCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: gym.color.withValues(alpha: 0.2), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: gym.color.withValues(alpha: 0.12),
-                ),
-                child: Icon(gym.icon, color: gym.color, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(gym.name,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700)),
-                    Row(
-                      children: [
-                        const Icon(Icons.star_rounded,
-                            color: Color(0xFFF59E0B), size: 12),
-                        const SizedBox(width: 3),
-                        Text(gym.rating,
-                            style: const TextStyle(
-                                color: Color(0xFFF59E0B),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600)),
-                        Text('  ·  ${gym.distance}',
-                            style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.4),
-                                fontSize: 11)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(gym.price,
-                      style: TextStyle(
-                          color: gym.color,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800)),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 6),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: gym.color,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text('Join',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(gym.description,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 12,
-                  height: 1.4)),
-        ],
-      ),
-    );
-  }
-}
-
-class _TrainerCard extends StatelessWidget {
-  final _Trainer trainer;
-  const _TrainerCard({required this.trainer});
-
-  static const _teal = Color(0xFF14B8A6);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
-      ),
       child: Row(
         children: [
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: trainer.imageUrl,
-              width: 48,
-              height: 48,
-              fit: BoxFit.cover,
-              placeholder: (_, __) =>
-                  Container(color: _teal.withValues(alpha: 0.2)),
-              errorWidget: (_, __, ___) => Container(
-                color: _teal.withValues(alpha: 0.2),
-                child: const Icon(Icons.person_rounded,
-                    color: Colors.white54, size: 24),
-              ),
-            ),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: gym.color.withValues(alpha: 0.12)),
+            child: Icon(gym.icon, color: gym.color, size: 20),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(trainer.name,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600)),
-                Text(trainer.specialty,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
-                        fontSize: 12)),
+                Text(gym.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                Row(
+                  children: [
+                    const Icon(Icons.star_rounded, color: Color(0xFFF59E0B), size: 12),
+                    const SizedBox(width: 3),
+                    Text('${gym.rating}', style: const TextStyle(color: Color(0xFFF59E0B), fontSize: 11, fontWeight: FontWeight.w600)),
+                    Text('  ·  ${gym.city}', style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+                  ],
+                ),
+                Text(gym.discount, style: TextStyle(color: gym.color, fontSize: 11, fontWeight: FontWeight.w600)),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.star_rounded,
-                      color: Color(0xFFF59E0B), size: 12),
-                  const SizedBox(width: 2),
-                  Text(trainer.rating,
-                      style: const TextStyle(
-                          color: Color(0xFFF59E0B),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600)),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(trainer.rate,
-                  style: const TextStyle(
-                      color: _teal,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(height: 4),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _teal.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text('Book',
-                      style: TextStyle(
-                          color: _teal,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ],
+          GestureDetector(
+            onTap: onRefer,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(color: gym.color, borderRadius: BorderRadius.circular(12)),
+              child: const Text('Get Referral', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+            ),
           ),
         ],
       ),
@@ -1370,70 +735,13 @@ class _TrainerCard extends StatelessWidget {
   }
 }
 
-class _SupplementCard extends StatelessWidget {
-  final _Supplement supp;
-  const _SupplementCard({required this.supp});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F0F1C),
-        borderRadius: BorderRadius.circular(14),
-        border:
-            Border.all(color: supp.color.withValues(alpha: 0.2), width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(supp.icon, color: supp.color, size: 16),
-              const Spacer(),
-              Text(supp.price,
-                  style: TextStyle(
-                      color: supp.color,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700)),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(supp.name,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 2),
-              Text(supp.benefit,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 10),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HealthAppTile extends StatefulWidget {
-  final _HealthApp app;
-  const _HealthAppTile({required this.app});
-
-  @override
-  State<_HealthAppTile> createState() => _HealthAppTileState();
-}
-
-class _HealthAppTileState extends State<_HealthAppTile> {
-  bool _connected = false;
+class _WearableTile extends StatelessWidget {
+  final _WearableProvider provider;
+  final bool connected;
+  final bool busy;
+  final VoidCallback onConnect;
+  final VoidCallback? onSync;
+  const _WearableTile({required this.provider, required this.connected, required this.busy, required this.onConnect, required this.onSync});
 
   @override
   Widget build(BuildContext context) {
@@ -1443,59 +751,38 @@ class _HealthAppTileState extends State<_HealthAppTile> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: _connected
-                ? widget.app.color.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.06),
-            width: 1),
+        border: Border.all(color: connected ? provider.color.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06), width: 1),
       ),
       child: Row(
         children: [
           Container(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: widget.app.color.withValues(alpha: 0.12),
-            ),
-            child: Icon(widget.app.icon, color: widget.app.color, size: 18),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: provider.color.withValues(alpha: 0.12)),
+            child: Icon(provider.icon, color: provider.color, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.app.name,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600)),
-                Text(
-                    '${widget.app.description}  ·  ${widget.app.price}',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        fontSize: 11)),
-              ],
-            ),
+            child: Text(provider.name, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
           ),
+          if (connected && onSync != null)
+            GestureDetector(
+              onTap: busy ? null : onSync,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(Icons.sync_rounded, color: provider.color, size: 18),
+              ),
+            ),
           GestureDetector(
-            onTap: () => setState(() => _connected = !_connected),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            onTap: (busy || connected) ? null : onConnect,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: _connected
-                    ? widget.app.color.withValues(alpha: 0.15)
-                    : widget.app.color,
+                color: connected ? provider.color.withValues(alpha: 0.15) : provider.color,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                  _connected ? 'Connected' : 'Connect',
-                  style: TextStyle(
-                      color: _connected ? widget.app.color : Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600)),
+              child: Text(connected ? 'Connected' : 'Connect',
+                  style: TextStyle(color: connected ? provider.color : Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -1504,9 +791,12 @@ class _HealthAppTileState extends State<_HealthAppTile> {
   }
 }
 
-class _MealTile extends StatelessWidget {
-  final _Meal meal;
-  const _MealTile({required this.meal});
+class _NutritionPartnerTile extends StatelessWidget {
+  final _NutritionPartner partner;
+  final bool connected;
+  final bool busy;
+  final VoidCallback onConnect;
+  const _NutritionPartnerTile({required this.partner, required this.connected, required this.busy, required this.onConnect});
 
   @override
   Widget build(BuildContext context) {
@@ -1516,70 +806,40 @@ class _MealTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
-        border:
-            Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1),
+        border: Border.all(color: connected ? partner.color.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06), width: 1),
       ),
       child: Row(
         children: [
-          Icon(meal.icon, color: const Color(0xFFF59E0B), size: 20),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: partner.color.withValues(alpha: 0.12)),
+            child: Icon(partner.icon, color: partner.color, size: 18),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(meal.name,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(partner.name, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
+                Text(partner.description, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11)),
+              ],
+            ),
           ),
-          Text(meal.time,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.35), fontSize: 12)),
-          const SizedBox(width: 10),
-          Text(meal.calories,
-              style: const TextStyle(
-                  color: Color(0xFFF59E0B),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700)),
+          GestureDetector(
+            onTap: (busy || connected) ? null : onConnect,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: connected ? partner.color.withValues(alpha: 0.15) : partner.color,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(connected ? 'Connected' : 'Connect',
+                  style: TextStyle(color: connected ? partner.color : Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+            ),
+          ),
         ],
       ),
     );
   }
-}
-
-Widget macroCard(
-    String label, String val, String target, Color color, double progress) {
-  return Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: const Color(0xFF0F0F1C),
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
-        const SizedBox(height: 4),
-        Text(val,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w800)),
-        Text(target,
-            style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.35), fontSize: 10)),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: color.withValues(alpha: 0.12),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 3,
-          ),
-        ),
-      ],
-    ),
-  );
 }

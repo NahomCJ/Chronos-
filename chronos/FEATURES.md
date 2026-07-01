@@ -319,7 +319,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 
 | Area | Route | File | Status | Icon |
 |------|-------|------|--------|------|
-| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` — dark bg `#0D0D22`, dark cards `#0F0F1C` (fixed white-on-white text bug) |
+| Health | `/lifex/health` | `lifex_health_page.dart` | [LIVE] | `monitor_heart_rounded` — dark bg `#0D0D22`, dark cards `#0F0F1C` (fixed white-on-white text bug). Rebuilt around HSA management, an insurance marketplace, NY/SF gym partnerships, and wearable/nutrition-partner connections — calorie/step tracking is now a small "Today's Vitals" strip on Overview instead of the headline. HSA deposit/withdraw, insurance enrollment, wearable connect+sync, and nutrition-partner connect all call real `/api/lifex/health/*` endpoints; insurance/gym/nutrition catalogs are mock/curated content on the client. |
 | Education | `/lifex/education` | `lifex_education_page.dart` | [LIVE] | `menu_book_rounded` |
 | Spiritual | `/lifex/spiritual` | `lifex_spiritual_page.dart` | [LIVE] | `spa_rounded` — nature imagery only |
 | Finance | `/lifex/finance` | `lifex_finance_page.dart` | [LIVE] | `account_balance_wallet_rounded` |
