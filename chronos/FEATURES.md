@@ -202,7 +202,7 @@ Path: `lib/features/panther_ai/`
 
 | Screen | Route | File | Status |
 |--------|-------|------|--------|
-| Panther AI Dashboard | `/panther-ai` | `panther_ai_page.dart` | [LIVE] |
+| Panther AI Dashboard | `/panther-ai` | `panther_ai_page.dart` | [LIVE] | Intelligence section reorganized into 3 labeled groups (Money Health: Bills/Debts/Budget/Net Worth, Grow: Portfolio/Trading, Payments: TickPay/Taxes) instead of one flat 8-icon grid. Added a live "heads up" banner above it wired to `AlertsBloc`/`AlertsGenerateRequested`, which was already built end-to-end but never rendered on this page. |
 | Panther AI Chat | `/panther-ai-chat` | `panther_ai_chat_page.dart` | [LIVE] | Text + Voice mode toggle; voice mode shows full-screen purple orb |
 | Panther AI Settings | `/panther-ai-settings` | `panther_ai_settings_page.dart` | [LIVE] |
 | Market Intelligence | `/market-intelligence` | `market_intelligence_page.dart` | [LIVE] |

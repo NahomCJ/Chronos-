@@ -71,6 +71,69 @@ export async function generateAndStoreAlerts(userId: string): Promise<number> {
     });
   }
 
+  // Can they actually cover what's coming due? This is the "heads up before
+  // you overspend" check for bills and debt the LifeX/Panther redesign needs.
+  if (mainWallet) {
+    const pendingBills = await prisma.billPayment.findMany({
+      where: { userId, status: "PENDING" },
+    });
+    const upcomingBillsTotal = pendingBills.reduce(
+      (sum, b) => sum + Number(b.amount),
+      0
+    );
+
+    if (upcomingBillsTotal > 0) {
+      if (upcomingBillsTotal > mainWallet.balance) {
+        created.push({
+          type: "CASHFLOW" as AiAlertType,
+          domain: "BANKING" as AiAlertDomain,
+          title: "Upcoming Bills Exceed Your Balance",
+          message: `You have $${upcomingBillsTotal.toFixed(2)} in pending bills but only $${mainWallet.balance.toFixed(2)} available. Avoid non-essential spending until these clear.`,
+        });
+      } else if (upcomingBillsTotal > mainWallet.balance * 0.7) {
+        created.push({
+          type: "CASHFLOW" as AiAlertType,
+          domain: "BANKING" as AiAlertDomain,
+          title: "Bills Are Tight This Cycle",
+          message: `Pending bills ($${upcomingBillsTotal.toFixed(2)}) take up most of your balance ($${mainWallet.balance.toFixed(2)}). Spend carefully until they clear.`,
+        });
+      }
+    }
+
+    const activeLoans = await prisma.loan.findMany({
+      where: { userId, status: "ACTIVE" },
+    });
+    if (activeLoans.length > 0) {
+      const totalDebt = activeLoans.reduce(
+        (sum, l) => sum + Number(l.outstandingAmount),
+        0
+      );
+      const soon = new Date();
+      soon.setDate(soon.getDate() + 7);
+      const dueSoon = activeLoans.filter((l) => l.dueDate <= soon);
+
+      if (dueSoon.length > 0) {
+        const dueSoonTotal = dueSoon.reduce(
+          (sum, l) => sum + Number(l.outstandingAmount),
+          0
+        );
+        created.push({
+          type: "CASHFLOW" as AiAlertType,
+          domain: "BANKING" as AiAlertDomain,
+          title: `${dueSoon.length} Debt Payment${dueSoon.length > 1 ? "s" : ""} Due This Week`,
+          message: `${dueSoon.map((l) => l.name).join(", ")} — $${dueSoonTotal.toFixed(2)} due within 7 days. Across all your debts you owe $${totalDebt.toFixed(2)}.`,
+        });
+      } else if (totalDebt > mainWallet.balance * 3) {
+        created.push({
+          type: "CASHFLOW" as AiAlertType,
+          domain: "BANKING" as AiAlertDomain,
+          title: "Debt Load Is Getting Heavy",
+          message: `You're carrying $${totalDebt.toFixed(2)} across ${activeLoans.length} loan${activeLoans.length > 1 ? "s" : ""} against a $${mainWallet.balance.toFixed(2)} balance. Consider a payoff plan before taking on more.`,
+        });
+      }
+    }
+  }
+
   if (created.length === 0) return 0;
 
   await prisma.aiAlert.createMany({
