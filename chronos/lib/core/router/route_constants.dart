@@ -22,8 +22,6 @@ enum RouteConstants {
   findAtm,
   exchange,
   selectCurrency,
-  enterExchangeAmount,
-  reviewExchange,
   exchangeProcessing,
   exchangeSuccess,
   blockHub,
@@ -152,10 +150,6 @@ extension RouteConstantsX on RouteConstants {
         return '/exchange';
       case RouteConstants.selectCurrency:
         return '/select-currency';
-      case RouteConstants.enterExchangeAmount:
-        return '/enter-exchange-amount';
-      case RouteConstants.reviewExchange:
-        return '/review-exchange';
       case RouteConstants.exchangeProcessing:
         return '/exchange-processing';
       case RouteConstants.exchangeSuccess:
@@ -356,10 +350,6 @@ extension RouteConstantsX on RouteConstants {
         return 'exchange';
       case RouteConstants.selectCurrency:
         return 'select-currency';
-      case RouteConstants.enterExchangeAmount:
-        return 'enter-exchange-amount';
-      case RouteConstants.reviewExchange:
-        return 'review-exchange';
       case RouteConstants.exchangeProcessing:
         return 'exchange-processing';
       case RouteConstants.exchangeSuccess:

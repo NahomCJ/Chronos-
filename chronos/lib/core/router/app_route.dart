@@ -24,9 +24,6 @@ import '../../features/wallet/presentation/pages/wallet_onboarding_page.dart';
 import '../../features/wallet/presentation/pages/find_atm_page.dart';
 import '../../features/exchange/presentation/pages/exchange_page.dart';
 import '../../features/exchange/presentation/pages/select_currency_page.dart';
-import '../../features/exchange/presentation/pages/enter_amount_page.dart'
-    as exchange;
-import '../../features/exchange/presentation/pages/review_exchange_page.dart';
 import '../../features/exchange/presentation/pages/exchange_processing_page.dart';
 import '../../features/exchange/presentation/pages/exchange_success_page.dart';
 import '../../features/blockhub/presentation/pages/blockhub_page.dart';
@@ -296,40 +293,6 @@ final GoRouter router = GoRouter(
         return SelectCurrencyPage(
           currentCurrency: extra?['currentCurrency'] ?? 'USD',
           isFromCurrency: extra?['isFromCurrency'] ?? true,
-        );
-      },
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: RouteConstants.enterExchangeAmount.toPath,
-      name: RouteConstants.enterExchangeAmount.name,
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return exchange.EnterAmountPage(
-          fromCurrency: extra?['fromCurrency'] ?? 'USD',
-          toCurrency: extra?['toCurrency'] ?? 'EUR',
-          fromCurrencyName: extra?['fromCurrencyName'] ?? 'US Dollar',
-          toCurrencyName: extra?['toCurrencyName'] ?? 'Euro',
-          fromFlag: extra?['fromFlag'] ?? '🇺🇸',
-          toFlag: extra?['toFlag'] ?? '🇪🇺',
-        );
-      },
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      path: RouteConstants.reviewExchange.toPath,
-      name: RouteConstants.reviewExchange.name,
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return ReviewExchangePage(
-          fromCurrency: extra?['fromCurrency'] ?? 'USD',
-          toCurrency: extra?['toCurrency'] ?? 'EUR',
-          fromCurrencyName: extra?['fromCurrencyName'] ?? 'US Dollar',
-          toCurrencyName: extra?['toCurrencyName'] ?? 'Euro',
-          fromFlag: extra?['fromFlag'] ?? '🇺🇸',
-          toFlag: extra?['toFlag'] ?? '🇪🇺',
-          amount: extra?['amount'] ?? '0',
-          isRateLocked: extra?['isRateLocked'] ?? false,
         );
       },
     ),

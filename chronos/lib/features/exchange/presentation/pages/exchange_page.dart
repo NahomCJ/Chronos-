@@ -1,12 +1,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../../../../core/widgets/fluid_glass.dart';
+import '../bloc/exchange_bloc.dart';
+import '../bloc/exchange_event.dart';
+import '../bloc/exchange_state.dart';
+import '../../domain/entities/exchange_entity.dart';
 
 class ExchangePage extends StatefulWidget {
   const ExchangePage({super.key});
@@ -23,15 +29,77 @@ class _ExchangePageState extends State<ExchangePage> {
   String _fromFlag = '🇺🇸';
   String _toFlag = '🇪🇺';
   final TextEditingController _amountController = TextEditingController();
+  late final ExchangeBloc _exchangeBloc;
+  FxQuote? _lastQuote;
+
+  static const double _previewRate = 0.92;
+
+  double get _typedAmount => double.tryParse(_amountController.text) ?? 0.0;
+
+  String get _previewConverted {
+    final converted = _typedAmount * _previewRate;
+    if (converted == 0.0) return '-';
+    return converted.toStringAsFixed(2);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _exchangeBloc = GetIt.I<ExchangeBloc>();
+    _amountController.addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
     _amountController.dispose();
+    _exchangeBloc.close();
     super.dispose();
+  }
+
+  void _onExchangePressed() {
+    if (_typedAmount <= 0) return;
+    _exchangeBloc.add(ExchangeQuoteRequested(
+      fromCurrency: _fromCurrency,
+      toCurrency: _toCurrency,
+      amount: _typedAmount,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _exchangeBloc,
+      child: BlocConsumer<ExchangeBloc, ExchangeState>(
+        listener: (context, state) {
+          if (state is ExchangeQuoteLoaded) {
+            _lastQuote = state.quote;
+            _exchangeBloc.add(ExchangeExecuteRequested(state.quote.quoteId));
+          } else if (state is ExchangeExecuted) {
+            context.go(
+              RouteConstants.exchangeSuccess.toPath,
+              extra: {
+                'fromCurrency': _fromCurrency,
+                'toCurrency': _toCurrency,
+                'fromAmount': _amountController.text,
+                'toAmount': (_lastQuote?.convertedAmount ?? state.execution.amount)
+                    .toStringAsFixed(2),
+                'fromFlag': _fromFlag,
+                'toFlag': _toFlag,
+              },
+            );
+          } else if (state is ExchangeError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        builder: (context, state) => _buildScaffold(context, state),
+      ),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, ExchangeState state) {
+    final isProcessing = state is ExchangeLoading;
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -189,6 +257,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                     currency: _toCurrency,
                                     currencyName: _toCurrencyName,
                                     showInput: false,
+                                    previewAmount: _previewConverted,
                                     onTap: () async {
                                       final result = await context.push(
                                         RouteConstants.selectCurrency.toPath,
@@ -260,7 +329,7 @@ class _ExchangePageState extends State<ExchangePage> {
 
                         const SizedBox(height: 28),
 
-                        // Review Exchange Button
+                        // Exchange Now Button
                         FluidGlass.dark(
                           borderRadius: BorderRadius.circular(26),
                           padding: const EdgeInsets.all(4),
@@ -269,19 +338,9 @@ class _ExchangePageState extends State<ExchangePage> {
                           width: double.infinity,
                           height: 44,
                           child: ElevatedButton(
-                            onPressed: () {
-                              context.push(
-                                RouteConstants.enterExchangeAmount.toPath,
-                                extra: {
-                                  'fromCurrency': _fromCurrency,
-                                  'toCurrency': _toCurrency,
-                                  'fromCurrencyName': _fromCurrencyName,
-                                  'toCurrencyName': _toCurrencyName,
-                                  'fromFlag': _fromFlag,
-                                  'toFlag': _toFlag,
-                                },
-                              );
-                            },
+                            onPressed: (_typedAmount <= 0 || isProcessing)
+                                ? null
+                                : _onExchangePressed,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFF0A0A14),
@@ -289,15 +348,27 @@ class _ExchangePageState extends State<ExchangePage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(22),
                               ),
+                              disabledBackgroundColor: Colors.white.withValues(alpha: 0.4),
                             ),
-                            child: Text(
-                              'Review Exchange',
-                              style: TextStyles.bodyLarge.copyWith(
-                                color: const Color(0xFF0A0A14),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
+                            child: isProcessing
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF0A0A14),
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    'Exchange Now',
+                                    style: TextStyles.bodyLarge.copyWith(
+                                      color: const Color(0xFF0A0A14),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                           ),
                           ),
                         ),
@@ -322,6 +393,7 @@ class _ExchangePageState extends State<ExchangePage> {
     required String currencyName,
     required bool showInput,
     required VoidCallback onTap,
+    String? previewAmount,
   }) {
     return SizedBox(
       height: 52,
@@ -414,9 +486,14 @@ class _ExchangePageState extends State<ExchangePage> {
               )
             else
               Text(
-                '-',
+                previewAmount ?? '-',
                 style: TextStyles.bodyLarge.copyWith(
-                  color: Colors.white.withValues(alpha: 0.35),
+                  color: Colors.white.withValues(
+                    alpha: previewAmount == null || previewAmount == '-' ? 0.35 : 1,
+                  ),
+                  fontWeight: previewAmount == null || previewAmount == '-'
+                      ? FontWeight.normal
+                      : FontWeight.w600,
                   fontSize: 15,
                 ),
               ),
