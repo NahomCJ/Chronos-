@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/auth/di/auth_di.dart';
 import '../../features/home/di/home_di.dart';
@@ -11,6 +12,8 @@ import '../../features/tickpay/di/tickpay_di.dart';
 import '../../features/profile/di/profile_di.dart';
 import '../../features/unit_banking/di/unit_banking_di.dart';
 import '../theme/theme_cubit.dart';
+import '../theme/background_cubit.dart';
+import '../network/api_client.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -26,4 +29,7 @@ Future<void> initAppDi() async {
   initProfileDi(sl);
   initUnitBankingDi(sl);
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
+  sl.registerLazySingleton<BackgroundCubit>(
+    () => BackgroundCubit(sl<SharedPreferences>(), sl<ApiClient>()),
+  );
 }

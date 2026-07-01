@@ -348,7 +348,13 @@ Path: `lib/features/profile/`
 | Profile | `/profile` | `profile_page.dart` | [LIVE] |
 | Change Password | `/profile/change-password` | `change_password_page.dart` | [LIVE] |
 | Notification Settings | `/profile/notifications` | `notification_settings_page.dart` | [LIVE] |
-| Theme Settings | — | `theme_settings_page.dart` | [LIVE] |
+| Theme Settings | — | `theme_settings_page.dart` | [LIVE] | Added a "Custom Background" section — search Pexels for a photo or video and apply it as the app-wide background via `BackgroundCubit`. Persisted locally and synced to the user's profile (`backgroundUrl`/`backgroundMediaType` on `User`, `PATCH /api/v1/users/me`). |
+
+**App-wide background system** [PARTIAL — infrastructure done, most pages not yet migrated]:
+- `lib/core/theme/background_cubit.dart` — `BackgroundCubit` (registered in `app_di.dart`, provided at the app root in `main.dart` alongside `ThemeCubit`) holds the selected background and keeps local (`SharedPreferences`) + backend in sync.
+- `lib/core/widgets/app_background.dart` — `AppBackground({child, overlayOpacity})` replaces the old per-page pattern of a hardcoded Pexels photo + dark overlay `Container`, rendering the user's chosen photo or video (looping, muted) instead, with the same overlay treatment. Falls back to the same default photo every page used to hardcode when nothing's been chosen yet.
+- Migrated: `panther_ai_page.dart`, `exchange_page.dart`.
+- **Not yet migrated**: ~121 other pages still hardcode `Image.network('...pexels-photo-30004067...')` + a dark overlay `Container` directly (grep `pexels-photo-30004067` across `lib/` to find them). Swapping each to `AppBackground(child: SafeArea(...))` is mechanical but was too large a surface to safely hand-edit in one pass without a compiler in this environment — planned as a follow-up.
 
 ---
 

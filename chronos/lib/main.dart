@@ -8,6 +8,7 @@ import 'core/di/app_di.dart';
 import 'core/router/app_route.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';
+import 'core/theme/background_cubit.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -40,8 +41,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ThemeCubit>(
-      create: (_) => sl<ThemeCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeCubit>(create: (_) => sl<ThemeCubit>()),
+        BlocProvider<BackgroundCubit>(create: (_) => sl<BackgroundCubit>()),
+      ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,

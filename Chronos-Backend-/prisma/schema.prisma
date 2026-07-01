@@ -252,6 +252,8 @@ model User {
   tier            String    @default("standard")
   userLevel       UserLevel @default(BEGINNER)
   faith           String? // captured during onboarding, used by LifeX Spiritual
+  backgroundUrl       String? // user-chosen app-wide background (Pexels photo or video URL)
+  backgroundMediaType String? // "photo" | "video"
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

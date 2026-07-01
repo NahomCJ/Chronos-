@@ -9,6 +9,7 @@ import '../bloc/alerts_bloc.dart';
 import '../bloc/alerts_event.dart';
 import '../bloc/alerts_state.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/app_background.dart';
 import '../../domain/entities/ai_alert.dart';
 
 class PantherAiPage extends StatefulWidget {
@@ -76,24 +77,20 @@ class _PantherAiPageState extends State<PantherAiPage>
       value: _alertsBloc,
       child: Scaffold(
         backgroundColor: _bg,
-        body: Stack(
-          children: [
-            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(child: _buildHeader()),
-                  SliverToBoxAdapter(child: _buildOrbHero()),
-                  SliverToBoxAdapter(child: _buildStoriesSection()),
-                  SliverToBoxAdapter(child: _buildLifeXCard()),
-                  SliverToBoxAdapter(child: _buildQuickActions()),
-                  SliverToBoxAdapter(child: _buildIntelligence()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
-                ],
-              ),
+        body: AppBackground(
+          child: SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: _buildHeader()),
+                SliverToBoxAdapter(child: _buildOrbHero()),
+                SliverToBoxAdapter(child: _buildStoriesSection()),
+                SliverToBoxAdapter(child: _buildLifeXCard()),
+                SliverToBoxAdapter(child: _buildQuickActions()),
+                SliverToBoxAdapter(child: _buildIntelligence()),
+                const SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
