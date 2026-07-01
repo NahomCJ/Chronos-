@@ -335,6 +335,7 @@ LifeX is a life coaching dashboard with 11 life-area sub-pages. All sub-pages us
 - Rebuilt from a meditation-app-first layout into 5 tabs: Practice (meditation/gratitude/goals, unchanged), Giving (charity donations + crowdfunding campaigns), Trips (spiritual pilgrimages/retreats), Shop (ecommerce for devotional goods), Events (faith-based event calendar, informational). Removed the third-party Mindfulness Apps (Calm/Headspace) tile and the old Anchor tab.
 - Charity/campaign/trip/product/event catalogs are mock/curated data in the page (Pexels images) — the actual money movement (donate, contribute, book, checkout) calls real backend endpoints under `/api/lifex/spiritual/*` (`donations`, `campaigns/contribute`, `trips/book`, `shop/checkout`) which debit the user's real wallet via the same ledger mechanism `TransferService` uses.
 - `LifeXService` (`lib/features/lifex/data/lifex_service.dart`) is now registered in DI (`auth_di.dart`) — it previously existed but was never wired to GetIt.
+- Onboarding now asks faith: `personal_info_page.dart` has a 4th step ("Chris wants to know you better") with a faith chip picker, feeding the same `faith` field via `LifeXService.setFaith()` (best-effort — this page doesn't submit the rest of its fields to the backend yet either).
 
 ---
 

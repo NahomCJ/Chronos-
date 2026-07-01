@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/route_constants.dart';
+import '../../../lifex/data/lifex_service.dart';
 
 const _kBg = 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900';
 
@@ -25,6 +27,9 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   final _zipCtrl = TextEditingController();
   String _selectedCountry = 'Ethiopia';
 
+  String? _selectedFaith;
+  final _customFaithCtrl = TextEditingController();
+
   @override
   void dispose() {
     _firstNameCtrl.dispose();
@@ -33,6 +38,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     _addressCtrl.dispose();
     _cityCtrl.dispose();
     _zipCtrl.dispose();
+    _customFaithCtrl.dispose();
     super.dispose();
   }
 
@@ -50,9 +56,15 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
 
   void _next() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    if (_step < 2) {
+    if (_step < 3) {
       setState(() => _step++);
     } else {
+      final faith = _selectedFaith == 'Other' ? _customFaithCtrl.text.trim() : _selectedFaith;
+      if (faith != null && faith.isNotEmpty && faith != 'Prefer not to say') {
+        // Best-effort — the rest of this onboarding flow doesn't submit to
+        // the backend yet either, so this degrades silently if it can't reach it.
+        GetIt.I<LifeXService>().setFaith(faith).catchError((_) => <String, dynamic>{});
+      }
       context.go(RouteConstants.home.toPath);
     }
   }
@@ -99,6 +111,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                           if (_step == 0) ..._buildPersonalFields(),
                           if (_step == 1) ..._buildAddressFields(),
                           if (_step == 2) ..._buildIdentityFields(),
+                          if (_step == 3) ..._buildFaithFields(),
                           const SizedBox(height: 24),
                           SizedBox(
                             height: 46,
@@ -111,12 +124,12 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                _step < 2 ? 'Continue' : 'Complete Setup',
+                                _step < 3 ? 'Continue' : 'Complete Setup',
                                 style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                               ),
                             ),
                           ),
-                          if (_step < 2) ...[
+                          if (_step < 3) ...[
                             const SizedBox(height: 10),
                             Center(
                               child: TextButton(
@@ -147,13 +160,15 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   String get _stepTitle => switch (_step) {
         0 => 'Personal Details',
         1 => 'Your Address',
-        _ => 'Verify Identity',
+        2 => 'Verify Identity',
+        _ => 'One Last Thing',
       };
 
   String get _stepSubtitle => switch (_step) {
         0 => 'Tell us a bit about yourself',
         1 => 'Required for regulatory compliance',
-        _ => 'Upload a government-issued ID',
+        2 => 'Upload a government-issued ID',
+        _ => 'Chris wants to know you better',
       };
 
   Widget _buildHeader() {
@@ -186,7 +201,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           ),
           const Spacer(),
           Text(
-            '${_step + 1} of 3',
+            '${_step + 1} of 4',
             style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
           ),
         ],
@@ -198,11 +213,11 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Row(
-        children: List.generate(3, (i) {
+        children: List.generate(4, (i) {
           final active = i <= _step;
           return Expanded(
             child: Container(
-              margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
+              margin: EdgeInsets.only(right: i < 3 ? 6 : 0),
               height: 3,
               decoration: BoxDecoration(
                 color: active ? Colors.white : Colors.white.withValues(alpha: 0.2),
@@ -349,6 +364,84 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
             ],
           ),
         ),
+      ];
+
+  static const _faithOptions = [
+    'Christianity',
+    'Islam',
+    'Judaism',
+    'Hinduism',
+    'Buddhism',
+    'Spiritual, not religious',
+    'Other',
+    'Prefer not to say',
+  ];
+
+  List<Widget> _buildFaithFields() => [
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.15),
+                ),
+                child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 15),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Hey, I\'m Chris. Do you follow a faith? I\'ll use it to personalize your LifeX Spiritual space — events, giving, and community that actually fit you.',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 13, height: 1.45),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _faithOptions.map((faith) {
+            final isSelected = _selectedFaith == faith;
+            return GestureDetector(
+              onTap: () => setState(() => _selectedFaith = faith),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withValues(alpha: isSelected ? 1 : 0.2)),
+                ),
+                child: Text(
+                  faith,
+                  style: TextStyle(
+                    color: isSelected ? const Color(0xFF1A0A2E) : Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12.5,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        if (_selectedFaith == 'Other') ...[
+          const SizedBox(height: 14),
+          _field(
+            controller: _customFaithCtrl,
+            hint: 'Tell us what you follow',
+            icon: Icons.edit_outlined,
+          ),
+        ],
       ];
 
   Widget _countryDropdown() {
