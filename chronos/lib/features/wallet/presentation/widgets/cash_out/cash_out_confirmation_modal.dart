@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../../../core/theme/text_theme.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class CashOutConfirmationModal extends StatelessWidget {
   final String method;
@@ -129,7 +133,7 @@ class CashOutConfirmationModal extends StatelessWidget {
                 child: Column(
                   children: [
                     // Amount
-                    _buildDetailRow('Amount', '\$${amount.toStringAsFixed(2)}'),
+                    _buildDetailRow('Amount', _money(amount)),
 
                     const SizedBox(height: 20),
 
@@ -169,7 +173,7 @@ class CashOutConfirmationModal extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '\$${total.toStringAsFixed(2)}',
+                          _money(total),
                           style: TextStyles.titleLarge.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -191,7 +195,7 @@ class CashOutConfirmationModal extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Cash out of \$${amount.toStringAsFixed(2)} initiated successfully',
+                      'Cash out of ${_money(amount)} initiated successfully',
                     ),
                     backgroundColor: const Color(0xFF10B981),
                   ),

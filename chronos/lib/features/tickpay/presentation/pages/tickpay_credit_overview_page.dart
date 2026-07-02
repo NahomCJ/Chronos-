@@ -185,6 +185,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
   }
 
   Widget _buildUtilizationCard(TickpayAccountLoaded? account) {
+    final fmt = NumberFormat('#,##0.00');
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -252,7 +253,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           const SizedBox(height: 20),
           _buildUtilRow(
               'Credit Used',
-              account == null ? '\$0' : '\$${account.creditUsed.toStringAsFixed(2)}',
+              account == null ? '\$0' : '\$${fmt.format(account.creditUsed)}',
               account == null || account.creditLimit == 0
                   ? 0.0
                   : math.min(account.creditUsed / account.creditLimit, 1.0),
@@ -260,7 +261,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           const SizedBox(height: 10),
           _buildUtilRow(
               'Available',
-              account == null ? '\$0' : '\$${account.available.toStringAsFixed(2)}',
+              account == null ? '\$0' : '\$${fmt.format(account.available)}',
               account == null || account.creditLimit == 0
                   ? 1.0
                   : math.min(account.available / account.creditLimit, 1.0),

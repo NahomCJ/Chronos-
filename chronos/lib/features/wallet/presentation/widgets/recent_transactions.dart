@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../domain/entities/wallet_entity.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class RecentTransactions extends StatefulWidget {
   final List<TransactionEntity> transactions;
@@ -137,7 +141,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                   title: tx.type,
                   subtitle: _formatDate(tx.createdAt),
                   amount:
-                      '${tx.isCredit ? '+' : '-'}\$${tx.amount.abs().toStringAsFixed(2)}',
+                      '${tx.isCredit ? '+' : '-'}${_money(tx.amount.abs())}',
                   status: tx.status,
                   isNegative: !tx.isCredit,
                 ),

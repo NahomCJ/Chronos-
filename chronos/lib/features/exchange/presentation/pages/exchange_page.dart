@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -231,7 +230,7 @@ class _ExchangePageState extends State<ExchangePage> {
                                         child: Container(
                                           width: 30,
                                           height: 30,
-                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(vertical: 3),
                                           decoration: BoxDecoration(
                                             color: Colors.white.withValues(alpha: 0.10),
                                             shape: BoxShape.circle,
@@ -279,25 +278,25 @@ class _ExchangePageState extends State<ExchangePage> {
 
                         // Rate pill
                         Center(
-                          child: ClipRRect(
+                          child: FluidGlass.dark(
                             borderRadius: BorderRadius.circular(20),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
-                                ),
-                                child: Text(
+                            blur: 8,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.bolt_rounded,
+                                    color: Colors.white.withValues(alpha: 0.7), size: 13),
+                                const SizedBox(width: 5),
+                                Text(
                                   '1 $_fromCurrency = 0.92 $_toCurrency',
                                   style: TextStyles.bodySmall.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.6),
-                                    fontSize: 11,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
                         ),
@@ -391,7 +390,7 @@ class _ExchangePageState extends State<ExchangePage> {
     String? previewAmount,
   }) {
     return SizedBox(
-      height: 52,
+      height: 46,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Row(
@@ -504,17 +503,10 @@ class _ExchangePageState extends State<ExchangePage> {
     required String title,
     required String subtitle,
   }) {
-    return ClipRRect(
+    return FluidGlass.dark(
       borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
+      blur: 10,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-      ),
       child: Row(
         children: [
           Icon(icon, color: iconColor, size: 16),
@@ -543,8 +535,6 @@ class _ExchangePageState extends State<ExchangePage> {
             ),
           ),
         ],
-      ),
-        ),
       ),
     );
   }

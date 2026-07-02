@@ -5,14 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/section_header.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 import '../../../../features/home/domain/entities/home_summary.dart';
 import '../../../../features/home/presentation/bloc/home_bloc.dart';
 import '../../../../features/home/presentation/bloc/home_event.dart';
 import '../../../../features/home/presentation/bloc/home_state.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+
+String _money(double value) => '\$${_moneyFormat.format(value)}';
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -125,7 +133,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required double balance,
     required bool isLoading,
   }) {
-    final double heroHeight = (isSmallScreen ? 380 : 440) * scale;
+    final double heroHeight = (isSmallScreen ? 356 : 410) * scale;
 
     return Stack(
       children: [
@@ -173,7 +181,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       GestureDetector(
@@ -245,7 +253,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  SizedBox(height: 45 * scale),
+                  SizedBox(height: 26 * scale),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -287,7 +295,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                         )
                       : Text(
                           _isBalanceVisible
-                              ? '\$${balance.toStringAsFixed(2)}'
+                              ? _money(balance)
                               : '••••••••',
                           style: TextStyles.displaySmall.copyWith(
                             color: Colors.white,
@@ -324,7 +332,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                           )),
                     ],
                   ),
-                  SizedBox(height: 24 * scale),
+                  SizedBox(height: 16 * scale),
                 ],
               ),
             ),
@@ -342,15 +350,14 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         const PopupMenuItem(value: 'USD', child: Text('USD')),
         const PopupMenuItem(value: 'EUR', child: Text('EUR')),
       ],
-      child: Container(
+      child: FluidGlass(
+        borderRadius: BorderRadius.circular(8),
+        blur: 12,
+        tintColor: Colors.white,
+        tintOpacity: 0.14,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.15), width: 0.7),
-        ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(_selectedCurrency,
                 style: TextStyles.labelSmall.copyWith(
@@ -401,7 +408,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         SectionHeader(
           title: 'Transactions',
           actionText: 'View All',
-          onActionPressed: () {},
+          onActionPressed: () => context.push(RouteConstants.history.toPath),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -429,7 +436,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                               title: tx.description ?? tx.type,
                               subtitle: _formatDate(tx.createdAt),
                               amount:
-                                  '${tx.isCredit ? '+' : '-'}\$${tx.amount.abs().toStringAsFixed(2)}',
+                                  '${tx.isCredit ? '+' : '-'}${_money(tx.amount.abs())}',
                               isNegative: !tx.isCredit,
                               scale: scale,
                               textScale: textScale,
@@ -507,41 +514,121 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required double scale,
     required double textScale,
   }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12 * scale),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12 * scale),
-            decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.grey, size: 24 * scale),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: TextStyles.titleSmall.copyWith(
-                        color: const Color(0xFF1A1A1A),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14 * textScale)),
-                Text(subtitle,
-                    style: TextStyles.bodySmall.copyWith(
-                        color: const Color(0xFF888888), fontSize: 11 * textScale)),
-              ],
+    return InkWell(
+      onTap: () => _showTransactionDetail(
+        icon: icon,
+        title: title,
+        subtitle: subtitle,
+        amount: amount,
+        isNegative: isNegative,
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12 * scale),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12 * scale),
+              decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+              child: Icon(icon, color: Colors.grey, size: 24 * scale),
             ),
-          ),
-          Text(amount,
-              style: TextStyles.bodyLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14 * textScale,
-                  color: isNegative
-                      ? const Color(0xFF1A1A1A)
-                      : const Color(0xFFCD853F))),
-          const SizedBox(width: 4),
-          Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20 * scale),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: TextStyles.titleSmall.copyWith(
+                          color: const Color(0xFF1A1A1A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14 * textScale)),
+                  Text(subtitle,
+                      style: TextStyles.bodySmall.copyWith(
+                          color: const Color(0xFF888888), fontSize: 11 * textScale)),
+                ],
+              ),
+            ),
+            Text(amount,
+                style: TextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14 * textScale,
+                    color: isNegative
+                        ? const Color(0xFF1A1A1A)
+                        : const Color(0xFF10B981))),
+            const SizedBox(width: 4),
+            Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20 * scale),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTransactionDetail({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String amount,
+    required bool isNegative,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0E0E0),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+              child: Icon(icon, color: Colors.white, size: 28),
+            ),
+            const SizedBox(height: 16),
+            Text(title,
+                style: TextStyles.titleMedium.copyWith(
+                    color: const Color(0xFF1A1A1A), fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(subtitle,
+                style: TextStyles.bodySmall.copyWith(color: const Color(0xFF888888))),
+            const SizedBox(height: 20),
+            Text(amount,
+                style: TextStyles.displaySmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32,
+                    color: isNegative
+                        ? const Color(0xFF1A1A1A)
+                        : const Color(0xFF10B981))),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Color(0xFFEEEEEE)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text('Close',
+                    style: TextStyles.bodyMedium.copyWith(
+                        color: const Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -549,76 +636,68 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
   Widget _buildOffersSection(double scale, double textScale) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Icon(Icons.card_giftcard, color: const Color(0xFFB8860B),
-                  size: 20 * scale),
-              const SizedBox(width: 8),
-              Text('Offers For You',
-                  style: TextStyles.titleMedium.copyWith(
-                      color: const Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16 * textScale)),
-              const Spacer(),
-              TextButton(
-                onPressed: () {},
-                child: Text('View All',
-                    style: TextStyles.labelLarge.copyWith(
-                        color: const Color(0xFFB8860B),
-                        fontSize: 12 * textScale)),
-              ),
-            ],
-          ),
+        SectionHeader(
+          title: 'Offers For You',
+          actionText: 'View All',
+          onActionPressed: () {},
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
-            padding: EdgeInsets.all(16 * scale),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => _showTransactionDetail(
+              icon: Icons.percent,
+              title: 'Cashback Boost',
+              subtitle: 'Get 5% cashback on dining',
+              amount: '5%',
+              isNegative: false,
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(12 * scale),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFCD853F),
-                    borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: EdgeInsets.all(16 * scale),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  child: Icon(Icons.percent, color: Colors.white,
-                      size: 24 * scale),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Cashback Boost',
-                          style: TextStyles.titleSmall.copyWith(
-                              color: const Color(0xFF1A1A1A),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14 * textScale)),
-                      Text('Get 5% cashback on dining',
-                          style: TextStyles.bodySmall.copyWith(
-                              color: const Color(0xFF888888),
-                              fontSize: 11 * textScale)),
-                    ],
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12 * scale),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCD853F),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(Icons.percent, color: Colors.white,
+                        size: 24 * scale),
                   ),
-                ),
-                Icon(Icons.chevron_right, size: 18 * scale,
-                    color: const Color(0xFFCCCCCC)),
-              ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Cashback Boost',
+                            style: TextStyles.titleSmall.copyWith(
+                                color: const Color(0xFF1A1A1A),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14 * textScale)),
+                        Text('Get 5% cashback on dining',
+                            style: TextStyles.bodySmall.copyWith(
+                                color: const Color(0xFF888888),
+                                fontSize: 11 * textScale)),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, size: 18 * scale,
+                      color: const Color(0xFFCCCCCC)),
+                ],
+              ),
             ),
           ),
         ),
@@ -696,7 +775,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                         style: TextStyles.bodySmall.copyWith(
                             color: const Color(0xFF888888),
                             fontSize: 12 * textScale)),
-                    Text('\$${total.toStringAsFixed(0)}',
+                    Text(_moneyWhole(total),
                         style: TextStyles.titleMedium.copyWith(
                             color: const Color(0xFF1A1A1A),
                             fontWeight: FontWeight.bold,
@@ -707,8 +786,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                 // Category bars
                 ...List.generate(math.min(values.length, 5), (i) {
                   final pct = values[i] / maxVal;
-                  final hue = (i * 40.0) % 360;
-                  final barColor = HSLColor.fromAHSL(1, hue, 0.55, 0.52).toColor();
+                  const barColor = Color(0xFFCD853F);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
@@ -735,7 +813,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                                           color: const Color(0xFF333333),
                                           fontSize: 12 * textScale,
                                           fontWeight: FontWeight.w500)),
-                                  Text('\$${values[i].toStringAsFixed(0)}',
+                                  Text(_moneyWhole(values[i]),
                                       style: TextStyles.bodySmall.copyWith(
                                           color: const Color(0xFF1A1A1A),
                                           fontWeight: FontWeight.w600,
@@ -769,11 +847,11 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
 
   Widget _buildNetWorthSection(double scale, double textScale, double balance) {
     final assets = [
-      _AssetTile('Cash & Bank', '\$${(balance * 0.62).toStringAsFixed(0)}',
+      _AssetTile('Cash & Bank', _moneyWhole(balance * 0.62),
           '+2.1%', true, Icons.account_balance_outlined, const Color(0xFF0EA5E9)),
-      _AssetTile('Crypto', '\$${(balance * 0.25).toStringAsFixed(0)}',
+      _AssetTile('Crypto', _moneyWhole(balance * 0.25),
           '+8.4%', true, Icons.currency_bitcoin, const Color(0xFFF59E0B)),
-      _AssetTile('Investments', '\$${(balance * 0.13).toStringAsFixed(0)}',
+      _AssetTile('Investments', _moneyWhole(balance * 0.13),
           '-0.3%', false, Icons.trending_up_outlined, const Color(0xFF8B5CF6)),
     ];
 
@@ -790,7 +868,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                       fontWeight: FontWeight.bold,
                       fontSize: 16 * textScale)),
               const Spacer(),
-              Text('\$${balance.toStringAsFixed(0)}',
+              Text(_moneyWhole(balance),
                   style: TextStyles.titleMedium.copyWith(
                       color: const Color(0xFF1A1A1A),
                       fontWeight: FontWeight.bold,

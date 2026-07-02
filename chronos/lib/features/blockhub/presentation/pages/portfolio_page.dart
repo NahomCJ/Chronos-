@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../domain/entities/blockhub_entities.dart';
 import '../bloc/portfolio/portfolio_bloc.dart';
 import '../bloc/portfolio/portfolio_event.dart';
 import '../bloc/portfolio/portfolio_state.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class PortfolioPage extends StatefulWidget {
   const PortfolioPage({super.key});
@@ -153,7 +157,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
   Widget _buildTotalValueSection(bool isSmallScreen, double? totalValue) {
     final displayValue = totalValue != null
-        ? '\$${totalValue.toStringAsFixed(2)}'
+        ? _money(totalValue)
         : '\$-';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),

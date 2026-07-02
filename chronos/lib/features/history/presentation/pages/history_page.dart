@@ -268,7 +268,10 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildItem(_HistoryItem item) {
-    return Container(
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => _showDetail(item),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -328,6 +331,76 @@ class _HistoryPageState extends State<HistoryPage> {
             ],
           ),
         ],
+      ),
+      ),
+    );
+  }
+
+  void _showDetail(_HistoryItem item) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0E0E0),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(color: item.iconBg, shape: BoxShape.circle),
+              child: Icon(item.icon, color: Colors.white, size: 26),
+            ),
+            const SizedBox(height: 16),
+            Text(item.title,
+                style: TextStyles.titleMedium.copyWith(
+                    color: const Color(0xFF1A1A1A), fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text(item.subtitle,
+                style: TextStyles.bodySmall.copyWith(color: const Color(0xFF888888))),
+            if (item.detail != null) ...[
+              const SizedBox(height: 2),
+              Text(item.detail!,
+                  style: TextStyles.bodySmall.copyWith(color: const Color(0xFF999999))),
+            ],
+            const SizedBox(height: 20),
+            Text(item.amount,
+                style: TextStyles.displaySmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32,
+                    color: item.isPositive ? const Color(0xFF10B981) : const Color(0xFF1A1A1A))),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Color(0xFFEEEEEE)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text('Close',
+                    style: TextStyles.bodyMedium.copyWith(
+                        color: const Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

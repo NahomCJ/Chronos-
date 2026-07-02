@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class BillsManagementPage extends StatefulWidget {
   const BillsManagementPage({super.key});
@@ -173,7 +177,7 @@ class _BillsManagementPageState extends State<BillsManagementPage>
                       style: TextStyle(
                           color: _textSecondary,
                           fontSize: 12)),
-                  Text('\$${_totalMonthly.toStringAsFixed(0)}',
+                  Text(_moneyWhole(_totalMonthly),
                       style: const TextStyle(
                           color: _textPrimary,
                           fontSize: 28,

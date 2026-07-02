@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class BudgetIntelligencePage extends StatefulWidget {
   const BudgetIntelligencePage({super.key});
@@ -198,7 +202,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                       style: TextStyle(
                           color: _textSecondary,
                           fontSize: 12)),
-                  Text('\$${_totalSpent.toStringAsFixed(0)}',
+                  Text(_moneyWhole(_totalSpent),
                       style: const TextStyle(
                           color: _textPrimary,
                           fontSize: 30,
@@ -213,7 +217,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                       style: TextStyle(
                           color: _textSubtle,
                           fontSize: 11)),
-                  Text('\$${_totalBudget.toStringAsFixed(0)}',
+                  Text(_moneyWhole(_totalBudget),
                       style: const TextStyle(
                           color: _textPrimary,
                           fontSize: 22,
@@ -238,8 +242,8 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
             children: [
               Text(
                 over
-                    ? 'Over budget by \$${(_totalSpent - _totalBudget).toStringAsFixed(0)}'
-                    : '\$${(_totalBudget - _totalSpent).toStringAsFixed(0)} remaining',
+                    ? 'Over budget by ${_moneyWhole(_totalSpent - _totalBudget)}'
+                    : '${_moneyWhole(_totalBudget - _totalSpent)} remaining',
                 style: TextStyle(
                     color: over ? _red : _green,
                     fontSize: 12,
@@ -384,12 +388,12 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
                               fontSize: 13,
                               fontWeight: FontWeight.w500)),
                     ),
-                    Text('\$${c.spent.toStringAsFixed(0)}',
+                    Text(_moneyWhole(c.spent),
                         style: TextStyle(
                             color: over ? _red : _textPrimary,
                             fontSize: 13,
                             fontWeight: FontWeight.w700)),
-                    Text(' / \$${c.budget.toStringAsFixed(0)}',
+                    Text(' / ${_moneyWhole(c.budget)}',
                         style: const TextStyle(
                             color: _textSecondary,
                             fontSize: 11)),
