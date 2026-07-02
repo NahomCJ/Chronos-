@@ -323,7 +323,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 style: TextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
-                  color: item.isPositive ? const Color(0xFF10B981) : const Color(0xFF1A1A1A),
+                  color: const Color(0xFF1A1A1A),
                 ),
               ),
               const SizedBox(height: 4),
@@ -381,7 +381,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 style: TextStyles.displaySmall.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 32,
-                    color: item.isPositive ? const Color(0xFF10B981) : const Color(0xFF1A1A1A))),
+                    color: const Color(0xFF1A1A1A))),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,

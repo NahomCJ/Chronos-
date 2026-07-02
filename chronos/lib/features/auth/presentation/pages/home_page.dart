@@ -437,7 +437,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                               subtitle: _formatDate(tx.createdAt),
                               amount:
                                   '${tx.isCredit ? '+' : '-'}${_money(tx.amount.abs())}',
-                              isNegative: !tx.isCredit,
                               scale: scale,
                               textScale: textScale,
                             ))
@@ -462,7 +461,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                 title: i.$1,
                 subtitle: i.$2,
                 amount: i.$3,
-                isNegative: i.$4,
                 scale: scale,
                 textScale: textScale,
               ))
@@ -510,18 +508,11 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required String title,
     required String subtitle,
     required String amount,
-    required bool isNegative,
     required double scale,
     required double textScale,
   }) {
     return InkWell(
-      onTap: () => _showTransactionDetail(
-        icon: icon,
-        title: title,
-        subtitle: subtitle,
-        amount: amount,
-        isNegative: isNegative,
-      ),
+      onTap: () => context.push(RouteConstants.history.toPath),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12 * scale),
         child: Row(
@@ -551,9 +542,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                 style: TextStyles.bodyLarge.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 14 * textScale,
-                    color: isNegative
-                        ? const Color(0xFF1A1A1A)
-                        : const Color(0xFF10B981))),
+                    color: const Color(0xFF1A1A1A))),
             const SizedBox(width: 4),
             Icon(Icons.chevron_right, color: const Color(0xFFCCCCCC), size: 20 * scale),
           ],
@@ -567,7 +556,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required String title,
     required String subtitle,
     required String amount,
-    required bool isNegative,
   }) {
     showModalBottomSheet(
       context: context,
@@ -607,9 +595,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                 style: TextStyles.displaySmall.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 32,
-                    color: isNegative
-                        ? const Color(0xFF1A1A1A)
-                        : const Color(0xFF10B981))),
+                    color: const Color(0xFF1A1A1A))),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -650,7 +636,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               title: 'Cashback Boost',
               subtitle: 'Get 5% cashback on dining',
               amount: '5%',
-              isNegative: false,
             ),
             child: Container(
               padding: EdgeInsets.all(16 * scale),
@@ -668,16 +653,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               ),
               child: Row(
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(12 * scale),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCD853F),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(Icons.percent, color: Colors.white,
-                        size: 24 * scale),
-                  ),
-                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -738,12 +713,11 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               Text('Spending Analysis',
                   style: TextStyles.titleMedium.copyWith(
                       color: const Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16 * textScale)),
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               Text('This month',
                   style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF999999),
+                      color: const Color(0xFF888888),
                       fontSize: 11 * textScale)),
             ],
           ),
@@ -751,20 +725,10 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
+          child: FluidGlass.light(
+            borderRadius: BorderRadius.circular(20),
+            blur: 16,
             padding: EdgeInsets.all(20 * scale),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
             child: Column(
               children: [
                 // Total row
@@ -865,8 +829,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               Text('Net Worth',
                   style: TextStyles.titleMedium.copyWith(
                       color: const Color(0xFF1A1A1A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16 * textScale)),
+                      fontWeight: FontWeight.bold)),
               const Spacer(),
               Text(_moneyWhole(balance),
                   style: TextStyles.titleMedium.copyWith(

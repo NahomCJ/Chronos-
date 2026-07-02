@@ -228,9 +228,9 @@ class _ExchangePageState extends State<ExchangePage> {
                                           });
                                         },
                                         child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          margin: const EdgeInsets.symmetric(vertical: 3),
+                                          width: 26,
+                                          height: 26,
+                                          margin: const EdgeInsets.symmetric(vertical: 1),
                                           decoration: BoxDecoration(
                                             color: Colors.white.withValues(alpha: 0.10),
                                             shape: BoxShape.circle,
@@ -390,7 +390,7 @@ class _ExchangePageState extends State<ExchangePage> {
     String? previewAmount,
   }) {
     return SizedBox(
-      height: 46,
+      height: 40,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         child: Row(
