@@ -423,7 +423,14 @@ class _MethodCardState extends State<_MethodCard> {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white,
+                          widget.method.color.withValues(alpha: 0.25),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(widget.method.icon,

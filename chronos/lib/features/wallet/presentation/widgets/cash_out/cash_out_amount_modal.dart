@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'cash_out_confirmation_modal.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class CashOutAmountModal extends StatefulWidget {
   final String method;
@@ -104,7 +108,7 @@ class _CashOutAmountModalState extends State<CashOutAmountModal> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${_availableBalance.toStringAsFixed(2)}',
+                    _money(_availableBalance),
                     style: TextStyles.headlineMedium.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

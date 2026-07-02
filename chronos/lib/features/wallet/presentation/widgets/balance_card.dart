@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/text_theme.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class BalanceCard extends StatelessWidget {
   final double balance;
@@ -46,7 +50,7 @@ class BalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '\$${balance.toStringAsFixed(2)}',
+                  _money(balance),
                   style: TextStyles.headlineLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
