@@ -1,5 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class TaxIntelligencePage extends StatefulWidget {
   const TaxIntelligencePage({super.key});
@@ -306,7 +310,7 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                                             color: _textSecondary,
                                             fontSize: 11)),
                                     Text(
-                                        '\$${e.amount.toStringAsFixed(0)}',
+                                        _moneyWhole(e.amount),
                                         style: const TextStyle(
                                             color: _textPrimary,
                                             fontSize: 12,
@@ -371,7 +375,7 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                               fontSize: 13,
                               fontWeight: FontWeight.w500)),
                     ),
-                    Text('\$${e.amount.toStringAsFixed(0)}',
+                    Text(_moneyWhole(e.amount),
                         style: const TextStyle(
                             color: _textPrimary,
                             fontSize: 14,
@@ -616,7 +620,7 @@ class _PieChartPainter extends CustomPainter {
       text: TextSpan(
         children: [
           TextSpan(
-            text: '\$${total.toStringAsFixed(0)}\n',
+            text: '${_moneyWhole(total)}\n',
             style: const TextStyle(
                 color: Color(0xFF1A1A2E),
                 fontSize: 14,

@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/services/pexels_service.dart';
 import '../../domain/entities/spending_summary.dart';
 import '../bloc/spending_bloc.dart';
 import '../bloc/spending_event.dart';
 import '../bloc/spending_state.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class TickPayAiPage extends StatefulWidget {
   const TickPayAiPage({super.key});
@@ -427,7 +433,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   }
 
   Widget _buildChrisInsight(SpendingSummary? summary) {
-    final totalSpent = summary != null ? '\$${summary.totalSpent.toStringAsFixed(0)}' : '\$1,240';
+    final totalSpent = summary != null ? _moneyWhole(summary.totalSpent) : '\$1,240';
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -691,7 +697,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
               ),
             ])),
             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Text('\$${totalAmt.toStringAsFixed(2)}', style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w700)),
+              Text(_money(totalAmt), style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w700)),
               const Text('total', style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 9)),
             ]),
           ]),

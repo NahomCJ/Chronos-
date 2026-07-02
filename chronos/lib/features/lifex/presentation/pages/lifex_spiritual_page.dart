@@ -2,9 +2,15 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../data/lifex_service.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class LifeXSpiritualPage extends StatefulWidget {
   const LifeXSpiritualPage({super.key});
@@ -774,7 +780,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                           height: 16,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     else
-                      Text('\$${cartTotal.toStringAsFixed(2)}',
+                      Text(_money(cartTotal),
                           style: const TextStyle(
                               color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
                   ],
@@ -1177,7 +1183,7 @@ class _CampaignCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('\$${campaign.raised.toStringAsFixed(0)} raised of \$${campaign.goal.toStringAsFixed(0)}',
+                    Text('${_moneyWhole(campaign.raised)} raised of ${_moneyWhole(campaign.goal)}',
                         style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
                     GestureDetector(
                       onTap: busy ? null : onContribute,

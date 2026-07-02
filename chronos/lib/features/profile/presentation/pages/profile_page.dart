@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/fluid_glass.dart';
 import '../../../../core/router/route_constants.dart';
@@ -13,6 +14,9 @@ import '../../../../features/auth/presentation/bloc/auth/auth_state.dart';
 import '../bloc/profile_cubit.dart';
 import '../bloc/profile_state.dart';
 import '../../data/datasources/profile_remote_datasource.dart';
+
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -353,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildStatsRow(UserProfileModel? user) {
-    final balance = user != null ? '\$${user.balance.toStringAsFixed(0)}' : '---';
+    final balance = user != null ? _moneyWhole(user.balance) : '---';
     final txCount = user?.transactionCount.toString() ?? '---';
     final since = user?.memberSince;
     final sinceStr = since != null ? '${_mon(since.month)} ${since.year}' : '---';

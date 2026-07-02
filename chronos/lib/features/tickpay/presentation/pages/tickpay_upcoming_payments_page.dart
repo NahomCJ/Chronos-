@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
+import '../utils/tickpay_formatters.dart';
 
 class TickPayUpcomingPaymentsPage extends StatefulWidget {
   const TickPayUpcomingPaymentsPage({super.key});
@@ -243,7 +244,7 @@ class _TickPayUpcomingPaymentsPageState
                           fontSize: 13)),
                   const SizedBox(height: 4),
                   Text(
-                    total > 0 ? '\$${total.toStringAsFixed(2)}' : '\$0.00',
+                    total > 0 ? TickpayFormatters.moneyPrecise(total) : '\$0.00',
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 30,

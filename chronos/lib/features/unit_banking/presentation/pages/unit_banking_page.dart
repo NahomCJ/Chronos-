@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
@@ -9,6 +10,9 @@ import '../../domain/entities/unit_banking_entities.dart';
 import '../bloc/unit_banking_bloc.dart';
 import '../bloc/unit_banking_event.dart';
 import '../bloc/unit_banking_state.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
 
 class UnitBankingPage extends StatelessWidget {
   const UnitBankingPage({super.key});
@@ -198,7 +202,7 @@ class _UnitBankingView extends StatelessWidget {
               style: TextStyles.bodyMedium.copyWith(color: Colors.white70)),
           const SizedBox(height: 8),
           Text(
-            '\$${summary.totalBalance.toStringAsFixed(2)}',
+            _money(summary.totalBalance),
             style: TextStyles.headlineLarge.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -284,7 +288,7 @@ class _UnitBankingView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('\$${account.balance.toStringAsFixed(2)}',
+              Text(_money(account.balance),
                   style: TextStyles.bodyMedium.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w600)),
               Container(
@@ -434,7 +438,7 @@ class _UnitBankingView extends StatelessWidget {
               ],
             ),
           ),
-          Text('\$${transfer.amount.toStringAsFixed(2)}',
+          Text(_money(transfer.amount),
               style: TextStyles.bodyMedium
                   .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
         ],

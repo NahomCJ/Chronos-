@@ -1,9 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../data/lifex_service.dart';
+
+final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
+final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
+String _money(double value) => '\$${_moneyFormat.format(value)}';
+String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
 
 class LifeXHealthPage extends StatefulWidget {
   const LifeXHealthPage({super.key});
@@ -338,9 +344,9 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 ],
               ),
               const SizedBox(height: 14),
-              Text('\$${balance.toStringAsFixed(2)}',
+              Text(_money(balance),
                   style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800)),
-              Text('\$${contributions.toStringAsFixed(2)} contributed all-time',
+              Text('${_money(contributions)} contributed all-time',
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
               const SizedBox(height: 16),
               Row(
@@ -656,7 +662,7 @@ class _InsurancePlanCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('\$${plan.monthlyPremium.toStringAsFixed(0)}/mo',
+              Text('${_moneyWhole(plan.monthlyPremium)}/mo',
                   style: TextStyle(color: plan.color, fontSize: 14, fontWeight: FontWeight.w800)),
               GestureDetector(
                 onTap: (busy || enrolled) ? null : onEnroll,
