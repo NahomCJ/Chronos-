@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../../../core/theme/text_theme.dart';
 import '../../domain/entities/blockhub_entities.dart';
 import '../bloc/portfolio/portfolio_bloc.dart';
