@@ -3,7 +3,7 @@
 > **Rule**: Update this file in every commit that adds, modifies, or removes a feature, page, route, or service.
 > Status tags: `[LIVE]` — built and wired | `[STUB]` — UI exists, no real data | `[PLANNED]` — not yet built
 
-Last updated: 2026-07-01 (updated: Exchange flow collapsed to a single page — removed duplicate Enter Amount/Review Exchange steps, CTA renamed "Exchange Now"; Chris voice orb wave amplitude increased)
+Last updated: 2026-07-02 (updated: Chris FAB wake-word flow now handled inline in the FAB — no chat sheet pops up; waves enlarged/widened; ~15 dead "View All" buttons wired to real destinations; TickPay Shop/AI Search merged into one entry, search+category results now populate Featured Deals instead of a header strip, checkout sheet buttons shrunk and recolored from purple to dark/white, Order History action buttons shrunk, Upcoming Payments calendar now uses FluidGlass.light and Due Today card redesigned as a 2-column FluidGlass.dark grid in red, Product Detail page's rogue dark photo background removed (was making its dark text illegible), TickPay dashboard's duplicate/redundant background darkness layer removed)
 
 ---
 
@@ -295,6 +295,15 @@ TickPay is a BNPL (Buy Now Pay Later) + credit platform with AI-powered product 
 | Order Confirmed | `/tickpay/order-confirmed` | `tickpay_order_confirmed_page.dart` | [LIVE] |
 | Chris Shopping | — | `chris_shopping_page.dart` | [LIVE] |
 
+**Content notes:**
+- Dashboard quick actions: the separate "AI Search" tile was removed — it routed to the same `tickpayDiscover` page as "Shop", so they're now one entry.
+- Discover page: search and category taps no longer show results in a strip inside the dark header — they replace the "Featured Deals" section content in the white body instead (title becomes `Results for "<query>"`, with a Clear action). Tapping a search result opens the installment-picker checkout sheet directly (`_selectProduct`) instead of navigating to Product Detail.
+- Discover's checkout sheet (`_CheckoutSheet`): installment buttons and the confirm button are smaller, and purple (`#8B5CF6`) was replaced with dark (`#1A1A2E`)/white throughout.
+- Order History: "View Receipt"/"Buy Again" buttons had `minimumSize: Size.zero` + `tapTargetSize: MaterialTapTargetSize.shrinkWrap` added — Material buttons enforce a 48dp minimum tap target regardless of padding, which was why they looked oversized despite already-small padding/font.
+- Upcoming Payments: calendar card now uses `FluidGlass.light` instead of a plain white `Container`. "Due Today" card rebuilt as a 2-column `FluidGlass.dark` grid (amount · payment count) in red (`#EF4444`) instead of the purple gradient block.
+- Product Detail page had a full-page dark photo background (the same hardcoded Pexels-image pattern used elsewhere in the app) sitting underneath content designed for a solid white page with dark text — removed it; the page was always meant to be plain white.
+- Dashboard (`tickpay_dashboard_page.dart`) had two full-page background layers stacked (a `0.20`-alpha one, then a redundant `0.52`-alpha one painted on top) — removed the redundant second layer, which was the "too dark behind the card" difference vs. the main Home page.
+
 ---
 
 ## LifeX Feature
@@ -376,7 +385,7 @@ Accessible via the history icon (top-right of home hero section, replaces bell i
 |-----------|------|--------|-------|
 | Search Page | `lib/core/pages/search_page.dart` | [LIVE] | Neutral dark theme `#08080F`, white/subtle borders — no purple |
 | Bottom Nav Bar | `lib/core/widgets/` | [LIVE] | 5 tabs, persistent across shell routes |
-| ChrisFAB | `lib/core/widgets/chris_home_fab.dart` | [LIVE] | Dark amber orb FAB; tap → gradient-border text sheet with suggestion chips; "Hey Chris" → Siri-like voice overlay with pulsing orb (amber=listening, teal=thinking, indigo=speaking); triple-open wake word bug fixed via `_wakeWordTriggered` guard |
+| ChrisFAB | `lib/core/widgets/chris_home_fab.dart` | [LIVE] | `_StrandsPainter` renders 4 animated wave strands (purple/cyan) inside the FAB circle, with a teal pulse ring while the wake-word mic is listening; tap → text/voice bottom sheet. "Hey Chris" now stays fully inline — it does **not** open the sheet: strands speed up (`_respondingMode`) while `_listenForCommand()` captures the follow-up utterance via STT, then `ChrisActionService` resolves and executes it directly (navigate or `VoiceConfirmationSheet`), falling back to full chat only if unresolved. Wave amplitude/spread increased for a bigger, wider look; triple-open wake word bug fixed via `_wakeWordTriggered` guard. |
 | Chris Action Service | `lib/core/services/chris_action_service.dart` | [LIVE] | 8 transactional actions (exchange/transfer/balance/BNPL/deposit/buy-sell-send crypto) + 21 navigation intents covering every app page |
 | Pexels Service | `lib/core/services/pexels_service.dart` | [LIVE] | Fetches Pexels video/photo URLs |
 | Token Storage Service | `lib/features/auth/data/services/token_storage_service.dart` | [LIVE] | JWT persistence |

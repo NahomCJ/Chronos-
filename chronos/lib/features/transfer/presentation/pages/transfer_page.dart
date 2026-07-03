@@ -298,10 +298,16 @@ class _TransferPageState extends State<TransferPage>
                       color: Colors.white,
                       fontSize: 13,
                       fontWeight: FontWeight.w600)),
-              Text('See All',
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.45),
-                      fontSize: 11)),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const TransferContactsPage()),
+                ),
+                child: Text('See All',
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        fontSize: 11)),
+              ),
             ],
           ),
         ),

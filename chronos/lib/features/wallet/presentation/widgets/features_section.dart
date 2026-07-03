@@ -24,7 +24,10 @@ class FeaturesSection extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WalletAnalyticsPage()),
+              ),
               child: Text(
                 'See All',
                 style: TextStyles.bodyMedium.copyWith(

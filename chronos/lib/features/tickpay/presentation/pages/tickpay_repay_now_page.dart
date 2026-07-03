@@ -341,9 +341,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                     color: Color(0xFF1A1A1A),
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
-            const Text('View All',
-                style: TextStyle(
-                    color: Color(0xFF7C3AED), fontSize: 13)),
+            GestureDetector(
+              onTap: () => context.push(RouteConstants.tickpayLinkWallets.toPath),
+              child: const Text('View All',
+                  style: TextStyle(
+                      color: Color(0xFF7C3AED), fontSize: 13)),
+            ),
           ],
         ),
         const SizedBox(height: 12),

@@ -292,7 +292,9 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF1A0A2E),
-                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     side:
                         const BorderSide(color: Color(0xFFCCCCCC)),
                     shape: RoundedRectangleBorder(
@@ -311,7 +313,9 @@ class _TickPayOrderHistoryPageState extends State<TickPayOrderHistoryPage> {
                         ? const Color(0xFF3B82F6)
                         : const Color(0xFF1A0A2E),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                     elevation: 0,

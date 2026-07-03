@@ -625,7 +625,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         SectionHeader(
           title: 'Offers For You',
           actionText: 'View All',
-          onActionPressed: () {},
+          onActionPressed: () => context.push(RouteConstants.tickpayRewards.toPath),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

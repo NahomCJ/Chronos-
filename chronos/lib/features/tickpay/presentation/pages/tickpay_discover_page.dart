@@ -200,11 +200,8 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                       _buildTopBar(context),
                       _buildSearchBar(context),
                       const SizedBox(height: 12),
-                      // AI results preview strip inside the dark header
-                      if (_isAiMode) _buildAiPreviewStrip(),
-                      if (_isAiMode) const SizedBox(height: 12),
-                      if (!_isAiMode) _buildCategoriesRow(context),
-                      if (!_isAiMode) const SizedBox(height: 16),
+                      _buildCategoriesRow(context),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -350,107 +347,6 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
     );
   }
 
-  Widget _buildAiPreviewStrip() {
-    if (_searching) {
-      return const SizedBox(
-        height: 120,
-        child: Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
-      );
-    }
-    if (_aiResults.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Text(
-          'No results for "${_ctrl.text}" — try another search',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13),
-        ),
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-          child: Row(
-            children: [
-              const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 14),
-              const SizedBox(width: 6),
-              Text(
-                '${_aiResults.length} results — best prices for "${_ctrl.text}"',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.85),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 130,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: _aiResults.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) => _aiPreviewCard(_aiResults[i]),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _aiPreviewCard(TProduct product) {
-    return GestureDetector(
-      onTap: () => _selectProduct(product),
-      child: Container(
-        width: 110,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-              child: Image.network(
-                product.imageUrl,
-                width: 110,
-                height: 70,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 110, height: 70,
-                  color: Colors.white.withValues(alpha: 0.08),
-                  child: const Icon(Icons.image, color: Colors.white38, size: 30),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(7, 5, 7, 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(product.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 2),
-                  Text(product.price,
-                      style: const TextStyle(color: Color(0xFFFFD700), fontSize: 11, fontWeight: FontWeight.bold)),
-                  if (product.bnpl.isNotEmpty)
-                    Text(product.bnpl,
-                        style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 9)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildCategoriesRow(BuildContext context) {
     return SizedBox(
       height: 90,
@@ -537,6 +433,9 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
   }
 
   Widget _buildFeaturedDeals(BuildContext context) {
+    final title = !_isAiMode
+        ? 'Featured Deals'
+        : (_ctrl.text.isNotEmpty ? 'Results for "${_ctrl.text}"' : 'Search Results');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -545,32 +444,63 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Featured Deals',
-                  style: TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
-              GestureDetector(
-                onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
-                child: const Row(children: [
-                  Text('View All', style: TextStyle(color: Color(0xFFFF2D87), fontSize: 13)),
-                  Icon(Icons.arrow_forward, color: Color(0xFFFF2D87), size: 14),
-                ]),
+              Expanded(
+                child: Text(title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
               ),
+              if (_isAiMode)
+                GestureDetector(
+                  onTap: _clearSearch,
+                  child: const Row(children: [
+                    Icon(Icons.close_rounded, color: Color(0xFFFF2D87), size: 14),
+                    SizedBox(width: 4),
+                    Text('Clear', style: TextStyle(color: Color(0xFFFF2D87), fontSize: 13)),
+                  ]),
+                )
+              else
+                GestureDetector(
+                  onTap: () => context.push(RouteConstants.tickpaySearch.toPath),
+                  child: const Row(children: [
+                    Text('View All', style: TextStyle(color: Color(0xFFFF2D87), fontSize: 13)),
+                    Icon(Icons.arrow_forward, color: Color(0xFFFF2D87), size: 14),
+                  ]),
+                ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        SizedBox(
-          height: 210,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
+        if (_isAiMode && _searching)
+          const SizedBox(
+            height: 210,
+            child: Center(child: CircularProgressIndicator(color: Color(0xFFFF2D87), strokeWidth: 2)),
+          )
+        else if (_isAiMode && _aiResults.isEmpty)
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemCount: _electronicsProducts.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, i) {
-              final p = _electronicsProducts[i];
-              return _productCard(context, p.$1, p.$2, p.$3, p.$4);
-            },
+            child: Text('No results for "${_ctrl.text}" — try another search',
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+          )
+        else
+          SizedBox(
+            height: 210,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: _isAiMode ? _aiResults.length : _electronicsProducts.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (context, i) {
+                if (_isAiMode) {
+                  final p = _aiResults[i];
+                  return _productCard(context, p.name, p.price, p.imageUrl, p.discount,
+                      onTap: () => _selectProduct(p));
+                }
+                final p = _electronicsProducts[i];
+                return _productCard(context, p.$1, p.$2, p.$3, p.$4);
+              },
+            ),
           ),
-        ),
       ],
     );
   }
@@ -678,9 +608,9 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
   }
 
   Widget _productCard(BuildContext context, String name, String price,
-      String asset, double discount) {
+      String asset, double discount, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () => context.push(RouteConstants.tickpayProductDetail.toPath,
+      onTap: onTap ?? () => context.push(RouteConstants.tickpayProductDetail.toPath,
           extra: {'name': name, 'price': price, 'asset': asset}),
       child: Container(
         width: 152,
@@ -888,17 +818,17 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
           Row(
             children: [
               Container(
-                width: 24,
-                height: 24,
+                width: 22,
+                height: 22,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                  color: const Color(0xFF1A1A2E).withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 13),
+                child: const Icon(Icons.auto_awesome, color: Color(0xFF1A1A2E), size: 12),
               ),
               const SizedBox(width: 8),
               const Text('Chris says:',
-                  style: TextStyle(color: Color(0xFF8B5CF6), fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 8),
@@ -909,7 +839,7 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
           const SizedBox(height: 20),
           const Text('Choose your plan:',
               style: TextStyle(color: Color(0xFF555555), fontSize: 13, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Row(
             children: [2, 3, 4, 6].map((n) {
               final selected = _installments == n;
@@ -918,31 +848,28 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                   onTap: () => setState(() => _installments = n),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: selected ? const Color(0xFF8B5CF6) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      color: selected ? const Color(0xFF1A1A2E) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: selected
-                            ? const Color(0xFF8B5CF6)
+                            ? const Color(0xFF1A1A2E)
                             : Colors.grey.shade200,
                       ),
-                      boxShadow: selected
-                          ? [BoxShadow(color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))]
-                          : [],
                     ),
                     child: Column(
                       children: [
                         Text('$n',
                             style: TextStyle(
                                 color: selected ? Colors.white : const Color(0xFF1A1A1A),
-                                fontSize: 18,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold)),
                         Text('payments',
                             style: TextStyle(
                                 color: selected ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF888888),
-                                fontSize: 10)),
+                                fontSize: 9)),
                       ],
                     ),
                   ),
@@ -950,11 +877,11 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+              color: const Color(0xFF1A1A2E).withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -967,8 +894,8 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                     Text(
                       '\$${_perInstallment.toStringAsFixed(2)}',
                       style: const TextStyle(
-                          color: Color(0xFF8B5CF6),
-                          fontSize: 22,
+                          color: Color(0xFF1A1A2E),
+                          fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -981,7 +908,7 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                       widget.product.price,
                       style: const TextStyle(
                           color: Color(0xFF1A1A1A),
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -989,29 +916,22 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
           GestureDetector(
             onTap: () => widget.onConfirm(_installments),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 13),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                color: const Color(0xFF1A1A2E),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: const Text(
                 'Confirm & Checkout',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold),
               ),
             ),

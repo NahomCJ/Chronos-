@@ -641,7 +641,7 @@ class PaymentPlanPage extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () => context.push(RouteConstants.tickpayPaymentHistory.toPath),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white.withValues(alpha: 0.08),
               foregroundColor: Colors.white,
