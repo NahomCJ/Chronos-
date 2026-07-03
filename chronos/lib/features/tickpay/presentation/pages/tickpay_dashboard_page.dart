@@ -108,18 +108,6 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             children: [
               Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
               Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-              // ── Full background ───────────────────────────────────────────
-              Positioned.fill(
-                child: Stack(fit: StackFit.expand, children: [
-                  CachedNetworkImage(
-                    imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(color: const Color(0xFF0A1628)),
-                    errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628)),
-                  ),
-                  Container(color: Colors.black.withValues(alpha: 0.52)),
-                ]),
-              ),
               // ── Content (fully scrollable) ────────────────────────────
               SafeArea(
                 bottom: false,
@@ -526,7 +514,6 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
       (Icons.shopping_bag_outlined, 'Shop', RouteConstants.tickpayDiscover.toPath, false),
-      (Icons.auto_awesome_rounded, 'AI Search', RouteConstants.tickpayDiscover.toPath, true),
       (Icons.payment_outlined, 'Pay', RouteConstants.tickpayRepayNow.toPath, false),
       (Icons.receipt_long_outlined, 'Purchases', RouteConstants.tickpayOrderHistory.toPath, false),
       (Icons.replay_outlined, 'Repayments', RouteConstants.tickpayUpcomingPayments.toPath, false),

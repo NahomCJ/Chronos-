@@ -417,9 +417,12 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 17)),
-            Text('See All',
-                style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+            GestureDetector(
+              onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
+              child: Text('See All',
+                  style: TextStyles.bodySmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+            ),
           ],
         ),
         const SizedBox(height: 14),

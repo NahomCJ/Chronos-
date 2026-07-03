@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../history/presentation/pages/history_page.dart';
 import 'deposit_page.dart';
 import 'deposit_fiat_page.dart';
 import 'withdraw_page.dart';
@@ -87,7 +88,7 @@ class WalletsFundsPage extends StatelessWidget {
                         const SizedBox(height: 20),
                         _buildBlockHubCards(),
                         const SizedBox(height: 20),
-                        _buildRecentActivity(),
+                        _buildRecentActivity(context),
                         const SizedBox(height: 40),
                       ],
                     ),
@@ -648,7 +649,7 @@ class WalletsFundsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
+  Widget _buildRecentActivity(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -656,12 +657,18 @@ class WalletsFundsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildSectionTitle('Recent Activity'),
-            Text(
-              'View All →',
-              style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFF00D4FF),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HistoryPage()),
+              ),
+              child: Text(
+                'View All →',
+                style: TextStyles.bodySmall.copyWith(
+                  color: const Color(0xFF00D4FF),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],

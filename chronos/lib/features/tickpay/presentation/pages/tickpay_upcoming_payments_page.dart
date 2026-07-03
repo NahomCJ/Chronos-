@@ -4,6 +4,7 @@ import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../utils/tickpay_formatters.dart';
+import '../../../../core/widgets/fluid_glass.dart';
 
 class TickPayUpcomingPaymentsPage extends StatefulWidget {
   const TickPayUpcomingPaymentsPage({super.key});
@@ -208,62 +209,84 @@ class _TickPayUpcomingPaymentsPageState
   }
 
   Widget _buildDueTodayCard() {
-    final today = _payments.where((p) => p.status == 'Due Today');
+    final today = _payments.where((p) => p.status == 'Due Today').toList();
     final total = today.fold(0.0, (sum, p) {
       final raw = p.amount.replaceAll(RegExp(r'[^\d.]'), '');
       return sum + (double.tryParse(raw) ?? 0);
     });
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7C3AED), Color(0xFF9F67FF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            )
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Due Today',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 13)),
-                  const SizedBox(height: 4),
-                  Text(
-                    total > 0 ? TickpayFormatters.moneyPrecise(total) : '\$0.00',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+      child: FluidGlass.dark(
+        padding: const EdgeInsets.all(4),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEF4444).withValues(alpha: 0.18),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.event_busy_rounded,
+                                color: Color(0xFFEF4444), size: 14),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('Due Today',
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 13, fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        total > 0 ? TickpayFormatters.moneyPrecise(total) : '\$0.00',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(14),
+              Container(width: 1, color: Colors.white.withValues(alpha: 0.12)),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Payments',
+                          style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.75),
+                              fontSize: 13, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${today.length}',
+                        style: const TextStyle(
+                            color: Color(0xFFEF4444),
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              child: const Icon(Icons.calendar_today,
-                  color: Colors.white, size: 24),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -278,17 +301,8 @@ class _TickPayUpcomingPaymentsPageState
     final isCurrentMonth = _focusedMonth.year == today.year &&
         _focusedMonth.month == today.month;
 
-    return Container(
+    return FluidGlass.light(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 12)
-        ],
-      ),
       child: Column(
         children: [
           Row(

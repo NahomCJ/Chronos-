@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
 
 class TickPayAutoPayPage extends StatefulWidget {
   const TickPayAutoPayPage({super.key});
@@ -204,7 +205,10 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
           children: [
             const Text('Payment Plans',
                 style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.bold)),
-            Text('View All', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+            GestureDetector(
+              onTap: () => context.push(RouteConstants.tickpayActivePlans.toPath),
+              child: Text('View All', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+            ),
           ],
         ),
         const SizedBox(height: 12),

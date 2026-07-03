@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'nft_analytics_page.dart';
 import 'nft_pnl_page.dart';
+import '../nft/nft_collections_page.dart';
 
 class NftPortfolioPage extends StatefulWidget {
   const NftPortfolioPage({super.key});
@@ -343,12 +344,18 @@ class _NftPortfolioPageState extends State<NftPortfolioPage> {
                 fontSize: 17,
               ),
             ),
-            Text(
-              'View All',
-              style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFDC8F4A),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NftCollectionsPage()),
+              ),
+              child: Text(
+                'View All',
+                style: TextStyles.bodySmall.copyWith(
+                  color: const Color(0xFFDC8F4A),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

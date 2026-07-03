@@ -812,12 +812,18 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                 ),
               ],
             ),
-            Text(
-              'View All',
-              style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFB366FF),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NftCollectionsPage()),
+              ),
+              child: Text(
+                'View All',
+                style: TextStyles.bodySmall.copyWith(
+                  color: const Color(0xFFB366FF),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

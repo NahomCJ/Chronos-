@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/router/route_constants.dart';
 import '../../domain/entities/wallet_entity.dart';
 
 final NumberFormat _moneyFormat = NumberFormat('#,##0.00');
@@ -109,7 +111,7 @@ class _RecentTransactionsState extends State<RecentTransactions> {
                 style: TextStyles.titleMedium.copyWith(
                     color: Colors.white, fontWeight: FontWeight.w600)),
             TextButton(
-              onPressed: () {},
+              onPressed: () => context.push(RouteConstants.history.toPath),
               child: Text('See All',
                   style: TextStyles.bodyMedium.copyWith(
                       color: const Color(0xFFB8860B),

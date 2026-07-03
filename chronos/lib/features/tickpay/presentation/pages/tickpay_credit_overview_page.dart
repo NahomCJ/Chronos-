@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/router/route_constants.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 
@@ -43,7 +44,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                       const SizedBox(height: 24),
                       _buildUtilizationCard(account),
                       const SizedBox(height: 24),
-                      _buildRecentActivity(account),
+                      _buildRecentActivity(context, account),
                       const SizedBox(height: 24),
                       _buildActionButtons(context),
                       const SizedBox(height: 40),
@@ -309,7 +310,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity(TickpayAccountLoaded? account) {
+  Widget _buildRecentActivity(BuildContext context, TickpayAccountLoaded? account) {
     final fmt = NumberFormat('#,##0.00');
     final txs = account?.transactions.take(4).toList() ?? [];
     return Column(
@@ -326,9 +327,12 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
-              'View All',
-              style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
+            GestureDetector(
+              onTap: () => context.push(RouteConstants.tickpayPaymentHistory.toPath),
+              child: const Text(
+                'View All',
+                style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
+              ),
             ),
           ],
         ),

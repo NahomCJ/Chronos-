@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/router/route_constants.dart';
 
 class TickPayRewardsPage extends StatelessWidget {
   const TickPayRewardsPage({super.key});
@@ -34,7 +35,7 @@ class TickPayRewardsPage extends StatelessWidget {
                   const SizedBox(height: 28),
                   _buildActiveCampaigns(),
                   const SizedBox(height: 28),
-                  _buildRecentActivity(),
+                  _buildRecentActivity(context),
                   const SizedBox(height: 24),
                   _buildRedeemButton(),
                   const SizedBox(height: 40),
@@ -303,7 +304,7 @@ class TickPayRewardsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
+  Widget _buildRecentActivity(BuildContext context) {
     final items = [
       ('Purchase at Amazon', 'Dec 26', '+125 pts', true),
       ('Cashback Applied', 'Dec 18', '-50 pts', false),
@@ -323,9 +324,12 @@ class TickPayRewardsPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
-              'View All',
-              style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
+            GestureDetector(
+              onTap: () => context.push(RouteConstants.tickpayPaymentHistory.toPath),
+              child: const Text(
+                'View All',
+                style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
+              ),
             ),
           ],
         ),

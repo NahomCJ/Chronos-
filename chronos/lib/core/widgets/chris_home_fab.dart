@@ -91,10 +91,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
             HapticFeedback.mediumImpact();
             if (mounted) {
               setState(() => _respondingMode = true);
-              Future.delayed(const Duration(seconds: 3), () {
-                if (mounted) setState(() => _respondingMode = false);
-              });
-              _openSheet();
+              _listenForCommand();
             }
           }
         },
@@ -107,6 +104,56 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
       );
     } catch (_) {
       if (mounted) setState(() => _wakeActive = false);
+    }
+  }
+
+  // After "Hey Chris" is heard, capture the follow-up command directly —
+  // the strands keep animating fast (_respondingMode) as the only feedback,
+  // no sheet or overlay pops up. Resolved intents execute or show the
+  // confirmation sheet; anything unresolved falls back to full chat.
+  Future<void> _listenForCommand() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+    try {
+      await _speech.listen(
+        onResult: (r) async {
+          if (!r.finalResult) return;
+          final text = r.recognizedWords.trim();
+          await _speech.stop();
+          if (text.isEmpty) {
+            if (mounted) setState(() => _respondingMode = false);
+            return;
+          }
+          await _handleCommand(text);
+        },
+        listenOptions: stt.SpeechListenOptions(
+          cancelOnError: false,
+          listenMode: stt.ListenMode.dictation,
+          listenFor: const Duration(seconds: 15),
+          pauseFor: const Duration(seconds: 3),
+        ),
+      );
+    } catch (_) {
+      if (mounted) setState(() => _respondingMode = false);
+    }
+  }
+
+  Future<void> _handleCommand(String text) async {
+    final intent = ChrisActionService.parseIntent(text);
+    ChrisActionPlan? plan;
+    if (intent.type != ChrisActionType.unknown) {
+      plan = await ChrisActionService.buildPlan(intent);
+    }
+    if (!mounted) return;
+    setState(() => _respondingMode = false);
+    if (plan != null) {
+      if (plan.navigateTo != null) {
+        context.push(plan.navigateTo!);
+      } else {
+        await VoiceConfirmationSheet.show(context, plan);
+      }
+    } else {
+      context.push(RouteConstants.pantherAiChat.toPath);
     }
   }
 
@@ -174,12 +221,12 @@ class _StrandsPainter extends CustomPainter {
   });
   static const _colors = [Color(0xFF7C3AED), Color(0xFF06B6D4)];
   static const _count = 4;
-  static const _amplitude = 1.3;
+  static const _amplitude = 1.9;
   static const _waviness = 2.0;
   static const _thickness = 1.1;
   static const _glow = 2.1;
   static const _taper = 0.5;
-  static const _spread = 0.7;
+  static const _spread = 1.05;
   static const _scale = 1.5;
   static const _intensity = 0.6;
 
