@@ -340,7 +340,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   ),
                   const SizedBox(height: 14),
                   SizedBox(
-                    height: 210,
+                    height: 250,
                     child: PageView.builder(
                       controller: PageController(viewportFraction: 0.72),
                       itemCount: _coins.length,
@@ -454,7 +454,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
       // ClipOval trims the protruding rim so only the front face shows.
       coinImage = Transform(
         alignment: Alignment.center,
-        transform: Matrix4.identity()..scale(1.22, 1.0),
+        transform: Matrix4.identity()..scale(1.35, 1.0),
         child: Image.asset(
           localAsset,
           fit: BoxFit.contain,
@@ -514,81 +514,61 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ? '\$${coin.price.toStringAsFixed(coin.price < 10 ? 2 : 1)}'
             : '\$${coin.price.toStringAsFixed(2)}';
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: coin.primaryColor.withValues(alpha: 0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildFlatCoinIcon(coin, 110),
+          const SizedBox(height: 10),
+          Text(
+            coin.symbol,
+            style: const TextStyle(
+              color: Color(0xFF12122A),
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
+          const SizedBox(height: 2),
+          Text(
+            coin.name,
+            style: const TextStyle(color: Color(0xFF888899), fontSize: 11),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                priceStr,
+                style: const TextStyle(
+                  color: Color(0xFF12122A),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: coin.isPositive
+                      ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                      : const Color(0xFFEF4444).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    color: coin.isPositive
+                        ? const Color(0xFF059669)
+                        : const Color(0xFFDC2626),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildFlatCoinIcon(coin, 72),
-            const SizedBox(height: 10),
-            Text(
-              coin.symbol,
-              style: const TextStyle(
-                color: Color(0xFF12122A),
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              coin.name,
-              style: const TextStyle(color: Color(0xFF888899), fontSize: 11),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  priceStr,
-                  style: const TextStyle(
-                    color: Color(0xFF12122A),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: coin.isPositive
-                        ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                        : const Color(0xFFEF4444).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      color: coin.isPositive
-                          ? const Color(0xFF059669)
-                          : const Color(0xFFDC2626),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -705,6 +685,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
 
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: const Color(0xFF0D0D1A),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),

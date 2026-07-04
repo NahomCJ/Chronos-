@@ -204,7 +204,7 @@ class NftDetailPage extends StatelessWidget {
 
   Widget _buildPriceCard(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(16),
@@ -231,7 +231,7 @@ class NftDetailPage extends StatelessWidget {
                       '3.5 ETH',
                       style: TextStyles.titleLarge.copyWith(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -260,7 +260,7 @@ class NftDetailPage extends StatelessWidget {
                     '3.2',
                     style: TextStyles.titleMedium.copyWith(
                       color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -284,7 +284,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 7),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -293,7 +293,7 @@ class NftDetailPage extends StatelessWidget {
                   child: Text(
                     'Buy Now',
                     style: TextStyles.labelLarge.copyWith(
-                      fontSize: 15,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
@@ -307,7 +307,7 @@ class NftDetailPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 7),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
@@ -319,7 +319,7 @@ class NftDetailPage extends StatelessWidget {
                   child: Text(
                     'Make Offer',
                     style: TextStyles.labelLarge.copyWith(
-                      fontSize: 15,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -482,7 +482,7 @@ class NftDetailPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
               ),

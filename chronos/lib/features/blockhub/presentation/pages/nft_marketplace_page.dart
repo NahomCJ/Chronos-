@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +5,7 @@ import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import 'nft/nft_collections_page.dart';
+import 'nft/nft_detail_page.dart';
 
 class NftMarketplacePage extends StatefulWidget {
   const NftMarketplacePage({super.key});
@@ -23,7 +23,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF08080F),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
@@ -39,58 +39,51 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           }
         },
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          Positioned.fill(child: ColoredBox(color: Colors.black)),
-          Positioned.fill(
-            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildFeaturedCard(),
-                        const SizedBox(height: 16),
-                        _buildFilterTabs(),
+      body: ColoredBox(
+        color: const Color(0xFF08080F),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      _buildFeaturedCard(),
+                      const SizedBox(height: 16),
+                      _buildFilterTabs(),
+                      const SizedBox(height: 22),
+                      if (_selectedFilter == 'Collectibles') ...[
+                        _buildTrendingCollectibles(),
                         const SizedBox(height: 22),
-                        if (_selectedFilter == 'Collectibles') ...[
-                          _buildTrendingCollectibles(),
-                          const SizedBox(height: 22),
-                          _buildPantherInsightCard(),
-                          const SizedBox(height: 22),
-                          _buildNewDropsCollectibles(),
-                        ] else ...[
-                          _buildTrendingCollections(),
-                          const SizedBox(height: 22),
-                          _buildTopVolume(),
-                          const SizedBox(height: 22),
-                          _buildNewDrops(),
-                        ],
-                        const SizedBox(height: 40),
+                        _buildPantherInsightCard(),
+                        const SizedBox(height: 22),
+                        _buildNewDropsCollectibles(),
+                      ] else ...[
+                        _buildTrendingCollections(),
+                        const SizedBox(height: 22),
+                        _buildTopVolume(),
+                        const SizedBox(height: 22),
+                        _buildNewDrops(),
                       ],
-                    ),
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: const Color(0xFF08080F),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
@@ -354,7 +347,10 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             scrollDirection: Axis.horizontal,
             itemCount: collections.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) => _TapScale(child: _buildTrendingCard(collections[i])),
+            itemBuilder: (context, i) => _TapScale(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+              child: _buildTrendingCard(collections[i]),
+            ),
           ),
         ),
       ],
@@ -553,7 +549,9 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
 
   Widget _buildVolumeRow(_TopVolumeItem item) {
     final isPositive = item.change.startsWith('+');
-    return Padding(
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+      child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
@@ -638,6 +636,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -657,11 +656,17 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
         Row(
           children: [
             Expanded(
-              child: _TapScale(child: _buildDropCard('Chromatic Dreams', '2.5 ETH', false)),
+              child: _TapScale(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+                child: _buildDropCard('Chromatic Dreams', '2.5 ETH', false),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _TapScale(child: _buildDropCard('Geometric Visions', '1.8 ETH', false)),
+              child: _TapScale(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+                child: _buildDropCard('Geometric Visions', '1.8 ETH', false),
+              ),
             ),
           ],
         ),
@@ -945,19 +950,17 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
         Row(
           children: [
             Expanded(
-              child: _TapScale(child: _buildImageDropCard(
-                'Abstract Dimensions',
-                '0.95 ETH',
-                'assets/home_bg1.png',
-              )),
+              child: _TapScale(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+                child: _buildImageDropCard('Abstract Dimensions', '0.95 ETH', 'assets/home_bg1.png'),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _TapScale(child: _buildImageDropCard(
-                'Crypto Punks Legacy',
-                '5.2 ETH',
-                'assets/home_bg2.png',
-              )),
+              child: _TapScale(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+                child: _buildImageDropCard('Crypto Punks Legacy', '5.2 ETH', 'assets/home_bg2.png'),
+              ),
             ),
           ],
         ),
@@ -1114,7 +1117,8 @@ class _TopVolumeItem {
 
 class _TapScale extends StatefulWidget {
   final Widget child;
-  const _TapScale({required this.child});
+  final VoidCallback? onTap;
+  const _TapScale({required this.child, this.onTap});
 
   @override
   State<_TapScale> createState() => _TapScaleState();
@@ -1150,6 +1154,7 @@ class _TapScaleState extends State<_TapScale>
       onTapDown: (_) => _ctrl.reverse(),
       onTapUp: (_) => _ctrl.forward(),
       onTapCancel: () => _ctrl.forward(),
+      onTap: widget.onTap,
       child: AnimatedBuilder(
         animation: _scale,
         builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
