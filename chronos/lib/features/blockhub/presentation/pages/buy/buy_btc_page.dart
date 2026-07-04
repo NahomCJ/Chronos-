@@ -187,15 +187,13 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                                 ? SizedBox(
                                     key: ValueKey(_coin.symbol),
                                     width: 100, height: 100,
-                                    child: ClipRect(
-                                      child: Transform(
-                                        alignment: const Alignment(0, -0.15),
-                                        transform: Matrix4.identity()..scale(1.6, 1.2),
-                                        child: Image.asset(
-                                          _k3dAssets[_coin.symbol]!,
-                                          fit: BoxFit.contain,
-                                          width: 100, height: 100,
-                                        ),
+                                    child: Transform(
+                                      alignment: const Alignment(0, -0.15),
+                                      transform: Matrix4.identity()..scale(1.6, 1.2),
+                                      child: Image.asset(
+                                        _k3dAssets[_coin.symbol]!,
+                                        fit: BoxFit.contain,
+                                        width: 100, height: 100,
                                       ),
                                     ),
                                   )

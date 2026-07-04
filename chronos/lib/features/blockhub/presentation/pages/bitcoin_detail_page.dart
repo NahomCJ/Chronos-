@@ -57,17 +57,15 @@ class _BitcoinDetailPageState extends State<BitcoinDetailPage> {
                       // Bitcoin 3D coin icon
                       SizedBox(
                         width: 42, height: 42,
-                        child: ClipRect(
-                          child: Transform(
-                            alignment: const Alignment(0, -0.15),
-                            transform: Matrix4.identity()..scale(1.6, 1.2),
-                            child: Image.asset(
-                              'assets/Blockhub/extracted/bitcoin.png',
-                              fit: BoxFit.contain, width: 42, height: 42,
-                              errorBuilder: (_, __, ___) => Container(
-                                decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
-                                child: const Icon(Icons.currency_bitcoin, color: Colors.white, size: 20),
-                              ),
+                        child: Transform(
+                          alignment: const Alignment(0, -0.15),
+                          transform: Matrix4.identity()..scale(1.6, 1.2),
+                          child: Image.asset(
+                            'assets/Blockhub/extracted/bitcoin.png',
+                            fit: BoxFit.contain, width: 42, height: 42,
+                            errorBuilder: (_, __, ___) => Container(
+                              decoration: const BoxDecoration(color: Colors.orange, shape: BoxShape.circle),
+                              child: const Icon(Icons.currency_bitcoin, color: Colors.white, size: 20),
                             ),
                           ),
                         ),

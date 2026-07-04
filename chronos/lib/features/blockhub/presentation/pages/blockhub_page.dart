@@ -91,40 +91,48 @@ const _kCoinLogos = {
 };
 
 // ── Shared coin icon builder ───────────────────────────────────────────────
-// showCircle = false → bare image only (used in carousel cards)
+// showCircle = false → bare image only (used in carousel cards). Coins with
+// a dedicated 3D render float free with no clip, so their glow/rim isn't
+// hard-cropped into a visible box edge.
 // showCircle = true  → coin icon inside circle container (used in detail sheet)
 Widget _buildFlatCoinIcon(_CoinData coin, double size, {bool showCircle = true}) {
   final localAsset = _kCoin3dAssets[coin.symbol];
   final cdnUrl = _kCoinLogos[coin.symbol];
 
-  Widget coinImage;
   if (localAsset != null) {
     // Scale X to counteract horizontal foreshortening from the baked-in tilt.
     // Scale Y slightly to zoom into the face and push the bottom rim off-frame.
     // Pivot above center so the rim falls further below the clip boundary.
-    coinImage = Transform(
+    final coinImage = Transform(
       alignment: const Alignment(0, -0.15),
       transform: Matrix4.identity()..scale(1.6, 1.2),
       child: Image.asset(localAsset, fit: BoxFit.contain, width: size, height: size),
     );
-  } else if (cdnUrl != null) {
-    coinImage = CachedNetworkImage(
-      imageUrl: cdnUrl,
-      fit: BoxFit.cover,
-      placeholder: (_, __) => _coinSymbolFallback(coin, size),
-      errorWidget: (_, __, ___) => _coinSymbolFallback(coin, size),
-    );
-  } else {
-    coinImage = _coinSymbolFallback(coin, size);
+    if (!showCircle) {
+      return SizedBox(width: size, height: size, child: coinImage);
+    }
+    return _coinCircleBadge(coin, size, ClipOval(child: coinImage));
   }
 
-  if (!showCircle) {
-    return SizedBox(
-      width: size, height: size,
-      child: ClipRect(child: coinImage),
-    );
-  }
+  // No dedicated 3D render for this coin yet — fall back to its real brand
+  // logo inside a colored coin badge, so it reads as a coin rather than a
+  // bare (or, if the network call fails, missing) flat image.
+  final logo = cdnUrl != null
+      ? CachedNetworkImage(
+          imageUrl: cdnUrl,
+          fit: BoxFit.contain,
+          placeholder: (_, __) => _coinInitials(coin, size),
+          errorWidget: (_, __, ___) => _coinInitials(coin, size),
+        )
+      : _coinInitials(coin, size);
+  return _coinCircleBadge(
+    coin,
+    size,
+    Padding(padding: EdgeInsets.all(size * 0.16), child: logo),
+  );
+}
 
+Widget _coinCircleBadge(_CoinData coin, double size, Widget child) {
   return Container(
     width: size, height: size,
     decoration: BoxDecoration(
@@ -138,18 +146,15 @@ Widget _buildFlatCoinIcon(_CoinData coin, double size, {bool showCircle = true})
       ],
       border: Border.all(color: coin.primaryColor.withValues(alpha: 0.4), width: 1.5),
     ),
-    child: ClipOval(child: coinImage),
+    child: ClipOval(child: child),
   );
 }
 
-Widget _coinSymbolFallback(_CoinData coin, double size) {
+Widget _coinInitials(_CoinData coin, double size) {
   final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
-  return Container(
-    decoration: BoxDecoration(color: coin.primaryColor.withValues(alpha: 0.2), shape: BoxShape.circle),
-    child: Center(
-      child: Text(label,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: size * 0.3)),
-    ),
+  return Center(
+    child: Text(label,
+        style: TextStyle(color: coin.primaryColor, fontWeight: FontWeight.w800, fontSize: size * 0.28)),
   );
 }
 
@@ -423,7 +428,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   SizedBox(
                     height: 270,
                     child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.80),
+                      controller: PageController(viewportFraction: 0.62),
                       itemCount: _coins.length,
                       itemBuilder: (context, index) {
                         final coin = _coins[index];
