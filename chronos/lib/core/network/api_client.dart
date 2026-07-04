@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../../features/auth/data/services/token_storage_service.dart';
 
@@ -73,6 +74,21 @@ class ApiClient {
       body: jsonEncode(body),
     );
     return _handleMapResponse(response);
+  }
+
+  Future<Uint8List> postBytesWithBase(
+      String base, String path, Map<String, dynamic> body) async {
+    final response = await _client.post(
+      Uri.parse('$base$path'),
+      headers: _headers,
+      body: jsonEncode(body),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return response.bodyBytes;
+    }
+    throw Exception(
+      _extractError(response) ?? 'Request failed (${response.statusCode})',
+    );
   }
 
   Future<Map<String, dynamic>> patch(String path, Map<String, dynamic> body) async {
