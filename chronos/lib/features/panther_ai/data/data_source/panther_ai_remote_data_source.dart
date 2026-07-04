@@ -23,10 +23,14 @@ class PantherAiRemoteDataSource {
 
   // ── Chat ──────────────────────────────────────────────────────────────────
 
-  Future<ChatResponseModel> sendMessage(String message) async {
+  Future<ChatResponseModel> sendMessage(
+    String message, {
+    List<Map<String, String>> history = const [],
+  }) async {
     final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
       'user_id': _userId,
       'message': message,
+      if (history.isNotEmpty) 'history': history,
     });
     return ChatResponseModel.fromJson({
       'reply': data['response'] as String? ?? data['reply'] as String? ?? '',
