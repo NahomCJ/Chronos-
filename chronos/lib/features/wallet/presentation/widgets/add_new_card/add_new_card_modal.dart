@@ -18,12 +18,12 @@ class AddNewCardModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height * 0.60,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF8F8FC), Color(0xFFE8E8F5)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -45,7 +45,7 @@ class AddNewCardModal extends StatelessWidget {
                       onTap: () => Navigator.of(context).pop(),
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: Color(0xFF12122A),
                         size: 24,
                       ),
                     ),
@@ -53,7 +53,7 @@ class AddNewCardModal extends StatelessWidget {
                     Text(
                       'Bank Transfer',
                       style: TextStyles.titleLarge.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF12122A),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -61,7 +61,7 @@ class AddNewCardModal extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, color: Colors.white, size: 24),
+                  child: const Icon(Icons.close, color: Color(0xFF12122A), size: 24),
                 ),
               ],
             ),
@@ -88,10 +88,10 @@ class AddNewCardModal extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color(0xFFF8C630).withValues(alpha: 0.1),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Color(0xFFF8C630).withValues(alpha: 0.3),
+                  color: const Color(0xFF6366F1).withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -100,12 +100,12 @@ class AddNewCardModal extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF8C630).withValues(alpha: 0.2),
+                      color: const Color(0xFF6366F1).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
                       Icons.access_time,
-                      color: Color(0xFFF8C630),
+                      color: Color(0xFF6366F1),
                       size: 20,
                     ),
                   ),
@@ -117,7 +117,7 @@ class AddNewCardModal extends StatelessWidget {
                         Text(
                           'Instant Transfer Fee',
                           style: TextStyles.bodyMedium.copyWith(
-                            color: Color(0xFFF8C630),
+                            color: const Color(0xFF6366F1),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -125,7 +125,7 @@ class AddNewCardModal extends StatelessWidget {
                         Text(
                           'A 1.5% fee applies to debit card transfers for instant delivery.',
                           style: TextStyles.bodySmall.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: const Color(0xFF12122A).withValues(alpha: 0.55),
                           ),
                         ),
                       ],
@@ -145,12 +145,12 @@ class AddNewCardModal extends StatelessWidget {
               },
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Color(0xFFF8C630),
+                    color: const Color(0xFF6366F1),
                     width: 2,
                     style: BorderStyle.solid,
                   ),
@@ -158,12 +158,12 @@ class AddNewCardModal extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add, color: Color(0xFFF8C630), size: 24),
+                    const Icon(Icons.add, color: Color(0xFF6366F1), size: 24),
                     const SizedBox(width: 12),
                     Text(
                       'Add new debit card',
                       style: TextStyles.bodyLarge.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF12122A),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -178,7 +178,7 @@ class AddNewCardModal extends StatelessWidget {
             Text(
               'Saved debit cards',
               style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+                color: const Color(0xFF12122A),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -251,12 +251,12 @@ class AddNewCardModal extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: const Color(0xFF12122A).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: const Color(0xFF12122A).withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -265,12 +265,12 @@ class AddNewCardModal extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFFF8C630).withValues(alpha: 0.2),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.credit_card,
-                color: Color(0xFFF8C630),
+                color: Color(0xFF6366F1),
                 size: 24,
               ),
             ),
@@ -282,7 +282,7 @@ class AddNewCardModal extends StatelessWidget {
                   Text(
                     '$cardType $cardNumber',
                     style: TextStyles.bodyLarge.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF12122A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -290,7 +290,7 @@ class AddNewCardModal extends StatelessWidget {
                   Text(
                     '$cardHolder • $expiryDate',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF12122A).withValues(alpha: 0.55),
                     ),
                   ),
                 ],
@@ -298,7 +298,7 @@ class AddNewCardModal extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: const Color(0xFF12122A).withValues(alpha: 0.45),
               size: 20,
             ),
           ],

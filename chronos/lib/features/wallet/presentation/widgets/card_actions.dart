@@ -6,6 +6,7 @@ import 'card_details/card_details_modal.dart';
 import 'card_settings/freeze_card_modal.dart';
 import 'cash_out/cash_out_method_modal.dart';
 import 'add_new_card/add_new_card_modal.dart';
+import '../pages/wallet_analytics_page.dart';
 
 class CardActions extends StatelessWidget {
   const CardActions({super.key});
@@ -75,14 +76,12 @@ class CardActions extends StatelessWidget {
                   label: 'Wallet Analytics',
                   scale: scale,
                   textScale: textScale,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Wallet Analytics feature coming soon!'),
-                        backgroundColor: Color(0xFF6366F1),
-                      ),
-                    );
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WalletAnalyticsPage(),
+                    ),
+                  ),
                 ),
               ),
             ),

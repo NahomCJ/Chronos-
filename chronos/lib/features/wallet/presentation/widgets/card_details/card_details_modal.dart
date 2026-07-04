@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'authentication_modal.dart';
@@ -11,7 +11,7 @@ class CardDetailsModal extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) => const CardDetailsModal(),
     );
   }
@@ -20,56 +20,54 @@ class CardDetailsModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.35,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+            width: MediaQuery.of(context).size.width * 0.62,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 22),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+              color: Colors.white.withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: 30,
-                  offset: const Offset(0, 16),
+                  color: Colors.black.withValues(alpha: 0.10),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
-
-            /// âœ… Buttons centered vertically & horizontally
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Center(
-                  child: _buildModalOption(
-                    context: context,
-                    title: 'Card Details',
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      AuthenticationModal.show(context);
-                    },
-                    backgroundColor: Colors.white.withValues(alpha: 0.15),
-                    borderColor: Colors.white.withValues(alpha: 0.35),
+                Text(
+                  'Card Options',
+                  style: TextStyles.titleMedium.copyWith(
+                    color: const Color(0xFF12122A),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
-                Center(
-                  child: _buildModalOption(
-                    context: context,
-                    title: 'Card Settings',
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      CardSettingsModal.show(context);
-                    },
-                    backgroundColor: const Color(0xFFB0B0B0),
-                    borderColor: const Color(0xFFB0B0B0),
-                  ),
+                const SizedBox(height: 18),
+                _buildModalOption(
+                  context: context,
+                  title: 'Card Details',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    AuthenticationModal.show(context);
+                  },
+                  isDark: true,
+                ),
+                const SizedBox(height: 10),
+                _buildModalOption(
+                  context: context,
+                  title: 'Card Settings',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    CardSettingsModal.show(context);
+                  },
+                  isDark: false,
                 ),
               ],
             ),
@@ -83,32 +81,46 @@ class CardDetailsModal extends StatelessWidget {
     required BuildContext context,
     required String title,
     required VoidCallback onTap,
-    required Color backgroundColor,
-    required Color borderColor,
+    required bool isDark,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width:
-            MediaQuery.of(context).size.width * 0.75, // ðŸ‘ˆ horizontal increase
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
         decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: borderColor),
+          gradient: isDark
+              ? const LinearGradient(
+                  colors: [Color(0xFF0F0F2A), Color(0xFF2D2D5A)],
+                )
+              : null,
+          color: isDark ? null : const Color(0xFFF0F0F8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? Colors.transparent
+                : const Color(0xFF12122A).withValues(alpha: 0.10),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
-              style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+              style: TextStyles.bodyMedium.copyWith(
+                color: isDark ? Colors.white : const Color(0xFF12122A),
                 fontWeight: FontWeight.w600,
+                fontSize: 13,
               ),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+            const SizedBox(width: 6),
+            Icon(
+              Icons.arrow_forward,
+              color: isDark
+                  ? Colors.white
+                  : const Color(0xFF12122A).withValues(alpha: 0.55),
+              size: 16,
+            ),
           ],
         ),
       ),

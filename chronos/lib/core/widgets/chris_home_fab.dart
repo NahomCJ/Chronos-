@@ -166,15 +166,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     super.dispose();
   }
 
-  void _openSheet() {
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      useSafeArea: true,
-      builder: (_) => _ChrisSheet(parentContext: context),
-    );
+  // Tap → fast waves + immediate voice command listening, no sheet.
+  void _startSession() {
+    HapticFeedback.mediumImpact();
+    if (!mounted) return;
+    setState(() => _respondingMode = true);
+    _listenForCommand();
   }
 
   @override
@@ -182,7 +179,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: widget.onTap ?? _openSheet,
+        onTap: widget.onTap ?? _startSession,
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeNotifier, _glowAnim]),

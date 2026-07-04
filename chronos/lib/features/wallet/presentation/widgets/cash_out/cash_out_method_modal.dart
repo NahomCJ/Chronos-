@@ -18,12 +18,12 @@ class CashOutMethodModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.68,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF8F8FC), Color(0xFFE8E8F5)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -43,13 +43,13 @@ class CashOutMethodModal extends StatelessWidget {
                 Text(
                   'Cash Out',
                   style: TextStyles.titleLarge.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFF12122A),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, color: Colors.white, size: 24),
+                  child: const Icon(Icons.close, color: Color(0xFF12122A), size: 24),
                 ),
               ],
             ),
@@ -73,7 +73,7 @@ class CashOutMethodModal extends StatelessWidget {
             Text(
               'Select withdrawal method',
               style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+                color: const Color(0xFF12122A),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -181,24 +181,24 @@ class CashOutMethodModal extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: const Color(0xFF12122A).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: const Color(0xFF12122A).withValues(alpha: 0.08),
             width: 1,
           ),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: Colors.orange, size: 24),
+              child: Icon(icon, color: const Color(0xFF6366F1), size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -208,7 +208,7 @@ class CashOutMethodModal extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyles.bodyLarge.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF12122A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -216,7 +216,7 @@ class CashOutMethodModal extends StatelessWidget {
                   Text(
                     subtitle,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF12122A).withValues(alpha: 0.55),
                     ),
                   ),
                 ],
@@ -224,7 +224,7 @@ class CashOutMethodModal extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: const Color(0xFF12122A).withValues(alpha: 0.45),
               size: 20,
             ),
           ],

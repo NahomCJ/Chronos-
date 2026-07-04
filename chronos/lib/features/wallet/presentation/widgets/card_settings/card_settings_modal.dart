@@ -31,12 +31,12 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.9,
+      height: MediaQuery.of(context).size.height * 0.72,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF8F8FC), Color(0xFFE8E8F5)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -58,7 +58,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                     Text(
                       'Card Settings',
                       style: TextStyles.titleLarge.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF12122A),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -66,25 +66,25 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                     Text(
                       'Chronos Platinum •••• 4829',
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF12122A).withValues(alpha: 0.55),
                       ),
                     ),
                   ],
                 ),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, color: Colors.white, size: 24),
+                  child: const Icon(Icons.close, color: Color(0xFF12122A), size: 24),
                 ),
               ],
             ),
           ),
           Container(
-            margin: EdgeInsets.all(16),
-              height: 1,
-              width: double.infinity,
-              color: Colors.white.withValues(alpha: 0.2),
-            ),
-            
+            margin: const EdgeInsets.all(16),
+            height: 1,
+            width: double.infinity,
+            color: const Color(0xFF12122A).withValues(alpha: 0.1),
+          ),
+
           // Content
           Expanded(
             child: SingleChildScrollView(
@@ -96,7 +96,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                   Text(
                     'Card Controls',
                     style: TextStyles.titleMedium.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF12122A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -155,7 +155,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                   Text(
                     'Manage Card',
                     style: TextStyles.titleMedium.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF12122A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -211,12 +211,12 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: const Color(0xFF12122A).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: const Color(0xFF12122A).withValues(alpha: 0.08),
           width: 1,
         ),
       ),
@@ -225,10 +225,10 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: const Color(0xFF12122A).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.white, size: 20),
+            child: Icon(icon, color: const Color(0xFF12122A), size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -238,7 +238,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                 Text(
                   title,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFF12122A),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -246,7 +246,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                 Text(
                   subtitle,
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: const Color(0xFF12122A).withValues(alpha: 0.55),
                   ),
                 ),
               ],
@@ -275,12 +275,12 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: const Color(0xFF12122A).withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: const Color(0xFF12122A).withValues(alpha: 0.08),
             width: 1,
           ),
         ),
@@ -289,10 +289,10 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: const Color(0xFF12122A).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: Colors.white, size: 20),
+              child: Icon(icon, color: const Color(0xFF12122A), size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -302,7 +302,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                   Text(
                     title,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: const Color(0xFF12122A),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -310,7 +310,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
                   Text(
                     subtitle,
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF12122A).withValues(alpha: 0.55),
                     ),
                   ),
                 ],
@@ -318,7 +318,7 @@ class _CardSettingsModalState extends State<CardSettingsModal> {
             ),
             Icon(
               Icons.arrow_forward,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: const Color(0xFF12122A).withValues(alpha: 0.45),
               size: 20,
             ),
           ],
