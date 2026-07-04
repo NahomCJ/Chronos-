@@ -2,14 +2,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../features/auth/data/services/token_storage_service.dart';
+import '../../features/panther_ai/domain/usecases/send_message.dart';
 import '../router/route_constants.dart';
 import '../services/chris_action_service.dart';
+import '../services/tts_service.dart';
 import 'voice_confirmation_sheet.dart';
 
 const _teal = Color(0xFF00D4B8);
-const _sheetBg = Color(0xFF0D0D22);
 
 // ── FAB ───────────────────────────────────────────────────────────────────────
 class ChrisHomeFab extends StatefulWidget {
@@ -87,12 +90,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           if (words.contains('hey chris') ||
               (words.startsWith('hey') && words.contains('chris'))) {
             _wakeWordTriggered = true;
-            _speech.stop();
-            HapticFeedback.mediumImpact();
-            if (mounted) {
-              setState(() => _respondingMode = true);
-              _listenForCommand();
-            }
+            _engage();
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -107,10 +105,33 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     }
   }
 
-  // After "Hey Chris" is heard, capture the follow-up command directly —
-  // the strands keep animating fast (_respondingMode) as the only feedback,
-  // no sheet or overlay pops up. Resolved intents execute or show the
-  // confirmation sheet; anything unresolved falls back to full chat.
+  String get _userFirstName {
+    try {
+      final name = GetIt.instance<TokenStorageService>().firstName;
+      return (name != null && name.isNotEmpty) ? name : 'there';
+    } catch (_) {
+      return 'there';
+    }
+  }
+
+  // Shared entry point for both "Hey Chris" and a direct tap — Chris greets
+  // the user by name, waits for that to finish speaking, then listens for
+  // the command. No sheet or overlay pops up; the strands (_respondingMode)
+  // are the only visual feedback.
+  Future<void> _engage() async {
+    if (_respondingMode) return;
+    _speech.stop();
+    HapticFeedback.mediumImpact();
+    if (!mounted) return;
+    setState(() => _respondingMode = true);
+    await TtsService().speak('Hey $_userFirstName, what would you like to do?');
+    if (!mounted) return;
+    _listenForCommand();
+  }
+
+  // After the greeting, capture the follow-up command directly. Resolved
+  // intents execute or show the confirmation sheet; anything unresolved
+  // falls back to a spoken reply from Chris chat.
   Future<void> _listenForCommand() async {
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
@@ -145,15 +166,31 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
       plan = await ChrisActionService.buildPlan(intent);
     }
     if (!mounted) return;
-    setState(() => _respondingMode = false);
+
     if (plan != null) {
+      setState(() => _respondingMode = false);
       if (plan.navigateTo != null) {
-        context.push(plan.navigateTo!);
+        await TtsService().speak(plan.subtitle);
+        if (mounted) context.push(plan.navigateTo!);
       } else {
         await VoiceConfirmationSheet.show(context, plan);
       }
-    } else {
-      context.push(RouteConstants.pantherAiChat.toPath);
+      return;
+    }
+
+    // Unresolved intent — keep the conversation going with a real reply
+    // from Chris chat instead of silently jumping to the chat page.
+    try {
+      final response = await GetIt.instance<SendMessage>().call(text);
+      if (!mounted) return;
+      setState(() => _respondingMode = false);
+      await TtsService().speak(response.reply);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _respondingMode = false);
+      await TtsService()
+          .speak('Sorry, I couldn\'t reach the server. Let\'s continue in chat.');
+      if (mounted) context.push(RouteConstants.pantherAiChat.toPath);
     }
   }
 
@@ -166,20 +203,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     super.dispose();
   }
 
-  // Tap → fast waves + immediate voice command listening, no sheet.
-  void _startSession() {
-    HapticFeedback.mediumImpact();
-    if (!mounted) return;
-    setState(() => _respondingMode = true);
-    _listenForCommand();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: widget.onTap ?? _startSession,
+        onTap: widget.onTap ?? _engage,
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeNotifier, _glowAnim]),
@@ -330,239 +359,4 @@ class _StrandsPainter extends CustomPainter {
   @override
   bool shouldRepaint(_StrandsPainter old) =>
       old.time != time || old.pulseValue != pulseValue || old.speed != speed;
-}
-
-// ── Chris Chat Sheet ──────────────────────────────────────────────────────────
-class _ChrisSheet extends StatefulWidget {
-  final BuildContext parentContext;
-  const _ChrisSheet({required this.parentContext});
-
-  @override
-  State<_ChrisSheet> createState() => _ChrisSheetState();
-}
-
-class _ChrisSheetState extends State<_ChrisSheet> {
-  final _ctrl = TextEditingController();
-  final _focusNode = FocusNode();
-  final _speech = stt.SpeechToText();
-  bool _voiceActive = false;
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl.addListener(() {
-      final has = _ctrl.text.trim().isNotEmpty;
-      if (has != _hasText) setState(() => _hasText = has);
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-    });
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    _focusNode.dispose();
-    _speech.stop();
-    super.dispose();
-  }
-
-  Future<void> _toggleVoice() async {
-    if (_voiceActive) {
-      await _speech.stop();
-      setState(() => _voiceActive = false);
-      return;
-    }
-    final available = await _speech.initialize();
-    if (!available) return;
-    setState(() {
-      _voiceActive = true;
-      _ctrl.clear();
-    });
-    await _speech.listen(
-      onResult: (r) {
-        setState(() => _ctrl.text = r.recognizedWords);
-        if (r.finalResult && r.recognizedWords.trim().isNotEmpty) {
-          setState(() => _voiceActive = false);
-          _speech.stop();
-          _send(null);
-        }
-      },
-      listenOptions: stt.SpeechListenOptions(
-        cancelOnError: false,
-        listenMode: stt.ListenMode.dictation,
-        listenFor: const Duration(seconds: 30),
-        pauseFor: const Duration(seconds: 4),
-      ),
-    );
-  }
-
-  void _send(String? override) async {
-    final text = (override ?? _ctrl.text).trim();
-    if (text.isEmpty) return;
-
-    final intent = ChrisActionService.parseIntent(text);
-    if (intent.type != ChrisActionType.unknown) {
-      final plan = await ChrisActionService.buildPlan(intent);
-      if (plan != null && mounted) {
-        Navigator.pop(context);
-        if (plan.navigateTo != null) {
-          widget.parentContext.push(plan.navigateTo!);
-          return;
-        }
-        await VoiceConfirmationSheet.show(widget.parentContext, plan);
-        return;
-      }
-    }
-
-    Navigator.pop(context);
-    widget.parentContext.push(RouteConstants.pantherAiChat.toPath);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final keyboard = mq.viewInsets.bottom;
-    // When keyboard is hidden, clear the custom pill nav bar (~70px) plus
-    // the system safe-area inset so nothing is hidden behind it.
-    final bottomPad = keyboard > 0
-        ? keyboard + 8.0
-        : mq.padding.bottom + 90.0;
-    return Container(
-      color: _sheetBg,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Voice listening indicator
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: _voiceActive ? 48 : 0,
-            child: _voiceActive
-                ? Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _teal,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Listening…',
-                          style: TextStyle(
-                            color: _teal.withValues(alpha: 0.85),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          // Input row
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 48),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF131325),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: _voiceActive
-                            ? _teal.withValues(alpha: 0.55)
-                            : Colors.white.withValues(alpha: 0.09),
-                      ),
-                    ),
-                    child: TextField(
-                      controller: _ctrl,
-                      focusNode: _focusNode,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          height: 1.4),
-                      decoration: InputDecoration(
-                        hintText: _voiceActive
-                            ? 'Speak now…'
-                            : 'Message Chris…',
-                        hintStyle: TextStyle(
-                          color: _voiceActive
-                              ? _teal.withValues(alpha: 0.60)
-                              : Colors.white.withValues(alpha: 0.28),
-                          fontSize: 15,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 13),
-                      ),
-                      maxLines: 5,
-                      minLines: 1,
-                      onSubmitted: (_) => _send(null),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Mic → Send toggle
-                GestureDetector(
-                  onTap: _hasText ? () => _send(null) : _toggleVoice,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _hasText
-                          ? _teal
-                          : (_voiceActive
-                              ? _teal.withValues(alpha: 0.18)
-                              : const Color(0xFF1A1A30)),
-                      border: _hasText
-                          ? null
-                          : Border.all(
-                              color: _voiceActive
-                                  ? _teal.withValues(alpha: 0.65)
-                                  : Colors.white.withValues(alpha: 0.12),
-                            ),
-                      boxShadow: _hasText
-                          ? [
-                              BoxShadow(
-                                color: _teal.withValues(alpha: 0.35),
-                                blurRadius: 12,
-                                spreadRadius: 1,
-                              )
-                            ]
-                          : null,
-                    ),
-                    child: Icon(
-                      _hasText
-                          ? Icons.arrow_upward_rounded
-                          : (_voiceActive
-                              ? Icons.mic_rounded
-                              : Icons.mic_none_rounded),
-                      color: _hasText
-                          ? Colors.white
-                          : (_voiceActive
-                              ? _teal
-                              : Colors.white.withValues(alpha: 0.45)),
-                      size: 22,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: bottomPad),
-        ],
-      ),
-    );
-  }
 }
