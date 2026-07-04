@@ -31,17 +31,32 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { message, user_id } = req.body ?? {};
+  const { message, user_id, history } = req.body ?? {};
   if (!message?.trim()) {
     return res.status(400).json({ error: 'message is required' });
   }
+
+  // Prior turns from this voice/chat session, for multi-turn memory.
+  // Capped and sanitized — only well-formed {role, content} pairs survive.
+  const priorTurns = Array.isArray(history)
+    ? history
+        .filter(
+          (h) =>
+            h &&
+            (h.role === 'user' || h.role === 'assistant') &&
+            typeof h.content === 'string' &&
+            h.content.trim()
+        )
+        .slice(-10)
+        .map((h) => ({ role: h.role, content: h.content.trim() }))
+    : [];
 
   try {
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 512,
       system: CHRIS_SYSTEM,
-      messages: [{ role: 'user', content: message.trim() }],
+      messages: [...priorTurns, { role: 'user', content: message.trim() }],
     });
 
     const reply = response.content[0]?.text ?? 'I could not generate a response. Please try again.';

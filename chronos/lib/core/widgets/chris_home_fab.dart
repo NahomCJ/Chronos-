@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,8 @@ import 'voice_confirmation_sheet.dart';
 
 const _teal = Color(0xFF00D4B8);
 
+enum _ChrisState { idle, listening, thinking, speaking }
+
 // ── FAB ───────────────────────────────────────────────────────────────────────
 class ChrisHomeFab extends StatefulWidget {
   final VoidCallback? onTap;
@@ -26,15 +29,25 @@ class ChrisHomeFab extends StatefulWidget {
 
 class _ChrisHomeFabState extends State<ChrisHomeFab>
     with TickerProviderStateMixin {
+  static const _maxFollowUpTurns = 4;
+
   final _speech = stt.SpeechToText();
   bool _wakeActive = false;
   bool _wakeWordTriggered = false;
-  bool _respondingMode = false; // true while Chris is "answering" (fast strands)
+  _ChrisState _state = _ChrisState.idle;
+  bool _micAvailable = true;
+  bool _micPermissionWarned = false;
+  int _followUpTurns = 0;
+  int _commandGeneration = 0;
+  final List<Map<String, String>> _history = [];
+
   Offset _offset = Offset.zero;
   late final AnimationController _glowCtrl;
   late final Animation<double> _glowAnim;
   final _timeNotifier = ValueNotifier<double>(0);
   late final Ticker _timeTicker;
+
+  bool get _isBusy => _state != _ChrisState.idle;
 
   @override
   void initState() {
@@ -53,33 +66,49 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   }
 
   Future<void> _initWakeWord() async {
+    _micAvailable = await _initSpeechEngine();
+    // Background wake-word polling relies on silently restarting the mic
+    // every few seconds, which browsers block outside a direct user
+    // gesture. On web, only tap-to-talk works.
+    if (_micAvailable && !kIsWeb) _startListening();
+  }
+
+  // Registers the status/error handlers exactly once per successful call —
+  // reused both at startup and when lazily re-checking mic permission later,
+  // so a permission granted mid-session doesn't leave the wake-word restart
+  // chain unwired.
+  Future<bool> _initSpeechEngine() async {
     try {
-      final available = await _speech.initialize(
+      return await _speech.initialize(
         onStatus: (s) {
           if ((s == 'done' || s == 'notListening') && mounted) {
-            setState(() {
-              _wakeActive = false;
+            setState(() => _wakeActive = false);
+            // Only resume passive "Hey Chris" listening once the whole
+            // interaction has settled back to idle — otherwise this races
+            // with the deliberate listen sessions inside a conversation.
+            if (!_isBusy) {
               _wakeWordTriggered = false;
-            });
-            Future.delayed(const Duration(seconds: 3), _startListening);
+              Future.delayed(const Duration(seconds: 3), _startListening);
+            }
           }
         },
         onError: (_) {
           if (mounted) {
-            setState(() {
-              _wakeActive = false;
+            setState(() => _wakeActive = false);
+            if (!_isBusy) {
               _wakeWordTriggered = false;
-            });
-            Future.delayed(const Duration(seconds: 5), _startListening);
+              Future.delayed(const Duration(seconds: 5), _startListening);
+            }
           }
         },
       );
-      if (available) _startListening();
-    } catch (_) {}
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<void> _startListening() async {
-    if (!mounted || _wakeActive || !_speech.isAvailable) return;
+    if (!mounted || _wakeActive || _isBusy || !_speech.isAvailable) return;
     _wakeWordTriggered = false;
     try {
       setState(() => _wakeActive = true);
@@ -114,25 +143,70 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     }
   }
 
-  // Shared entry point for both "Hey Chris" and a direct tap — Chris greets
-  // the user by name, waits for that to finish speaking, then listens for
-  // the command. No sheet or overlay pops up; the strands (_respondingMode)
-  // are the only visual feedback.
+  void _setChrisState(_ChrisState s) {
+    if (mounted) setState(() => _state = s);
+  }
+
+  void _warnMicUnavailable() {
+    if (_micPermissionWarned || !mounted) return;
+    _micPermissionWarned = true;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Microphone access is needed for voice commands. '
+          'Enable it in your device settings.',
+        ),
+      ),
+    );
+  }
+
+  // Shared entry point for "Hey Chris", a tap while idle, or a tap that
+  // interrupts Chris mid-response. No sheet or overlay pops up; the strands
+  // are the only visual feedback (their speed reflects the current state).
   Future<void> _engage() async {
-    if (_respondingMode) return;
+    final interrupting = _isBusy;
     _speech.stop();
+    await TtsService().stop();
     HapticFeedback.mediumImpact();
     if (!mounted) return;
-    setState(() => _respondingMode = true);
+
+    // Always start from a clean slate — if this is an interrupt, the
+    // in-flight turn may not have gotten an assistant reply appended,
+    // and sending an orphaned "user" entry would break the strict
+    // user/assistant alternation Anthropic's API requires.
+    _history.clear();
+    _followUpTurns = 0;
+
+    if (!_micAvailable) {
+      // Just re-check permission — don't start the background wake-word
+      // loop here, since we're about to greet-and-listen ourselves below.
+      _micAvailable = await _initSpeechEngine();
+    }
+    if (!_micAvailable) {
+      _endConversation();
+      _warnMicUnavailable();
+      return;
+    }
+
+    if (interrupting) {
+      // The user already knows what's up — skip straight to listening.
+      _listenForCommand();
+      return;
+    }
+
+    _setChrisState(_ChrisState.speaking);
     await TtsService().speak('Hey $_userFirstName, what would you like to do?');
     if (!mounted) return;
     _listenForCommand();
   }
 
-  // After the greeting, capture the follow-up command directly. Resolved
-  // intents execute or show the confirmation sheet; anything unresolved
-  // falls back to a spoken reply from Chris chat.
+  // After the greeting (or an interrupt), capture the follow-up command.
+  // Resolved intents execute or show the confirmation sheet; anything
+  // unresolved gets a real spoken reply from Chris chat, and — up to a
+  // few turns — the conversation keeps going without repeating "Hey Chris".
   Future<void> _listenForCommand() async {
+    _commandGeneration++; // invalidate any earlier in-flight _handleCommand
+    _setChrisState(_ChrisState.listening);
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     try {
@@ -142,7 +216,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           final text = r.recognizedWords.trim();
           await _speech.stop();
           if (text.isEmpty) {
-            if (mounted) setState(() => _respondingMode = false);
+            _endConversation();
             return;
           }
           await _handleCommand(text);
@@ -155,24 +229,37 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         ),
       );
     } catch (_) {
-      if (mounted) setState(() => _respondingMode = false);
+      _endConversation();
     }
   }
 
+  void _endConversation() {
+    if (!mounted) return;
+    setState(() => _state = _ChrisState.idle);
+    _followUpTurns = 0;
+    _history.clear();
+    if (!kIsWeb) Future.delayed(const Duration(seconds: 1), _startListening);
+  }
+
   Future<void> _handleCommand(String text) async {
+    final myGen = _commandGeneration;
+    _setChrisState(_ChrisState.thinking);
     final intent = ChrisActionService.parseIntent(text);
     ChrisActionPlan? plan;
     if (intent.type != ChrisActionType.unknown) {
       plan = await ChrisActionService.buildPlan(intent);
     }
-    if (!mounted) return;
+    if (!mounted || myGen != _commandGeneration) return;
 
     if (plan != null) {
-      setState(() => _respondingMode = false);
       if (plan.navigateTo != null) {
+        _setChrisState(_ChrisState.speaking);
         await TtsService().speak(plan.subtitle);
+        if (myGen != _commandGeneration) return;
+        _endConversation();
         if (mounted) context.push(plan.navigateTo!);
       } else {
+        _endConversation();
         await VoiceConfirmationSheet.show(context, plan);
       }
       return;
@@ -180,16 +267,27 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
 
     // Unresolved intent — keep the conversation going with a real reply
     // from Chris chat instead of silently jumping to the chat page.
+    _history.add({'role': 'user', 'content': text});
     try {
-      final response = await GetIt.instance<SendMessage>().call(text);
-      if (!mounted) return;
-      setState(() => _respondingMode = false);
+      final response = await GetIt.instance<SendMessage>()
+          .call(text, history: List.of(_history));
+      if (!mounted || myGen != _commandGeneration) return;
+      _history.add({'role': 'assistant', 'content': response.reply});
+      _setChrisState(_ChrisState.speaking);
       await TtsService().speak(response.reply);
+      if (!mounted || myGen != _commandGeneration) return;
+      if (_followUpTurns < _maxFollowUpTurns) {
+        _followUpTurns++;
+        _listenForCommand();
+      } else {
+        _endConversation();
+      }
     } catch (_) {
-      if (!mounted) return;
-      setState(() => _respondingMode = false);
+      if (!mounted || myGen != _commandGeneration) return;
+      _setChrisState(_ChrisState.speaking);
       await TtsService()
           .speak('Sorry, I couldn\'t reach the server. Let\'s continue in chat.');
+      _endConversation();
       if (mounted) context.push(RouteConstants.pantherAiChat.toPath);
     }
   }
@@ -201,6 +299,19 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _timeNotifier.dispose();
     _speech.stop();
     super.dispose();
+  }
+
+  double get _painterSpeed {
+    switch (_state) {
+      case _ChrisState.listening:
+        return 0.10;
+      case _ChrisState.thinking:
+        return 0.12;
+      case _ChrisState.speaking:
+        return 0.18;
+      case _ChrisState.idle:
+        return 0.02;
+    }
   }
 
   @override
@@ -221,7 +332,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
                 painter: _StrandsPainter(
                   time: _timeNotifier.value,
                   pulseValue: pulse,
-                  speed: _respondingMode ? 0.15 : 0.02,
+                  speed: _painterSpeed,
                 ),
               ),
             );

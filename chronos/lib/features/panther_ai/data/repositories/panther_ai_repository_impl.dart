@@ -13,8 +13,11 @@ class PantherAiRepositoryImpl implements PantherAiRepository {
   PantherAiRepositoryImpl(this.dataSource);
 
   @override
-  Future<ChatResponse> sendMessage(String message) async {
-    final model = await dataSource.sendMessage(message);
+  Future<ChatResponse> sendMessage(
+    String message, {
+    List<Map<String, String>> history = const [],
+  }) async {
+    final model = await dataSource.sendMessage(message, history: history);
     return model.toEntity();
   }
 
