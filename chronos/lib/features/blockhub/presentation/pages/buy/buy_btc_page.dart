@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'buy_btc_order_type_page.dart';
 
+const _k3dAssets = {
+  'BTC': 'assets/Blockhub/extracted/bitcoin.png',
+  'ETH': 'assets/Blockhub/extracted/ethereum.png',
+  'BNB': 'assets/Blockhub/extracted/bnb.png',
+  'SOL': 'assets/Blockhub/extracted/solana.png',
+  'XRP': 'assets/Blockhub/extracted/xrp.png',
+};
+
 class _Coin {
   final String symbol;
   final String name;
@@ -170,7 +178,49 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        // 3D coin display
+                        Center(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 350),
+                            child: _k3dAssets.containsKey(_coin.symbol)
+                                ? SizedBox(
+                                    key: ValueKey(_coin.symbol),
+                                    width: 100, height: 100,
+                                    child: ClipRect(
+                                      child: Transform(
+                                        alignment: const Alignment(0, -0.15),
+                                        transform: Matrix4.identity()..scale(1.6, 1.2),
+                                        child: Image.asset(
+                                          _k3dAssets[_coin.symbol]!,
+                                          fit: BoxFit.contain,
+                                          width: 100, height: 100,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    key: ValueKey(_coin.symbol),
+                                    width: 80, height: 80,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _coin.color.withValues(alpha: 0.15),
+                                      border: Border.all(color: _coin.color.withValues(alpha: 0.4), width: 1.5),
+                                    ),
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: _coin.logoUrl,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (_, __, ___) => Center(
+                                          child: Text(_coin.symbol[0],
+                                              style: TextStyle(color: _coin.color, fontSize: 28, fontWeight: FontWeight.bold)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         Text(
                           'Amount (USD)',
                           style: TextStyles.bodyMedium.copyWith(

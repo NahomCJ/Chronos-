@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,6 +72,86 @@ const List<_CoinData> _coins = [
     primaryColor: Color(0xFFE84142), secondaryColor: Color(0xFFFF6B6B),
   ),
 ];
+
+// ── File-level coin asset maps (shared with _CoinCard) ────────────────────
+const _kCoin3dAssets = {
+  'BTC': 'assets/Blockhub/extracted/bitcoin.png',
+  'ETH': 'assets/Blockhub/extracted/ethereum.png',
+  'BNB': 'assets/Blockhub/extracted/bnb.png',
+  'SOL': 'assets/Blockhub/extracted/solana.png',
+  'XRP': 'assets/Blockhub/extracted/xrp.png',
+};
+
+const _kCoinLogos = {
+  'ADA':  'https://assets.coingecko.com/coins/images/975/large/cardano.png',
+  'DOT':  'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
+  'MATIC':'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
+  'LINK': 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
+  'AVAX': 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
+};
+
+// ── Shared coin icon builder ───────────────────────────────────────────────
+// showCircle = false → bare image only (used in carousel cards)
+// showCircle = true  → coin icon inside circle container (used in detail sheet)
+Widget _buildFlatCoinIcon(_CoinData coin, double size, {bool showCircle = true}) {
+  final localAsset = _kCoin3dAssets[coin.symbol];
+  final cdnUrl = _kCoinLogos[coin.symbol];
+
+  Widget coinImage;
+  if (localAsset != null) {
+    // Scale X to counteract horizontal foreshortening from the baked-in tilt.
+    // Scale Y slightly to zoom into the face and push the bottom rim off-frame.
+    // Pivot above center so the rim falls further below the clip boundary.
+    coinImage = Transform(
+      alignment: const Alignment(0, -0.15),
+      transform: Matrix4.identity()..scale(1.6, 1.2),
+      child: Image.asset(localAsset, fit: BoxFit.contain, width: size, height: size),
+    );
+  } else if (cdnUrl != null) {
+    coinImage = CachedNetworkImage(
+      imageUrl: cdnUrl,
+      fit: BoxFit.cover,
+      placeholder: (_, __) => _coinSymbolFallback(coin, size),
+      errorWidget: (_, __, ___) => _coinSymbolFallback(coin, size),
+    );
+  } else {
+    coinImage = _coinSymbolFallback(coin, size);
+  }
+
+  if (!showCircle) {
+    return SizedBox(
+      width: size, height: size,
+      child: ClipRect(child: coinImage),
+    );
+  }
+
+  return Container(
+    width: size, height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: coin.primaryColor.withValues(alpha: 0.15),
+      boxShadow: [
+        BoxShadow(
+          color: coin.primaryColor.withValues(alpha: 0.30),
+          blurRadius: 12, offset: const Offset(0, 4),
+        ),
+      ],
+      border: Border.all(color: coin.primaryColor.withValues(alpha: 0.4), width: 1.5),
+    ),
+    child: ClipOval(child: coinImage),
+  );
+}
+
+Widget _coinSymbolFallback(_CoinData coin, double size) {
+  final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
+  return Container(
+    decoration: BoxDecoration(color: coin.primaryColor.withValues(alpha: 0.2), shape: BoxShape.circle),
+    child: Center(
+      child: Text(label,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: size * 0.3)),
+    ),
+  );
+}
 
 class BlockHubPage extends StatefulWidget {
   const BlockHubPage({super.key});
@@ -340,15 +421,15 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   ),
                   const SizedBox(height: 14),
                   SizedBox(
-                    height: 250,
+                    height: 270,
                     child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.72),
+                      controller: PageController(viewportFraction: 0.80),
                       itemCount: _coins.length,
                       itemBuilder: (context, index) {
                         final coin = _coins[index];
-                        return GestureDetector(
-                          onTap: () => _showCoinDetail(context, coin),
-                          child: _buildCoinCardLight(coin),
+                        return _CoinCard(
+                          coin: coin,
+                          onShowDetail: () => _showCoinDetail(context, coin),
                         );
                       },
                     ),
@@ -423,155 +504,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  // ── Local 3-D coin assets (assets/Blockhub/extracted/) ──────────────────
-  // Scale X by 1/cos(30°) ≈ 1.22 inside ClipOval to counter the baked-in
-  // 30° Y-rotation so the coin face appears straight-on to the viewer.
-  static const _coin3dAssets = {
-    'BTC': 'assets/Blockhub/extracted/bitcoin.png',
-    'ETH': 'assets/Blockhub/extracted/ethereum.png',
-    'BNB': 'assets/Blockhub/extracted/bnb.png',
-    'SOL': 'assets/Blockhub/extracted/solana.png',
-    'XRP': 'assets/Blockhub/extracted/xrp.png',
-  };
-
-  // Fallback CDN logos for coins without a local 3-D asset
-  static const _coinLogos = {
-    'ADA':  'https://assets.coingecko.com/coins/images/975/large/cardano.png',
-    'DOT':  'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
-    'MATIC':'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
-    'LINK': 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
-    'AVAX': 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
-  };
-
-  // ── 3-D coin icon — face corrected to straight-on ────────────────────────
-  Widget _buildFlatCoinIcon(_CoinData coin, double size) {
-    final localAsset = _coin3dAssets[coin.symbol];
-    final cdnUrl = _coinLogos[coin.symbol];
-
-    Widget coinImage;
-    if (localAsset != null) {
-      // Stretch horizontally to undo the ~30° Y-tilt baked into the 3D render.
-      // ClipOval trims the protruding rim so only the front face shows.
-      coinImage = Transform(
-        alignment: Alignment.center,
-        transform: Matrix4.identity()..scale(1.35, 1.0),
-        child: Image.asset(
-          localAsset,
-          fit: BoxFit.contain,
-          width: size * 1.0,
-          height: size * 1.0,
-        ),
-      );
-    } else if (cdnUrl != null) {
-      coinImage = CachedNetworkImage(
-        imageUrl: cdnUrl,
-        fit: BoxFit.cover,
-        placeholder: (_, __) => _coinSymbolFallback(coin, size),
-        errorWidget: (_, __, ___) => _coinSymbolFallback(coin, size),
-      );
-    } else {
-      coinImage = _coinSymbolFallback(coin, size);
-    }
-
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: coin.primaryColor.withValues(alpha: 0.15),
-        boxShadow: [
-          BoxShadow(
-            color: coin.primaryColor.withValues(alpha: 0.30),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: coin.primaryColor.withValues(alpha: 0.4), width: 1.5),
-      ),
-      child: ClipOval(child: coinImage),
-    );
-  }
-
-  Widget _coinSymbolFallback(_CoinData coin, double size) {
-    final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
-    return Center(
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: size * 0.3,
-        ),
-      ),
-    );
-  }
-
-  // ── Light-theme coin card (used in bottom white section) ──────────────────
-  Widget _buildCoinCardLight(_CoinData coin) {
-    final priceStr = coin.price >= 1000
-        ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
-        : coin.price >= 1
-            ? '\$${coin.price.toStringAsFixed(coin.price < 10 ? 2 : 1)}'
-            : '\$${coin.price.toStringAsFixed(2)}';
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildFlatCoinIcon(coin, 110),
-          const SizedBox(height: 10),
-          Text(
-            coin.symbol,
-            style: const TextStyle(
-              color: Color(0xFF12122A),
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            coin.name,
-            style: const TextStyle(color: Color(0xFF888899), fontSize: 11),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                priceStr,
-                style: const TextStyle(
-                  color: Color(0xFF12122A),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: coin.isPositive
-                      ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                      : const Color(0xFFEF4444).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
-                  style: TextStyle(
-                    color: coin.isPositive
-                        ? const Color(0xFF059669)
-                        : const Color(0xFFDC2626),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   // ── Light-theme watchlist item ────────────────────────────────────────────
   Widget _buildWatchlistItemLight(CryptoAsset asset, bool isSmallScreen) {
@@ -600,9 +532,9 @@ class _BlockHubPageState extends State<BlockHubPage> {
               border: Border.all(color: const Color(0xFFE0E0EE), width: 1),
             ),
             child: ClipOval(
-              child: _coinLogos.containsKey(asset.symbol)
+              child: _kCoinLogos.containsKey(asset.symbol)
                   ? CachedNetworkImage(
-                      imageUrl: _coinLogos[asset.symbol]!,
+                      imageUrl: _kCoinLogos[asset.symbol]!,
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Icon(
                         _getCryptoIcon(asset.symbol),
@@ -779,7 +711,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                       );
                     },
                     child: Container(
-                      height: 52,
+                      height: 44,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14),
@@ -790,7 +722,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                         style: TextStyle(
                           color: Color(0xFF0D0D1A),
                           fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -807,7 +739,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                       );
                     },
                     child: Container(
-                      height: 52,
+                      height: 44,
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
@@ -821,7 +753,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -897,6 +829,113 @@ class _BlockHubPageState extends State<BlockHubPage> {
       default:
         return Icons.currency_bitcoin;
     }
+  }
+}
+
+// ── Coin carousel card with 360° Y-axis spin animation on tap ─────────────
+class _CoinCard extends StatefulWidget {
+  final _CoinData coin;
+  final VoidCallback onShowDetail;
+  const _CoinCard({required this.coin, required this.onShowDetail});
+
+  @override
+  State<_CoinCard> createState() => _CoinCardState();
+}
+
+class _CoinCardState extends State<_CoinCard> with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _spin;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _spin = Tween<double>(begin: 0.0, end: 2 * math.pi)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+    _ctrl.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _ctrl.reset();
+        widget.onShowDetail();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final coin = widget.coin;
+    final priceStr = coin.price >= 1000
+        ? '\$${(coin.price / 1000).toStringAsFixed(1)}k'
+        : coin.price >= 1
+            ? '\$${coin.price.toStringAsFixed(coin.price < 10 ? 2 : 1)}'
+            : '\$${coin.price.toStringAsFixed(2)}';
+
+    return GestureDetector(
+      onTap: () { if (!_ctrl.isAnimating) _ctrl.forward(); },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedBuilder(
+              animation: _spin,
+              builder: (_, child) => Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.002)
+                  ..rotateY(_spin.value),
+                child: child,
+              ),
+              child: _buildFlatCoinIcon(coin, 125, showCircle: false),
+            ),
+            const SizedBox(height: 10),
+            Text(coin.symbol,
+                style: const TextStyle(
+                    color: Color(0xFF12122A), fontWeight: FontWeight.w800, fontSize: 16)),
+            const SizedBox(height: 2),
+            Text(coin.name,
+                style: const TextStyle(color: Color(0xFF888899), fontSize: 11)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(priceStr,
+                    style: const TextStyle(
+                        color: Color(0xFF12122A), fontWeight: FontWeight.w700, fontSize: 14)),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: coin.isPositive
+                        ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                        : const Color(0xFFEF4444).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${coin.isPositive ? '+' : '-'}${coin.change.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      color: coin.isPositive
+                          ? const Color(0xFF059669)
+                          : const Color(0xFFEF4444),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
