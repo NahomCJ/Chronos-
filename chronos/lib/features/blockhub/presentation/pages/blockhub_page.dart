@@ -423,12 +423,19 @@ class _BlockHubPageState extends State<BlockHubPage> {
     );
   }
 
-  // ── Coin logo URLs (CoinGecko CDN) ───────────────────────────────────────
+  // ── Local 3-D coin assets (assets/Blockhub/extracted/) ──────────────────
+  // Scale X by 1/cos(30°) ≈ 1.22 inside ClipOval to counter the baked-in
+  // 30° Y-rotation so the coin face appears straight-on to the viewer.
+  static const _coin3dAssets = {
+    'BTC': 'assets/Blockhub/extracted/bitcoin.png',
+    'ETH': 'assets/Blockhub/extracted/ethereum.png',
+    'BNB': 'assets/Blockhub/extracted/bnb.png',
+    'SOL': 'assets/Blockhub/extracted/solana.png',
+    'XRP': 'assets/Blockhub/extracted/xrp.png',
+  };
+
+  // Fallback CDN logos for coins without a local 3-D asset
   static const _coinLogos = {
-    'BTC':  'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
-    'ETH':  'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
-    'SOL':  'https://assets.coingecko.com/coins/images/4128/large/solana.png',
-    'BNB':  'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',
     'ADA':  'https://assets.coingecko.com/coins/images/975/large/cardano.png',
     'DOT':  'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
     'MATIC':'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
@@ -436,9 +443,36 @@ class _BlockHubPageState extends State<BlockHubPage> {
     'AVAX': 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
   };
 
-  // ── 2-D coin icon with real logo ─────────────────────────────────────────
+  // ── 3-D coin icon — face corrected to straight-on ────────────────────────
   Widget _buildFlatCoinIcon(_CoinData coin, double size) {
-    final url = _coinLogos[coin.symbol];
+    final localAsset = _coin3dAssets[coin.symbol];
+    final cdnUrl = _coinLogos[coin.symbol];
+
+    Widget coinImage;
+    if (localAsset != null) {
+      // Stretch horizontally to undo the ~30° Y-tilt baked into the 3D render.
+      // ClipOval trims the protruding rim so only the front face shows.
+      coinImage = Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.identity()..scale(1.22, 1.0),
+        child: Image.asset(
+          localAsset,
+          fit: BoxFit.contain,
+          width: size * 1.0,
+          height: size * 1.0,
+        ),
+      );
+    } else if (cdnUrl != null) {
+      coinImage = CachedNetworkImage(
+        imageUrl: cdnUrl,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _coinSymbolFallback(coin, size),
+        errorWidget: (_, __, ___) => _coinSymbolFallback(coin, size),
+      );
+    } else {
+      coinImage = _coinSymbolFallback(coin, size);
+    }
+
     return Container(
       width: size,
       height: size,
@@ -448,39 +482,26 @@ class _BlockHubPageState extends State<BlockHubPage> {
         boxShadow: [
           BoxShadow(
             color: coin.primaryColor.withValues(alpha: 0.30),
-            blurRadius: 10,
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(color: coin.primaryColor.withValues(alpha: 0.4), width: 1.5),
       ),
-      child: ClipOval(
-        child: url != null
-            ? CachedNetworkImage(
-                imageUrl: url,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => Center(
-                  child: Text(
-                    coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
-                        fontSize: size * 0.3),
-                  ),
-                ),
-                errorWidget: (_, __, ___) => Center(
-                  child: Text(
-                    coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
-                        fontSize: size * 0.3),
-                  ),
-                ),
-              )
-            : Center(
-                child: Text(
-                  coin.symbol.substring(0, coin.symbol.length > 3 ? 3 : coin.symbol.length),
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800,
-                      fontSize: size * 0.3),
-                ),
-              ),
+      child: ClipOval(child: coinImage),
+    );
+  }
+
+  Widget _coinSymbolFallback(_CoinData coin, double size) {
+    final label = coin.symbol.length > 3 ? coin.symbol.substring(0, 3) : coin.symbol;
+    return Center(
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          fontSize: size * 0.3,
+        ),
       ),
     );
   }
