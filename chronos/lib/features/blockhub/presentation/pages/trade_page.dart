@@ -20,13 +20,16 @@ const _kCoins = [
   _Coin('MATIC', 'Polygon', 1.05, 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png', Color(0xFF8247E5)),
 ];
 
-// Dark gradient fill for input/text boxes — keeps white text readable
-// regardless of what's behind the background photo.
+// Light fill for input/text boxes — a clean white card with dark text,
+// readable regardless of what's behind the background photo.
 const _kFieldGradient = LinearGradient(
-  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  colors: [Color(0xFFFFFFFF), Color(0xFFF3F3F8)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+const _kFieldBorder = Color(0x14000000);
+const _kFieldTextPrimary = Color(0xFF12122A);
+const _kFieldTextSecondary = Color(0xFF6B6B7A);
 
 class TradePage extends StatefulWidget {
   const TradePage({super.key});
@@ -190,12 +193,12 @@ class _TradePageState extends State<TradePage> {
       decoration: BoxDecoration(
         gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+          Text(label, style: const TextStyle(color: _kFieldTextSecondary, fontSize: 12)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -236,11 +239,11 @@ class _TradePageState extends State<TradePage> {
                         controller: _fromController,
                         textAlign: TextAlign.right,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+                        style: const TextStyle(color: _kFieldTextPrimary, fontSize: 18, fontWeight: FontWeight.w700),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: '0',
-                          hintStyle: TextStyle(color: Colors.white38, fontSize: 18),
+                          hintStyle: TextStyle(color: _kFieldTextSecondary, fontSize: 18),
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -249,8 +252,8 @@ class _TradePageState extends State<TradePage> {
                     : Text(
                         _toAmount > 0 ? _toAmount.toStringAsFixed(6) : '0',
                         textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                        style: const TextStyle(
+                          color: _kFieldTextSecondary,
                           fontSize: 16, fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -260,7 +263,7 @@ class _TradePageState extends State<TradePage> {
           const SizedBox(height: 6),
           Text(
             '≈ \$${usd.toStringAsFixed(2)}',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 11),
+            style: const TextStyle(color: _kFieldTextSecondary, fontSize: 11),
           ),
           if (isFrom) ...[
             const SizedBox(height: 10),
@@ -279,10 +282,10 @@ class _TradePageState extends State<TradePage> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: const Color(0x0F000000),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(e.value, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
+                      child: Text(e.value, style: const TextStyle(color: _kFieldTextSecondary, fontSize: 10)),
                     ),
                   ),
                 );
@@ -300,7 +303,7 @@ class _TradePageState extends State<TradePage> {
       decoration: BoxDecoration(
         gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         children: [
@@ -320,8 +323,8 @@ class _TradePageState extends State<TradePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(label, style: const TextStyle(color: _kFieldTextSecondary, fontSize: 12)),
+        Text(value, style: const TextStyle(color: _kFieldTextPrimary, fontSize: 12, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -346,10 +349,10 @@ class _TradePageState extends State<TradePage> {
                     gradient: sel ? null : _kFieldGradient,
                     color: sel ? const Color(0xFF8B5CF6).withValues(alpha: 0.25) : null,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: sel ? const Color(0xFF8B5CF6) : Colors.white.withValues(alpha: 0.12)),
+                    border: Border.all(color: sel ? const Color(0xFF8B5CF6) : _kFieldBorder),
                   ),
                   child: Text(e.value, style: TextStyle(
-                    color: sel ? const Color(0xFF8B5CF6) : Colors.white.withValues(alpha: 0.6),
+                    color: sel ? const Color(0xFF8B5CF6) : _kFieldTextSecondary,
                     fontSize: 12, fontWeight: sel ? FontWeight.w700 : FontWeight.w400,
                   )),
                 ),

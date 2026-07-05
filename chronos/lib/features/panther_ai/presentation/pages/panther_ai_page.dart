@@ -272,11 +272,11 @@ class _PantherAiPageState extends State<PantherAiPage>
               ),
             ),
             SizedBox(
-              height: 205,
+              height: 168,
               child: NotificationListener<ScrollNotification>(
                 onNotification: (n) {
                   if (n is ScrollUpdateNotification) {
-                    final cardWidth = screenWidth * 0.80 + 12;
+                    final cardWidth = screenWidth * 0.62 + 12;
                     final page = (n.metrics.pixels / cardWidth).round();
                     if (page != _currentStory) {
                       setState(() => _currentStory = page.clamp(0, stories.length - 1));
@@ -291,7 +291,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                   itemCount: stories.length,
                   itemBuilder: (_, i) => GestureDetector(
                     onTap: stories[i].onTap,
-                    child: _StoryCard(story: stories[i], width: screenWidth * 0.80),
+                    child: _StoryCard(story: stories[i], width: screenWidth * 0.62),
                   ),
                 ),
               ),
@@ -369,9 +369,9 @@ class _PantherAiPageState extends State<PantherAiPage>
 
   Widget _buildLifeXCard() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+      padding: const EdgeInsets.fromLTRB(28, 0, 28, 24),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: _cardBg,
           borderRadius: BorderRadius.circular(16),
@@ -390,7 +390,7 @@ class _PantherAiPageState extends State<PantherAiPage>
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: _teal.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(100),
@@ -400,39 +400,39 @@ class _PantherAiPageState extends State<PantherAiPage>
                     'LIFEX × MONEY',
                     style: TextStyles.bodySmall.copyWith(
                       color: _teal,
-                      fontSize: 10,
+                      fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.9,
                     ),
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.hub_outlined, color: _teal.withValues(alpha: 0.45), size: 16),
+                Icon(Icons.hub_outlined, color: _teal.withValues(alpha: 0.45), size: 14),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               'Life × Money Intelligence',
               style: TextStyles.titleMedium.copyWith(
                 color: _textPrimary,
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 5),
             Text(
               'Chris cross-references your LifeX data with financial patterns to surface decisions that benefit from more context.',
               style: TextStyles.bodySmall.copyWith(
                 color: _textSecondary,
-                fontSize: 13,
-                height: 1.5,
+                fontSize: 11,
+                height: 1.4,
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
             _signalRow('ACTIVITY', 'High-load period detected', const Color(0xFFF59E0B)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             _signalRow('FINANCE SIGNAL', '2 decisions flagged for review', const Color(0xFFEF4444)),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
             GestureDetector(
               onTap: () => context.push(RouteConstants.lifex.toPath),
               child: Row(
@@ -749,7 +749,7 @@ class _StoryCard extends StatelessWidget {
     return Container(
       width: width,
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -766,7 +766,7 @@ class _StoryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               color: story.tagColor.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(100),
@@ -775,30 +775,32 @@ class _StoryCard extends StatelessWidget {
               story.tag,
               style: TextStyle(
                 color: story.tagColor,
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.8,
               ),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Text(
             story.headline,
             style: const TextStyle(
               color: Color(0xFF1A1A2E),
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
-              height: 1.3,
+              height: 1.25,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Expanded(
             child: Text(
               story.detail,
               style: const TextStyle(
                 color: Color(0xFF6B7080),
-                fontSize: 13,
-                height: 1.45,
+                fontSize: 11,
+                height: 1.4,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -811,12 +813,12 @@ class _StoryCard extends StatelessWidget {
                 story.action,
                 style: TextStyle(
                   color: story.tagColor,
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(Icons.arrow_forward_rounded, color: story.tagColor, size: 14),
+              Icon(Icons.arrow_forward_rounded, color: story.tagColor, size: 13),
             ],
           ),
         ],
@@ -843,10 +845,10 @@ class _QuickTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
           boxShadow: [
             BoxShadow(
@@ -859,15 +861,15 @@ class _QuickTile extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: accent, size: 22),
-            const SizedBox(height: 10),
+            Icon(icon, color: accent, size: 16),
+            const SizedBox(height: 6),
             Text(
               label,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF374151),
-                fontSize: 11,
-                height: 1.35,
+                fontSize: 9,
+                height: 1.3,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -905,10 +907,10 @@ class _IntelTile extends StatelessWidget {
     return GestureDetector(
       onTap: data.onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
           boxShadow: [
             BoxShadow(
@@ -926,38 +928,38 @@ class _IntelTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(7),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(data.icon, color: const Color(0xFF374151), size: 16),
+                  child: Icon(data.icon, color: const Color(0xFF374151), size: 14),
                 ),
-                Icon(Icons.chevron_right_rounded, color: const Color(0xFFD1D5DB), size: 16),
+                Icon(Icons.chevron_right_rounded, color: const Color(0xFFD1D5DB), size: 14),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               data.title,
               style: const TextStyle(
                 color: Color(0xFF6B7080),
-                fontSize: 11,
+                fontSize: 10,
                 letterSpacing: 0.2,
               ),
             ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 2),
             Text(
               data.value,
               style: const TextStyle(
                 color: Color(0xFF1A1A2E),
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               data.change,
-              style: TextStyle(color: data.changeColor, fontSize: 11, fontWeight: FontWeight.w500),
+              style: TextStyle(color: data.changeColor, fontSize: 10, fontWeight: FontWeight.w500),
             ),
           ],
         ),

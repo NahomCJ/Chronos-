@@ -7,13 +7,16 @@ import '../../bloc/trade/trade_event.dart';
 import '../../bloc/trade/trade_state.dart';
 import 'buy_btc_success_page.dart';
 
-// Dark gradient fill for input/text boxes — keeps white text readable
-// regardless of what's behind the (now-ungradiented) background photo.
+// Light fill for input/text boxes — a clean white card with dark text,
+// readable regardless of what's behind the (now-ungradiented) background photo.
 const _kFieldGradient = LinearGradient(
-  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  colors: [Color(0xFFFFFFFF), Color(0xFFF3F3F8)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+const _kFieldBorder = Color(0x14000000);
+const _kFieldTextPrimary = Color(0xFF12122A);
+const _kFieldTextSecondary = Color(0xFF6B6B7A);
 
 class BuyBtcReviewPage extends StatefulWidget {
   final double amount;
@@ -152,7 +155,7 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                 gradient: _kFieldGradient,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.14),
+                                  color: _kFieldBorder,
                                 ),
                               ),
                               child: Column(
@@ -174,7 +177,7 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                   const SizedBox(height: 14),
                                   Container(
                                     height: 1,
-                                    color: Colors.white.withValues(alpha: 0.14),
+                                    color: _kFieldBorder,
                                   ),
                                   const SizedBox(height: 14),
                                   _buildOrderDetailRow(
@@ -194,7 +197,7 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                       Text(
                                         'Total Cost',
                                         style: TextStyles.bodyMedium.copyWith(
-                                          color: Colors.white,
+                                          color: _kFieldTextPrimary,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
                                         ),
@@ -202,7 +205,7 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                       Text(
                                         '\$${totalCost.toStringAsFixed(2)}',
                                         style: TextStyles.bodyMedium.copyWith(
-                                          color: Colors.white,
+                                          color: _kFieldTextPrimary,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
                                         ),
@@ -344,14 +347,14 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: _kFieldTextSecondary,
             fontSize: 12,
           ),
         ),
         Text(
           value,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white,
+            color: _kFieldTextPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),

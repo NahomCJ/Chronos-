@@ -725,10 +725,20 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: FluidGlass.light(
-            borderRadius: BorderRadius.circular(20),
-            blur: 16,
+          child: Container(
             padding: EdgeInsets.all(20 * scale),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: Column(
               children: [
                 // Total row
@@ -840,62 +850,65 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
           ),
         ),
         const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: assets.map((a) {
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: a == assets.last ? 0 : 10),
-                  padding: EdgeInsets.all(14 * scale),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+        SizedBox(
+          height: 122 * scale,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: assets.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, i) {
+              final a = assets[i];
+              return Container(
+                width: 148 * scale,
+                padding: EdgeInsets.symmetric(horizontal: 18 * scale, vertical: 14 * scale),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFEEEEEE), width: 0.8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: a.color.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: a.color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(a.icon, color: a.color, size: 16),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(a.value,
-                          style: TextStyles.titleMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF1A1A1A),
-                              fontSize: 13 * textScale)),
-                      const SizedBox(height: 3),
-                      Text(a.label,
-                          style: TextStyles.bodySmall.copyWith(
-                              color: const Color(0xFF888888),
-                              fontSize: 10 * textScale)),
-                      const SizedBox(height: 4),
-                      Text(a.change,
-                          style: TextStyles.bodySmall.copyWith(
-                              color: a.isPositive
-                                  ? const Color(0xFF10B981)
-                                  : const Color(0xFFEF4444),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10 * textScale)),
-                    ],
-                  ),
+                      child: Icon(a.icon, color: a.color, size: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(a.value,
+                        style: TextStyles.titleMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1A1A1A),
+                            fontSize: 13 * textScale)),
+                    const SizedBox(height: 3),
+                    Text(a.label,
+                        style: TextStyles.bodySmall.copyWith(
+                            color: const Color(0xFF888888),
+                            fontSize: 10 * textScale)),
+                    const SizedBox(height: 4),
+                    Text(a.change,
+                        style: TextStyles.bodySmall.copyWith(
+                            color: a.isPositive
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFFEF4444),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10 * textScale)),
+                  ],
                 ),
               );
-            }).toList(),
+            },
           ),
         ),
       ],
