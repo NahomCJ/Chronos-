@@ -11,7 +11,7 @@ import '../network/api_client.dart';
 // server-side. Falls back to on-device TTS if that call fails.
 const _kVoiceBase = String.fromEnvironment(
   'CHRIS_VOICE_BASE_URL',
-  defaultValue: 'https://chronosapp-nahomp.vercel.app',
+  defaultValue: 'https://chronosapp-rosy.vercel.app',
 );
 
 class TtsService {

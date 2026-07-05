@@ -8,8 +8,12 @@ const _kPantherBase = String.fromEnvironment(
 );
 
 // Chris chat is served by the Vercel serverless function (api/chat.js)
-// which holds the Anthropic API key securely server-side.
-const _kChrisChatBase = 'https://chronosapp-nahomp.vercel.app';
+// which holds the Anthropic API key securely server-side. Must match
+// whichever Vercel project the API keys are actually configured on.
+const _kChrisChatBase = String.fromEnvironment(
+  'CHRIS_CHAT_BASE_URL',
+  defaultValue: 'https://chronosapp-rosy.vercel.app',
+);
 
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
