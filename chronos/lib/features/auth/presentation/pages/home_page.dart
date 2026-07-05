@@ -701,7 +701,19 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     }
 
     final total = values.fold(0.0, (a, b) => a + b);
-    final maxVal = values.reduce((a, b) => a > b ? a : b);
+    final count = math.min(values.length, 5);
+
+    // Ascending by spend: the curve builds from the smallest category
+    // (lightest node, top) up to the biggest (most saturated node, bottom)
+    // — so the darkest circle always marks the category the user spent
+    // the most on.
+    final entries = List.generate(
+        count, (i) => (icons[i % icons.length], labels[i], values[i]))
+      ..sort((a, b) => a.$3.compareTo(b.$3));
+
+    const rowHeight = 62.0;
+    final curveHeight = rowHeight * count;
+    const curveWidth = 76.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,6 +738,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
+            clipBehavior: Clip.antiAlias,
             padding: EdgeInsets.all(20 * scale),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -739,78 +752,139 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            child: Column(
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                // Total row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Total Spent',
-                        style: TextStyles.bodySmall.copyWith(
-                            color: const Color(0xFF888888),
-                            fontSize: 12 * textScale)),
-                    Text(_moneyWhole(total),
-                        style: TextStyles.titleMedium.copyWith(
-                            color: const Color(0xFF1A1A1A),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15 * textScale)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Category bars
-                ...List.generate(math.min(values.length, 5), (i) {
-                  final pct = values[i] / maxVal;
-                  const barColor = Color(0xFFCD853F);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: barColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(icons[i % icons.length], size: 15, color: barColor),
+                Positioned(
+                  top: -30,
+                  right: -30,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            const Color(0xFF3B82F6).withValues(alpha: 0.06),
+                            const Color(0xFF3B82F6).withValues(alpha: 0.0),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                    ),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Total row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Total Spent',
+                            style: TextStyles.bodySmall.copyWith(
+                                color: const Color(0xFF888888),
+                                fontSize: 12 * textScale)),
+                        Text(_moneyWhole(total),
+                            style: TextStyles.titleMedium.copyWith(
+                                color: const Color(0xFF1A1A1A),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15 * textScale)),
+                      ],
+                    ),
+                    SizedBox(height: 18 * scale),
+                    // Curved category arc — smallest spend at the top
+                    // (lightest node), biggest spend at the bottom
+                    // (most saturated node), connected by a smooth curve.
+                    SizedBox(
+                      height: curveHeight,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: CustomPaint(
+                              painter: _SpendCurvePainter(
+                                  width: curveWidth, itemCount: count),
+                            ),
+                          ),
+                          ...List.generate(count, (i) {
+                            final t = count > 1 ? i / (count - 1) : 0.0;
+                            final node = _SpendCurvePainter.nodeAt(
+                                curveWidth, curveHeight, count, i);
+                            final badgeColor = Color.lerp(
+                                const Color(0xFFDCEAFB),
+                                const Color(0xFF1D4ED8),
+                                t)!;
+                            final iconColor = t < 0.5
+                                ? const Color(0xFF1D4ED8)
+                                : Colors.white;
+                            final entry = entries[i];
+                            return Positioned(
+                              left: node.dx - 22,
+                              top: node.dy - 22,
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.08),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: badgeColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(entry.$1,
+                                        size: 16, color: iconColor),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                          ...List.generate(count, (i) {
+                            final node = _SpendCurvePainter.nodeAt(
+                                curveWidth, curveHeight, count, i);
+                            final entry = entries[i];
+                            return Positioned(
+                              left: curveWidth + 14,
+                              right: 0,
+                              top: node.dy - 16,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(labels[i],
-                                      style: TextStyles.bodySmall.copyWith(
-                                          color: const Color(0xFF333333),
-                                          fontSize: 12 * textScale,
-                                          fontWeight: FontWeight.w500)),
-                                  Text(_moneyWhole(values[i]),
+                                  Text(entry.$2,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyles.bodySmall.copyWith(
                                           color: const Color(0xFF1A1A1A),
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12 * textScale)),
+                                  const SizedBox(height: 2),
+                                  Text(_moneyWhole(entry.$3),
+                                      style: TextStyles.bodySmall.copyWith(
+                                          color: const Color(0xFF888888),
+                                          fontSize: 11 * textScale)),
                                 ],
                               ),
-                              const SizedBox(height: 5),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value: pct,
-                                  minHeight: 5,
-                                  backgroundColor: const Color(0xFFF0F0F0),
-                                  valueColor: AlwaysStoppedAnimation(barColor),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-                  );
-                }),
+                  ],
+                ),
               ],
             ),
           ),
@@ -923,6 +997,64 @@ class _AssetTile {
   final Color color;
   const _AssetTile(this.label, this.value, this.change, this.isPositive,
       this.icon, this.color);
+}
+
+/// Draws the smooth "crescent" curve behind the Spending Analysis nodes —
+/// a single cubic bezier that bulges right in the middle and curls back
+/// at both ends, matching where [nodeAt] places each circular badge.
+class _SpendCurvePainter extends CustomPainter {
+  final double width;
+  final int itemCount;
+  const _SpendCurvePainter({required this.width, required this.itemCount});
+
+  static List<Offset> _controlPoints(double width, double height) {
+    final startX = width * 0.32;
+    final bulgeX = width * 0.98;
+    return [
+      Offset(startX, 0),
+      Offset(bulgeX, height * 0.26),
+      Offset(bulgeX, height * 0.74),
+      Offset(startX, height),
+    ];
+  }
+
+  static Offset _cubicAt(List<Offset> p, double t) {
+    final mt = 1 - t;
+    final a = mt * mt * mt;
+    final b = 3 * mt * mt * t;
+    final c = 3 * mt * t * t;
+    final d = t * t * t;
+    return Offset(
+      a * p[0].dx + b * p[1].dx + c * p[2].dx + d * p[3].dx,
+      a * p[0].dy + b * p[1].dy + c * p[2].dy + d * p[3].dy,
+    );
+  }
+
+  /// Point on the curve for node [index] of [count], using the same
+  /// control points [paint] draws — keeps badges glued to the line.
+  static Offset nodeAt(double width, double height, int count, int index) {
+    final t = count > 1 ? index / (count - 1) : 0.5;
+    return _cubicAt(_controlPoints(width, height), t);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final points = _controlPoints(width, size.height);
+    final path = Path()
+      ..moveTo(points[0].dx, points[0].dy)
+      ..cubicTo(points[1].dx, points[1].dy, points[2].dx, points[2].dy,
+          points[3].dx, points[3].dy);
+    final paint = Paint()
+      ..color = const Color(0xFFC7D2E3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpendCurvePainter oldDelegate) =>
+      oldDelegate.itemCount != itemCount || oldDelegate.width != width;
 }
 
 class DonutChartPainter extends CustomPainter {
