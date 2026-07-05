@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -7,6 +6,14 @@ import '../../bloc/trade/trade_bloc.dart';
 import '../../bloc/trade/trade_event.dart';
 import '../../bloc/trade/trade_state.dart';
 import 'buy_btc_success_page.dart';
+
+// Dark gradient fill for input/text boxes — keeps white text readable
+// regardless of what's behind the (now-ungradiented) background photo.
+const _kFieldGradient = LinearGradient(
+  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
 
 class BuyBtcReviewPage extends StatefulWidget {
   final double amount;
@@ -79,9 +86,6 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
             children: [
               Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
               Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-              Positioned.fill(
-                child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
-              ),
               SafeArea(
                 child: Column(
                   children: [
@@ -143,64 +147,64 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                             const SizedBox(height: 32),
                             Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
+                                gradient: _kFieldGradient,
+                                borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: Colors.white.withValues(alpha: 0.14),
                                 ),
                               ),
                               child: Column(
                                 children: [
                                   _buildOrderDetailRow('Asset', 'Bitcoin (BTC)'),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 12),
                                   _buildOrderDetailRow(
                                     'Amount',
                                     '${widget.btcAmount.toStringAsFixed(6)} BTC',
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 12),
                                   _buildOrderDetailRow(
                                     'Price',
                                     '\$${widget.limitPrice.toStringAsFixed(0)}',
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 12),
                                   _buildOrderDetailRow(
                                       'Order Type', widget.orderType),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 14),
                                   Container(
                                     height: 1,
-                                    color: Colors.white.withValues(alpha: 0.2),
+                                    color: Colors.white.withValues(alpha: 0.14),
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 14),
                                   _buildOrderDetailRow(
                                     'Subtotal',
                                     '\$${widget.amount.toStringAsFixed(2)}',
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 12),
                                   _buildOrderDetailRow(
                                     'Fee (1%)',
                                     '\$${fee.toStringAsFixed(2)}',
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 14),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         'Total Cost',
-                                        style: TextStyles.titleMedium.copyWith(
+                                        style: TextStyles.bodyMedium.copyWith(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                         ),
                                       ),
                                       Text(
                                         '\$${totalCost.toStringAsFixed(2)}',
-                                        style: TextStyles.titleMedium.copyWith(
+                                        style: TextStyles.bodyMedium.copyWith(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ],
@@ -208,10 +212,10 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
                             Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF59E0B)
                                     .withValues(alpha: 0.2),
@@ -227,16 +231,16 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                   const Icon(
                                     Icons.warning_outlined,
                                     color: Color(0xFFF59E0B),
-                                    size: 20,
+                                    size: 18,
                                   ),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       'This transaction is subject to market conditions. Actual execution price may vary slightly.',
-                                      style: TextStyles.bodyMedium.copyWith(
+                                      style: TextStyles.bodySmall.copyWith(
                                         color:
                                             Colors.white.withValues(alpha: 0.9),
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         height: 1.4,
                                       ),
                                     ),
@@ -268,7 +272,7 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                     Colors.white.withValues(alpha: 0.9),
                                 foregroundColor: Colors.black,
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -284,9 +288,10 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
                                     )
                                   : Text(
                                       'Confirm Purchase',
-                                      style: TextStyles.titleMedium.copyWith(
+                                      style: TextStyles.bodyMedium.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600,
+                                        fontSize: 14,
                                       ),
                                     ),
                             ),
@@ -338,17 +343,17 @@ class _BuyBtcReviewPageState extends State<BuyBtcReviewPage> {
       children: [
         Text(
           label,
-          style: TextStyles.bodyMedium.copyWith(
+          style: TextStyles.bodySmall.copyWith(
             color: Colors.white.withValues(alpha: 0.7),
-            fontSize: 14,
+            fontSize: 12,
           ),
         ),
         Text(
           value,
-          style: TextStyles.bodyMedium.copyWith(
+          style: TextStyles.bodySmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w600,
-            fontSize: 14,
+            fontSize: 12,
           ),
         ),
       ],
