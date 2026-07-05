@@ -256,7 +256,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
       body: Stack(
         children: [
           Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SingleChildScrollView(
         child: Column(
           children: [
@@ -483,24 +482,25 @@ class _BlockHubPageState extends State<BlockHubPage> {
       child: Column(
         children: [
           Container(
-            width: isSmallScreen ? 44 : 48,
-            height: isSmallScreen ? 44 : 48,
+            width: isSmallScreen ? 50 : 54,
+            height: isSmallScreen ? 50 : 54,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.22),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.40)),
+              color: Colors.white.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withValues(alpha: 0.30)),
             ),
             child: Icon(
               icon,
               color: Colors.white,
-              size: isSmallScreen ? 18 : 20,
+              size: isSmallScreen ? 22 : 24,
             ),
           ),
           SizedBox(height: isSmallScreen ? 6 : 8),
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.80),
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
               fontSize: isSmallScreen ? 10 : 11,
             ),
           ),

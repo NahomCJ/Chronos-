@@ -533,33 +533,31 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             child: Column(
               children: [
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: 54,
+                  height: 54,
                   decoration: BoxDecoration(
                     color: isAi
                         ? const Color(0xFF14B8A6).withValues(alpha: 0.30)
-                        : Colors.black.withValues(alpha: 0.30),
+                        : Colors.white.withValues(alpha: 0.16),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isAi
                           ? const Color(0xFF14B8A6).withValues(alpha: 0.6)
                           : Colors.white.withValues(alpha: 0.30),
-                      width: isAi ? 1.2 : 0.8,
+                      width: isAi ? 1.2 : 1.0,
                     ),
                   ),
                   child: Icon(actions[i].$1,
                       color: isAi ? const Color(0xFF14B8A6) : Colors.white,
-                      size: 22),
+                      size: 24),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   actions[i].$2,
                   style: TextStyle(
-                    color: isAi
-                        ? const Color(0xFF14B8A6)
-                        : Colors.white.withValues(alpha: 0.75),
+                    color: isAi ? const Color(0xFF14B8A6) : Colors.white,
                     fontSize: 11,
-                    fontWeight: isAi ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isAi ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
               ],
