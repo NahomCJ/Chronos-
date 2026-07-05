@@ -29,13 +29,16 @@ const _kCoins = [
   _Coin('ADA', 'Cardano', 0.62, 500.0, 'https://assets.coingecko.com/coins/images/975/large/cardano.png', Color(0xFF0033AD)),
 ];
 
-// Dark gradient fill for input/text boxes — keeps white text readable
-// regardless of what's behind the (now-ungradiented) background photo.
+// Light fill for input/text boxes — a clean white card with dark text,
+// readable regardless of what's behind the (now-ungradiented) background photo.
 const _kFieldGradient = LinearGradient(
-  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  colors: [Color(0xFFFFFFFF), Color(0xFFF3F3F8)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+const _kFieldBorder = Color(0x14000000);
+const _kFieldTextPrimary = Color(0xFF12122A);
+const _kFieldTextSecondary = Color(0xFF6B6B7A);
 
 class SellBtcPage extends StatefulWidget {
   const SellBtcPage({super.key});
@@ -225,18 +228,18 @@ class _SellBtcPageState extends State<SellBtcPage> {
                           decoration: BoxDecoration(
                             gradient: _kFieldGradient,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+                            border: Border.all(color: _kFieldBorder),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   controller: _amountController,
-                                  style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
-                                  decoration: InputDecoration(
+                                  style: TextStyles.bodyMedium.copyWith(color: _kFieldTextPrimary, fontWeight: FontWeight.w600, fontSize: 15),
+                                  decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     hintText: '0.015564',
-                                    hintStyle: const TextStyle(color: Colors.white54),
+                                    hintStyle: TextStyle(color: _kFieldTextSecondary),
                                     isDense: true,
                                     contentPadding: EdgeInsets.zero,
                                   ),
@@ -248,7 +251,7 @@ class _SellBtcPageState extends State<SellBtcPage> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Text(_coin.symbol, style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                              Text(_coin.symbol, style: TextStyles.bodyMedium.copyWith(color: _kFieldTextPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
                             ],
                           ),
                         ),
@@ -262,10 +265,10 @@ class _SellBtcPageState extends State<SellBtcPage> {
                           decoration: BoxDecoration(
                             gradient: _kFieldGradient,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+                            border: Border.all(color: _kFieldBorder),
                           ),
                           child: Text('\$${_usdAmount.toStringAsFixed(2)}',
-                              style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                              style: TextStyles.bodyMedium.copyWith(color: _kFieldTextPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
                         ),
                         const SizedBox(height: 32),
                         Row(
@@ -322,14 +325,14 @@ class _SellBtcPageState extends State<SellBtcPage> {
                                 const Icon(Icons.info_outline, color: Color(0xFF8B5CF6), size: 16),
                                 const SizedBox(width: 6),
                                 Text('Fee: \$${_fee.toStringAsFixed(2)} (1%)',
-                                    style: TextStyles.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
+                                    style: TextStyles.bodySmall.copyWith(color: _kFieldTextPrimary, fontWeight: FontWeight.w600, fontSize: 12)),
                               ]),
                               const SizedBox(height: 6),
                               Text('Price: \$${_coin.price.toStringAsFixed(2)} / ${_coin.symbol}',
-                                  style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
+                                  style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 12)),
                               const SizedBox(height: 3),
                               Text('Balance: ${_coin.balance.toStringAsFixed(6)} ${_coin.symbol}',
-                                  style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
+                                  style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 12)),
                             ],
                           ),
                         ),

@@ -4,13 +4,16 @@ import 'sell_btc_review_page.dart';
 
 enum SellOrderType { market, limit }
 
-// Dark gradient fill for input/text boxes — keeps white text readable
-// regardless of what's behind the (now-ungradiented) background photo.
+// Light fill for input/text boxes — a clean white card with dark text,
+// readable regardless of what's behind the (now-ungradiented) background photo.
 const _kFieldGradient = LinearGradient(
-  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  colors: [Color(0xFFFFFFFF), Color(0xFFF3F3F8)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+const _kFieldBorder = Color(0x14000000);
+const _kFieldTextPrimary = Color(0xFF12122A);
+const _kFieldTextSecondary = Color(0xFF6B6B7A);
 
 class SellBtcOrderTypePage extends StatefulWidget {
   final double btcAmount;
@@ -180,7 +183,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                               gradient: _kFieldGradient,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.14),
+                                color: _kFieldBorder,
                               ),
                             ),
                             child: Row(
@@ -188,7 +191,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                                 Text(
                                   '\$',
                                   style: TextStyles.bodyMedium.copyWith(
-                                    color: Colors.white,
+                                    color: _kFieldTextPrimary,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 15,
                                   ),
@@ -198,7 +201,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                                   child: TextField(
                                     controller: _limitPriceController,
                                     style: TextStyles.bodyMedium.copyWith(
-                                      color: Colors.white,
+                                      color: _kFieldTextPrimary,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
                                     ),
@@ -206,7 +209,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                                       border: InputBorder.none,
                                       hintText: '64250',
                                       hintStyle: TextStyle(
-                                        color: Colors.white54,
+                                        color: _kFieldTextSecondary,
                                       ),
                                       isDense: true,
                                       contentPadding: EdgeInsets.zero,
@@ -302,7 +305,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
           gradient: _kFieldGradient,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? Colors.red : Colors.white.withValues(alpha: 0.14),
+            color: isSelected ? Colors.red : _kFieldBorder,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -316,7 +319,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color:
-                      isSelected ? Colors.red : Colors.white.withValues(alpha: 0.5),
+                      isSelected ? Colors.red : _kFieldTextSecondary,
                   width: 2,
                 ),
               ),
@@ -345,7 +348,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                   Text(
                     title,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: _kFieldTextPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
@@ -354,7 +357,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                   Text(
                     description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: _kFieldTextSecondary,
                       fontSize: 12,
                       height: 1.3,
                     ),
