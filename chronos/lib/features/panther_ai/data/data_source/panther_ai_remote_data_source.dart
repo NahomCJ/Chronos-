@@ -7,14 +7,6 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
-// Chris chat is served by the Vercel serverless function (api/chat.js)
-// which holds the Anthropic API key securely server-side. Must match
-// whichever Vercel project the API keys are actually configured on.
-const _kChrisChatBase = String.fromEnvironment(
-  'CHRIS_CHAT_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
-);
-
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
 class PantherAiRemoteDataSource {
@@ -26,21 +18,24 @@ class PantherAiRemoteDataSource {
   String get _userId => _tokenStorage.userId ?? 'user_marcus';
 
   // ── Chat ──────────────────────────────────────────────────────────────────
+  // Chris chat is served by the main Chronos Express backend, which holds
+  // the Anthropic API key server-side and is authenticated via the JWT
+  // ApiClient already attaches to every request.
 
   Future<ChatResponseModel> sendMessage(
     String message, {
     List<Map<String, String>> history = const [],
   }) async {
-    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
-      'user_id': _userId,
+    final data = await _client.post('/api/ai/chris/chat', {
       'message': message,
+      'responseMode': 'text',
       if (history.isNotEmpty) 'history': history,
     });
     return ChatResponseModel.fromJson({
-      'reply': data['response'] as String? ?? data['reply'] as String? ?? '',
+      'reply': data['reply'] as String? ?? '',
       'domain': data['domain'] ?? 'GENERAL',
       'userLevel': data['userLevel'] ?? 'BEGINNER',
-      'timestamp': DateTime.now().toIso8601String(),
+      'timestamp': data['timestamp'] as String? ?? DateTime.now().toIso8601String(),
     });
   }
 

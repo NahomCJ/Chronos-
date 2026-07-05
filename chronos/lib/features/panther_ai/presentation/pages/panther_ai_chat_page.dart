@@ -148,6 +148,17 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     _chatBloc.add(ChatMessageSent(text.trim()));
   }
 
+  // ApiClient surfaces the backend's actual error message (e.g. "message is
+  // required", "Unauthorized") inside the Exception text — show that instead
+  // of a generic string so failures are debuggable from the chat itself.
+  String _friendlyErrorText(String rawError) {
+    final cleaned = rawError.replaceFirst('Exception: ', '').trim();
+    if (cleaned.isEmpty) {
+      return 'Sorry, something went wrong. Please try again.';
+    }
+    return 'Sorry, something went wrong: $cleaned';
+  }
+
   String _currentTime() {
     final now = DateTime.now();
     final h = now.hour % 12 == 0 ? 12 : now.hour % 12;
@@ -193,7 +204,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             setState(() {
               _orbState = OrbState.idle;
               _messages.add(_ChatMessage(
-                text: 'Sorry, something went wrong. Please try again.',
+                text: _friendlyErrorText(state.message),
                 isUser: false,
                 time: _currentTime(),
               ));
