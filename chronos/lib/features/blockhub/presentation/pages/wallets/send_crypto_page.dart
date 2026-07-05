@@ -20,6 +20,14 @@ const _kCoins = [
   _Coin('MATIC', 'Polygon', 1200.0, 1.05, 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png', Color(0xFF8247E5)),
 ];
 
+// Dark gradient fill for input/text boxes — keeps white text readable
+// regardless of what's behind the background photo.
+const _kFieldGradient = LinearGradient(
+  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
 class SendCryptoPage extends StatefulWidget {
   const SendCryptoPage({super.key});
 
@@ -62,7 +70,6 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
         children: [
           Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
           Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          Positioned.fill(child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))])),
           SafeArea(
             child: Column(
               children: [
@@ -178,9 +185,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Column(
         children: [
@@ -212,9 +219,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,9 +265,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,9 +312,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,9 +377,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,7 +409,7 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),

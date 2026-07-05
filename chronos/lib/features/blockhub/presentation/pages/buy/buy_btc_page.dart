@@ -28,6 +28,14 @@ const _kCoins = [
   _Coin('ADA', 'Cardano', 0.62, 'https://assets.coingecko.com/coins/images/975/large/cardano.png', Color(0xFF0033AD)),
 ];
 
+// Dark gradient fill for input/text boxes — keeps white text readable
+// regardless of what's behind the (now-ungradiented) background photo.
+const _kFieldGradient = LinearGradient(
+  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+
 class BuyBtcPage extends StatefulWidget {
   const BuyBtcPage({super.key});
 
@@ -76,9 +84,6 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
         children: [
           Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
           Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          Positioned.fill(
-            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
-          ),
           SafeArea(
             child: Column(
               children: [
@@ -226,26 +231,28 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                             fontSize: isSmallScreen ? 14 : 16,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                            gradient: _kFieldGradient,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
                           ),
                           child: Row(
                             children: [
-                              Text('\$', style: TextStyles.titleMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
-                              const SizedBox(width: 8),
+                              Text('\$', style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                              const SizedBox(width: 6),
                               Expanded(
                                 child: TextField(
                                   controller: _amountController,
-                                  style: TextStyles.titleMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                                  style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
                                     hintText: '1000',
                                     hintStyle: TextStyle(color: Colors.white54),
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
                                   ),
                                   keyboardType: TextInputType.number,
                                   onChanged: (v) {
@@ -260,7 +267,7 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Text(
                           'You\'ll receive',
                           style: TextStyles.bodyMedium.copyWith(
@@ -268,31 +275,31 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                             fontSize: isSmallScreen ? 14 : 16,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                            gradient: _kFieldGradient,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
                           ),
                           child: Row(
                             children: [
                               ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: _coin.logoUrl,
-                                  width: 24, height: 24, fit: BoxFit.cover,
+                                  width: 20, height: 20, fit: BoxFit.cover,
                                   errorWidget: (_, __, ___) => Container(
-                                    width: 24, height: 24,
+                                    width: 20, height: 20,
                                     decoration: BoxDecoration(color: _coin.color, shape: BoxShape.circle),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 8),
                               Text(
                                 '${_coinAmount.toStringAsFixed(6)} ${_coin.symbol}',
-                                style: TextStyles.titleMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                                style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
                               ),
                             ],
                           ),
@@ -342,13 +349,13 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                             _pctBtn('100%', 1.0),
                           ],
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 24),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(16),
+                            gradient: _kFieldGradient,
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: const Color(0xFF8B5CF6).withValues(alpha: 0.3)),
                           ),
                           child: Column(
@@ -356,20 +363,20 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.info_outline, color: Color(0xFF8B5CF6), size: 20),
-                                  const SizedBox(width: 8),
+                                  const Icon(Icons.info_outline, color: Color(0xFF8B5CF6), size: 16),
+                                  const SizedBox(width: 6),
                                   Text(
                                     'Fee: \$${_fee.toStringAsFixed(2)} (1%)',
-                                    style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                                    style: TextStyles.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 6),
                               Text('Price: \$${_coin.price.toStringAsFixed(2)} / ${_coin.symbol}',
-                                  style: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.8))),
-                              const SizedBox(height: 4),
+                                  style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
+                              const SizedBox(height: 3),
                               Text('Available: \$${_maxAmount.toStringAsFixed(2)}',
-                                  style: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.8))),
+                                  style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.8), fontSize: 12)),
                             ],
                           ),
                         ),
@@ -395,10 +402,10 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white.withValues(alpha: 0.9),
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text('Continue', style: TextStyles.titleMedium.copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
+                      child: Text('Continue', style: TextStyles.bodyMedium.copyWith(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14)),
                     ),
                   ),
                 ),
@@ -434,13 +441,13 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
     return GestureDetector(
       onTap: () => _updateAmount(value),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: sel ? const Color(0xFF8B5CF6).withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: sel ? const Color(0xFF8B5CF6) : Colors.white.withValues(alpha: 0.2)),
         ),
-        child: Text(label, style: TextStyles.bodyMedium.copyWith(color: sel ? const Color(0xFF8B5CF6) : Colors.white, fontWeight: FontWeight.w600)),
+        child: Text(label, style: TextStyles.bodySmall.copyWith(color: sel ? const Color(0xFF8B5CF6) : Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
       ),
     );
   }

@@ -1,9 +1,16 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'sell_btc_review_page.dart';
 
 enum SellOrderType { market, limit }
+
+// Dark gradient fill for input/text boxes — keeps white text readable
+// regardless of what's behind the (now-ungradiented) background photo.
+const _kFieldGradient = LinearGradient(
+  colors: [Color(0xFF1C1C2E), Color(0xFF0D0D18)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
 
 class SellBtcOrderTypePage extends StatefulWidget {
   final double btcAmount;
@@ -47,10 +54,6 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
         children: [
           Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
           Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          // Background Image
-          Positioned.fill(
-            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
-          ),
 
           // Content
           SafeArea(
@@ -166,36 +169,38 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                             ),
                           ),
 
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
 
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
+                              horizontal: 12,
+                              vertical: 10,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              gradient: _kFieldGradient,
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: Colors.white.withValues(alpha: 0.14),
                               ),
                             ),
                             child: Row(
                               children: [
                                 Text(
                                   '\$',
-                                  style: TextStyles.titleMedium.copyWith(
+                                  style: TextStyles.bodyMedium.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
+                                    fontSize: 15,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 6),
                                 Expanded(
                                   child: TextField(
                                     controller: _limitPriceController,
-                                    style: TextStyles.titleMedium.copyWith(
+                                    style: TextStyles.bodyMedium.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
+                                      fontSize: 15,
                                     ),
                                     decoration: const InputDecoration(
                                       border: InputBorder.none,
@@ -203,6 +208,8 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                                       hintStyle: TextStyle(
                                         color: Colors.white54,
                                       ),
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
                                     ),
                                     keyboardType: TextInputType.number,
                                   ),
@@ -231,16 +238,17 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white.withValues(alpha: 0.9),
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         'Continue',
-                        style: TextStyles.titleMedium.copyWith(
+                        style: TextStyles.bodyMedium.copyWith(
                           color: Colors.black,
                           fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -289,12 +297,12 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
+          gradient: _kFieldGradient,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? Colors.red : Colors.white.withValues(alpha: 0.2),
+            color: isSelected ? Colors.red : Colors.white.withValues(alpha: 0.14),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -302,8 +310,8 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
           children: [
             // Radio Button
             Container(
-              width: 20,
-              height: 20,
+              width: 18,
+              height: 18,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -316,8 +324,8 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                   isSelected
                       ? Center(
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: 7,
+                          height: 7,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.red,
@@ -327,7 +335,7 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                       : null,
             ),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
 
             // Title and Description
             Expanded(
@@ -336,18 +344,18 @@ class _SellBtcOrderTypePageState extends State<SellBtcOrderTypePage> {
                 children: [
                   Text(
                     title,
-                    style: TextStyles.titleMedium.copyWith(
+                    style: TextStyles.bodyMedium.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     description,
-                    style: TextStyles.bodyMedium.copyWith(
+                    style: TextStyles.bodySmall.copyWith(
                       color: Colors.white.withValues(alpha: 0.7),
-                      fontSize: 14,
+                      fontSize: 12,
                       height: 1.3,
                     ),
                   ),
