@@ -279,18 +279,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                     ),
                   ),
                   Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withValues(alpha: 0.40),
-                            Colors.black.withValues(alpha: 0.72),
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: Container(color: Colors.black.withValues(alpha: 0.20)),
                   ),
                   SafeArea(
                     bottom: false,
