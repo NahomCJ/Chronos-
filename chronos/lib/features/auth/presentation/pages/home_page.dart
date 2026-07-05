@@ -45,6 +45,9 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
   bool _isBalanceVisible = true;
   String _selectedCurrency = 'USD';
   Timer? _refreshTimer;
+  final PageController _spendPageController =
+      PageController(viewportFraction: 0.58);
+  int _spendPageIndex = 0;
 
   @override
   void initState() {
@@ -67,6 +70,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
   @override
   void dispose() {
     _refreshTimer?.cancel();
+    _spendPageController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -691,6 +695,13 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
       Icons.receipt_long_outlined,
       Icons.more_horiz,
     ];
+    const ringColors = [
+      Color(0xFF3B82F6),
+      Color(0xFFF59E0B),
+      Color(0xFF8B5CF6),
+      Color(0xFF22C55E),
+      Color(0xFFEF4444),
+    ];
 
     if (summary != null && summary.spendingByCategory.isNotEmpty) {
       values = summary.spendingByCategory.map((c) => c.amount).toList();
@@ -701,7 +712,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     }
 
     final total = values.fold(0.0, (a, b) => a + b);
-    final maxVal = values.reduce((a, b) => a > b ? a : b);
+    final count = math.min(values.length, 5);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,7 +737,8 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
-            padding: EdgeInsets.all(20 * scale),
+            padding: EdgeInsets.symmetric(
+                horizontal: 16 * scale, vertical: 16 * scale),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -756,61 +768,91 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                             fontSize: 15 * textScale)),
                   ],
                 ),
-                const SizedBox(height: 16),
-                // Category bars
-                ...List.generate(math.min(values.length, 5), (i) {
-                  final pct = values[i] / maxVal;
-                  const barColor = Color(0xFFCD853F);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: barColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(icons[i % icons.length], size: 15, color: barColor),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(labels[i],
-                                      style: TextStyles.bodySmall.copyWith(
-                                          color: const Color(0xFF333333),
-                                          fontSize: 12 * textScale,
-                                          fontWeight: FontWeight.w500)),
-                                  Text(_moneyWhole(values[i]),
-                                      style: TextStyles.bodySmall.copyWith(
-                                          color: const Color(0xFF1A1A1A),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12 * textScale)),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value: pct,
-                                  minHeight: 5,
-                                  backgroundColor: const Color(0xFFF0F0F0),
-                                  valueColor: AlwaysStoppedAnimation(barColor),
+                SizedBox(height: 10 * scale),
+                // Slideshow: one category ring per page — swipe through
+                // Food, Transport, etc. instead of a stacked list.
+                SizedBox(
+                  height: 126 * scale,
+                  child: PageView.builder(
+                    controller: _spendPageController,
+                    itemCount: count,
+                    onPageChanged: (i) => setState(() => _spendPageIndex = i),
+                    itemBuilder: (context, i) {
+                      final pct = total > 0 ? values[i] / total : 0.0;
+                      final color = ringColors[i % ringColors.length];
+                      return AnimatedBuilder(
+                        animation: _spendPageController,
+                        builder: (context, child) {
+                          double proximity = 1.0;
+                          if (_spendPageController.hasClients &&
+                              _spendPageController.position.haveDimensions) {
+                            proximity =
+                                ((_spendPageController.page ?? i) - i)
+                                    .abs()
+                                    .clamp(0.0, 1.0);
+                          }
+                          final scaleFactor = 1.0 - (proximity * 0.16);
+                          return Transform.scale(
+                            scale: scaleFactor,
+                            child: Opacity(
+                              opacity: 1.0 - (proximity * 0.45),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 68 * scale,
+                              height: 68 * scale,
+                              child: CustomPaint(
+                                painter:
+                                    _SpendRingPainter(progress: pct, color: color),
+                                child: Center(
+                                  child: Icon(icons[i % icons.length],
+                                      size: 22, color: color),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(labels[i],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyles.bodySmall.copyWith(
+                                    color: const Color(0xFF1A1A1A),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12 * textScale)),
+                            const SizedBox(height: 2),
+                            Text(_moneyWhole(values[i]),
+                                style: TextStyles.bodySmall.copyWith(
+                                    color: const Color(0xFF888888),
+                                    fontSize: 11 * textScale)),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                }),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 8 * scale),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(count, (i) {
+                    final active = i == _spendPageIndex;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: active ? 16 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        color: active
+                            ? ringColors[i % ringColors.length]
+                            : const Color(0xFFE5E7EB),
+                      ),
+                    );
+                  }),
+                ),
               ],
             ),
           ),
@@ -923,6 +965,42 @@ class _AssetTile {
   final Color color;
   const _AssetTile(this.label, this.value, this.change, this.isPositive,
       this.icon, this.color);
+}
+
+/// Draws the circular progress ring behind each Spending Analysis
+/// carousel page — a light track plus a coloured arc representing that
+/// category's share of total spend.
+class _SpendRingPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  const _SpendRingPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2 - 5;
+
+    final trackPaint = Paint()
+      ..color = color.withValues(alpha: 0.12)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(center, radius, trackPaint);
+
+    final progressPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    const startAngle = -math.pi / 2;
+    final sweepAngle = 2 * math.pi * progress.clamp(0.0, 1.0);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius),
+        startAngle, sweepAngle, false, progressPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpendRingPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.color != color;
 }
 
 class DonutChartPainter extends CustomPainter {
