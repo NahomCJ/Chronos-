@@ -1,10 +1,12 @@
 import { runPanther } from "../panther/orchestrator";
 import { ResponseMode } from "../panther/llm/prompt-compiler";
+import { LLMMessage } from "../panther/llm/claude.client";
 
 export interface ChatInput {
   userId: string;
   message: string;
   responseMode?: ResponseMode;
+  history?: LLMMessage[];
 }
 
 export interface ChatOutput {
@@ -15,7 +17,7 @@ export interface ChatOutput {
 }
 
 export async function processChrisChat(input: ChatInput): Promise<ChatOutput> {
-  const { userId, message, responseMode = "text" } = input;
+  const { userId, message, responseMode = "text", history = [] } = input;
 
   if (!message || message.trim().length === 0) {
     throw new Error("Message cannot be empty");
@@ -25,7 +27,7 @@ export async function processChrisChat(input: ChatInput): Promise<ChatOutput> {
     throw new Error("Message too long — please keep it under 2000 characters");
   }
 
-  const result = await runPanther({ userId, message, responseMode });
+  const result = await runPanther({ userId, message, responseMode, history });
 
   return {
     reply: result.reply,

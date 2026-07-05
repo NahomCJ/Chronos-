@@ -6,14 +6,9 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_it/get_it.dart';
 import '../network/api_client.dart';
 
-// Chris's voice is synthesized by the same Vercel serverless function that
-// serves chat (api/synthesize.js), which holds the ElevenLabs key securely
-// server-side. Falls back to on-device TTS if that call fails.
-const _kVoiceBase = String.fromEnvironment(
-  'CHRIS_VOICE_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
-);
-
+// Chris's voice is synthesized by the main Chronos Express backend, which
+// holds the ElevenLabs key securely server-side. Falls back to on-device
+// TTS if that call fails.
 class TtsService {
   static final TtsService _instance = TtsService._();
   factory TtsService() => _instance;
@@ -108,8 +103,8 @@ class TtsService {
       final api = GetIt.instance<ApiClient>();
       final trimmed = text.length > 480 ? text.substring(0, 480) : text;
       final bytes = await api.postBytesWithBase(
-        _kVoiceBase,
-        '/api/synthesize',
+        api.baseUrl,
+        '/api/ai/voice/synthesize',
         {'text': trimmed},
       );
       return bytes.isEmpty ? null : bytes;
