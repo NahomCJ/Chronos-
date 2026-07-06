@@ -1270,6 +1270,13 @@ model NftContract {
   deployTxHash    String?
   isActive        Boolean  @default(true)
   deployedAt      DateTime?
+  // Marketplace display metadata — collections had no cover image, blurb,
+  // curation flag, or category before this; the Flutter marketplace page
+  // was showing fully hardcoded content because of it.
+  imageUrl        String?
+  description     String?
+  isFeatured      Boolean  @default(false)
+  category        String   @default("ART") // ART | COLLECTIBLES | MUSIC
   nfts            Nft[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

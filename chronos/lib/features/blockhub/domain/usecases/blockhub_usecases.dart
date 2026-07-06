@@ -45,3 +45,32 @@ class BrowseNfts {
   BrowseNfts(this.repository);
   Future<List<NftItem>> call() => repository.browseNfts();
 }
+
+class GetFeaturedCollection {
+  final BlockhubRepository repository;
+  GetFeaturedCollection(this.repository);
+  Future<NftCollection?> call() => repository.getFeaturedCollection();
+}
+
+class GetTrendingCollections {
+  final BlockhubRepository repository;
+  GetTrendingCollections(this.repository);
+  Future<List<NftCollection>> call({String? category, int limit = 10}) =>
+      repository.getTrendingCollections(category: category, limit: limit);
+}
+
+class GetTopVolumeCollections {
+  final BlockhubRepository repository;
+  GetTopVolumeCollections(this.repository);
+  Future<List<NftCollection>> call(
+          {String period = '24h', String? category, int limit = 10}) =>
+      repository.getTopVolumeCollections(
+          period: period, category: category, limit: limit);
+}
+
+class GetNewDrops {
+  final BlockhubRepository repository;
+  GetNewDrops(this.repository);
+  Future<List<NftItem>> call({String? category, int limit = 10}) =>
+      repository.getNewDrops(category: category, limit: limit);
+}

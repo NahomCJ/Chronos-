@@ -7,6 +7,7 @@ import '../presentation/bloc/portfolio/portfolio_bloc.dart';
 import '../presentation/bloc/market/market_bloc.dart';
 import '../presentation/bloc/trade/trade_bloc.dart';
 import '../presentation/bloc/nft/nft_bloc.dart';
+import '../presentation/bloc/nft_marketplace/nft_marketplace_bloc.dart';
 
 void initBlockhubDi(GetIt sl) {
   sl.registerLazySingleton(() => BlockhubRemoteDataSource(sl()));
@@ -20,6 +21,10 @@ void initBlockhubDi(GetIt sl) {
   sl.registerLazySingleton(() => SellCrypto(sl()));
   sl.registerLazySingleton(() => GetNftCollections(sl()));
   sl.registerLazySingleton(() => BrowseNfts(sl()));
+  sl.registerLazySingleton(() => GetFeaturedCollection(sl()));
+  sl.registerLazySingleton(() => GetTrendingCollections(sl()));
+  sl.registerLazySingleton(() => GetTopVolumeCollections(sl()));
+  sl.registerLazySingleton(() => GetNewDrops(sl()));
 
   sl.registerFactory(
       () => PortfolioBloc(getPortfolio: sl()));
@@ -29,4 +34,10 @@ void initBlockhubDi(GetIt sl) {
       () => TradeBloc(buyCrypto: sl(), sellCrypto: sl()));
   sl.registerFactory(
       () => NftBloc(getNftCollections: sl(), browseNfts: sl()));
+  sl.registerFactory(() => NftMarketplaceBloc(
+        getFeatured: sl(),
+        getTrending: sl(),
+        getTopVolume: sl(),
+        getNewDrops: sl(),
+      ));
 }

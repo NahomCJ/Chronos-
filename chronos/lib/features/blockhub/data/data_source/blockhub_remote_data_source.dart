@@ -85,4 +85,55 @@ class BlockhubRemoteDataSource {
         .map((e) => NftItemModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<NftCollectionModel?> getFeaturedCollection() async {
+    final data =
+        await _client.getWithBase(_kBlockhubBase, '/api/v1/nft/collections/featured');
+    // Backend returns a bare JSON object when a collection exists, or a
+    // bare `null` (which ApiClient wraps as {'data': null}) when none do.
+    if (data.isEmpty || data['id'] == null) return null;
+    return NftCollectionModel.fromJson(data);
+  }
+
+  Future<List<NftCollectionModel>> getTrendingCollections(
+      {String? category, int limit = 10}) async {
+    final query = [
+      'limit=$limit',
+      if (category != null) 'category=$category',
+    ].join('&');
+    final data = await _client.getWithBase(
+        _kBlockhubBase, '/api/v1/nft/collections/trending?$query');
+    final items = data['data'] as List<dynamic>? ?? [];
+    return items
+        .map((e) => NftCollectionModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<NftCollectionModel>> getTopVolumeCollections(
+      {String period = '24h', String? category, int limit = 10}) async {
+    final query = [
+      'period=$period',
+      'limit=$limit',
+      if (category != null) 'category=$category',
+    ].join('&');
+    final data = await _client.getWithBase(
+        _kBlockhubBase, '/api/v1/nft/collections/top-volume?$query');
+    final items = data['data'] as List<dynamic>? ?? [];
+    return items
+        .map((e) => NftCollectionModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<NftItemModel>> getNewDrops({String? category, int limit = 10}) async {
+    final query = [
+      'limit=$limit',
+      if (category != null) 'category=$category',
+    ].join('&');
+    final data =
+        await _client.getWithBase(_kBlockhubBase, '/api/v1/nft/drops/new?$query');
+    final items = data['data'] as List<dynamic>? ?? [];
+    return items
+        .map((e) => NftItemModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }
