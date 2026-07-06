@@ -77,6 +77,12 @@ class NftCollectionModel {
   final double volume;
   final int itemCount;
   final String? imageUrl;
+  final double volumeChangePct;
+  final int ownerCount;
+  final String category;
+  final bool isFeatured;
+  final String? description;
+  final int rank;
 
   const NftCollectionModel({
     required this.id,
@@ -85,6 +91,12 @@ class NftCollectionModel {
     required this.volume,
     required this.itemCount,
     this.imageUrl,
+    this.volumeChangePct = 0,
+    this.ownerCount = 0,
+    this.category = 'ART',
+    this.isFeatured = false,
+    this.description,
+    this.rank = 0,
   });
 
   factory NftCollectionModel.fromJson(Map<String, dynamic> json) =>
@@ -95,6 +107,13 @@ class NftCollectionModel {
         volume: (json['volume'] as num? ?? 0).toDouble(),
         itemCount: (json['item_count'] as int? ?? json['itemCount'] as int? ?? 0),
         imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
+        volumeChangePct:
+            (json['volume_change_pct'] as num? ?? json['volumeChangePct'] as num? ?? 0).toDouble(),
+        ownerCount: (json['owner_count'] as int? ?? json['ownerCount'] as int? ?? 0),
+        category: json['category'] as String? ?? 'ART',
+        isFeatured: json['is_featured'] as bool? ?? json['isFeatured'] as bool? ?? false,
+        description: json['description'] as String?,
+        rank: (json['rank'] as int? ?? 0),
       );
 
   NftCollection toEntity() => NftCollection(
@@ -104,6 +123,12 @@ class NftCollectionModel {
         volume: volume,
         itemCount: itemCount,
         imageUrl: imageUrl,
+        volumeChangePct: volumeChangePct,
+        ownerCount: ownerCount,
+        category: category,
+        isFeatured: isFeatured,
+        description: description,
+        rank: rank,
       );
 }
 

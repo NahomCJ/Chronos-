@@ -43,4 +43,32 @@ class BlockhubRepositoryImpl implements BlockhubRepository {
     final models = await _remote.browseNfts();
     return models.map((m) => m.toEntity()).toList();
   }
+
+  @override
+  Future<NftCollection?> getFeaturedCollection() async {
+    final model = await _remote.getFeaturedCollection();
+    return model?.toEntity();
+  }
+
+  @override
+  Future<List<NftCollection>> getTrendingCollections(
+      {String? category, int limit = 10}) async {
+    final models =
+        await _remote.getTrendingCollections(category: category, limit: limit);
+    return models.map((m) => m.toEntity()).toList();
+  }
+
+  @override
+  Future<List<NftCollection>> getTopVolumeCollections(
+      {String period = '24h', String? category, int limit = 10}) async {
+    final models = await _remote.getTopVolumeCollections(
+        period: period, category: category, limit: limit);
+    return models.map((m) => m.toEntity()).toList();
+  }
+
+  @override
+  Future<List<NftItem>> getNewDrops({String? category, int limit = 10}) async {
+    final models = await _remote.getNewDrops(category: category, limit: limit);
+    return models.map((m) => m.toEntity()).toList();
+  }
 }
