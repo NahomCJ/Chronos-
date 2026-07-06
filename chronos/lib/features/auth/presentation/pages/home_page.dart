@@ -789,7 +789,8 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                             proximity =
                                 ((_spendPageController.page ?? i) - i)
                                     .abs()
-                                    .clamp(0.0, 1.0);
+                                    .clamp(0.0, 1.0)
+                                    .toDouble();
                           }
                           final scaleFactor = 1.0 - (proximity * 0.16);
                           return Transform.scale(
