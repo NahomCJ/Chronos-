@@ -5,7 +5,25 @@ import 'nft_offer_sheet.dart';
 import 'nft_price_history_page.dart';
 
 class NftDetailPage extends StatelessWidget {
-  const NftDetailPage({super.key});
+  final String collection;
+  final String tokenName;
+  final String ownerAddress;
+  final String priceEth;
+  final String priceUsd;
+  final String lastSaleEth;
+  final String imageUrl;
+
+  const NftDetailPage({
+    super.key,
+    this.collection = 'Holographic Futures',
+    this.tokenName = 'Holographic #9012',
+    this.ownerAddress = '0x9876...5432',
+    this.priceEth = '3.5 ETH',
+    this.priceUsd = '\$8400.00',
+    this.lastSaleEth = '3.2',
+    this.imageUrl =
+        'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +106,9 @@ class NftDetailPage extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        'assets/btc.png',
-                        fit: BoxFit.contain,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
                         errorBuilder:
                             (_, __, ___) => Center(
                               child: Icon(
@@ -152,7 +170,7 @@ class NftDetailPage extends StatelessWidget {
         children: [
           // Collection label
           Text(
-            'Holographic Futures',
+            collection,
             style: TextStyles.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.5),
               fontSize: 13,
@@ -161,7 +179,7 @@ class NftDetailPage extends StatelessWidget {
           const SizedBox(height: 4),
           // Title
           Text(
-            'Holographic #9012',
+            tokenName,
             style: TextStyles.titleLarge.copyWith(
               color: Colors.white,
               fontSize: 20,
@@ -180,7 +198,7 @@ class NftDetailPage extends StatelessWidget {
                 ),
               ),
               Text(
-                '0x9876...5432',
+                ownerAddress,
                 style: TextStyles.bodySmall.copyWith(
                   color: const Color(0xFF00D4FF),
                   fontSize: 13,
@@ -228,7 +246,7 @@ class NftDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '3.5 ETH',
+                      priceEth,
                       style: TextStyles.titleLarge.copyWith(
                         color: Colors.white,
                         fontSize: 17,
@@ -236,7 +254,7 @@ class NftDetailPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$8400.00',
+                      priceUsd,
                       style: TextStyles.bodySmall.copyWith(
                         color: const Color(0xFF00D4FF),
                         fontSize: 13,
@@ -257,7 +275,7 @@ class NftDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '3.2',
+                    lastSaleEth,
                     style: TextStyles.titleMedium.copyWith(
                       color: Colors.white,
                       fontSize: 18,

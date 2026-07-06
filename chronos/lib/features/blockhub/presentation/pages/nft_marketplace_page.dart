@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../../../../core/services/pexels_service.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import 'nft/nft_collections_page.dart';
 import 'nft/nft_detail_page.dart';
+
+// Static fallback if the live Pexels search returns nothing (offline, API
+// hiccup) — distinct photo IDs so cards still look different from each
+// other rather than all showing the same placeholder.
+const _kFallbackNftPhotoIds = [
+  1103970, 3861458, 2681319, 1591447, 3308588, 3078831,
+  1509534, 2387793, 1054218, 1287145,
+];
 
 class NftMarketplacePage extends StatefulWidget {
   const NftMarketplacePage({super.key});
@@ -17,8 +26,54 @@ class NftMarketplacePage extends StatefulWidget {
 class _NftMarketplacePageState extends State<NftMarketplacePage> {
   String _selectedFilter = 'All';
   String _volumePeriod = '24h';
+  List<PexelsPhoto> _photos = [];
 
   final _filters = ['All', 'Art', 'Collectibles', 'Music'];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPhotos();
+  }
+
+  Future<void> _loadPhotos() async {
+    final photos = await PexelsService.searchPhotos(
+      'abstract digital art',
+      perPage: 20,
+    );
+    if (mounted && photos.isNotEmpty) setState(() => _photos = photos);
+  }
+
+  /// A distinct image URL for NFT slot [index] — pulled from the live
+  /// Pexels search when available, otherwise a static fallback so every
+  /// slot still gets a different picture instead of a blank/reused one.
+  String _photoUrl(int index) {
+    if (_photos.isNotEmpty) {
+      return _photos[index % _photos.length].large;
+    }
+    final id = _kFallbackNftPhotoIds[index % _kFallbackNftPhotoIds.length];
+    return PexelsService.photoUrl(id, w: 600, h: 600);
+  }
+
+  void _openDetail(
+    BuildContext context, {
+    required String name,
+    required String collection,
+    required String price,
+    required int imageIndex,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => NftDetailPage(
+          tokenName: name,
+          collection: collection,
+          priceEth: price,
+          imageUrl: _photoUrl(imageIndex),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,58 +94,76 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           }
         },
       ),
-      body: ColoredBox(
-        color: const Color(0xFF08080F),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      _buildFeaturedCard(),
-                      const SizedBox(height: 16),
-                      _buildFilterTabs(),
-                      const SizedBox(height: 22),
-                      if (_selectedFilter == 'Collectibles') ...[
-                        _buildTrendingCollectibles(),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.network(
+              'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  Container(color: const Color(0xFF1A2A3A)),
+            ),
+          ),
+          Positioned.fill(
+            child: Container(color: Colors.black.withValues(alpha: 0.20)),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        _buildFeaturedCard(),
+                        const SizedBox(height: 16),
+                        _buildFilterTabs(),
                         const SizedBox(height: 22),
-                        _buildPantherInsightCard(),
-                        const SizedBox(height: 22),
-                        _buildNewDropsCollectibles(),
-                      ] else ...[
-                        _buildTrendingCollections(),
-                        const SizedBox(height: 22),
-                        _buildTopVolume(),
-                        const SizedBox(height: 22),
-                        _buildNewDrops(),
+                        if (_selectedFilter == 'Collectibles') ...[
+                          _buildTrendingCollectibles(),
+                          const SizedBox(height: 22),
+                          _buildPantherInsightCard(),
+                          const SizedBox(height: 22),
+                          _buildNewDropsCollectibles(),
+                        ] else ...[
+                          _buildTrendingCollections(),
+                          const SizedBox(height: 22),
+                          _buildTopVolume(),
+                          const SizedBox(height: 22),
+                          _buildNewDrops(),
+                        ],
+                        const SizedBox(height: 40),
                       ],
-                      const SizedBox(height: 40),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: const Color(0xFF08080F),
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          Icon(
-            Icons.menu,
-            color: Colors.white.withValues(alpha: 0.8),
-            size: 24,
+          GestureDetector(
+            onTap: () => Navigator.of(context).maybePop(),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+            ),
           ),
           Expanded(
             child: Column(
@@ -113,7 +186,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
               ],
             ),
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: 36),
         ],
       ),
     );
@@ -121,15 +194,22 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
 
   Widget _buildFeaturedCard() {
     final isCollectibles = _selectedFilter == 'Collectibles';
-    return Container(
+    final name = isCollectibles ? 'Abstract Dimensions' : 'Chromatic Dreams';
+    final price = isCollectibles ? '0.95 ETH' : '2.5 ETH';
+    final imageIndex = isCollectibles ? 1 : 0;
+    return _TapScale(
+      onTap: () => _openDetail(context,
+          name: name,
+          collection: 'Featured',
+          price: price,
+          imageIndex: imageIndex),
+      child: Container(
       height: 180,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white.withValues(alpha: 0.08),
         image: DecorationImage(
-          image: AssetImage(
-            isCollectibles ? 'assets/home_bg1.png' : 'assets/home_bg2.png',
-          ),
+          image: NetworkImage(_photoUrl(imageIndex)),
           fit: BoxFit.cover,
           onError: (_, __) {},
         ),
@@ -215,6 +295,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             ),
           ],
         ),
+      ),
       ),
     );
   }
@@ -348,8 +429,12 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             itemCount: collections.length,
             separatorBuilder: (_, __) => const SizedBox(width: 10),
             itemBuilder: (context, i) => _TapScale(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
-              child: _buildTrendingCard(collections[i]),
+              onTap: () => _openDetail(context,
+                  name: collections[i].name,
+                  collection: collections[i].name,
+                  price: collections[i].floor,
+                  imageIndex: 2 + i),
+              child: _buildTrendingCard(collections[i], 2 + i),
             ),
           ),
         ),
@@ -357,7 +442,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildTrendingCard(_NftCollection c) {
+  Widget _buildTrendingCard(_NftCollection c, int imageIndex) {
     final isPositive = c.change.startsWith('+');
     return Container(
       width: 130,
@@ -370,18 +455,21 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
               ),
-              child: Center(
-                child: Icon(
-                  Icons.image_outlined,
-                  color: Colors.white.withValues(alpha: 0.3),
-                  size: 32,
+              child: Container(
+                width: double.infinity,
+                color: Colors.white.withValues(alpha: 0.1),
+                child: Image.network(
+                  _photoUrl(imageIndex),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.image_outlined,
+                    color: Colors.white.withValues(alpha: 0.3),
+                    size: 32,
+                  ),
                 ),
               ),
             ),
@@ -527,7 +615,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                 final isLast = e.key == items.length - 1;
                 return Column(
                   children: [
-                    _buildVolumeRow(e.value),
+                    _buildVolumeRow(e.value, 5 + e.key),
                     if (!isLast)
                       Divider(
                         color: Colors.white.withValues(alpha: 0.06),
@@ -547,10 +635,14 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildVolumeRow(_TopVolumeItem item) {
+  Widget _buildVolumeRow(_TopVolumeItem item, int imageIndex) {
     final isPositive = item.change.startsWith('+');
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
+      onTap: () => _openDetail(context,
+          name: item.name,
+          collection: item.name,
+          price: item.floor,
+          imageIndex: imageIndex),
       child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
@@ -566,17 +658,20 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             ),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
+          ClipOval(
+            child: Container(
+              width: 40,
+              height: 40,
               color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.image_outlined,
-              color: Colors.white.withValues(alpha: 0.3),
-              size: 20,
+              child: Image.network(
+                _photoUrl(imageIndex),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Icon(
+                  Icons.image_outlined,
+                  color: Colors.white.withValues(alpha: 0.3),
+                  size: 20,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -657,15 +752,23 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           children: [
             Expanded(
               child: _TapScale(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
-                child: _buildDropCard('Chromatic Dreams', '2.5 ETH', false),
+                onTap: () => _openDetail(context,
+                    name: 'Chromatic Dreams',
+                    collection: 'New Drops',
+                    price: '2.5 ETH',
+                    imageIndex: 10),
+                child: _buildDropCard('Chromatic Dreams', '2.5 ETH', 10),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _TapScale(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
-                child: _buildDropCard('Geometric Visions', '1.8 ETH', false),
+                onTap: () => _openDetail(context,
+                    name: 'Geometric Visions',
+                    collection: 'New Drops',
+                    price: '1.8 ETH',
+                    imageIndex: 11),
+                child: _buildDropCard('Geometric Visions', '1.8 ETH', 11),
               ),
             ),
           ],
@@ -674,24 +777,29 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildDropCard(String name, String price, bool hasImageBg) {
+  Widget _buildDropCard(String name, String price, int imageIndex) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Stack(
           children: [
-            Container(
-              height: 130,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.image_outlined,
-                  color: Colors.white.withValues(alpha: 0.25),
-                  size: 40,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                height: 130,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                ),
+                child: Image.network(
+                  _photoUrl(imageIndex),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.image_outlined,
+                    color: Colors.white.withValues(alpha: 0.25),
+                    size: 40,
+                  ),
                 ),
               ),
             ),
@@ -810,7 +918,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                   final isLast = e.key == items.length - 1;
                   return Column(
                     children: [
-                      _buildCollectibleRow(e.value),
+                      _buildCollectibleRow(e.value, 12 + e.key),
                       if (!isLast)
                         Divider(
                           color: Colors.white.withValues(alpha: 0.06),
@@ -828,25 +936,34 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildCollectibleRow(_TopVolumeItem item) {
+  Widget _buildCollectibleRow(_TopVolumeItem item, int imageIndex) {
     final isPositive = item.change.startsWith('+');
-    return Padding(
+    return GestureDetector(
+      onTap: () => _openDetail(context,
+          name: item.name,
+          collection: item.name,
+          price: item.floor,
+          imageIndex: imageIndex),
+      child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       child: Row(
         children: [
           Stack(
             children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
+              ClipOval(
+                child: Container(
+                  width: 52,
+                  height: 52,
                   color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.image_outlined,
-                  color: Colors.white.withValues(alpha: 0.3),
-                  size: 24,
+                  child: Image.network(
+                    _photoUrl(imageIndex),
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.image_outlined,
+                      color: Colors.white.withValues(alpha: 0.3),
+                      size: 24,
+                    ),
+                  ),
                 ),
               ),
               Positioned(
@@ -857,7 +974,8 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
                   height: 20,
                   decoration: BoxDecoration(
                     color: const Color(0xFF7C3AED),
-                    borderRadius: BorderRadius.circular(6),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFF08080F), width: 1.5),
                   ),
                   child: Center(
                     child: Text(
@@ -931,6 +1049,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -951,15 +1070,23 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
           children: [
             Expanded(
               child: _TapScale(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
-                child: _buildImageDropCard('Abstract Dimensions', '0.95 ETH', 'assets/home_bg1.png'),
+                onTap: () => _openDetail(context,
+                    name: 'Abstract Dimensions',
+                    collection: 'New Drops',
+                    price: '0.95 ETH',
+                    imageIndex: 14),
+                child: _buildImageDropCard('Abstract Dimensions', '0.95 ETH', 14),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _TapScale(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftDetailPage())),
-                child: _buildImageDropCard('Crypto Punks Legacy', '5.2 ETH', 'assets/home_bg2.png'),
+                onTap: () => _openDetail(context,
+                    name: 'Crypto Punks Legacy',
+                    collection: 'New Drops',
+                    price: '5.2 ETH',
+                    imageIndex: 15),
+                child: _buildImageDropCard('Crypto Punks Legacy', '5.2 ETH', 15),
               ),
             ),
           ],
@@ -968,7 +1095,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
     );
   }
 
-  Widget _buildImageDropCard(String name, String price, String imagePath) {
+  Widget _buildImageDropCard(String name, String price, int imageIndex) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Stack(
@@ -978,7 +1105,7 @@ class _NftMarketplacePageState extends State<NftMarketplacePage> {
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.08),
               image: DecorationImage(
-                image: AssetImage(imagePath),
+                image: NetworkImage(_photoUrl(imageIndex)),
                 fit: BoxFit.cover,
                 onError: (_, __) {},
               ),
