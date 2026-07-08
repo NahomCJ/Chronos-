@@ -18,6 +18,12 @@ class TtsService {
   final AudioPlayer _player = AudioPlayer();
   bool _initialized = false;
 
+  // The premium (ElevenLabs) voice failing used to be invisible — any error
+  // silently downgraded to the on-device fallback with only a debugPrint.
+  // Callers (e.g. ChrisHomeFab) can set this to surface the real reason.
+  String? lastError;
+  void Function(String message)? onError;
+
   // Bumped on every stop() so any in-flight speak() sequence abandons
   // itself instead of playing a sentence that's no longer relevant —
   // this is what makes interrupting Chris mid-sentence possible.
@@ -107,11 +113,21 @@ class TtsService {
         '/api/ai/voice/synthesize',
         {'text': trimmed},
       );
-      return bytes.isEmpty ? null : bytes;
+      if (bytes.isEmpty) {
+        _reportError('Voice synthesis returned an empty response.');
+        return null;
+      }
+      return bytes;
     } catch (e) {
-      debugPrint('ElevenLabs TTS error: $e');
+      _reportError(e.toString());
       return null;
     }
+  }
+
+  void _reportError(String message) {
+    lastError = message;
+    debugPrint('Chris voice synthesis error: $message');
+    onError?.call(message);
   }
 
   Future<void> _playBytes(Uint8List bytes, int myGen) async {

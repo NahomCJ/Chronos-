@@ -56,6 +56,30 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Chronos Bank uses speech recognition to convert your voice into text for the AI assistant.</string>
 
+	<!-- Backend has no TLS cert yet (tracked as [PLANNED] in CLAUDE.md) — ATS
+	     blocks plain HTTP by default, which would silently fail every call
+	     to it on a real device, including Chris chat and voice synthesis. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>chronos.us-east-1.elasticbeanstalk.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>blockhub-env.us-east-1.elasticbeanstalk.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+
 	<!-- google_sign_in: OAuth redirect URL scheme -->
 	<key>CFBundleURLTypes</key>
 	<array>
