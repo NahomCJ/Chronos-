@@ -148,7 +148,13 @@ POST /api/ai/user-level/quiz    → { "answers": { "q1": "a", "q2": "b", ... } }
 ```
 POST /api/ai/voice/transcribe   → multipart/form-data, field: "audio" → { "text": "..." }
 POST /api/ai/voice/synthesize   → { "text": "Hello" } → audio/mpeg stream
+GET  /api/ai/voice/health       → { configured, ok, detail?, charactersUsed?, charactersLimit? }
 ```
+`/health` hits ElevenLabs' subscription endpoint (spends no characters) so a
+misconfigured/invalid/quota-exhausted key can be diagnosed directly. Errors
+from `/synthesize` now return the real ElevenLabs response body (previously
+`response.statusText`, which is frequently empty) and a 503 (not configured)
+vs 502 (live call failed) status split — see Bugs Fixed #13.
 
 ---
 
@@ -371,6 +377,9 @@ RDS auto-stops after periods of inactivity. Symptoms: EB returns 502, `prisma db
 
 ### 12. BlockHub missing env vars — EB Degraded (blockhub-v2)
 BlockHub crashed on startup with `Configuration key "JWT_SECRET" does not exist`. Fixed: set `JWT_SECRET`, `DATABASE_URL`, `NODE_ENV` as EB environment properties on `blockhub-env`.
+
+### 13. Chris voice synthesis silently broken for months (client-side, undiagnosable)
+`voice.service.ts`'s `synthesizeSpeech()` discarded ElevenLabs' actual error body on a failed call and threw only `response.statusText`, which is frequently empty — every failure (bad key, exhausted monthly character quota, invalid voice ID, network error) looked identical. Worse, the Flutter `TtsService._fetchAudio()` caught that exception and silently fell back to the on-device `flutter_tts` voice with just a `debugPrint`, so there was no way to tell from the running app whether voice was even attempting the ElevenLabs call, let alone why it failed. Fixed: `synthesizeSpeech()` now reads and includes the real response body in the thrown error; the controller logs it server-side and returns 503 (key not configured) vs 502 (call failed) instead of a blanket 500; added `GET /api/ai/voice/health` which checks ElevenLabs' subscription endpoint (spends no characters) to report configured/valid/quota-remaining directly. Client-side, `TtsService` now exposes `lastError`/`onError` instead of swallowing failures, and `ChrisHomeFab` shows a one-time SnackBar with the real reason when the premium voice can't be reached. Also hardened the transport layer that both chat and voice depend on: the EB backend has no TLS cert, so its `http://` URL is silently blocked by default network security policy on real devices (Android `cleartextTrafficPermitted="false"`, iOS ATS) — added explicit cleartext/ATS exceptions scoped to the two EB hostnames on both platforms, and declared `RECORD_AUDIO` explicitly in `AndroidManifest.xml` for `speech_to_text`. `.env.example` never listed `ANTHROPIC_API_KEY`/`OPENAI_API_KEY`/`ELEVENLABS_API_KEY`/`ELEVENLABS_VOICE_ID` at all — backfilled as documented-optional entries.
 
 ---
 

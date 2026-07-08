@@ -59,9 +59,84 @@ export async function synthesizeSpeech(text: string): Promise<Buffer> {
   );
 
   if (!response.ok) {
-    throw new Error(`ElevenLabs synthesis failed: ${response.statusText}`);
+    // response.statusText is frequently empty/unhelpful (varies by runtime) —
+    // ElevenLabs puts the actual reason (invalid key, quota exceeded, voice
+    // not found, etc.) in the JSON body, which was previously discarded, so
+    // every synthesis failure looked identical from the client's point of
+    // view no matter the real cause.
+    let detail = response.statusText;
+    try {
+      const body = await response.text();
+      if (body) detail = body.slice(0, 300);
+    } catch {
+      // keep statusText fallback
+    }
+    console.error(
+      `[voice.synthesize] ElevenLabs ${response.status}: ${detail}`
+    );
+    throw new Error(
+      `ElevenLabs synthesis failed (${response.status}): ${detail}`
+    );
   }
 
   const arrayBuffer = await response.arrayBuffer();
   return Buffer.from(arrayBuffer);
+}
+
+// Cheap health check — hits ElevenLabs' subscription endpoint (no
+// characters spent) so misconfiguration (missing/invalid key, exhausted
+// monthly character quota) can be diagnosed directly instead of guessing
+// from a silent client-side fallback to the on-device voice.
+export interface VoiceHealth {
+  configured: boolean;
+  ok: boolean;
+  detail?: string;
+  charactersUsed?: number;
+  charactersLimit?: number;
+}
+
+export async function checkVoiceHealth(): Promise<VoiceHealth> {
+  if (!ELEVENLABS_API_KEY) {
+    return {
+      configured: false,
+      ok: false,
+      detail: "ELEVENLABS_API_KEY is not set on this environment.",
+    };
+  }
+
+  try {
+    const response = await fetch("https://api.elevenlabs.io/v1/user/subscription", {
+      headers: { "xi-api-key": ELEVENLABS_API_KEY },
+    });
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      return {
+        configured: true,
+        ok: false,
+        detail: `ElevenLabs rejected the configured key (${response.status}): ${body.slice(0, 300)}`,
+      };
+    }
+    const data = (await response.json()) as {
+      character_count?: number;
+      character_limit?: number;
+    };
+    const used = data.character_count ?? 0;
+    const limit = data.character_limit ?? 0;
+    const exhausted = limit > 0 && used >= limit;
+    return {
+      configured: true,
+      ok: !exhausted,
+      detail: exhausted
+        ? `Monthly character quota exhausted (${used}/${limit}).`
+        : undefined,
+      charactersUsed: used,
+      charactersLimit: limit,
+    };
+  } catch (err) {
+    return {
+      configured: true,
+      ok: false,
+      detail: err instanceof Error ? err.message : "Network error reaching ElevenLabs",
+    };
+  }
 }

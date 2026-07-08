@@ -37,6 +37,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   _ChrisState _state = _ChrisState.idle;
   bool _micAvailable = true;
   bool _micPermissionWarned = false;
+  bool _voiceErrorWarned = false;
   int _followUpTurns = 0;
   int _commandGeneration = 0;
   final List<Map<String, String>> _history = [];
@@ -62,7 +63,27 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _timeTicker = createTicker((elapsed) {
       _timeNotifier.value = elapsed.inMicroseconds / 1e6;
     })..start();
+    TtsService().onError = _warnVoiceError;
     _initWakeWord();
+  }
+
+  // Chris's premium (ElevenLabs) voice used to fail silently, downgrading to
+  // the on-device fallback with no visible sign anything was wrong — this
+  // makes the real reason (missing/invalid key, exhausted quota, network
+  // error) visible instead of indistinguishable guesswork.
+  void _warnVoiceError(String message) {
+    if (_voiceErrorWarned || !mounted) return;
+    _voiceErrorWarned = true;
+    debugPrint('Chris voice unavailable: $message');
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        content: Text(
+          "Chris's premium voice is unavailable right now (using the "
+          'built-in voice instead). Reason: $message',
+        ),
+        duration: const Duration(seconds: 6),
+      ),
+    );
   }
 
   Future<void> _initWakeWord() async {
@@ -92,7 +113,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
             }
           }
         },
-        onError: (_) {
+        onError: (e) {
+          debugPrint('Chris speech recognition error: ${e.errorMsg}');
           if (mounted) {
             setState(() => _wakeActive = false);
             if (!_isBusy) {
@@ -102,7 +124,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           }
         },
       );
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Chris speech engine failed to initialize: $e');
       return false;
     }
   }
@@ -129,7 +152,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           pauseFor: const Duration(seconds: 6),
         ),
       );
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Chris wake-word listen() failed: $e');
       if (mounted) setState(() => _wakeActive = false);
     }
   }
