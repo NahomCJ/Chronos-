@@ -82,7 +82,7 @@ Mounted under `/api/lifex`:
 | `/finance` | Budgets, financial plans | ✅ |
 | `/vision` | Vision boards, long-term goals | ✅ |
 | `/activity` | Activity logs, stats, streaks | ✅ |
-| `/ai` | LifeX AI coach (insights, chat, weekly plan) | ✅ |
+| `/ai` | LifeX AI coach (insights, chat, weekly plan) + `/ai/voice/*` ElevenLabs voice chat (see below) | ✅ |
 | `/export` | Data export (health, finance, education, vision, full) | ✅ |
 | `/family` | Family groups, shared goals, shared budgets | ✅ |
 | `/social` | Follow/unfollow, posts, likes, community feed | ✅ |
@@ -155,6 +155,27 @@ misconfigured/invalid/quota-exhausted key can be diagnosed directly. Errors
 from `/synthesize` now return the real ElevenLabs response body (previously
 `response.statusText`, which is frequently empty) and a 503 (not configured)
 vs 502 (live call failed) status split — see Bugs Fixed #13.
+
+All ElevenLabs calls across the whole backend (this module AND the LifeX AI
+coach's voice chat below) go through one shared client:
+`src/modules/ai/voice/elevenlabs.client.ts` — single source of truth for the
+API key (`ELEVENLABS_API_KEY`, `XI_API_KEY` alias), default voice/model, and
+a 600-char synthesis cap so no caller can accidentally run up a huge
+ElevenLabs bill on an unbounded LLM reply. See Bugs Fixed #14.
+
+### LifeX AI Coach — Voice Chat
+```
+GET  /api/lifex/ai/voice/config      → { elevenLabsConfigured, agentConfigured, ttsModel, sttModel, ... } (auth required)
+GET  /api/lifex/ai/voice/signed-url  → { signedUrl, agentId } — for the ElevenLabs Agent widget (needs ELEVENLABS_AGENT_ID)
+POST /api/lifex/ai/voice/text        → { message, conversationId?, history? } → { transcript, reply, audioBase64, audioMimeType }
+POST /api/lifex/ai/voice/audio       → { audioBase64 | audioDataUrl, mimeType, ... } → same shape (STT via ElevenLabs, not Whisper)
+```
+Replies default to `LifeAiService.coachReply()` (the LifeX AI coach) unless
+`CHRONOS_VOICE_CHAT_URL` is set to proxy elsewhere. Manual test client at
+`GET /chronos-voice-chat.html` (statically served, requires pasting a JWT —
+see Bugs Fixed #14). Not currently called from the Flutter app — no LifeX
+page has a live chat UI wired to `/insights`, `/chat`, or `/weekly-plan` yet
+(the LifeX AI Insights page's content is still static/hardcoded).
 
 ---
 
@@ -380,6 +401,9 @@ BlockHub crashed on startup with `Configuration key "JWT_SECRET" does not exist`
 
 ### 13. Chris voice synthesis silently broken for months (client-side, undiagnosable)
 `voice.service.ts`'s `synthesizeSpeech()` discarded ElevenLabs' actual error body on a failed call and threw only `response.statusText`, which is frequently empty — every failure (bad key, exhausted monthly character quota, invalid voice ID, network error) looked identical. Worse, the Flutter `TtsService._fetchAudio()` caught that exception and silently fell back to the on-device `flutter_tts` voice with just a `debugPrint`, so there was no way to tell from the running app whether voice was even attempting the ElevenLabs call, let alone why it failed. Fixed: `synthesizeSpeech()` now reads and includes the real response body in the thrown error; the controller logs it server-side and returns 503 (key not configured) vs 502 (call failed) instead of a blanket 500; added `GET /api/ai/voice/health` which checks ElevenLabs' subscription endpoint (spends no characters) to report configured/valid/quota-remaining directly. Client-side, `TtsService` now exposes `lastError`/`onError` instead of swallowing failures, and `ChrisHomeFab` shows a one-time SnackBar with the real reason when the premium voice can't be reached. Also hardened the transport layer that both chat and voice depend on: the EB backend has no TLS cert, so its `http://` URL is silently blocked by default network security policy on real devices (Android `cleartextTrafficPermitted="false"`, iOS ATS) — added explicit cleartext/ATS exceptions scoped to the two EB hostnames on both platforms, and declared `RECORD_AUDIO` explicitly in `AndroidManifest.xml` for `speech_to_text`. `.env.example` never listed `ANTHROPIC_API_KEY`/`OPENAI_API_KEY`/`ELEVENLABS_API_KEY`/`ELEVENLABS_VOICE_ID` at all — backfilled as documented-optional entries.
+
+### 14. Duplicate ElevenLabs integrations + voice never wired outside the home FAB
+A same-day teammate PR (`agent/elevenlabs-voice-chat`, merged as #90) added a second, fully independent ElevenLabs client (`src/modules/lifex/modules/ai/elevenLabsVoice.service.ts`) for the LifeX AI coach, with its own default voice ID (`JBFqnCBsd6RMkjVDRZzb` vs. Chris's `21m00Tcm4TlvDq8ikWAM`), its own env-var name (`XI_API_KEY` as an alt for the key), no character-length cap on synthesis (risk: an unbounded LLM reply → a huge/slow/costly ElevenLabs call), and an unauthenticated `GET /config` leaking whether ElevenLabs/agent keys were configured. Its manual test page (`public/chronos-voice-chat.html`) also never attached a JWT to any of its `requireAuth`-gated calls, so it 401'd on every request even before this fix. Consolidated: both integrations now call one shared client, `src/modules/ai/voice/elevenlabs.client.ts` (single API key resolution, single default voice/model, a 600-char synthesis cap enforced centrally regardless of caller); `/config` now requires auth; `chronos-voice-chat.html` got a token input (saved to `localStorage`, attached as `Authorization: Bearer` on every call) so the manual test page actually works end to end. Separately, voice output had only ever been wired into the home-screen Chris FAB — `panther_ai_chat_page.dart`'s full chat page (same `/api/ai/chris/chat` backend, same `SendMessage` usecase) never spoke replies at all, and its voice-mode volume-mute button (`Icons.volume_up_rounded`) was a dead `onTap: () {}` stub; `chris_shopping_page.dart` (TickPay's "Chris" shopping assistant, chat-bubble UI, Chris-branded) never spoke its scripted replies either. Both now call `TtsService().speak(...)`, with the Panther chat page speaking only in its dedicated voice mode (not the plain typed-text view) and stopping playback on mode-switch/dispose; the previously-dead volume button now actually mutes.
 
 ---
 

@@ -1,6 +1,5 @@
 import { LifeAiService } from "./lifeAi.service";
-
-type FetchLike = (input: string, init?: Record<string, unknown>) => Promise<any>;
+import * as elevenlabs from "../../../ai/voice/elevenlabs.client";
 
 export interface VoiceChatHistoryItem {
   role: 'user' | 'assistant' | 'system';
@@ -35,18 +34,10 @@ interface ParsedAudio {
   fileName: string;
 }
 
-const ELEVENLABS_API_BASE_URL = 'https://api.elevenlabs.io/v1';
-const DEFAULT_VOICE_ID = 'JBFqnCBsd6RMkjVDRZzb';
-const DEFAULT_OUTPUT_FORMAT = 'mp3_44100_128';
-
 export class ElevenLabsVoiceService {
-  private readonly fetchImpl: FetchLike;
-  private readonly apiKey?: string;
   private readonly lifeAiService: LifeAiService;
 
-  constructor(fetchImpl?: FetchLike) {
-    this.fetchImpl = fetchImpl || (globalThis as any).fetch;
-    this.apiKey = process.env.ELEVENLABS_API_KEY || process.env.XI_API_KEY;
+  constructor() {
     this.lifeAiService = new LifeAiService();
   }
 
@@ -56,49 +47,18 @@ export class ElevenLabsVoiceService {
     environment?: string;
     includeConversationId?: boolean;
   } = {}): Promise<{ signedUrl: string; agentId: string }> {
-    this.assertElevenLabsReady();
-
-    const agentId = options.agentId || process.env.ELEVENLABS_AGENT_ID;
-    if (!agentId) {
-      throw new Error('ELEVENLABS_AGENT_ID is required to create a signed conversation URL.');
-    }
-
-    const params = new URLSearchParams({
-      agent_id: agentId,
-      include_conversation_id: String(Boolean(options.includeConversationId)),
-    });
-
-    if (options.branchId) {
-      params.set('branch_id', options.branchId);
-    }
-
-    if (options.environment) {
-      params.set('environment', options.environment);
-    }
-
-    const response = await this.fetchJson(
-      `${ELEVENLABS_API_BASE_URL}/convai/conversation/get-signed-url?${params.toString()}`,
-      {
-        method: 'GET',
-        headers: this.elevenLabsHeaders(),
-      },
-    );
-
-    return {
-      signedUrl: response.signed_url,
-      agentId,
-    };
+    return elevenlabs.createSignedConversationUrl(options);
   }
 
   async chatFromText(input: VoiceChatInput): Promise<VoiceChatResponse> {
     const transcript = this.requireText(input.message, 'message');
     const reply = await this.getChronosReply(transcript, input);
-    const speech = await this.textToSpeech(reply, input.voiceId);
+    const speech = await elevenlabs.synthesizeSpeech(reply, { voiceId: input.voiceId });
 
     return {
       transcript,
       reply,
-      audioBase64: speech.audioBase64,
+      audioBase64: speech.buffer.toString('base64'),
       audioMimeType: speech.mimeType,
       conversationId: input.conversationId,
     };
@@ -106,81 +66,21 @@ export class ElevenLabsVoiceService {
 
   async chatFromAudio(input: VoiceChatInput): Promise<VoiceChatResponse> {
     const audio = this.parseAudio(input);
-    const transcript = await this.speechToText(audio, input.languageCode);
+    const transcript = await elevenlabs.speechToText({
+      buffer: audio.buffer,
+      mimeType: audio.mimeType,
+      fileName: audio.fileName,
+      languageCode: input.languageCode,
+    });
     const reply = await this.getChronosReply(transcript, input);
-    const speech = await this.textToSpeech(reply, input.voiceId);
+    const speech = await elevenlabs.synthesizeSpeech(reply, { voiceId: input.voiceId });
 
     return {
       transcript,
       reply,
-      audioBase64: speech.audioBase64,
+      audioBase64: speech.buffer.toString('base64'),
       audioMimeType: speech.mimeType,
       conversationId: input.conversationId,
-    };
-  }
-
-  private async speechToText(audio: ParsedAudio, languageCode?: string): Promise<string> {
-    this.assertElevenLabsReady();
-
-    const FormDataCtor = (globalThis as any).FormData;
-    const BlobCtor = (globalThis as any).Blob;
-
-    if (!FormDataCtor || !BlobCtor) {
-      throw new Error('Node runtime must provide global FormData and Blob for ElevenLabs speech-to-text uploads.');
-    }
-
-    const form = new FormDataCtor();
-    form.append('model_id', process.env.ELEVENLABS_STT_MODEL || 'scribe_v2');
-    form.append('file', new BlobCtor([audio.buffer], { type: audio.mimeType }), audio.fileName);
-
-    if (languageCode) {
-      form.append('language_code', languageCode);
-    }
-
-    const response = await this.fetchJson(`${ELEVENLABS_API_BASE_URL}/speech-to-text`, {
-      method: 'POST',
-      headers: this.elevenLabsHeaders(),
-      body: form,
-    });
-
-    return this.requireText(response.text, 'transcript');
-  }
-
-  private async textToSpeech(text: string, voiceId?: string): Promise<{ audioBase64: string; mimeType: string }> {
-    this.assertElevenLabsReady();
-
-    const selectedVoiceId = voiceId || process.env.ELEVENLABS_VOICE_ID || DEFAULT_VOICE_ID;
-    const outputFormat = process.env.ELEVENLABS_OUTPUT_FORMAT || DEFAULT_OUTPUT_FORMAT;
-    const url = `${ELEVENLABS_API_BASE_URL}/text-to-speech/${encodeURIComponent(selectedVoiceId)}?output_format=${encodeURIComponent(outputFormat)}`;
-
-    const response = await this.fetchImpl(url, {
-      method: 'POST',
-      headers: {
-        ...this.elevenLabsHeaders(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-        model_id: process.env.ELEVENLABS_TTS_MODEL || 'eleven_multilingual_v2',
-        voice_settings: {
-          stability: Number(process.env.ELEVENLABS_VOICE_STABILITY || 0.45),
-          similarity_boost: Number(process.env.ELEVENLABS_VOICE_SIMILARITY_BOOST || 0.8),
-          style: Number(process.env.ELEVENLABS_VOICE_STYLE || 0.25),
-          use_speaker_boost: process.env.ELEVENLABS_SPEAKER_BOOST !== 'false',
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(await this.formatElevenLabsError(response, 'text-to-speech'));
-    }
-
-    const contentType = response.headers?.get?.('content-type') || 'audio/mpeg';
-    const audioBuffer = Buffer.from(await response.arrayBuffer());
-
-    return {
-      audioBase64: audioBuffer.toString('base64'),
-      mimeType: contentType,
     };
   }
 
@@ -207,7 +107,7 @@ export class ElevenLabsVoiceService {
       headers.Authorization = `Bearer ${process.env.CHRONOS_VOICE_CHAT_AUTH_TOKEN}`;
     }
 
-    const response = await this.fetchJson(chatUrl, {
+    const response = await fetch(chatUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -221,7 +121,12 @@ export class ElevenLabsVoiceService {
       }),
     });
 
-    return this.extractReplyText(response);
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new Error(`Chronos chat endpoint failed (${response.status}): ${body.slice(0, 300)}`);
+    }
+
+    return this.extractReplyText(await response.json());
   }
 
   private extractReplyText(response: any): string {
@@ -284,48 +189,6 @@ export class ElevenLabsVoiceService {
     }
 
     return 'chronos-voice.webm';
-  }
-
-  private async fetchJson(url: string, init: Record<string, unknown>): Promise<any> {
-    if (!this.fetchImpl) {
-      throw new Error('Node runtime must provide global fetch.');
-    }
-
-    const response = await this.fetchImpl(url, init);
-    if (!response.ok) {
-      throw new Error(await this.formatElevenLabsError(response, url));
-    }
-
-    return response.json();
-  }
-
-  private async formatElevenLabsError(response: any, label: string): Promise<string> {
-    const status = `${response.status || 'unknown'} ${response.statusText || ''}`.trim();
-    let body = '';
-
-    try {
-      body = await response.text();
-    } catch {
-      body = 'Unable to read error body.';
-    }
-
-    return `Request failed for ${label}: ${status}${body ? ` - ${body}` : ''}`;
-  }
-
-  private elevenLabsHeaders(): Record<string, string> {
-    return {
-      'xi-api-key': this.apiKey || '',
-    };
-  }
-
-  private assertElevenLabsReady(): void {
-    if (!this.apiKey) {
-      throw new Error('ELEVENLABS_API_KEY or XI_API_KEY is required.');
-    }
-
-    if (!this.fetchImpl) {
-      throw new Error('Node runtime must provide global fetch.');
-    }
   }
 
   private requireText(value: unknown, fieldName: string): string {
