@@ -1,13 +1,16 @@
 import { json, Request, Response, Router } from 'express';
 import { requireAuth } from "../../../auth/middlewares/auth.middleware";
 import elevenLabsVoiceService from './elevenLabsVoice.service';
+import { isElevenLabsConfigured } from '../../../ai/voice/elevenlabs.client';
 
 const router = Router();
 const jsonParser = json({ limit: process.env.CHRONOS_VOICE_JSON_LIMIT || '25mb' });
 
-router.get('/config', (_req: Request, res: Response) => {
+// Requires auth — previously public, leaking infra configuration state
+// (whether ElevenLabs/agent keys are set) to unauthenticated callers.
+router.get('/config', requireAuth, (_req: Request, res: Response) => {
   res.json({
-    elevenLabsConfigured: Boolean(process.env.ELEVENLABS_API_KEY || process.env.XI_API_KEY),
+    elevenLabsConfigured: isElevenLabsConfigured(),
     agentConfigured: Boolean(process.env.ELEVENLABS_AGENT_ID),
     signedWidgetEnabled: Boolean(process.env.ELEVENLABS_AGENT_ID),
     outputFormat: process.env.ELEVENLABS_OUTPUT_FORMAT || 'mp3_44100_128',

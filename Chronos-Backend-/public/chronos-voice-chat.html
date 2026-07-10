@@ -262,6 +262,10 @@
 
           <div id="status" class="status">Ready.</div>
 
+          <label for="tokenInput" class="subtitle">Chronos JWT (from login)</label>
+          <textarea id="tokenInput" placeholder="Paste a Bearer token — every endpoint here requires auth" style="min-height: 60px"></textarea>
+          <button id="saveTokenButton" class="secondary" type="button">Save Token</button>
+
           <div class="button-row">
             <button id="recordButton" type="button">Record</button>
             <button id="stopButton" class="secondary" type="button" disabled>Stop</button>
@@ -298,6 +302,8 @@
       const sendTextButton = document.getElementById('sendTextButton');
       const launchWidgetButton = document.getElementById('launchWidgetButton');
       const textInput = document.getElementById('textInput');
+      const tokenInput = document.getElementById('tokenInput');
+      const saveTokenButton = document.getElementById('saveTokenButton');
       const widgetMount = document.getElementById('widgetMount');
       const modeBadge = document.getElementById('modeBadge');
 
@@ -305,6 +311,21 @@
       let chunks = [];
       const history = [];
       const conversationId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+
+      // Every /api/lifex/ai/voice/* route requires a valid Chronos JWT —
+      // this page previously never sent one, so every call 401'd. Paste a
+      // token from a real login response and it's kept in localStorage.
+      tokenInput.value = localStorage.getItem('chronosToken') || '';
+      saveTokenButton.addEventListener('click', () => {
+        localStorage.setItem('chronosToken', tokenInput.value.trim());
+        setStatus('Token saved.');
+        loadConfig();
+      });
+
+      function authHeaders() {
+        const token = localStorage.getItem('chronosToken');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      }
 
       function setStatus(message, isError = false) {
         statusEl.textContent = message;
@@ -329,7 +350,7 @@
       async function postJson(url, body) {
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify(body),
         });
 
@@ -435,7 +456,7 @@
       async function launchWidget() {
         try {
           setStatus('Preparing ElevenLabs agent...');
-          const response = await fetch('/api/lifex/ai/voice/signed-url');
+          const response = await fetch('/api/lifex/ai/voice/signed-url', { headers: authHeaders() });
           const payload = await response.json();
 
           if (!response.ok) {
@@ -484,20 +505,29 @@
       });
       launchWidgetButton.addEventListener('click', launchWidget);
 
-      fetch('/api/lifex/ai/voice/config')
-        .then((response) => response.json())
-        .then((config) => {
-          if (!config.agentConfigured) {
-            launchWidgetButton.disabled = true;
-          }
+      function loadConfig() {
+        fetch('/api/lifex/ai/voice/config', { headers: authHeaders() })
+          .then((response) => {
+            if (response.status === 401) {
+              throw new Error('Paste a Chronos JWT above and click Save Token.');
+            }
+            return response.json();
+          })
+          .then((config) => {
+            if (!config.agentConfigured) {
+              launchWidgetButton.disabled = true;
+            }
 
-          if (!config.elevenLabsConfigured) {
-            setStatus('Set ELEVENLABS_API_KEY before using voice chat.', true);
-          }
-        })
-        .catch(() => {
-          setStatus('Voice route is not mounted yet.', true);
-        });
+            if (!config.elevenLabsConfigured) {
+              setStatus('Set ELEVENLABS_API_KEY before using voice chat.', true);
+            }
+          })
+          .catch((error) => {
+            setStatus(error.message || 'Voice route is not mounted yet.', true);
+          });
+      }
+
+      loadConfig();
     </script>
   </body>
 </html>
