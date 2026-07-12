@@ -1,23 +1,36 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+
+const _k3dAssets = {
+  'BTC':  'assets/crypto/btc.png',
+  'ETH':  'assets/crypto/eth.png',
+  'BNB':  'assets/Blockhub/extracted/bnb.png',
+  'SOL':  'assets/crypto/sol.png',
+  'XRP':  'assets/crypto/xrp.png',
+  'ADA':  'assets/crypto/ada.png',
+  'DOT':  'assets/crypto/dot.png',
+  'MATIC':'assets/crypto/matic.png',
+  'LINK': 'assets/crypto/link.png',
+  'AVAX': 'assets/crypto/avax.png',
+  'LTC':  'assets/crypto/ltc.png',
+  'USDT': 'assets/crypto/usdt.png',
+};
 
 class _Coin {
   final String symbol;
   final String name;
   final double price;
-  final String logoUrl;
   final Color color;
-  const _Coin(this.symbol, this.name, this.price, this.logoUrl, this.color);
+  const _Coin(this.symbol, this.name, this.price, this.color);
 }
 
 const _kCoins = [
-  _Coin('BTC', 'Bitcoin', 64250.0, 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png', Color(0xFFF7931A)),
-  _Coin('ETH', 'Ethereum', 3512.0, 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', Color(0xFF627EEA)),
-  _Coin('SOL', 'Solana', 178.5, 'https://assets.coingecko.com/coins/images/4128/large/solana.png', Color(0xFF9945FF)),
-  _Coin('BNB', 'BNB', 608.0, 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', Color(0xFFF3BA2F)),
-  _Coin('ADA', 'Cardano', 0.62, 'https://assets.coingecko.com/coins/images/975/large/cardano.png', Color(0xFF0033AD)),
-  _Coin('MATIC', 'Polygon', 1.05, 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png', Color(0xFF8247E5)),
+  _Coin('BTC', 'Bitcoin', 64250.0, Color(0xFFF7931A)),
+  _Coin('ETH', 'Ethereum', 3512.0, Color(0xFF627EEA)),
+  _Coin('SOL', 'Solana', 178.5, Color(0xFF9945FF)),
+  _Coin('BNB', 'BNB', 608.0, Color(0xFFF3BA2F)),
+  _Coin('ADA', 'Cardano', 0.62, Color(0xFF0033AD)),
+  _Coin('MATIC', 'Polygon', 1.05, Color(0xFF8247E5)),
 ];
 
 class TradePage extends StatefulWidget {
@@ -204,14 +217,13 @@ class _TradePageState extends State<TradePage> {
                   child: Row(
                     children: [
                       ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: coin.logoUrl, width: 24, height: 24, fit: BoxFit.cover,
-                          errorWidget: (_, __, ___) => Container(
-                            width: 24, height: 24,
-                            decoration: BoxDecoration(color: coin.color, shape: BoxShape.circle),
-                            child: Center(child: Text(coin.symbol[0], style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
-                          ),
-                        ),
+                        child: _k3dAssets.containsKey(coin.symbol)
+                            ? Image.asset(_k3dAssets[coin.symbol]!, width: 24, height: 24, fit: BoxFit.cover)
+                            : Container(
+                                width: 24, height: 24,
+                                decoration: BoxDecoration(color: coin.color, shape: BoxShape.circle),
+                                child: Center(child: Text(coin.symbol[0], style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))),
+                              ),
                       ),
                       const SizedBox(width: 6),
                       Text(coin.symbol, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15)),
@@ -421,10 +433,9 @@ class _TradePageState extends State<TradePage> {
               return ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: c.logoUrl, width: 40, height: 40, fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Container(width: 40, height: 40, decoration: BoxDecoration(color: c.color, shape: BoxShape.circle)),
-                  ),
+                  child: _k3dAssets.containsKey(c.symbol)
+                      ? Image.asset(_k3dAssets[c.symbol]!, width: 40, height: 40, fit: BoxFit.cover)
+                      : Container(width: 40, height: 40, decoration: BoxDecoration(color: c.color, shape: BoxShape.circle)),
                 ),
                 title: Text(c.symbol, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
                 subtitle: Text(c.name, style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),

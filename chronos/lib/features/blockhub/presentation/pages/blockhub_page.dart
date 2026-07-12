@@ -75,20 +75,23 @@ const List<_CoinData> _coins = [
 
 // ── File-level coin asset maps (shared with _CoinCard) ────────────────────
 const _kCoin3dAssets = {
-  'BTC': 'assets/Blockhub/extracted/bitcoin.png',
-  'ETH': 'assets/Blockhub/extracted/ethereum.png',
-  'BNB': 'assets/Blockhub/extracted/bnb.png',
-  'SOL': 'assets/Blockhub/extracted/solana.png',
-  'XRP': 'assets/Blockhub/extracted/xrp.png',
+  'BTC':  'assets/crypto/btc.png',
+  'ETH':  'assets/crypto/eth.png',
+  'BNB':  'assets/Blockhub/extracted/bnb.png',
+  'SOL':  'assets/crypto/sol.png',
+  'XRP':  'assets/crypto/xrp.png',
+  'ADA':  'assets/crypto/ada.png',
+  'DOT':  'assets/crypto/dot.png',
+  'MATIC':'assets/crypto/matic.png',
+  'LINK': 'assets/crypto/link.png',
+  'AVAX': 'assets/crypto/avax.png',
+  'LTC':  'assets/crypto/ltc.png',
+  'USDT': 'assets/crypto/usdt.png',
+  'USDC': 'assets/crypto/usdc.png',
+  'INJ':  'assets/crypto/inj.png',
 };
 
-const _kCoinLogos = {
-  'ADA':  'https://assets.coingecko.com/coins/images/975/large/cardano.png',
-  'DOT':  'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
-  'MATIC':'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
-  'LINK': 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
-  'AVAX': 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
-};
+const _kCoinLogos = <String, String>{};
 
 // ── Shared coin icon builder ───────────────────────────────────────────────
 // showCircle = false → bare image only (used in carousel cards)

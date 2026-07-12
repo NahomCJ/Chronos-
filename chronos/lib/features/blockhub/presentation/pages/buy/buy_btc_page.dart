@@ -1,31 +1,36 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
 import 'buy_btc_order_type_page.dart';
 
 const _k3dAssets = {
-  'BTC': 'assets/Blockhub/extracted/bitcoin.png',
-  'ETH': 'assets/Blockhub/extracted/ethereum.png',
-  'BNB': 'assets/Blockhub/extracted/bnb.png',
-  'SOL': 'assets/Blockhub/extracted/solana.png',
-  'XRP': 'assets/Blockhub/extracted/xrp.png',
+  'BTC':  'assets/crypto/btc.png',
+  'ETH':  'assets/crypto/eth.png',
+  'BNB':  'assets/Blockhub/extracted/bnb.png',
+  'SOL':  'assets/crypto/sol.png',
+  'XRP':  'assets/crypto/xrp.png',
+  'ADA':  'assets/crypto/ada.png',
+  'DOT':  'assets/crypto/dot.png',
+  'MATIC':'assets/crypto/matic.png',
+  'LINK': 'assets/crypto/link.png',
+  'AVAX': 'assets/crypto/avax.png',
+  'LTC':  'assets/crypto/ltc.png',
+  'USDT': 'assets/crypto/usdt.png',
 };
 
 class _Coin {
   final String symbol;
   final String name;
   final double price;
-  final String logoUrl;
   final Color color;
-  const _Coin(this.symbol, this.name, this.price, this.logoUrl, this.color);
+  const _Coin(this.symbol, this.name, this.price, this.color);
 }
 
 const _kCoins = [
-  _Coin('BTC', 'Bitcoin', 64250.0, 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png', Color(0xFFF7931A)),
-  _Coin('ETH', 'Ethereum', 3512.0, 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', Color(0xFF627EEA)),
-  _Coin('SOL', 'Solana', 178.5, 'https://assets.coingecko.com/coins/images/4128/large/solana.png', Color(0xFF9945FF)),
-  _Coin('BNB', 'BNB', 608.0, 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', Color(0xFFF3BA2F)),
-  _Coin('ADA', 'Cardano', 0.62, 'https://assets.coingecko.com/coins/images/975/large/cardano.png', Color(0xFF0033AD)),
+  _Coin('BTC', 'Bitcoin', 64250.0, Color(0xFFF7931A)),
+  _Coin('ETH', 'Ethereum', 3512.0, Color(0xFF627EEA)),
+  _Coin('SOL', 'Solana', 178.5, Color(0xFF9945FF)),
+  _Coin('BNB', 'BNB', 608.0, Color(0xFFF3BA2F)),
+  _Coin('ADA', 'Cardano', 0.62, Color(0xFF0033AD)),
 ];
 
 class BuyBtcPage extends StatefulWidget {
@@ -76,9 +81,7 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
         children: [
           Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
           Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          Positioned.fill(
-            child: Stack(fit: StackFit.expand, children: [CachedNetworkImage(imageUrl: 'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, placeholder: (_, __) => Container(color: const Color(0xFF0A1628)), errorWidget: (_, __, ___) => Container(color: const Color(0xFF0A1628))), Container(color: Colors.black.withValues(alpha: 0.58))]),
-          ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.58))),
           SafeArea(
             child: Column(
               children: [
@@ -133,15 +136,13 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                                 child: Row(
                                   children: [
                                     ClipOval(
-                                      child: CachedNetworkImage(
-                                        imageUrl: c.logoUrl,
-                                        width: 22, height: 22, fit: BoxFit.cover,
-                                        errorWidget: (_, __, ___) => Container(
-                                          width: 22, height: 22,
-                                          decoration: BoxDecoration(color: c.color, shape: BoxShape.circle),
-                                          child: Center(child: Text(c.symbol[0], style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))),
-                                        ),
-                                      ),
+                                      child: _k3dAssets.containsKey(c.symbol)
+                                          ? Image.asset(_k3dAssets[c.symbol]!, width: 22, height: 22, fit: BoxFit.cover)
+                                          : Container(
+                                              width: 22, height: 22,
+                                              decoration: BoxDecoration(color: c.color, shape: BoxShape.circle),
+                                              child: Center(child: Text(c.symbol[0], style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))),
+                                            ),
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
@@ -208,14 +209,9 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                                       border: Border.all(color: _coin.color.withValues(alpha: 0.4), width: 1.5),
                                     ),
                                     child: ClipOval(
-                                      child: CachedNetworkImage(
-                                        imageUrl: _coin.logoUrl,
-                                        fit: BoxFit.cover,
-                                        errorWidget: (_, __, ___) => Center(
-                                          child: Text(_coin.symbol[0],
-                                              style: TextStyle(color: _coin.color, fontSize: 28, fontWeight: FontWeight.bold)),
-                                        ),
-                                      ),
+                                      child: _k3dAssets.containsKey(_coin.symbol)
+                                          ? Image.asset(_k3dAssets[_coin.symbol]!, fit: BoxFit.cover)
+                                          : Center(child: Text(_coin.symbol[0], style: TextStyle(color: _coin.color, fontSize: 28, fontWeight: FontWeight.bold))),
                                     ),
                                   ),
                           ),
@@ -282,14 +278,9 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                           child: Row(
                             children: [
                               ClipOval(
-                                child: CachedNetworkImage(
-                                  imageUrl: _coin.logoUrl,
-                                  width: 24, height: 24, fit: BoxFit.cover,
-                                  errorWidget: (_, __, ___) => Container(
-                                    width: 24, height: 24,
-                                    decoration: BoxDecoration(color: _coin.color, shape: BoxShape.circle),
-                                  ),
-                                ),
+                                child: _k3dAssets.containsKey(_coin.symbol)
+                                    ? Image.asset(_k3dAssets[_coin.symbol]!, width: 24, height: 24, fit: BoxFit.cover)
+                                    : Container(width: 24, height: 24, decoration: BoxDecoration(color: _coin.color, shape: BoxShape.circle)),
                               ),
                               const SizedBox(width: 10),
                               Text(
