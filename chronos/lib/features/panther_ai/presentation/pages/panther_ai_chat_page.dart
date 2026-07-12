@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../../core/services/tts_service.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../auth/data/services/token_storage_service.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
 import '../bloc/chat_state.dart';
@@ -186,8 +188,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               ));
             });
             _scrollToBottom();
-            Future.delayed(const Duration(milliseconds: 2200), () {
+            final token = GetIt.instance<TokenStorageService>().accessToken;
+            TtsService().speak(state.reply, authToken: token).then((_) {
               if (mounted) setState(() => _orbState = OrbState.idle);
+            });
+            Future.delayed(const Duration(seconds: 10), () {
+              if (mounted && _orbState == OrbState.speaking) {
+                setState(() => _orbState = OrbState.idle);
+              }
             });
           } else if (state is ChatError) {
             setState(() {
