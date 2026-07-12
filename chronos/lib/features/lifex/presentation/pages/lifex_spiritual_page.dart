@@ -267,31 +267,6 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: _purple.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _purple.withValues(alpha: 0.5), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.spa_rounded,
-                        color: _purpleLight, size: 12),
-                    const SizedBox(width: 6),
-                    Text('MIND, BODY & SPIRIT',
-                        style: TextStyle(
-                            color: _purpleLight,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
               Text('Your Inner\nSanctuary',
                   style: TextStyles.displaySmall.copyWith(
                       color: Colors.white,

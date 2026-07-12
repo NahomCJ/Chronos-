@@ -46,8 +46,6 @@ class _LifeXPageState extends State<LifeXPage>
         'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600'),
   ];
 
-  static const _domainScores = [0.79, 0.84, 0.60, 0.70, 0.64, 0.50, 0.50];
-
   @override
   void initState() {
     super.initState();
@@ -87,11 +85,6 @@ class _LifeXPageState extends State<LifeXPage>
         context.push(RouteConstants.lifexSpiritual.toPath);
         break;
     }
-  }
-
-  double get _overallScore {
-    final sum = _domainScores.fold<double>(0, (a, b) => a + b);
-    return sum / _domainScores.length;
   }
 
   @override
@@ -258,12 +251,10 @@ class _LifeXPageState extends State<LifeXPage>
                 final dx = cos(angle) * ringR;
                 final dy = sin(angle) * ringR;
                 final m = _modules[i];
-                final score = _domainScores[i];
                 return Transform.translate(
                   offset: Offset(dx, dy),
                   child: _DomainOrb(
                     module: m,
-                    score: score,
                     onTap: () => _onModuleTap(m),
                   ),
                 );
@@ -276,19 +267,19 @@ class _LifeXPageState extends State<LifeXPage>
   }
 
   Widget _buildUserCenter(double size) {
-    final overall = (_overallScore * 100).round();
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Score ring
+        // Decorative ring — purely aesthetic, not tied to any score.
         SizedBox(
           width: size + 16,
           height: size + 16,
           child: CircularProgressIndicator(
-            value: _overallScore,
+            value: 1,
             strokeWidth: 4,
             backgroundColor: Colors.white.withValues(alpha: 0.08),
-            valueColor: const AlwaysStoppedAnimation<Color>(_tealLight),
+            valueColor: AlwaysStoppedAnimation<Color>(
+                _tealLight.withValues(alpha: 0.35)),
             strokeCap: StrokeCap.round,
           ),
         ),
@@ -308,18 +299,8 @@ class _LifeXPageState extends State<LifeXPage>
                 ],
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.person_rounded, color: Colors.white70, size: 28),
-                const SizedBox(height: 2),
-                Text('$overall%',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800)),
-              ],
-            ),
+            child: const Icon(Icons.person_rounded,
+                color: Colors.white70, size: 32),
           ),
         ),
       ],
@@ -328,8 +309,11 @@ class _LifeXPageState extends State<LifeXPage>
 
   // ── Life Score card ───────────────────────────────────────────────────────────
 
+  // No score, no grade — just a warm entry point into each domain. Tapping
+  // a chip navigates straight to that page, same as tapping its orb above.
   Widget _buildLifeScore() {
-    final overall = (_overallScore * 100).round();
+    const highlighted = ['Financial', 'Health', 'Vision', 'Spiritual'];
+    final chips = _modules.where((m) => highlighted.contains(m.title));
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
       child: ClipRRect(
@@ -351,57 +335,35 @@ class _LifeXPageState extends State<LifeXPage>
               border: Border.all(color: _teal.withValues(alpha: 0.3), width: 1),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 72,
-                          height: 72,
-                          child: CircularProgressIndicator(
-                            value: _overallScore,
-                            strokeWidth: 6,
-                            backgroundColor:
-                                Colors.white.withValues(alpha: 0.1),
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                _tealLight),
-                            strokeCap: StrokeCap.round,
-                          ),
-                        ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('$overall',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800)),
-                            Text('%',
-                                style: TextStyle(
-                                    color: _tealLight,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ],
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _tealLight.withValues(alpha: 0.15),
+                      ),
+                      child: Icon(Icons.auto_awesome_rounded,
+                          color: _tealLight, size: 22),
                     ),
-                    const SizedBox(width: 18),
-                    Expanded(
+                    const SizedBox(width: 14),
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Life Score',
+                          Text('Your LifeX Journey',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700)),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
-                            'Solid foundation. Vision & Spiritual\nneed some attention this week.',
+                            'Explore each part of your life at your own pace.',
                             style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.55),
+                                color: Colors.white70,
                                 fontSize: 12,
                                 height: 1.5),
                           ),
@@ -413,21 +375,10 @@ class _LifeXPageState extends State<LifeXPage>
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    _scoreTag(Icons.trending_up_rounded, 'Financial',
-                        '${(_domainScores[0] * 100).round()}%',
-                        const Color(0xFF10B981)),
-                    const SizedBox(width: 6),
-                    _scoreTag(Icons.favorite_rounded, 'Health',
-                        '${(_domainScores[1] * 100).round()}%',
-                        const Color(0xFF14B8A6)),
-                    const SizedBox(width: 6),
-                    _scoreTag(Icons.remove_red_eye_rounded, 'Vision',
-                        '${(_domainScores[5] * 100).round()}%',
-                        const Color(0xFF3B82F6)),
-                    const SizedBox(width: 6),
-                    _scoreTag(Icons.self_improvement_rounded, 'Spiritual',
-                        '${(_domainScores[6] * 100).round()}%',
-                        const Color(0xFF8B5CF6)),
+                    for (final m in chips) ...[
+                      _domainChip(m),
+                      if (m.title != highlighted.last) const SizedBox(width: 6),
+                    ],
                   ],
                 ),
               ],
@@ -438,25 +389,32 @@ class _LifeXPageState extends State<LifeXPage>
     );
   }
 
-  Widget _scoreTag(IconData icon, String label, String val, Color color) {
+  Widget _domainChip(_Module module) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 10),
-            const SizedBox(width: 4),
-            Text(val,
-                style: TextStyle(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700)),
-          ],
+      child: GestureDetector(
+        onTap: () => _onModuleTap(module),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(module.icon, color: Colors.white70, size: 12),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(module.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -510,19 +468,16 @@ class _DashedRingPainter extends CustomPainter {
 
 class _DomainOrb extends StatelessWidget {
   final _Module module;
-  final double score;
   final VoidCallback onTap;
 
   const _DomainOrb({
     required this.module,
-    required this.score,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     const orbSize = 64.0;
-    final pct = (score * 100).round();
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -531,15 +486,16 @@ class _DomainOrb extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
+              // Decorative ring — no score, no fill implying "incomplete".
               SizedBox(
                 width: orbSize,
                 height: orbSize,
                 child: CircularProgressIndicator(
-                  value: score,
+                  value: 1,
                   strokeWidth: 3.5,
                   backgroundColor: Colors.white.withValues(alpha: 0.10),
                   valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white.withValues(alpha: 0.45)),
+                      Colors.white.withValues(alpha: 0.22)),
                   strokeCap: StrokeCap.round,
                 ),
               ),
@@ -552,17 +508,8 @@ class _DomainOrb extends StatelessWidget {
                   border: Border.all(
                       color: Colors.white.withValues(alpha: 0.18), width: 1),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(module.icon, color: Colors.white, size: 15),
-                    const SizedBox(height: 1),
-                    Text('$pct%',
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700)),
-                  ],
+                child: Center(
+                  child: Icon(module.icon, color: Colors.white, size: 20),
                 ),
               ),
             ],

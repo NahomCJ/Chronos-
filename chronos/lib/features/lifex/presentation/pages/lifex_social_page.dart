@@ -29,59 +29,59 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
         'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100'),
   ];
 
-  static const _bg = Color(0xFF0A0608);
-  static const _card = Color(0xFF130910);
-  static const _red = Color(0xFFEF4444);
-  static const _redLight = Color(0xFFF87171);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _red = Colors.white;
+  static const _redLight = Colors.white70;
 
   static const _interestCategories = [
-    _InterestCat('Outdoor & Nature', Icons.terrain_rounded, Color(0xFF10B981),
+    _InterestCat('Outdoor & Nature', Icons.terrain_rounded, Color(0xFF9CA3AF),
         '2.4K members',
         'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=400'),
-    _InterestCat('Food & Dining', Icons.restaurant_rounded, Color(0xFFF59E0B),
+    _InterestCat('Food & Dining', Icons.restaurant_rounded, Color(0xFF9CA3AF),
         '5.1K members',
         'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _InterestCat('Sports & Fitness', Icons.sports_basketball_rounded,
-        Color(0xFF3B82F6), '3.8K members',
+        Color(0xFF9CA3AF), '3.8K members',
         'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=400'),
-    _InterestCat('Arts & Culture', Icons.palette_rounded, Color(0xFF8B5CF6),
+    _InterestCat('Arts & Culture', Icons.palette_rounded, Color(0xFF9CA3AF),
         '1.9K members',
         'https://images.pexels.com/photos/1183992/pexels-photo-1183992.jpeg?auto=compress&cs=tinysrgb&w=400'),
-    _InterestCat('Gaming', Icons.sports_esports_rounded, Color(0xFF06B6D4),
+    _InterestCat('Gaming', Icons.sports_esports_rounded, Color(0xFF9CA3AF),
         '4.2K members',
         'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _InterestCat('Volunteering', Icons.volunteer_activism_rounded,
-        Color(0xFFEC4899), '890 members',
+        Color(0xFF9CA3AF), '890 members',
         'https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400'),
   ];
 
   static const _upcomingEvents = [
     _Event('Rooftop Dinner', 'Sat, Jun 21', '7:00 PM', 4,
-        Color(0xFFF59E0B), Icons.restaurant_rounded, r'$35/person',
+        Color(0xFF9CA3AF), Icons.restaurant_rounded, r'$35/person',
         'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _Event('Hiking Trail Run', 'Sun, Jun 22', '8:00 AM', 6,
-        Color(0xFF10B981), Icons.terrain_rounded, 'Free',
+        Color(0xFF9CA3AF), Icons.terrain_rounded, 'Free',
         'https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=400'),
     _Event('Game Night', 'Fri, Jun 27', '8:00 PM', 8,
-        Color(0xFF06B6D4), Icons.sports_esports_rounded, 'Free',
+        Color(0xFF9CA3AF), Icons.sports_esports_rounded, 'Free',
         'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400'),
   ];
 
   static const _billSplits = [
-    _BillSplit('Cabo Trip Expenses', r'$1,240', 5, Color(0xFFF97316), 'In progress'),
+    _BillSplit('Cabo Trip Expenses', r'$1,240', 5, Color(0xFF9CA3AF), 'In progress'),
     _BillSplit("Alex's Birthday Dinner", r'$312', 8, Color(0xFF10B981), 'Settled'),
-    _BillSplit('Airbnb – Memorial Weekend', r'$680', 4, Color(0xFF3B82F6), "You're owed \$170"),
+    _BillSplit('Airbnb – Memorial Weekend', r'$680', 4, Color(0xFF9CA3AF), "You're owed \$170"),
   ];
 
   static const _activityFeed = [
     _Activity('Marcus W.', 'created "Cabo Trip" · 5 members joining',
-        Icons.flight_rounded, Color(0xFFF97316), '2h ago'),
+        Icons.flight_rounded, Color(0xFF9CA3AF), '2h ago'),
     _Activity('You', 'joined Rooftop Dinner · Jun 21',
-        Icons.restaurant_rounded, Color(0xFFF59E0B), '5h ago'),
+        Icons.restaurant_rounded, Color(0xFF9CA3AF), '5h ago'),
     _Activity('Aisha C.', 'split \$312 dinner bill · settled',
         Icons.receipt_long_rounded, Color(0xFF10B981), 'Yesterday'),
     _Activity('Derek K.', 'posted in Sports & Fitness group',
-        Icons.sports_basketball_rounded, Color(0xFF3B82F6), 'Yesterday'),
+        Icons.sports_basketball_rounded, Color(0xFF9CA3AF), 'Yesterday'),
   ];
 
   @override
@@ -189,8 +189,6 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _tag(Icons.group_rounded, 'SOCIAL DOMAIN', _red),
-              const SizedBox(height: 10),
               const Text('Your Social\nUniverse',
                   style: TextStyle(
                       color: Colors.white,
@@ -199,11 +197,9 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
                       height: 1.1)),
               const SizedBox(height: 6),
               Row(children: [
-                _pillStat('60', 'Score', _red),
+                _pillStat('3', 'Groups', Colors.white),
                 const SizedBox(width: 10),
-                _pillStat('3', 'Groups', const Color(0xFFF59E0B)),
-                const SizedBox(width: 10),
-                _pillStat('2', 'Events', const Color(0xFF10B981)),
+                _pillStat('2', 'Events', Colors.white),
               ]),
             ],
           ),
@@ -342,15 +338,15 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               Row(children: [
                 Expanded(
                     child: _spendStat(r'$165', 'Dining out',
-                        const Color(0xFFF59E0B))),
+                        const Color(0xFF9CA3AF))),
                 _vDivider(),
                 Expanded(
                     child: _spendStat(r'$85', 'Entertainment',
-                        const Color(0xFF8B5CF6))),
+                        const Color(0xFF9CA3AF))),
                 _vDivider(),
                 Expanded(
                     child: _spendStat(r'$210', 'Travel/trips',
-                        const Color(0xFF3B82F6))),
+                        const Color(0xFF9CA3AF))),
               ]),
               const SizedBox(height: 16),
               Container(
@@ -585,9 +581,9 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
 
   Widget _buildQuickActions() {
     final actions = [
-      ('Plan Event', Icons.event_rounded, const Color(0xFFF59E0B), null),
+      ('Plan Event', Icons.event_rounded, const Color(0xFF9CA3AF), null),
       ('Split Bill', Icons.receipt_long_rounded, const Color(0xFF10B981), null),
-      ('Find Group', Icons.group_add_rounded, const Color(0xFF3B82F6), null),
+      ('Find Group', Icons.group_add_rounded, const Color(0xFF9CA3AF), null),
       ('Invite', Icons.person_add_rounded, _red, _showInviteFriendsSheet),
     ];
     return Row(
@@ -812,13 +808,13 @@ class _LifeXSocialPageState extends State<LifeXSocialPage>
               const SizedBox(height: 16),
               Row(children: [
                 _quickPlan('Dinner', Icons.restaurant_rounded,
-                    const Color(0xFFF59E0B)),
+                    const Color(0xFF9CA3AF)),
                 const SizedBox(width: 8),
                 _quickPlan(
-                    'Trip', Icons.flight_rounded, const Color(0xFFF97316)),
+                    'Trip', Icons.flight_rounded, const Color(0xFF9CA3AF)),
                 const SizedBox(width: 8),
                 _quickPlan('Game Night', Icons.sports_esports_rounded,
-                    const Color(0xFF06B6D4)),
+                    const Color(0xFF9CA3AF)),
                 const SizedBox(width: 8),
                 _quickPlan('Other', Icons.add_rounded, _red),
               ]),

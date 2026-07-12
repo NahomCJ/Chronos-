@@ -71,14 +71,6 @@ class _LifeXFamilyPageState extends State<LifeXFamilyPage> {
         ),
       )),
       Positioned(bottom: 24, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: _pink.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _pink.withValues(alpha: 0.5), width: 1)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.people_rounded, color: _pinkLight, size: 12), const SizedBox(width: 6),
-            Text('FAMILY & BONDS', style: TextStyle(color: _pinkLight, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
-          ])),
-        const SizedBox(height: 10),
         Text('Your People', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
       ])),
     ]));

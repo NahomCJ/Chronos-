@@ -115,20 +115,6 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
         Positioned(
           bottom: 24, left: 20,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: _lime.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: _lime.withValues(alpha: 0.5), width: 1),
-              ),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(Icons.download_rounded, color: _limeLight, size: 12),
-                const SizedBox(width: 6),
-                Text('REPORTS & DATA', style: TextStyle(color: _limeLight, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
-              ]),
-            ),
-            const SizedBox(height: 10),
             Text('Your Data,\nYour Way', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
           ]),
         ),

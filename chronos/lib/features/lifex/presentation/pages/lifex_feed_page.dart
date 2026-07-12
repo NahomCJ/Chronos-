@@ -117,14 +117,6 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
         ),
       )),
       Positioned(bottom: 20, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: _orange.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _orange.withValues(alpha: 0.5), width: 1)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.feed_rounded, color: _orange, size: 12), const SizedBox(width: 6),
-            Text('LIFESTYLE FEED', style: TextStyle(color: _orange, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
-          ])),
-        const SizedBox(height: 10),
         Text('Your Daily\nInspiration', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 28, height: 1.1)),
       ])),
     ]));

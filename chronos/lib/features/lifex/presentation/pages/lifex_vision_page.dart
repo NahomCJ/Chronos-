@@ -14,16 +14,16 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
 
-  static const _bg = Color(0xFF060810);
-  static const _card = Color(0xFF0C0F1C);
-  static const _blue = Color(0xFF3B82F6);
-  static const _blueLight = Color(0xFF60A5FA);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _blue = Colors.white;
+  static const _blueLight = Colors.white70;
 
   static const _goals = [
     _VisionGoal(
       'Launch my Business',
       Icons.rocket_launch_rounded,
-      Color(0xFF6366F1),
+      Colors.white,
       0.45,
       '\$25,000',
       '18 months',
@@ -32,7 +32,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     _VisionGoal(
       'Buy a Home',
       Icons.home_rounded,
-      Color(0xFF10B981),
+      Colors.white,
       0.55,
       '\$180,000',
       '3 years',
@@ -41,7 +41,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     _VisionGoal(
       'Run a Marathon',
       Icons.directions_run_rounded,
-      Color(0xFFF59E0B),
+      Colors.white,
       0.30,
       '\$450',
       '8 months',
@@ -50,7 +50,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
     _VisionGoal(
       'Speak 2 Languages',
       Icons.language_rounded,
-      Color(0xFFEC4899),
+      Colors.white,
       0.25,
       '\$200',
       '2 years',
@@ -67,7 +67,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
       '\$1,389/mo',
       '\$640/mo short',
       18,
-      Color(0xFF6366F1),
+      Colors.white,
     ),
     _FinancialPlan(
       'Buy a Home',
@@ -77,7 +77,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
       '\$1,200/mo',
       '\$650/mo short',
       36,
-      Color(0xFF10B981),
+      Colors.white,
     ),
     _FinancialPlan(
       'Run a Marathon',
@@ -87,7 +87,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
       'Funded',
       'Ready to spend',
       0,
-      Color(0xFFF59E0B),
+      Colors.white,
     ),
   ];
 
@@ -112,7 +112,7 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 3, vsync: this);
+    _tabs = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -150,7 +150,10 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
             bottom: TabBar(
               controller: _tabs,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               tabs: const [
+                Tab(text: 'Overview'),
                 Tab(text: 'Vision Board'),
                 Tab(text: 'Financial Plan'),
                 Tab(text: '90-Day'),
@@ -167,11 +170,66 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
         body: TabBarView(
           controller: _tabs,
           children: [
+            _buildOverviewTab(),
             _buildBoardTab(),
             _buildFinancialPlanTab(),
             _buildNinetyDayTab(),
           ],
         ),
+      ),
+    );
+  }
+
+  // ── Overview Tab ──────────────────────────────────────────────
+
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: _card,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${_goals.length} goals set',
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text('3 on track, 1 needs attention — see the Financial Plan tab.',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _sectionTitle('Explore Vision'),
+          const SizedBox(height: 12),
+          _OverviewLink(
+            icon: Icons.rocket_launch_rounded,
+            title: 'Vision Board',
+            subtitle: '${_goals.length} goals with photos & progress',
+            onTap: () => _tabs.animateTo(1),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.savings_rounded,
+            title: 'Financial Plan',
+            subtitle: 'What each goal costs and the savings gap',
+            onTap: () => _tabs.animateTo(2),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.checklist_rounded,
+            title: '90-Day',
+            subtitle: 'Milestone map — 1 of 9 tasks complete',
+            onTap: () => _tabs.animateTo(3),
+          ),
+        ],
       ),
     );
   }
@@ -208,31 +266,6 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: _blue.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _blue.withValues(alpha: 0.5), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.remove_red_eye_rounded,
-                        color: _blueLight, size: 12),
-                    const SizedBox(width: 6),
-                    Text('GOALS & VISION',
-                        style: TextStyle(
-                            color: _blueLight,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
               Text('Your Future\nSelf',
                   style: TextStyles.displaySmall.copyWith(
                       color: Colors.white,
@@ -680,6 +713,51 @@ class _LifeXVisionPageState extends State<LifeXVisionPage>
   }
 }
 
+// ── Overview link card ────────────────────────────────────────────────────────
+
+class _OverviewLink extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback onTap;
+  const _OverviewLink({required this.icon, required this.title, required this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+              child: Icon(icon, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.35), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ── Data models ───────────────────────────────────────────────────────────────
 
 class _VisionGoal {
@@ -981,7 +1059,7 @@ class _MonthCardState extends State<_MonthCard> {
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Color(0xFF3B82F6)),
+                      shape: BoxShape.circle, color: Colors.white),
                 ),
                 const SizedBox(width: 10),
                 Text(widget.month.label,
@@ -1006,7 +1084,7 @@ class _MonthCardState extends State<_MonthCard> {
               value: completedCount / total,
               backgroundColor: Colors.white.withValues(alpha: 0.06),
               valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF3B82F6)),
+                  Colors.white),
               minHeight: 3,
             ),
           ),
@@ -1032,11 +1110,11 @@ class _MonthCardState extends State<_MonthCard> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: _done[i]
-                            ? const Color(0xFF3B82F6)
+                            ? Colors.white
                             : Colors.white.withValues(alpha: 0.06),
                         border: Border.all(
                             color: _done[i]
-                                ? const Color(0xFF3B82F6)
+                                ? Colors.white
                                 : Colors.white.withValues(alpha: 0.15),
                             width: 1),
                       ),

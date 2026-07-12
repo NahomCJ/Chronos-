@@ -104,22 +104,8 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
           ),
         )),
         Positioned(bottom: 24, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _tag(Icons.directions_run_rounded, 'ACTIVITY & FITNESS', _amber),
-          const SizedBox(height: 10),
           Text('Stay in\nMotion', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
         ])),
-      ]),
-    );
-  }
-
-  Widget _tag(IconData icon, String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.5), width: 1)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Icon(icon, color: color, size: 12), const SizedBox(width: 6),
-        Text(text, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
       ]),
     );
   }
