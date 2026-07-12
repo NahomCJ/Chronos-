@@ -13,26 +13,26 @@ class LifeXFeedPage extends StatefulWidget {
 class _LifeXFeedPageState extends State<LifeXFeedPage> {
   int _selectedFilter = 0;
 
-  static const _bg = Color(0xFF060810);
-  static const _orange = Color(0xFFF97316);
+  static const _bg = Color(0xFF0D0D22);
+  static const _accent = Colors.white;
   static const _filters = ['All', 'Health', 'Finance', 'Mindset', 'Lifestyle'];
 
   static const _feedItems = [
     _FeedItem('The Morning Routine That Changed My Life', 'Lifestyle', '7 min read',
         'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFFF97316), false),
+        Colors.white, false),
     _FeedItem('5 Habits of Financially Free People', 'Finance', '5 min read',
         'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF10B981), false),
+        Colors.white, false),
     _FeedItem('Why Sleep is Your Superpower', 'Health', '6 min read',
         'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF14B8A6), true),
+        Colors.white, true),
     _FeedItem('Stoicism: The Ancient Art of Mental Resilience', 'Mindset', '9 min read',
         'https://images.pexels.com/photos/3759089/pexels-photo-3759089.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF8B5CF6), false),
+        Colors.white, false),
     _FeedItem('Compound Learning: Read 25 Books This Year', 'Education', '4 min read',
         'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF6366F1), false),
+        Colors.white, false),
   ];
 
   @override
@@ -67,12 +67,12 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: active ? _orange : Colors.white.withValues(alpha: 0.06),
+                          color: active ? _accent : Colors.white.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: active ? _orange : Colors.white.withValues(alpha: 0.1), width: 1),
+                          border: Border.all(color: active ? _accent : Colors.white.withValues(alpha: 0.1), width: 1),
                         ),
                         child: Text(_filters[i], style: TextStyle(
-                          color: active ? Colors.white : Colors.white.withValues(alpha: 0.55),
+                          color: active ? Colors.black : Colors.white.withValues(alpha: 0.55),
                           fontSize: 13, fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                         )),
                       ),
@@ -103,8 +103,8 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
       CachedNetworkImage(
         imageUrl: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=900',
         fit: BoxFit.cover,
-        placeholder: (_, __) => Container(color: _orange.withValues(alpha: 0.1)),
-        errorWidget: (_, __, ___) => Container(color: _orange.withValues(alpha: 0.1)),
+        placeholder: (_, __) => Container(color: _accent.withValues(alpha: 0.1)),
+        errorWidget: (_, __, ___) => Container(color: _accent.withValues(alpha: 0.1)),
       ),
       Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
           colors: [Colors.black.withValues(alpha: 0.2), _bg.withValues(alpha: 0.97)]))),
@@ -132,22 +132,22 @@ class _LifeXFeedPageState extends State<LifeXFeedPage> {
           CachedNetworkImage(
             imageUrl: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=700',
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: _orange.withValues(alpha: 0.15)),
-            errorWidget: (_, __, ___) => Container(color: _orange.withValues(alpha: 0.15)),
+            placeholder: (_, __) => Container(color: _accent.withValues(alpha: 0.15)),
+            errorWidget: (_, __, ___) => Container(color: _accent.withValues(alpha: 0.15)),
           ),
           Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
               colors: [Colors.transparent, Colors.black.withValues(alpha: 0.75)]))),
           Positioned(top: 12, left: 14, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(10)),
-            child: const Text('FEATURED', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.2)))),
+            decoration: BoxDecoration(color: _accent, borderRadius: BorderRadius.circular(10)),
+            child: const Text('FEATURED', style: TextStyle(color: Colors.black, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.2)))),
           Positioned(bottom: 16, left: 16, right: 16, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('The Art of Living Well', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800, height: 1.2)),
             const SizedBox(height: 4),
             Text('A curated guide to building a life of purpose and abundance', style: TextStyle(color: Colors.white.withValues(alpha: 0.65), fontSize: 12)),
             const SizedBox(height: 10),
             Row(children: [
-              Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7), decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(20)),
-                  child: const Text('Read Now', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700))),
+              Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7), decoration: BoxDecoration(color: _accent, borderRadius: BorderRadius.circular(20)),
+                  child: const Text('Read Now', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w700))),
               const SizedBox(width: 10),
               Text('12 min read', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
             ]),
@@ -177,7 +177,7 @@ class _FeedCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        decoration: BoxDecoration(color: const Color(0xFF0C0F1A), borderRadius: BorderRadius.circular(18),
+        decoration: BoxDecoration(color: const Color(0xFF0F0F1C), borderRadius: BorderRadius.circular(18),
             border: Border.all(color: item.color.withValues(alpha: 0.15), width: 1)),
         child: Row(children: [
           ClipRRect(

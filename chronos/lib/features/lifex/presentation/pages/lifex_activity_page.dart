@@ -10,18 +10,32 @@ class LifeXActivityPage extends StatefulWidget {
   State<LifeXActivityPage> createState() => _LifeXActivityPageState();
 }
 
-class _LifeXActivityPageState extends State<LifeXActivityPage> {
-  static const _bg = Color(0xFF0A0800);
-  static const _card = Color(0xFF120F00);
-  static const _amber = Color(0xFFF59E0B);
-  static const _amberLight = Color(0xFFFBBF24);
+class _LifeXActivityPageState extends State<LifeXActivityPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabs;
+
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _accent = Colors.white;
 
   static const _activities = [
-    _ActivityLog('Morning Run', '5.4 km', '34 min', '385 kcal', Icons.directions_run_rounded, Color(0xFF14B8A6)),
-    _ActivityLog('Weight Training', '45 min', '3 sets', '280 kcal', Icons.fitness_center_rounded, Color(0xFFEF4444)),
-    _ActivityLog('Cycling', '12 km', '38 min', '310 kcal', Icons.directions_bike_rounded, Color(0xFF6366F1)),
-    _ActivityLog('Yoga Flow', '30 min', 'Flexibility', '140 kcal', Icons.self_improvement_rounded, Color(0xFF8B5CF6)),
+    _ActivityLog('Morning Run', '5.4 km', '34 min', '385 kcal', Icons.directions_run_rounded, Colors.white),
+    _ActivityLog('Weight Training', '45 min', '3 sets', '280 kcal', Icons.fitness_center_rounded, Colors.white),
+    _ActivityLog('Cycling', '12 km', '38 min', '310 kcal', Icons.directions_bike_rounded, Colors.white),
+    _ActivityLog('Yoga Flow', '30 min', 'Flexibility', '140 kcal', Icons.self_improvement_rounded, Colors.white),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,49 +45,106 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
         margin: const EdgeInsets.only(bottom: 30),
         child: const ChrisHomeFab(),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: _buildHero(context)),
-          SliverToBoxAdapter(child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 20, 18, 0),
-            child: _buildTodayRings(),
-          )),
-          SliverToBoxAdapter(child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _sectionTitle('Weekly Summary'),
-              const SizedBox(height: 14),
-              _buildWeeklyBars(),
-            ]),
-          )),
-          SliverToBoxAdapter(child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                _sectionTitle('Recent Activity'),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text('Log Activity', style: TextStyle(color: _amber, fontSize: 13, fontWeight: FontWeight.w600)),
+      body: NestedScrollView(
+        headerSliverBuilder: (_, __) => [
+          SliverAppBar(
+            expandedHeight: 220,
+            pinned: true,
+            backgroundColor: _bg,
+            leading: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.12),
                 ),
-              ]),
-              const SizedBox(height: 14),
-              ..._activities.map((a) => _ActivityCard(activity: a)),
-            ]),
-          )),
-          SliverToBoxAdapter(child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _sectionTitle('Workout Videos'),
-              const SizedBox(height: 14),
-              _VideoCard('30-Day HIIT Challenge', '28 min', 'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600', _amber),
-              const SizedBox(height: 14),
-              _VideoCard('Beginner Strength Training', '35 min', 'https://images.pexels.com/photos/3837757/pexels-photo-3837757.jpeg?auto=compress&cs=tinysrgb&w=600', const Color(0xFFEF4444)),
-              const SizedBox(height: 14),
-              _VideoCard('Evening Yoga & Stretch', '20 min', 'https://images.pexels.com/photos/2294354/pexels-photo-2294354.jpeg?auto=compress&cs=tinysrgb&w=600', const Color(0xFF8B5CF6)),
-            ]),
-          )),
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white, size: 16),
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(background: _buildHero(context)),
+            bottom: TabBar(
+              controller: _tabs,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              tabs: const [
+                Tab(text: 'Overview'),
+                Tab(text: 'Summary'),
+                Tab(text: 'Log'),
+                Tab(text: 'Videos'),
+              ],
+              labelColor: _accent,
+              unselectedLabelColor: Colors.white54,
+              indicatorColor: _accent,
+              indicatorSize: TabBarIndicatorSize.label,
+              labelStyle:
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+          ),
+        ],
+        body: TabBarView(
+          controller: _tabs,
+          children: [
+            _buildOverviewTab(),
+            _buildSummaryTab(),
+            _buildLogTab(),
+            _buildVideosTab(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Overview Tab ──────────────────────────────────────────────
+
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: _card,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('7,430 steps today',
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text('${_activities.length} activities logged this week — 74% of your daily goal so far.',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _sectionTitle('Explore Activity'),
+          const SizedBox(height: 12),
+          _OverviewLink(
+            icon: Icons.insights_rounded,
+            title: 'Summary',
+            subtitle: 'Today\'s rings & this week\'s bars',
+            onTap: () => _tabs.animateTo(1),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.directions_run_rounded,
+            title: 'Log',
+            subtitle: '${_activities.length} recent activities',
+            onTap: () => _tabs.animateTo(2),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.play_circle_outline_rounded,
+            title: 'Videos',
+            subtitle: 'Guided workout sessions',
+            onTap: () => _tabs.animateTo(3),
+          ),
         ],
       ),
     );
@@ -86,26 +157,31 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
         CachedNetworkImage(
           imageUrl: 'https://images.pexels.com/photos/863988/pexels-photo-863988.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
-          placeholder: (_, __) => Container(color: _amber.withValues(alpha: 0.15)),
-          errorWidget: (_, __, ___) => Container(color: _amber.withValues(alpha: 0.15)),
+          placeholder: (_, __) => Container(color: Colors.white.withValues(alpha: 0.06)),
+          errorWidget: (_, __, ___) => Container(color: Colors.white.withValues(alpha: 0.06)),
         ),
         Container(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
           colors: [Colors.black.withValues(alpha: 0.2), _bg.withValues(alpha: 0.97)],
         ))),
-        SafeArea(child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(width: 36, height: 36,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
-            ),
-          ),
-        )),
         Positioned(bottom: 24, left: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Stay in\nMotion', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
         ])),
+      ]),
+    );
+  }
+
+  // ── Summary Tab ──────────────────────────────────────────────
+
+  Widget _buildSummaryTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _buildTodayRings(),
+        const SizedBox(height: 22),
+        _sectionTitle('Weekly Summary'),
+        const SizedBox(height: 14),
+        _buildWeeklyBars(),
       ]),
     );
   }
@@ -116,14 +192,14 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _amber.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1),
       ),
       child: Row(children: [
         Stack(alignment: Alignment.center, children: [
           SizedBox(width: 90, height: 90,
             child: CircularProgressIndicator(value: 0.74, strokeWidth: 8,
                 backgroundColor: Colors.white.withValues(alpha: 0.07),
-                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 strokeCap: StrokeCap.round)),
           Column(mainAxisSize: MainAxisSize.min, children: [
             const Text('74%', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800)),
@@ -134,21 +210,21 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Text('Today\'s Goal', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
-          _activityStat(Icons.directions_walk_rounded, '7,430', '/ 10,000 steps', _amber),
+          _activityStat(Icons.directions_walk_rounded, '7,430', '/ 10,000 steps'),
           const SizedBox(height: 6),
-          _activityStat(Icons.local_fire_department_rounded, '742', '/ 600 kcal burned', const Color(0xFFEF4444)),
+          _activityStat(Icons.local_fire_department_rounded, '742', '/ 600 kcal burned'),
           const SizedBox(height: 6),
-          _activityStat(Icons.timer_rounded, '48', '/ 60 min active', const Color(0xFF14B8A6)),
+          _activityStat(Icons.timer_rounded, '48', '/ 60 min active'),
         ])),
       ]),
     );
   }
 
-  Widget _activityStat(IconData icon, String val, String label, Color color) {
+  Widget _activityStat(IconData icon, String val, String label) {
     return Row(children: [
-      Icon(icon, color: color, size: 13),
+      Icon(icon, color: Colors.white, size: 13),
       const SizedBox(width: 6),
-      Text(val, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)),
+      Text(val, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
       Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
     ]);
   }
@@ -169,19 +245,99 @@ class _LifeXActivityPageState extends State<LifeXActivityPage> {
               duration: Duration(milliseconds: 200 + i * 80),
               height: 70 * values[i],
               decoration: BoxDecoration(
-                color: isToday ? _amber : _amber.withValues(alpha: 0.22),
+                color: isToday ? Colors.white : Colors.white.withValues(alpha: 0.22),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
             const SizedBox(height: 6),
-            Text(days[i], style: TextStyle(color: isToday ? _amber : Colors.white.withValues(alpha: 0.35), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+            Text(days[i], style: TextStyle(color: isToday ? Colors.white : Colors.white.withValues(alpha: 0.35), fontSize: 11, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
           ]),
         ));
       })),
     );
   }
 
+  // ── Log Tab ──────────────────────────────────────────────
+
+  Widget _buildLogTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          _sectionTitle('Recent Activity'),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {},
+            child: const Text('Log Activity', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+          ),
+        ]),
+        const SizedBox(height: 14),
+        ..._activities.map((a) => _ActivityCard(activity: a)),
+      ]),
+    );
+  }
+
+  // ── Videos Tab ──────────────────────────────────────────────
+
+  Widget _buildVideosTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _sectionTitle('Workout Videos'),
+        const SizedBox(height: 14),
+        const _VideoCard('30-Day HIIT Challenge', '28 min', 'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600'),
+        const SizedBox(height: 14),
+        const _VideoCard('Beginner Strength Training', '35 min', 'https://images.pexels.com/photos/3837757/pexels-photo-3837757.jpeg?auto=compress&cs=tinysrgb&w=600'),
+        const SizedBox(height: 14),
+        const _VideoCard('Evening Yoga & Stretch', '20 min', 'https://images.pexels.com/photos/2294354/pexels-photo-2294354.jpeg?auto=compress&cs=tinysrgb&w=600'),
+      ]),
+    );
+  }
+
   Widget _sectionTitle(String t) => Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+}
+
+class _OverviewLink extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback onTap;
+  const _OverviewLink({required this.icon, required this.title, required this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+              child: Icon(icon, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.35), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ActivityLog {
@@ -203,17 +359,17 @@ class _ActivityCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(color: const Color(0xFF120F00), borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: activity.color.withValues(alpha: 0.2), width: 1)),
+      decoration: BoxDecoration(color: const Color(0xFF0F0F1C), borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1)),
       child: Row(children: [
-        Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle, color: activity.color.withValues(alpha: 0.12)),
-            child: Icon(activity.icon, color: activity.color, size: 22)),
+        Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+            child: Icon(activity.icon, color: Colors.white, size: 22)),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(activity.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Row(children: [
-            Text(activity.metric1, style: TextStyle(color: activity.color, fontSize: 12, fontWeight: FontWeight.w600)),
+            Text(activity.metric1, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
             Text('  ·  ${activity.metric2}  ·  ${activity.calories}', style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11)),
           ]),
         ])),
@@ -227,25 +383,24 @@ class _VideoCard extends StatelessWidget {
   final String title;
   final String duration;
   final String imageUrl;
-  final Color accentColor;
-  const _VideoCard(this.title, this.duration, this.imageUrl, this.accentColor);
+  const _VideoCard(this.title, this.duration, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
-      child: Container(
+      child: SizedBox(
         height: 155,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Stack(fit: StackFit.expand, children: [
             CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: const Color(0xFF120F00)),
-                errorWidget: (_, __, ___) => Container(color: const Color(0xFF120F00))),
+                placeholder: (_, __) => Container(color: const Color(0xFF0F0F1C)),
+                errorWidget: (_, __, ___) => Container(color: const Color(0xFF0F0F1C))),
             Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
                 colors: [Colors.transparent, Colors.black.withValues(alpha: 0.75)]))),
             Center(child: Container(width: 46, height: 46,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: accentColor.withValues(alpha: 0.25),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.18),
                   border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5)),
               child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24))),
             Positioned(bottom: 12, left: 14, right: 14, child: Row(children: [
