@@ -13,7 +13,7 @@ import {
   runLifeXAgent,
   detectLifexDomain,
 } from "./agents/lifex/lifestyle.agent";
-import { callLLM } from "./llm/claude.client";
+import { callLLM, LLMMessage } from "./llm/claude.client";
 import {
   compileSystemPrompt,
   UserLevel,
@@ -25,6 +25,7 @@ export interface OrchestratorInput {
   userId: string;
   message: string;
   responseMode?: ResponseMode;
+  history?: LLMMessage[];
 }
 
 export interface OrchestratorOutput {
@@ -36,7 +37,7 @@ export interface OrchestratorOutput {
 export async function runPanther(
   input: OrchestratorInput
 ): Promise<OrchestratorOutput> {
-  const { userId, message, responseMode = "text" } = input;
+  const { userId, message, responseMode = "text", history = [] } = input;
 
   const ctx = await getUserFinancialContext(userId);
   const domain = await routeQuery(message);
@@ -52,14 +53,14 @@ export async function runPanther(
           message
         );
       rawReply = isPredictive
-        ? await runPredictiveFinance(ctx, message, responseMode)
-        : await runBankingAnalyst(ctx, message, responseMode);
+        ? await runPredictiveFinance(ctx, message, responseMode, history)
+        : await runBankingAnalyst(ctx, message, responseMode, history);
       results.push({ domain, content: rawReply });
       break;
     }
 
     case "TICKPAY": {
-      rawReply = await runBnplChat(ctx, message, responseMode);
+      rawReply = await runBnplChat(ctx, message, responseMode, history);
       results.push({ domain, content: rawReply });
       break;
     }
@@ -72,7 +73,13 @@ export async function runPanther(
 
     case "LIFEX": {
       const lifexDomain = detectLifexDomain(message);
-      rawReply = await runLifeXAgent(ctx, message, lifexDomain, responseMode);
+      rawReply = await runLifeXAgent(
+        ctx,
+        message,
+        lifexDomain,
+        responseMode,
+        history
+      );
       results.push({ domain, content: rawReply });
       break;
     }
@@ -92,7 +99,7 @@ Provide a unified answer that draws on all relevant domains (banking, TickPay/BN
 
       rawReply = await callLLM({
         systemPrompt,
-        messages: [{ role: "user", content: unifiedPrompt }],
+        messages: [...history, { role: "user", content: unifiedPrompt }],
         model: "claude-sonnet-4-6",
         maxTokens: 1200,
       });

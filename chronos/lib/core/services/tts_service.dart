@@ -1,19 +1,37 @@
-import 'dart:convert';
+import 'dart:async';
+import 'dart:typed_data';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:http/http.dart' as http;
+import 'package:get_it/get_it.dart';
+import '../network/api_client.dart';
 
+// Chris's voice is synthesized by the main Chronos Express backend, which
+// holds the ElevenLabs key securely server-side. Falls back to on-device
+// TTS if that call fails.
 class TtsService {
   static final TtsService _instance = TtsService._();
   factory TtsService() => _instance;
   TtsService._();
 
   final FlutterTts _tts = FlutterTts();
+  final AudioPlayer _player = AudioPlayer();
   bool _initialized = false;
 
-  // Set this when the user provides their ElevenLabs key
-  static String? elevenLabsApiKey;
-  static const String _voiceId = 'pNInz6obpgDQGcFmaJgB'; // Adam voice
+  // The premium (ElevenLabs) voice failing used to be invisible — any error
+  // silently downgraded to the on-device fallback with only a debugPrint.
+  // Callers (e.g. ChrisHomeFab) can set this to surface the real reason.
+  String? lastError;
+  void Function(String message)? onError;
+
+  // Bumped on every stop() so any in-flight speak() sequence abandons
+  // itself instead of playing a sentence that's no longer relevant —
+  // this is what makes interrupting Chris mid-sentence possible.
+  int _generation = 0;
+  bool _isSpeaking = false;
+  Completer<void>? _activeCompleter;
+
+  bool get isSpeaking => _isSpeaking;
 
   Future<void> _ensureInit() async {
     if (_initialized) return;
@@ -21,55 +39,112 @@ class TtsService {
     await _tts.setSpeechRate(0.95);
     await _tts.setVolume(1.0);
     await _tts.setPitch(1.0);
+    await _tts.awaitSpeakCompletion(true);
     _initialized = true;
   }
 
+  /// Speaks [text] aloud, sentence by sentence — the next sentence's audio
+  /// is fetched from ElevenLabs while the current one is still playing, so
+  /// a long reply doesn't sit in dead air waiting for the whole thing to
+  /// synthesize first. Waits until all speech finishes, or until [stop] is
+  /// called from elsewhere (e.g. the user interrupting).
   Future<void> speak(String text) async {
-    if (text.isEmpty) return;
-    // System TTS is disabled until ElevenLabs API key is configured.
-    if (elevenLabsApiKey != null && elevenLabsApiKey!.isNotEmpty) {
-      await _speakElevenLabs(text);
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    await stop();
+    final myGen = ++_generation;
+    _isSpeaking = true;
+    try {
+      final sentences = _splitSentences(trimmed);
+      Future<Uint8List?>? nextFetch = _fetchAudio(sentences.first);
+      for (var i = 0; i < sentences.length; i++) {
+        if (myGen != _generation) return;
+        final bytes = await nextFetch;
+        nextFetch = (i + 1 < sentences.length)
+            ? _fetchAudio(sentences[i + 1])
+            : null;
+        if (myGen != _generation) return;
+        if (bytes != null && bytes.isNotEmpty) {
+          await _playBytes(bytes, myGen);
+        } else {
+          await _speakFallback(sentences[i], myGen);
+        }
+      }
+    } finally {
+      if (myGen == _generation) _isSpeaking = false;
     }
   }
 
+  /// Interrupts anything currently speaking or queued to speak.
   Future<void> stop() async {
+    _generation++;
+    _isSpeaking = false;
+    _activeCompleter?.complete();
+    _activeCompleter = null;
     await _tts.stop();
+    await _player.stop();
   }
 
-  Future<void> _speakFallback(String text) async {
+  List<String> _splitSentences(String text) {
+    final matches = RegExp(r'[^.!?\n]+[.!?\n]*').allMatches(text);
+    final parts = matches
+        .map((m) => m.group(0)!.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? [text] : parts;
+  }
+
+  Future<void> _speakFallback(String text, int myGen) async {
     try {
       await _ensureInit();
-      await _tts.stop();
+      if (myGen != _generation) return;
       await _tts.speak(text);
     } catch (e) {
       debugPrint('TTS fallback error: $e');
     }
   }
 
-  Future<void> _speakElevenLabs(String text) async {
+  Future<Uint8List?> _fetchAudio(String text) async {
     try {
-      final response = await http.post(
-        Uri.parse('https://api.elevenlabs.io/v1/text-to-speech/$_voiceId'),
-        headers: {
-          'Accept': 'audio/mpeg',
-          'Content-Type': 'application/json',
-          'xi-api-key': elevenLabsApiKey!,
-        },
-        body: jsonEncode({
-          'text': text,
-          'model_id': 'eleven_turbo_v2',
-          'voice_settings': {'stability': 0.5, 'similarity_boost': 0.75},
-        }),
+      final api = GetIt.instance<ApiClient>();
+      final trimmed = text.length > 480 ? text.substring(0, 480) : text;
+      final bytes = await api.postBytesWithBase(
+        api.baseUrl,
+        '/api/ai/voice/synthesize',
+        {'text': trimmed},
       );
-      if (response.statusCode == 200) {
-        // ElevenLabs audio playback requires audioplayers package
-        // Until that's added, fall back to system TTS
-        await _speakFallback(text);
-      } else {
-        await _speakFallback(text);
+      if (bytes.isEmpty) {
+        _reportError('Voice synthesis returned an empty response.');
+        return null;
       }
-    } catch (_) {
-      await _speakFallback(text);
+      return bytes;
+    } catch (e) {
+      _reportError(e.toString());
+      return null;
+    }
+  }
+
+  void _reportError(String message) {
+    lastError = message;
+    debugPrint('Chris voice synthesis error: $message');
+    onError?.call(message);
+  }
+
+  Future<void> _playBytes(Uint8List bytes, int myGen) async {
+    final completer = Completer<void>();
+    _activeCompleter = completer;
+    final sub = _player.onPlayerComplete.listen((_) {
+      if (!completer.isCompleted) completer.complete();
+    });
+    try {
+      await _player.play(BytesSource(bytes));
+      await completer.future.timeout(
+        const Duration(seconds: 20),
+        onTimeout: () {},
+      );
+    } finally {
+      await sub.cancel();
+      if (identical(_activeCompleter, completer)) _activeCompleter = null;
     }
   }
 }

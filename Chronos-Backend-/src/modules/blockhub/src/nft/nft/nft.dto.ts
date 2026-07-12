@@ -33,3 +33,22 @@ export class FavoriteNftDto {
   @IsUUID()
   nftId!: string;
 }
+
+export class CollectionsQueryDto {
+  @IsOptional()
+  @IsEnum(['ART', 'COLLECTIBLES', 'MUSIC'])
+  category?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  limit?: number = 10;
+}
+
+export class TopVolumeQueryDto extends CollectionsQueryDto {
+  @IsOptional()
+  @IsEnum(['24h', '7d'])
+  period?: '24h' | '7d' = '24h';
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../../core/services/tts_service.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
@@ -22,6 +23,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   late final ChatBloc _chatBloc;
 
   bool _isVoiceMode = false;
+  bool _voiceMuted = false;
 
   final List<_ChatMessage> _messages = [
     _ChatMessage(
@@ -128,6 +130,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
 
   @override
   void dispose() {
+    TtsService().stop();
     _chatBloc.close();
     _dotController.dispose();
     _pulseController.dispose();
@@ -146,6 +149,17 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     });
     _scrollToBottom();
     _chatBloc.add(ChatMessageSent(text.trim()));
+  }
+
+  // ApiClient surfaces the backend's actual error message (e.g. "message is
+  // required", "Unauthorized") inside the Exception text — show that instead
+  // of a generic string so failures are debuggable from the chat itself.
+  String _friendlyErrorText(String rawError) {
+    final cleaned = rawError.replaceFirst('Exception: ', '').trim();
+    if (cleaned.isEmpty) {
+      return 'Sorry, something went wrong. Please try again.';
+    }
+    return 'Sorry, something went wrong: $cleaned';
   }
 
   String _currentTime() {
@@ -186,14 +200,25 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               ));
             });
             _scrollToBottom();
-            Future.delayed(const Duration(milliseconds: 2200), () {
-              if (mounted) setState(() => _orbState = OrbState.idle);
-            });
+            // Only auto-speak in voice mode — a plain typed chat shouldn't
+            // start talking unprompted. Keep the orb in "speaking" state for
+            // as long as Chris is actually talking rather than the fixed
+            // 2.2s placeholder, which used to be purely decorative since
+            // nothing was really being spoken.
+            if (_isVoiceMode && !_voiceMuted) {
+              TtsService().speak(state.reply).whenComplete(() {
+                if (mounted) setState(() => _orbState = OrbState.idle);
+              });
+            } else {
+              Future.delayed(const Duration(milliseconds: 2200), () {
+                if (mounted) setState(() => _orbState = OrbState.idle);
+              });
+            }
           } else if (state is ChatError) {
             setState(() {
               _orbState = OrbState.idle;
               _messages.add(_ChatMessage(
-                text: 'Sorry, something went wrong. Please try again.',
+                text: _friendlyErrorText(state.message),
                 isUser: false,
                 time: _currentTime(),
               ));
@@ -603,6 +628,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             isVoiceMode: _isVoiceMode,
             onTextTap: () => setState(() {
               _isVoiceMode = false;
+              TtsService().stop();
               if (_isListening) {
                 _speech.stop();
                 _isListening = false;
@@ -632,7 +658,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _VoiceControlBtn(icon: Icons.volume_up_rounded, onTap: () {}),
+          _VoiceControlBtn(
+            icon: _voiceMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+            onTap: () {
+              setState(() => _voiceMuted = !_voiceMuted);
+              if (_voiceMuted) TtsService().stop();
+            },
+          ),
           GestureDetector(
             onTap: _toggleListening,
             child: AnimatedBuilder(

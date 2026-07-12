@@ -1,4 +1,4 @@
-import { callLLM } from "../../llm/claude.client";
+import { callLLM, LLMMessage } from "../../llm/claude.client";
 import {
   compileSystemPrompt,
   UserLevel,
@@ -42,7 +42,8 @@ export async function runLifeXAgent(
   ctx: UserFinancialContext,
   userMessage: string,
   domain: LifexDomain,
-  responseMode: ResponseMode
+  responseMode: ResponseMode,
+  history: LLMMessage[] = []
 ): Promise<string> {
   const level = ctx.userLevel as UserLevel;
   const systemPrompt = compileSystemPrompt("LIFEX", level, responseMode);
@@ -63,7 +64,7 @@ Provide personalized, actionable guidance for this life domain. Connect their fi
 
   return callLLM({
     systemPrompt,
-    messages: [{ role: "user", content: prompt }],
+    messages: [...history, { role: "user", content: prompt }],
     model: "claude-sonnet-4-6",
     maxTokens: 1024,
   });

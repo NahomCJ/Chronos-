@@ -7,7 +7,10 @@ import '../entities/marketplace_product.dart';
 import '../entities/payment_authorization.dart';
 
 abstract class PantherAiRepository {
-  Future<ChatResponse> sendMessage(String message);
+  Future<ChatResponse> sendMessage(
+    String message, {
+    List<Map<String, String>> history = const [],
+  });
   Future<List<AiAlert>> getAlerts();
   Future<void> generateAlerts();
   Future<void> dismissAlert(String alertId);

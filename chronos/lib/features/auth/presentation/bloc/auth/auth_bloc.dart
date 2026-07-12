@@ -133,6 +133,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         accessToken: session.accessToken,
         refreshToken: session.refreshToken,
         userId: session.userId,
+        firstName: session.firstName,
       );
       emit(AuthAuthenticated(session: session));
     } catch (e) {

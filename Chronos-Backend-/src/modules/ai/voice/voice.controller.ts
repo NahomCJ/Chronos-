@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { transcribeAudio, synthesizeSpeech } from "./voice.service";
+import { transcribeAudio, synthesizeSpeech, checkVoiceHealth } from "./voice.service";
 
 export async function transcribe(req: Request, res: Response): Promise<void> {
   const file = (req as any).file as
@@ -40,6 +40,18 @@ export async function synthesize(req: Request, res: Response): Promise<void> {
     res.status(200).send(audioBuffer);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Speech synthesis failed";
-    res.status(500).json({ error: msg });
+    console.error(`[voice.synthesize] ${msg}`);
+    // Not configured at all vs. a live call that failed are different
+    // problems for whoever's debugging this — keep the status codes apart.
+    const status = msg.includes("not configured") ? 503 : 502;
+    res.status(status).json({ error: msg });
   }
+}
+
+// GET /api/ai/voice/health — reports whether ElevenLabs is configured and
+// reachable without spending any characters, so "voice doesn't work" can be
+// diagnosed in one request instead of guessing across the whole stack.
+export async function health(_req: Request, res: Response): Promise<void> {
+  const result = await checkVoiceHealth();
+  res.status(200).json(result);
 }

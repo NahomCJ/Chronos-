@@ -33,6 +33,17 @@ const _kCoins = [
   _Coin('MATIC', 'Polygon', 1200.0, 1.05, Color(0xFF8247E5)),
 ];
 
+// Light fill for input/text boxes — a clean white card with dark text,
+// readable regardless of what's behind the background photo.
+const _kFieldGradient = LinearGradient(
+  colors: [Color(0xFFFFFFFF), Color(0xFFF3F3F8)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
+const _kFieldBorder = Color(0x14000000);
+const _kFieldTextPrimary = Color(0xFF12122A);
+const _kFieldTextSecondary = Color(0xFF6B6B7A);
+
 class SendCryptoPage extends StatefulWidget {
   const SendCryptoPage({super.key});
 
@@ -190,9 +201,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         children: [
@@ -207,13 +218,13 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
           ),
           const SizedBox(height: 8),
           Text('Available Balance', style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+            color: _kFieldTextSecondary, fontSize: 12,
           )),
           const SizedBox(height: 4),
           Text('${_coin.balance.toStringAsFixed(6)} ${_coin.symbol}',
-              style: TextStyles.titleLarge.copyWith(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+              style: TextStyles.titleLarge.copyWith(color: _kFieldTextPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
           Text('\$${(_coin.balance * _coin.price).toStringAsFixed(2)}',
-              style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+              style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 13)),
         ],
       ),
     );
@@ -223,9 +234,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +244,7 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text('Recipient Address', style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+              color: _kFieldTextSecondary, fontSize: 12,
             )),
           ),
           Row(
@@ -241,10 +252,10 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
               Expanded(
                 child: TextField(
                   controller: _addressController,
-                  style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontSize: 14),
+                  style: TextStyles.bodyMedium.copyWith(color: _kFieldTextPrimary, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: '0x... or ENS name',
-                    hintStyle: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+                    hintStyle: TextStyles.bodyMedium.copyWith(color: _kFieldTextSecondary, fontSize: 14),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   ),
@@ -269,18 +280,18 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(Icons.person_outline, color: Colors.white.withValues(alpha: 0.5), size: 16),
+            const Icon(Icons.person_outline, color: _kFieldTextSecondary, size: 16),
             const SizedBox(width: 6),
             Text('Recent Contacts', style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+              color: _kFieldTextSecondary, fontSize: 12,
             )),
           ]),
           const SizedBox(height: 12),
@@ -300,8 +311,8 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
                       child: Icon(Icons.person, color: _coin.color, size: 22),
                     ),
                     const SizedBox(height: 4),
-                    Text(c.$1, style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
-                    Text(c.$2, style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+                    Text(c.$1, style: TextStyles.bodySmall.copyWith(color: _kFieldTextPrimary, fontSize: 11, fontWeight: FontWeight.w600)),
+                    Text(c.$2, style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 10)),
                   ],
                 ),
               ),
@@ -316,14 +327,14 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Amount', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+          Text('Amount', style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 12)),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -331,17 +342,17 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
                 child: TextField(
                   controller: _amountController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  style: TextStyles.titleMedium.copyWith(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+                  style: TextStyles.titleMedium.copyWith(color: _kFieldTextPrimary, fontSize: 20, fontWeight: FontWeight.w600),
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     hintText: '0.00',
-                    hintStyle: TextStyles.titleMedium.copyWith(color: Colors.white.withValues(alpha: 0.25), fontSize: 20),
+                    hintStyle: TextStyles.titleMedium.copyWith(color: _kFieldTextSecondary, fontSize: 20),
                     border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero,
                   ),
                 ),
               ),
               Text(_coin.symbol, style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.5), fontSize: 14, fontWeight: FontWeight.w600,
+                color: _kFieldTextSecondary, fontSize: 14, fontWeight: FontWeight.w600,
               )),
             ],
           ),
@@ -368,11 +379,11 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
+          color: const Color(0x0F000000),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(label, textAlign: TextAlign.center,
-            style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+            style: TextStyles.bodySmall.copyWith(color: _kFieldTextPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
       ),
     );
   }
@@ -381,9 +392,9 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,15 +402,15 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text('Memo (Optional)', style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5), fontSize: 12,
+              color: _kFieldTextSecondary, fontSize: 12,
             )),
           ),
           TextField(
             controller: _memoController,
-            style: TextStyles.bodyMedium.copyWith(color: Colors.white, fontSize: 14),
+            style: TextStyles.bodyMedium.copyWith(color: _kFieldTextPrimary, fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Add a note...',
-              hintStyle: TextStyles.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.3), fontSize: 14),
+              hintStyle: TextStyles.bodyMedium.copyWith(color: _kFieldTextSecondary, fontSize: 14),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
             ),
@@ -413,29 +424,29 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: _kFieldGradient,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: _kFieldBorder),
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Network Fee', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.55), fontSize: 13)),
+              Text('Network Fee', style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 13)),
               Text('0.0015 ${_coin.symbol} (\$${(0.0015 * _coin.price).toStringAsFixed(2)})',
-                  style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 13)),
+                  style: TextStyles.bodySmall.copyWith(color: _kFieldTextPrimary, fontSize: 13)),
             ],
           ),
           const SizedBox(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Processing Time', style: TextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.55), fontSize: 13)),
+              Text('Processing Time', style: TextStyles.bodySmall.copyWith(color: _kFieldTextSecondary, fontSize: 13)),
               Row(children: [
-                Icon(Icons.access_time, color: Colors.white.withValues(alpha: 0.5), size: 14),
+                const Icon(Icons.access_time, color: _kFieldTextSecondary, size: 14),
                 const SizedBox(width: 4),
-                Text('~2-5 min', style: TextStyles.bodySmall.copyWith(color: Colors.white, fontSize: 13)),
+                Text('~2-5 min', style: TextStyles.bodySmall.copyWith(color: _kFieldTextPrimary, fontSize: 13)),
               ]),
             ],
           ),

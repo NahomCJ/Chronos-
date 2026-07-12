@@ -56,6 +56,12 @@ class NftCollection {
   final double volume;
   final int itemCount;
   final String? imageUrl;
+  final double volumeChangePct;
+  final int ownerCount;
+  final String category;
+  final bool isFeatured;
+  final String? description;
+  final int rank;
 
   const NftCollection({
     required this.id,
@@ -64,6 +70,12 @@ class NftCollection {
     required this.volume,
     required this.itemCount,
     this.imageUrl,
+    this.volumeChangePct = 0,
+    this.ownerCount = 0,
+    this.category = 'ART',
+    this.isFeatured = false,
+    this.description,
+    this.rank = 0,
   });
 }
 

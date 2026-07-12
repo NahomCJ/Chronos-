@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../../core/services/tts_service.dart';
 import '../utils/tickpay_media.dart';
 
 // ── Product model ─────────────────────────────────────────────────────────────
@@ -82,6 +83,7 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
 
   @override
   void dispose() {
+    TtsService().stop();
     _ctrl.dispose();
     _scroll.dispose();
     _speech.stop();
@@ -91,6 +93,9 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
   void _addChris(String text) {
     setState(() => _msgs.add(_ChatMsg.text(_MsgType.chris, text)));
     _scrollToBottom();
+    // Strip markdown-ish emphasis/emoji noise before handing text to TTS —
+    // spoken aloud verbatim it reads out "asterisk asterisk" and stray glyphs.
+    TtsService().speak(text.replaceAll(RegExp(r'\*\*|[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]', unicode: true), ''));
   }
 
   void _addUser(String text) {

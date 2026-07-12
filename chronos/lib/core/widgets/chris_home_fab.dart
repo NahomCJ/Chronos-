@@ -1,15 +1,21 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../features/auth/data/services/token_storage_service.dart';
+import '../../features/panther_ai/domain/usecases/send_message.dart';
 import '../router/route_constants.dart';
 import '../services/chris_action_service.dart';
+import '../services/tts_service.dart';
 import 'voice_confirmation_sheet.dart';
 
 const _teal = Color(0xFF00D4B8);
-const _sheetBg = Color(0xFF0D0D22);
+
+enum _ChrisState { idle, listening, thinking, speaking }
 
 // ── FAB ───────────────────────────────────────────────────────────────────────
 class ChrisHomeFab extends StatefulWidget {
@@ -23,15 +29,26 @@ class ChrisHomeFab extends StatefulWidget {
 
 class _ChrisHomeFabState extends State<ChrisHomeFab>
     with TickerProviderStateMixin {
+  static const _maxFollowUpTurns = 4;
+
   final _speech = stt.SpeechToText();
   bool _wakeActive = false;
   bool _wakeWordTriggered = false;
-  bool _respondingMode = false; // true while Chris is "answering" (fast strands)
+  _ChrisState _state = _ChrisState.idle;
+  bool _micAvailable = true;
+  bool _micPermissionWarned = false;
+  bool _voiceErrorWarned = false;
+  int _followUpTurns = 0;
+  int _commandGeneration = 0;
+  final List<Map<String, String>> _history = [];
+
   Offset _offset = Offset.zero;
   late final AnimationController _glowCtrl;
   late final Animation<double> _glowAnim;
   final _timeNotifier = ValueNotifier<double>(0);
   late final Ticker _timeTicker;
+
+  bool get _isBusy => _state != _ChrisState.idle;
 
   @override
   void initState() {
@@ -46,37 +63,75 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _timeTicker = createTicker((elapsed) {
       _timeNotifier.value = elapsed.inMicroseconds / 1e6;
     })..start();
+    TtsService().onError = _warnVoiceError;
     _initWakeWord();
   }
 
+  // Chris's premium (ElevenLabs) voice used to fail silently, downgrading to
+  // the on-device fallback with no visible sign anything was wrong — this
+  // makes the real reason (missing/invalid key, exhausted quota, network
+  // error) visible instead of indistinguishable guesswork.
+  void _warnVoiceError(String message) {
+    if (_voiceErrorWarned || !mounted) return;
+    _voiceErrorWarned = true;
+    debugPrint('Chris voice unavailable: $message');
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        content: Text(
+          "Chris's premium voice is unavailable right now (using the "
+          'built-in voice instead). Reason: $message',
+        ),
+        duration: const Duration(seconds: 6),
+      ),
+    );
+  }
+
   Future<void> _initWakeWord() async {
+    _micAvailable = await _initSpeechEngine();
+    // Background wake-word polling relies on silently restarting the mic
+    // every few seconds, which browsers block outside a direct user
+    // gesture. On web, only tap-to-talk works.
+    if (_micAvailable && !kIsWeb) _startListening();
+  }
+
+  // Registers the status/error handlers exactly once per successful call —
+  // reused both at startup and when lazily re-checking mic permission later,
+  // so a permission granted mid-session doesn't leave the wake-word restart
+  // chain unwired.
+  Future<bool> _initSpeechEngine() async {
     try {
-      final available = await _speech.initialize(
+      return await _speech.initialize(
         onStatus: (s) {
           if ((s == 'done' || s == 'notListening') && mounted) {
-            setState(() {
-              _wakeActive = false;
+            setState(() => _wakeActive = false);
+            // Only resume passive "Hey Chris" listening once the whole
+            // interaction has settled back to idle — otherwise this races
+            // with the deliberate listen sessions inside a conversation.
+            if (!_isBusy) {
               _wakeWordTriggered = false;
-            });
-            Future.delayed(const Duration(seconds: 3), _startListening);
+              Future.delayed(const Duration(seconds: 3), _startListening);
+            }
           }
         },
-        onError: (_) {
+        onError: (e) {
+          debugPrint('Chris speech recognition error: ${e.errorMsg}');
           if (mounted) {
-            setState(() {
-              _wakeActive = false;
+            setState(() => _wakeActive = false);
+            if (!_isBusy) {
               _wakeWordTriggered = false;
-            });
-            Future.delayed(const Duration(seconds: 5), _startListening);
+              Future.delayed(const Duration(seconds: 5), _startListening);
+            }
           }
         },
       );
-      if (available) _startListening();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Chris speech engine failed to initialize: $e');
+      return false;
+    }
   }
 
   Future<void> _startListening() async {
-    if (!mounted || _wakeActive || !_speech.isAvailable) return;
+    if (!mounted || _wakeActive || _isBusy || !_speech.isAvailable) return;
     _wakeWordTriggered = false;
     try {
       setState(() => _wakeActive = true);
@@ -87,12 +142,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           if (words.contains('hey chris') ||
               (words.startsWith('hey') && words.contains('chris'))) {
             _wakeWordTriggered = true;
-            _speech.stop();
-            HapticFeedback.mediumImpact();
-            if (mounted) {
-              setState(() => _respondingMode = true);
-              _listenForCommand();
-            }
+            _engage();
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -102,16 +152,85 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           pauseFor: const Duration(seconds: 6),
         ),
       );
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Chris wake-word listen() failed: $e');
       if (mounted) setState(() => _wakeActive = false);
     }
   }
 
-  // After "Hey Chris" is heard, capture the follow-up command directly —
-  // the strands keep animating fast (_respondingMode) as the only feedback,
-  // no sheet or overlay pops up. Resolved intents execute or show the
-  // confirmation sheet; anything unresolved falls back to full chat.
+  String get _userFirstName {
+    try {
+      final name = GetIt.instance<TokenStorageService>().firstName;
+      return (name != null && name.isNotEmpty) ? name : 'there';
+    } catch (_) {
+      return 'there';
+    }
+  }
+
+  void _setChrisState(_ChrisState s) {
+    if (mounted) setState(() => _state = s);
+  }
+
+  void _warnMicUnavailable() {
+    if (_micPermissionWarned || !mounted) return;
+    _micPermissionWarned = true;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Microphone access is needed for voice commands. '
+          'Enable it in your device settings.',
+        ),
+      ),
+    );
+  }
+
+  // Shared entry point for "Hey Chris", a tap while idle, or a tap that
+  // interrupts Chris mid-response. No sheet or overlay pops up; the strands
+  // are the only visual feedback (their speed reflects the current state).
+  Future<void> _engage() async {
+    final interrupting = _isBusy;
+    _speech.stop();
+    await TtsService().stop();
+    HapticFeedback.mediumImpact();
+    if (!mounted) return;
+
+    // Always start from a clean slate — if this is an interrupt, the
+    // in-flight turn may not have gotten an assistant reply appended,
+    // and sending an orphaned "user" entry would break the strict
+    // user/assistant alternation Anthropic's API requires.
+    _history.clear();
+    _followUpTurns = 0;
+
+    if (!_micAvailable) {
+      // Just re-check permission — don't start the background wake-word
+      // loop here, since we're about to greet-and-listen ourselves below.
+      _micAvailable = await _initSpeechEngine();
+    }
+    if (!_micAvailable) {
+      _endConversation();
+      _warnMicUnavailable();
+      return;
+    }
+
+    if (interrupting) {
+      // The user already knows what's up — skip straight to listening.
+      _listenForCommand();
+      return;
+    }
+
+    _setChrisState(_ChrisState.speaking);
+    await TtsService().speak('Hey $_userFirstName, what would you like to do?');
+    if (!mounted) return;
+    _listenForCommand();
+  }
+
+  // After the greeting (or an interrupt), capture the follow-up command.
+  // Resolved intents execute or show the confirmation sheet; anything
+  // unresolved gets a real spoken reply from Chris chat, and — up to a
+  // few turns — the conversation keeps going without repeating "Hey Chris".
   Future<void> _listenForCommand() async {
+    _commandGeneration++; // invalidate any earlier in-flight _handleCommand
+    _setChrisState(_ChrisState.listening);
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     try {
@@ -121,7 +240,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           final text = r.recognizedWords.trim();
           await _speech.stop();
           if (text.isEmpty) {
-            if (mounted) setState(() => _respondingMode = false);
+            _endConversation();
             return;
           }
           await _handleCommand(text);
@@ -134,26 +253,66 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         ),
       );
     } catch (_) {
-      if (mounted) setState(() => _respondingMode = false);
+      _endConversation();
     }
   }
 
+  void _endConversation() {
+    if (!mounted) return;
+    setState(() => _state = _ChrisState.idle);
+    _followUpTurns = 0;
+    _history.clear();
+    if (!kIsWeb) Future.delayed(const Duration(seconds: 1), _startListening);
+  }
+
   Future<void> _handleCommand(String text) async {
+    final myGen = _commandGeneration;
+    _setChrisState(_ChrisState.thinking);
     final intent = ChrisActionService.parseIntent(text);
     ChrisActionPlan? plan;
     if (intent.type != ChrisActionType.unknown) {
       plan = await ChrisActionService.buildPlan(intent);
     }
-    if (!mounted) return;
-    setState(() => _respondingMode = false);
+    if (!mounted || myGen != _commandGeneration) return;
+
     if (plan != null) {
       if (plan.navigateTo != null) {
-        context.push(plan.navigateTo!);
+        _setChrisState(_ChrisState.speaking);
+        await TtsService().speak(plan.subtitle);
+        if (myGen != _commandGeneration) return;
+        _endConversation();
+        if (mounted) context.push(plan.navigateTo!);
       } else {
+        _endConversation();
         await VoiceConfirmationSheet.show(context, plan);
       }
-    } else {
-      context.push(RouteConstants.pantherAiChat.toPath);
+      return;
+    }
+
+    // Unresolved intent — keep the conversation going with a real reply
+    // from Chris chat instead of silently jumping to the chat page.
+    _history.add({'role': 'user', 'content': text});
+    try {
+      final response = await GetIt.instance<SendMessage>()
+          .call(text, history: List.of(_history));
+      if (!mounted || myGen != _commandGeneration) return;
+      _history.add({'role': 'assistant', 'content': response.reply});
+      _setChrisState(_ChrisState.speaking);
+      await TtsService().speak(response.reply);
+      if (!mounted || myGen != _commandGeneration) return;
+      if (_followUpTurns < _maxFollowUpTurns) {
+        _followUpTurns++;
+        _listenForCommand();
+      } else {
+        _endConversation();
+      }
+    } catch (_) {
+      if (!mounted || myGen != _commandGeneration) return;
+      _setChrisState(_ChrisState.speaking);
+      await TtsService()
+          .speak('Sorry, I couldn\'t reach the server. Let\'s continue in chat.');
+      _endConversation();
+      if (mounted) context.push(RouteConstants.pantherAiChat.toPath);
     }
   }
 
@@ -166,12 +325,17 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     super.dispose();
   }
 
-  // Tap → fast waves + immediate voice command listening, no sheet.
-  void _startSession() {
-    HapticFeedback.mediumImpact();
-    if (!mounted) return;
-    setState(() => _respondingMode = true);
-    _listenForCommand();
+  double get _painterSpeed {
+    switch (_state) {
+      case _ChrisState.listening:
+        return 0.10;
+      case _ChrisState.thinking:
+        return 0.12;
+      case _ChrisState.speaking:
+        return 0.18;
+      case _ChrisState.idle:
+        return 0.02;
+    }
   }
 
   @override
@@ -179,7 +343,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: widget.onTap ?? _startSession,
+        onTap: widget.onTap ?? _engage,
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeNotifier, _glowAnim]),
@@ -192,7 +356,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
                 painter: _StrandsPainter(
                   time: _timeNotifier.value,
                   pulseValue: pulse,
-                  speed: _respondingMode ? 0.15 : 0.02,
+                  speed: _painterSpeed,
                 ),
               ),
             );
@@ -330,239 +494,4 @@ class _StrandsPainter extends CustomPainter {
   @override
   bool shouldRepaint(_StrandsPainter old) =>
       old.time != time || old.pulseValue != pulseValue || old.speed != speed;
-}
-
-// ── Chris Chat Sheet ──────────────────────────────────────────────────────────
-class _ChrisSheet extends StatefulWidget {
-  final BuildContext parentContext;
-  const _ChrisSheet({required this.parentContext});
-
-  @override
-  State<_ChrisSheet> createState() => _ChrisSheetState();
-}
-
-class _ChrisSheetState extends State<_ChrisSheet> {
-  final _ctrl = TextEditingController();
-  final _focusNode = FocusNode();
-  final _speech = stt.SpeechToText();
-  bool _voiceActive = false;
-  bool _hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl.addListener(() {
-      final has = _ctrl.text.trim().isNotEmpty;
-      if (has != _hasText) setState(() => _hasText = has);
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
-    });
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    _focusNode.dispose();
-    _speech.stop();
-    super.dispose();
-  }
-
-  Future<void> _toggleVoice() async {
-    if (_voiceActive) {
-      await _speech.stop();
-      setState(() => _voiceActive = false);
-      return;
-    }
-    final available = await _speech.initialize();
-    if (!available) return;
-    setState(() {
-      _voiceActive = true;
-      _ctrl.clear();
-    });
-    await _speech.listen(
-      onResult: (r) {
-        setState(() => _ctrl.text = r.recognizedWords);
-        if (r.finalResult && r.recognizedWords.trim().isNotEmpty) {
-          setState(() => _voiceActive = false);
-          _speech.stop();
-          _send(null);
-        }
-      },
-      listenOptions: stt.SpeechListenOptions(
-        cancelOnError: false,
-        listenMode: stt.ListenMode.dictation,
-        listenFor: const Duration(seconds: 30),
-        pauseFor: const Duration(seconds: 4),
-      ),
-    );
-  }
-
-  void _send(String? override) async {
-    final text = (override ?? _ctrl.text).trim();
-    if (text.isEmpty) return;
-
-    final intent = ChrisActionService.parseIntent(text);
-    if (intent.type != ChrisActionType.unknown) {
-      final plan = await ChrisActionService.buildPlan(intent);
-      if (plan != null && mounted) {
-        Navigator.pop(context);
-        if (plan.navigateTo != null) {
-          widget.parentContext.push(plan.navigateTo!);
-          return;
-        }
-        await VoiceConfirmationSheet.show(widget.parentContext, plan);
-        return;
-      }
-    }
-
-    Navigator.pop(context);
-    widget.parentContext.push(RouteConstants.pantherAiChat.toPath);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final keyboard = mq.viewInsets.bottom;
-    // When keyboard is hidden, clear the custom pill nav bar (~70px) plus
-    // the system safe-area inset so nothing is hidden behind it.
-    final bottomPad = keyboard > 0
-        ? keyboard + 8.0
-        : mq.padding.bottom + 90.0;
-    return Container(
-      color: _sheetBg,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Voice listening indicator
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: _voiceActive ? 48 : 0,
-            child: _voiceActive
-                ? Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _teal,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Listening…',
-                          style: TextStyle(
-                            color: _teal.withValues(alpha: 0.85),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          // Input row
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 48),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF131325),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: _voiceActive
-                            ? _teal.withValues(alpha: 0.55)
-                            : Colors.white.withValues(alpha: 0.09),
-                      ),
-                    ),
-                    child: TextField(
-                      controller: _ctrl,
-                      focusNode: _focusNode,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          height: 1.4),
-                      decoration: InputDecoration(
-                        hintText: _voiceActive
-                            ? 'Speak now…'
-                            : 'Message Chris…',
-                        hintStyle: TextStyle(
-                          color: _voiceActive
-                              ? _teal.withValues(alpha: 0.60)
-                              : Colors.white.withValues(alpha: 0.28),
-                          fontSize: 15,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 13),
-                      ),
-                      maxLines: 5,
-                      minLines: 1,
-                      onSubmitted: (_) => _send(null),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Mic → Send toggle
-                GestureDetector(
-                  onTap: _hasText ? () => _send(null) : _toggleVoice,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _hasText
-                          ? _teal
-                          : (_voiceActive
-                              ? _teal.withValues(alpha: 0.18)
-                              : const Color(0xFF1A1A30)),
-                      border: _hasText
-                          ? null
-                          : Border.all(
-                              color: _voiceActive
-                                  ? _teal.withValues(alpha: 0.65)
-                                  : Colors.white.withValues(alpha: 0.12),
-                            ),
-                      boxShadow: _hasText
-                          ? [
-                              BoxShadow(
-                                color: _teal.withValues(alpha: 0.35),
-                                blurRadius: 12,
-                                spreadRadius: 1,
-                              )
-                            ]
-                          : null,
-                    ),
-                    child: Icon(
-                      _hasText
-                          ? Icons.arrow_upward_rounded
-                          : (_voiceActive
-                              ? Icons.mic_rounded
-                              : Icons.mic_none_rounded),
-                      color: _hasText
-                          ? Colors.white
-                          : (_voiceActive
-                              ? _teal
-                              : Colors.white.withValues(alpha: 0.45)),
-                      size: 22,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: bottomPad),
-        ],
-      ),
-    );
-  }
 }
