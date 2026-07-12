@@ -22,28 +22,26 @@ class _LifeXPageState extends State<LifeXPage>
   static const _teal = Color(0xFF0F766E);
   static const _tealLight = Color(0xFF14B8A6);
 
+  // Primary 7 — shown on the ring around the avatar.
   static const _modules = [
-    _Module('Financial', Icons.account_balance_wallet_rounded, Color(0xFF10B981),
-        'Wealth, budgets & debt',
-        'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Health', Icons.monitor_heart_rounded, Color(0xFF14B8A6),
-        'Fitness, vitals & wellness',
-        'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Social', Icons.people_rounded, Color(0xFFEF4444),
-        'Groups, events & planning',
-        'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Educational', Icons.menu_book_rounded, Color(0xFF6366F1),
-        'Loans, learning & growth',
-        'https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Relationship', Icons.handshake_rounded, Color(0xFFEC4899),
-        'Couples, family & bonds',
-        'https://images.pexels.com/photos/1128318/pexels-photo-1128318.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Vision', Icons.rocket_launch_rounded, Color(0xFF3B82F6),
-        'Goals, milestones & future',
-        'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=600'),
-    _Module('Spiritual', Icons.spa_rounded, Color(0xFF8B5CF6),
-        'Values, purpose & routine',
-        'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=600'),
+    _Module('Financial', Icons.account_balance_wallet_rounded),
+    _Module('Health', Icons.monitor_heart_rounded),
+    _Module('Social', Icons.people_rounded),
+    _Module('Educational', Icons.menu_book_rounded),
+    _Module('Relationship', Icons.handshake_rounded),
+    _Module('Vision', Icons.rocket_launch_rounded),
+    _Module('Spiritual', Icons.spa_rounded),
+  ];
+
+  // Remaining 5 — the ring is tuned for 7 evenly-spaced orbs; cramming 12
+  // in would collide/overflow on small screens, so these get their own
+  // grid below instead.
+  static const _moreModules = [
+    _Module('Activity', Icons.directions_run_rounded),
+    _Module('Family', Icons.diversity_3_rounded),
+    _Module('Feed', Icons.dynamic_feed_rounded),
+    _Module('AI Insights', Icons.auto_awesome_rounded),
+    _Module('Export', Icons.ios_share_rounded),
   ];
 
   @override
@@ -84,6 +82,21 @@ class _LifeXPageState extends State<LifeXPage>
       case 'Spiritual':
         context.push(RouteConstants.lifexSpiritual.toPath);
         break;
+      case 'Activity':
+        context.push(RouteConstants.lifexActivity.toPath);
+        break;
+      case 'Family':
+        context.push(RouteConstants.lifexFamily.toPath);
+        break;
+      case 'Feed':
+        context.push(RouteConstants.lifexFeed.toPath);
+        break;
+      case 'AI Insights':
+        context.push(RouteConstants.lifexAiInsights.toPath);
+        break;
+      case 'Export':
+        context.push(RouteConstants.lifexExport.toPath);
+        break;
     }
   }
 
@@ -100,6 +113,7 @@ class _LifeXPageState extends State<LifeXPage>
           SliverToBoxAdapter(child: _buildHero(context)),
           SliverToBoxAdapter(child: _buildRingSection(context)),
           SliverToBoxAdapter(child: _buildLifeScore()),
+          SliverToBoxAdapter(child: _buildMoreModules()),
           const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
@@ -208,7 +222,7 @@ class _LifeXPageState extends State<LifeXPage>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Seven domains. One life.',
+                    'Twelve domains. One life.',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 13,
@@ -389,6 +403,35 @@ class _LifeXPageState extends State<LifeXPage>
     );
   }
 
+  // ── More in LifeX ─────────────────────────────────────────────────────────────
+
+  Widget _buildMoreModules() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('More in LifeX',
+              style: TextStyle(
+                  color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 2.6,
+            children: _moreModules.map((m) => _MoreModuleTile(
+                  module: m,
+                  onTap: () => _onModuleTap(m),
+                )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _domainChip(_Module module) {
     return Expanded(
       child: GestureDetector(
@@ -528,13 +571,49 @@ class _DomainOrb extends StatelessWidget {
   }
 }
 
+class _MoreModuleTile extends StatelessWidget {
+  final _Module module;
+  final VoidCallback onTap;
+  const _MoreModuleTile({required this.module, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+              child: Icon(module.icon, color: Colors.white, size: 16),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(module.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ── Data classes ──────────────────────────────────────────────────────────────
 
 class _Module {
   final String title;
   final IconData icon;
-  final Color color;
-  final String subtitle;
-  final String imageUrl;
-  const _Module(this.title, this.icon, this.color, this.subtitle, this.imageUrl);
+  const _Module(this.title, this.icon);
 }

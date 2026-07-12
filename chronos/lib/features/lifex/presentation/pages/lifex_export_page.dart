@@ -11,24 +11,24 @@ class LifeXExportPage extends StatefulWidget {
 }
 
 class _LifeXExportPageState extends State<LifeXExportPage> {
-  static const _bg = Color(0xFF060A04);
-  static const _card = Color(0xFF0B1008);
-  static const _lime = Color(0xFF84CC16);
-  static const _limeLight = Color(0xFFA3E635);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _accent = Colors.white;
+  static const _accentLight = Colors.white70;
 
   static const _reports = [
-    _Report('Monthly Life Score Report', 'May 2026', Icons.bar_chart_rounded, Color(0xFF06B6D4), 'PDF'),
-    _Report('Health & Fitness Summary', 'May 2026', Icons.favorite_rounded, Color(0xFF14B8A6), 'PDF'),
-    _Report('Financial Statement', 'May 2026', Icons.account_balance_rounded, Color(0xFF10B981), 'CSV'),
-    _Report('Activity Log', 'May 2026', Icons.directions_run_rounded, Color(0xFFF59E0B), 'CSV'),
-    _Report('Education Progress', 'May 2026', Icons.school_rounded, Color(0xFF8B5CF6), 'PDF'),
+    _Report('Monthly LifeX Summary Report', 'May 2026', Icons.bar_chart_rounded, Colors.white, 'PDF'),
+    _Report('Health & Fitness Summary', 'May 2026', Icons.favorite_rounded, Colors.white, 'PDF'),
+    _Report('Financial Statement', 'May 2026', Icons.account_balance_rounded, Colors.white, 'CSV'),
+    _Report('Activity Log', 'May 2026', Icons.directions_run_rounded, Colors.white, 'CSV'),
+    _Report('Education Progress', 'May 2026', Icons.school_rounded, Colors.white, 'PDF'),
   ];
 
   static const _exportTypes = [
-    _ExportType('Full LifeX Report', 'All modules combined', Icons.summarize_rounded, Color(0xFF84CC16)),
-    _ExportType('Financial Data', 'Transactions & budgets', Icons.attach_money_rounded, Color(0xFF10B981)),
-    _ExportType('Health Records', 'Vitals, habits, fitness', Icons.health_and_safety_rounded, Color(0xFF14B8A6)),
-    _ExportType('Activity History', 'Workouts & movement', Icons.directions_run_rounded, Color(0xFFF59E0B)),
+    _ExportType('Full LifeX Report', 'All modules combined', Icons.summarize_rounded, Colors.white),
+    _ExportType('Financial Data', 'Transactions & budgets', Icons.attach_money_rounded, Colors.white),
+    _ExportType('Health Records', 'Vitals, habits, fitness', Icons.health_and_safety_rounded, Colors.white),
+    _ExportType('Activity History', 'Workouts & movement', Icons.directions_run_rounded, Colors.white),
   ];
 
   @override
@@ -87,8 +87,8 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
         CachedNetworkImage(
           imageUrl: 'https://images.pexels.com/photos/669619/pexels-photo-669619.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
-          placeholder: (_, __) => Container(color: _lime.withValues(alpha: 0.15)),
-          errorWidget: (_, __, ___) => Container(color: _lime.withValues(alpha: 0.15)),
+          placeholder: (_, __) => Container(color: _accent.withValues(alpha: 0.15)),
+          errorWidget: (_, __, ___) => Container(color: _accent.withValues(alpha: 0.15)),
         ),
         Container(
           decoration: BoxDecoration(
@@ -140,18 +140,18 @@ class _LifeXExportPageState extends State<LifeXExportPage> {
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _lime.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: _accent.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           width: 36, height: 36,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: _lime.withValues(alpha: 0.1)),
-          child: Icon(Icons.lock_rounded, color: _limeLight, size: 17),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: _accent.withValues(alpha: 0.1)),
+          child: Icon(Icons.lock_rounded, color: _accentLight, size: 17),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('End-to-end encrypted', style: TextStyle(color: _limeLight, fontSize: 13, fontWeight: FontWeight.w700)),
+            Text('End-to-end encrypted', style: TextStyle(color: _accentLight, fontSize: 13, fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
             Text(
               'All exported data is encrypted and accessible only to you. Chronos never shares your personal data with third parties.',
@@ -185,7 +185,7 @@ class _ReportCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0B1008),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: report.color.withValues(alpha: 0.2), width: 1),
       ),
@@ -240,7 +240,7 @@ class _ExportTypeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1008),
+          color: const Color(0xFF0F0F1C),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: type.color.withValues(alpha: 0.25), width: 1),
         ),

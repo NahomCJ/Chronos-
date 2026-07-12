@@ -11,48 +11,40 @@ class LifeXAiInsightsPage extends StatefulWidget {
 }
 
 class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
-  static const _bg = Color(0xFF05080C);
-  static const _card = Color(0xFF0A0F16);
-  static const _cyan = Color(0xFF06B6D4);
-  static const _cyanLight = Color(0xFF22D3EE);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _accent = Colors.white;
+  static const _accentLight = Colors.white70;
 
   static const _insights = [
     _Insight(
       'Sleep Pattern Detected',
       'Your sleep quality dropped 18% this week. Going to bed 45 min earlier could recover your energy score by Thursday.',
       Icons.bedtime_rounded,
-      Color(0xFF6366F1),
+      Colors.white,
       'High Impact',
     ),
     _Insight(
       'Spending Anomaly',
       'You spent 2.4x more on food delivery this month. Cooking 3 nights per week saves ~\$180/month.',
       Icons.restaurant_rounded,
-      Color(0xFFF59E0B),
+      Colors.white,
       'Financial',
     ),
     _Insight(
       'Learning Streak at Risk',
       'You haven\'t opened your Education module in 4 days. A 10-min session today keeps your streak alive.',
       Icons.school_rounded,
-      Color(0xFF8B5CF6),
+      Colors.white,
       'Education',
     ),
     _Insight(
       'Activity Goal Update',
       'You\'re 1,200 steps short of your weekly goal. A 12-min walk today completes it.',
       Icons.directions_run_rounded,
-      Color(0xFF10B981),
+      Colors.white,
       'Fitness',
     ),
-  ];
-
-  static const _trends = [
-    _Trend('Wellbeing', 0.82, Color(0xFF14B8A6)),
-    _Trend('Finance', 0.65, Color(0xFF10B981)),
-    _Trend('Education', 0.55, Color(0xFF6366F1)),
-    _Trend('Activity', 0.74, Color(0xFFF59E0B)),
-    _Trend('Social', 0.48, Color(0xFFEC4899)),
   ];
 
   @override
@@ -88,10 +80,6 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _sectionTitle('Life Score Breakdown'),
-                const SizedBox(height: 14),
-                _buildTrendsCard(),
-                const SizedBox(height: 22),
                 _sectionTitle('Chris AI Summary'),
                 const SizedBox(height: 14),
                 _buildChrisSummary(),
@@ -99,10 +87,10 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
                 _sectionTitle('Recommended Actions'),
                 const SizedBox(height: 14),
                 ...[
-                  _Action('Schedule a 30-min digital detox today', Icons.do_not_disturb_on_rounded, _cyan),
-                  _Action('Review your monthly budget vs actuals', Icons.account_balance_wallet_rounded, const Color(0xFF10B981)),
-                  _Action('Log yesterday\'s meals for nutrition tracking', Icons.set_meal_rounded, const Color(0xFFF59E0B)),
-                  _Action('Call a family member this week', Icons.call_rounded, const Color(0xFFEC4899)),
+                  _Action('Schedule a 30-min digital detox today', Icons.do_not_disturb_on_rounded),
+                  _Action('Review your monthly budget vs actuals', Icons.account_balance_wallet_rounded),
+                  _Action('Log yesterday\'s meals for nutrition tracking', Icons.set_meal_rounded),
+                  _Action('Call a family member this week', Icons.call_rounded),
                 ].map((a) => _ActionTile(action: a)),
               ]),
             ),
@@ -120,8 +108,8 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
         CachedNetworkImage(
           imageUrl: 'https://images.pexels.com/photos/8439093/pexels-photo-8439093.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
-          placeholder: (_, __) => Container(color: _cyan.withValues(alpha: 0.15)),
-          errorWidget: (_, __, ___) => Container(color: _cyan.withValues(alpha: 0.15)),
+          placeholder: (_, __) => Container(color: Colors.white.withValues(alpha: 0.06)),
+          errorWidget: (_, __, ___) => Container(color: Colors.white.withValues(alpha: 0.06)),
         ),
         Container(
           decoration: BoxDecoration(
@@ -155,43 +143,31 @@ class _LifeXAiInsightsPageState extends State<LifeXAiInsightsPage> {
     );
   }
 
-  Widget _buildTrendsCard() {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: _card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _cyan.withValues(alpha: 0.2), width: 1),
-      ),
-      child: Column(children: _trends.map((t) => _TrendRow(trend: t)).toList()),
-    );
-  }
-
   Widget _buildChrisSummary() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _cyan.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12), width: 1),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           width: 34, height: 34,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _cyan.withValues(alpha: 0.12),
-            border: Border.all(color: _cyan.withValues(alpha: 0.4), width: 1),
+            color: _accent.withValues(alpha: 0.12),
+            border: Border.all(color: _accent.withValues(alpha: 0.4), width: 1),
           ),
-          child: Icon(Icons.auto_awesome_rounded, color: _cyan, size: 15),
+          child: const Icon(Icons.auto_awesome_rounded, color: _accent, size: 15),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Chris says', style: TextStyle(color: _cyanLight, fontSize: 11, fontWeight: FontWeight.w700)),
+            const Text('Chris says', style: TextStyle(color: _accentLight, fontSize: 11, fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
             Text(
-              'Your overall life score is 74 this week — up 6 points from last week. Your biggest growth area is Finance (+12%). Your wellbeing dipped slightly due to sleep. I\'ve prioritised 4 actions that will have the most impact this week.',
+              'Finance is your biggest area of growth this week, while sleep dipped a little. I\'ve prioritised 4 actions below that will have the most impact.',
               style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12.5, height: 1.5),
             ),
           ]),
@@ -222,14 +198,14 @@ class _InsightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0F16),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: insight.color.withValues(alpha: 0.25), width: 1),
+        border: Border.all(color: insight.color.withValues(alpha: 0.15), width: 1),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           width: 44, height: 44,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: insight.color.withValues(alpha: 0.12)),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: insight.color.withValues(alpha: 0.08)),
           child: Icon(insight.icon, color: insight.color, size: 22),
         ),
         const SizedBox(width: 14),
@@ -257,50 +233,10 @@ class _InsightCard extends StatelessWidget {
   }
 }
 
-class _Trend {
-  final String label;
-  final double value;
-  final Color color;
-  const _Trend(this.label, this.value, this.color);
-}
-
-class _TrendRow extends StatelessWidget {
-  final _Trend trend;
-  const _TrendRow({required this.trend});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(children: [
-        SizedBox(
-          width: 80,
-          child: Text(trend.label, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
-        ),
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: trend.value,
-              backgroundColor: Colors.white.withValues(alpha: 0.06),
-              valueColor: AlwaysStoppedAnimation<Color>(trend.color),
-              minHeight: 6,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Text('${(trend.value * 100).round()}%',
-            style: TextStyle(color: trend.color, fontSize: 12, fontWeight: FontWeight.w700)),
-      ]),
-    );
-  }
-}
-
 class _Action {
   final String text;
   final IconData icon;
-  final Color color;
-  const _Action(this.text, this.icon, this.color);
+  const _Action(this.text, this.icon);
 }
 
 class _ActionTile extends StatelessWidget {
@@ -313,15 +249,15 @@ class _ActionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0F16),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: action.color.withValues(alpha: 0.2), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
       ),
       child: Row(children: [
         Container(
           width: 36, height: 36,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: action.color.withValues(alpha: 0.1)),
-          child: Icon(action.icon, color: action.color, size: 17),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+          child: Icon(action.icon, color: Colors.white, size: 17),
         ),
         const SizedBox(width: 12),
         Expanded(child: Text(action.text, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500))),

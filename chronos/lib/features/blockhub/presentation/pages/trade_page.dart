@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/widgets/coin_icon_scale.dart';
 
 const _k3dAssets = {
   'BTC':  'assets/crypto/btc.png',
@@ -229,7 +230,13 @@ class _TradePageState extends State<TradePage> {
                     children: [
                       ClipOval(
                         child: _k3dAssets.containsKey(coin.symbol)
-                            ? Image.asset(_k3dAssets[coin.symbol]!, width: 24, height: 24, fit: BoxFit.cover)
+                            ? SizedBox(
+                                width: 24, height: 24,
+                                child: Transform.scale(
+                                  scale: coinBadgeScale(coin.symbol),
+                                  child: Image.asset(_k3dAssets[coin.symbol]!, width: 24, height: 24, fit: BoxFit.cover),
+                                ),
+                              )
                             : Container(
                                 width: 24, height: 24,
                                 decoration: BoxDecoration(color: coin.color, shape: BoxShape.circle),
@@ -439,7 +446,13 @@ class _TradePageState extends State<TradePage> {
                 contentPadding: EdgeInsets.zero,
                 leading: ClipOval(
                   child: _k3dAssets.containsKey(c.symbol)
-                      ? Image.asset(_k3dAssets[c.symbol]!, width: 40, height: 40, fit: BoxFit.cover)
+                      ? SizedBox(
+                          width: 40, height: 40,
+                          child: Transform.scale(
+                            scale: coinBadgeScale(c.symbol),
+                            child: Image.asset(_k3dAssets[c.symbol]!, width: 40, height: 40, fit: BoxFit.cover),
+                          ),
+                        )
                       : Container(width: 40, height: 40, decoration: BoxDecoration(color: c.color, shape: BoxShape.circle)),
                 ),
                 title: Text(c.symbol, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
