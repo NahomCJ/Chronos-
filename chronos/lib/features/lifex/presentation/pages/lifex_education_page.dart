@@ -19,14 +19,15 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
 
   static const _bg = Color(0xFFF5F6FA);
   static const _card = Colors.white;
-  static const _indigo = Color(0xFF6366F1);
-  static const _indigoLight = Color(0xFF818CF8);
+  // Neutral dark/light-gray accent — was a page-specific indigo theme.
+  static const _indigo = Color(0xFF374151);
+  static const _indigoLight = Color(0xFF6B7280);
 
   static const _idrPlans = [
-    _IDRPlan('SAVE', '\$186/mo', '\$0 remaining — income-based forgiveness', true, Color(0xFF10B981)),
-    _IDRPlan('IBR', '\$248/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF6366F1)),
-    _IDRPlan('PAYE', '\$215/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF3B82F6)),
-    _IDRPlan('Standard', '\$312/mo', 'Paid off by June 2034. Lowest total cost.', false, Color(0xFFF59E0B)),
+    _IDRPlan('SAVE', '\$186/mo', '\$0 remaining — income-based forgiveness', true, Color(0xFF22C55E)),
+    _IDRPlan('IBR', '\$248/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF6B7280)),
+    _IDRPlan('PAYE', '\$215/mo', 'Forgiveness at 20 years (2042)', false, Color(0xFF6B7280)),
+    _IDRPlan('Standard', '\$312/mo', 'Paid off by June 2034. Lowest total cost.', false, Color(0xFF6B7280)),
   ];
 
   static const _refiOffers = [
@@ -36,18 +37,18 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
   ];
 
   static const _skillApps = [
-    _SkillApp('Coursera', 'University courses', Icons.school_rounded, Color(0xFF3B82F6)),
-    _SkillApp('LinkedIn Learning', 'Career skills', Icons.work_rounded, Color(0xFF0288D1)),
-    _SkillApp('Udemy', 'Practical skills', Icons.laptop_rounded, Color(0xFFA435F0)),
-    _SkillApp('Khan Academy', 'Math & science', Icons.calculate_rounded, Color(0xFF14B8A6)),
-    _SkillApp('Duolingo', 'Languages', Icons.translate_rounded, Color(0xFF58CC02)),
-    _SkillApp('Blinkist', 'Book summaries', Icons.menu_book_rounded, Color(0xFFF59E0B)),
+    _SkillApp('Coursera', 'University courses', Icons.school_rounded, Color(0xFF374151)),
+    _SkillApp('LinkedIn Learning', 'Career skills', Icons.work_rounded, Color(0xFF374151)),
+    _SkillApp('Udemy', 'Practical skills', Icons.laptop_rounded, Color(0xFF374151)),
+    _SkillApp('Khan Academy', 'Math & science', Icons.calculate_rounded, Color(0xFF374151)),
+    _SkillApp('Duolingo', 'Languages', Icons.translate_rounded, Color(0xFF374151)),
+    _SkillApp('Blinkist', 'Book summaries', Icons.menu_book_rounded, Color(0xFF374151)),
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 3, vsync: this);
+    _tabs = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -85,7 +86,10 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
             flexibleSpace: FlexibleSpaceBar(background: _buildHero()),
             bottom: TabBar(
               controller: _tabs,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               tabs: const [
+                Tab(text: 'Overview'),
                 Tab(text: 'Loans'),
                 Tab(text: 'Tuition ROI'),
                 Tab(text: 'Skills'),
@@ -102,11 +106,69 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
         body: TabBarView(
           controller: _tabs,
           children: [
+            _buildOverviewTab(),
             _buildLoansTab(),
             _buildROITab(),
             _buildSkillsTab(),
           ],
         ),
+      ),
+    );
+  }
+
+  // ── Overview Tab ──────────────────────────────────────────────
+
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: _card,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Total Loan Balance',
+                    style: TextStyle(color: const Color(0xFF6B7080), fontSize: 12)),
+                const Text('\$28,500',
+                    style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 30, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text('38% paid off · access to 6 learning platforms below',
+                    style: TextStyle(color: const Color(0xFF6B7080), fontSize: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _sectionTitle('Explore Education'),
+          const SizedBox(height: 12),
+          _OverviewLink(
+            icon: Icons.account_balance_rounded,
+            title: 'Loans',
+            subtitle: 'Repayment plans, forgiveness tracker, refinancing',
+            onTap: () => _tabs.animateTo(1),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.trending_up_rounded,
+            title: 'Tuition ROI',
+            subtitle: 'What your degree is actually worth over time',
+            onTap: () => _tabs.animateTo(2),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.menu_book_rounded,
+            title: 'Skills',
+            subtitle: '${_skillApps.length} learning apps · free courses',
+            onTap: () => _tabs.animateTo(3),
+          ),
+        ],
       ),
     );
   }
@@ -143,30 +205,6 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: _indigo.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _indigo.withValues(alpha: 0.5), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.school_rounded, color: _indigo, size: 12),
-                    const SizedBox(width: 6),
-                    Text('EDUCATION & GROWTH',
-                        style: TextStyle(
-                            color: _indigo,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
               Text('Your Education\nFinances',
                   style: TextStyles.displaySmall.copyWith(
                       color: const Color(0xFF1A1A2E),
@@ -395,9 +433,9 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           const SizedBox(height: 18),
           Row(
             children: [
-              _forgivenessItem('32', 'Payments Made', const Color(0xFF10B981)),
-              _forgivenessItem('88', 'Remaining', const Color(0xFF6366F1)),
-              _forgivenessItem('7yr 4mo', 'Until Forgiven', const Color(0xFFF59E0B)),
+              _forgivenessItem('32', 'Payments Made', const Color(0xFF22C55E)),
+              _forgivenessItem('88', 'Remaining', const Color(0xFF6B7280)),
+              _forgivenessItem('7yr 4mo', 'Until Forgiven', const Color(0xFF6B7280)),
             ],
           ),
           const SizedBox(height: 14),
@@ -682,11 +720,11 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           const SizedBox(height: 16),
           Row(
             children: [
-              _roiStat('\$95K', 'Avg Starting Salary', const Color(0xFF10B981)),
+              _roiStat('\$95K', 'Avg Starting Salary', const Color(0xFF22C55E)),
               _roiDivider(),
-              _roiStat('340%', '10yr ROI', const Color(0xFF6366F1)),
+              _roiStat('340%', '10yr ROI', const Color(0xFF6B7280)),
               _roiDivider(),
-              _roiStat('2027', 'Break-even Year', const Color(0xFFF59E0B)),
+              _roiStat('2027', 'Break-even Year', const Color(0xFF6B7280)),
             ],
           ),
           const SizedBox(height: 18),
@@ -843,10 +881,10 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
                   color: const Color(0xFF6B7080), fontSize: 11)),
           const SizedBox(height: 16),
           ...[
-            _CareerLevel('Entry Level (Now)', '\$72,000', 0.40, const Color(0xFF6366F1)),
-            _CareerLevel('Mid-Level (3-5 yrs)', '\$95,000', 0.55, const Color(0xFF3B82F6)),
-            _CareerLevel('Senior (6-10 yrs)', '\$130,000', 0.74, const Color(0xFF14B8A6)),
-            _CareerLevel('Staff / Lead (10+ yrs)', '\$175,000', 1.0, const Color(0xFF10B981)),
+            _CareerLevel('Entry Level (Now)', '\$72,000', 0.40, const Color(0xFF6B7280)),
+            _CareerLevel('Mid-Level (3-5 yrs)', '\$95,000', 0.55, const Color(0xFF6B7280)),
+            _CareerLevel('Senior (6-10 yrs)', '\$130,000', 0.74, const Color(0xFF6B7280)),
+            _CareerLevel('Staff / Lead (10+ yrs)', '\$175,000', 1.0, const Color(0xFF22C55E)),
           ].map((c) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Column(
@@ -918,11 +956,11 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
           const SizedBox(height: 14),
           ...[
             _FreeCourse('Financial Modeling in Excel', 'Coursera', '4.8', '6hr',
-                const Color(0xFF3B82F6)),
+                const Color(0xFF374151)),
             _FreeCourse('Python for Everybody', 'Coursera', '4.9', '8hr',
-                const Color(0xFF6366F1)),
+                const Color(0xFF374151)),
             _FreeCourse('Public Speaking Fundamentals', 'Udemy', '4.7', '3hr',
-                const Color(0xFFA435F0)),
+                const Color(0xFF374151)),
           ].map((c) => _FreeCourseCard(course: c)),
         ],
       ),
@@ -982,6 +1020,52 @@ class _LifeXEducationPageState extends State<LifeXEducationPage>
     return Text(title,
         style: const TextStyle(
             color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.w700));
+  }
+}
+
+// ── Overview link card (light theme) ────────────────────────────────────────
+
+class _OverviewLink extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback onTap;
+  const _OverviewLink({required this.icon, required this.title, required this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+              child: Icon(icon, color: const Color(0xFF374151), size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  Text(subtitle, style: TextStyle(color: const Color(0xFF6B7080), fontSize: 11)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF), size: 20),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -29,24 +29,24 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   bool _isProcessingPayment = false;
   final Map<String, int> _cart = {};
 
-  static const _bg = Color(0xFF06040E);
-  static const _card = Color(0xFF0E0B1A);
-  static const _purple = Color(0xFF8B5CF6);
-  static const _purpleLight = Color(0xFFA78BFA);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _purple = Colors.white;
+  static const _purpleLight = Colors.white70;
 
   static const _meditations = [
     _Meditation('Morning Calm', '10 min', 'Guided',
         'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF8B5CF6)),
+        Color(0xFFFFFFFF)),
     _Meditation('Stress Relief', '15 min', 'Breathing',
         'https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF6366F1)),
+        Color(0xFFFFFFFF)),
     _Meditation('Sleep Well', '20 min', 'Body Scan',
         'https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFF3B82F6)),
+        Color(0xFFFFFFFF)),
     _Meditation('Focus Flow', '8 min', 'Breath Work',
         'https://images.pexels.com/photos/2775196/pexels-photo-2775196.jpeg?auto=compress&cs=tinysrgb&w=600',
-        Color(0xFFEC4899)),
+        Color(0xFFFFFFFF)),
   ];
 
   static const _gratitudes = [
@@ -56,18 +56,18 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   ];
 
   static const _goals = [
-    _SpiritualGoal('Meditate 21 days straight', 14, 21, Color(0xFF8B5CF6)),
-    _SpiritualGoal('Daily gratitude for 30 days', 22, 30, Color(0xFF10B981)),
-    _SpiritualGoal('Read spiritual text weekly', 3, 4, Color(0xFFF59E0B)),
+    _SpiritualGoal('Meditate 21 days straight', 14, 21, Color(0xFFFFFFFF)),
+    _SpiritualGoal('Daily gratitude for 30 days', 22, 30, Color(0xFFFFFFFF)),
+    _SpiritualGoal('Read spiritual text weekly', 3, 4, Color(0xFFFFFFFF)),
   ];
 
   static const _charities = [
     _Charity('Local Food Bank', 'Community', 25,
-        Icons.restaurant_rounded, Color(0xFF10B981)),
+        Icons.restaurant_rounded, Color(0xFFFFFFFF)),
     _Charity('Child Education Fund', 'Education', 30,
-        Icons.school_rounded, Color(0xFF3B82F6)),
+        Icons.school_rounded, Color(0xFFFFFFFF)),
     _Charity('Disaster Relief', 'Emergency Aid', 15,
-        Icons.volunteer_activism_rounded, Color(0xFFEF4444)),
+        Icons.volunteer_activism_rounded, Color(0xFFFFFFFF)),
   ];
 
   static const _campaigns = [
@@ -116,7 +116,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
   void initState() {
     super.initState();
     _api = GetIt.I<LifeXService>();
-    _tabs = TabController(length: 5, vsync: this);
+    _tabs = TabController(length: 6, vsync: this);
     _breathCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
@@ -206,6 +206,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               isScrollable: true,
               tabAlignment: TabAlignment.start,
               tabs: const [
+                Tab(text: 'Overview'),
                 Tab(text: 'Practice'),
                 Tab(text: 'Giving'),
                 Tab(text: 'Trips'),
@@ -224,6 +225,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
         body: TabBarView(
           controller: _tabs,
           children: [
+            _buildOverviewTab(),
             _buildPracticeTab(),
             _buildGivingTab(),
             _buildTripsTab(),
@@ -267,31 +269,6 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: _purple.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _purple.withValues(alpha: 0.5), width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.spa_rounded,
-                        color: _purpleLight, size: 12),
-                    const SizedBox(width: 6),
-                    Text('MIND, BODY & SPIRIT',
-                        style: TextStyle(
-                            color: _purpleLight,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
               Text('Your Inner\nSanctuary',
                   style: TextStyles.displaySmall.copyWith(
                       color: Colors.white,
@@ -308,6 +285,74 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
           ),
         ),
       ],
+    );
+  }
+
+  // ── Overview Tab ──────────────────────────────────────────────
+
+  Widget _buildOverviewTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: _card,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('21-day streak',
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 4),
+                Text('${_goals.length} goals in progress · ${_charities.length} causes you support',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _sectionTitle('Explore Spiritual'),
+          const SizedBox(height: 12),
+          _OverviewLink(
+            icon: Icons.self_improvement_rounded,
+            title: 'Practice',
+            subtitle: 'Meditation, breathing & gratitude journal',
+            onTap: () => _tabs.animateTo(1),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.volunteer_activism_rounded,
+            title: 'Giving',
+            subtitle: '${_charities.length} causes you can support',
+            onTap: () => _tabs.animateTo(2),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.flight_takeoff_rounded,
+            title: 'Trips',
+            subtitle: 'Retreats & spiritual travel',
+            onTap: () => _tabs.animateTo(3),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.shopping_bag_rounded,
+            title: 'Shop',
+            subtitle: 'Books, journals & mindfulness tools',
+            onTap: () => _tabs.animateTo(4),
+          ),
+          const SizedBox(height: 10),
+          _OverviewLink(
+            icon: Icons.event_rounded,
+            title: 'Events',
+            subtitle: 'Upcoming gatherings near you',
+            onTap: () => _tabs.animateTo(5),
+          ),
+        ],
+      ),
     );
   }
 
@@ -395,7 +440,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
               end: Alignment.bottomRight,
               colors: [
                 _purple.withValues(alpha: 0.2),
-                const Color(0xFF4F46E5).withValues(alpha: 0.06),
+                const Color(0xFFFFFFFF).withValues(alpha: 0.06),
               ],
             ),
             borderRadius: BorderRadius.circular(20),
@@ -442,7 +487,7 @@ class _LifeXSpiritualPageState extends State<LifeXSpiritualPage>
                       children: [
                         _chip('48 sessions', _purple),
                         const SizedBox(width: 8),
-                        _chip('360 mins', const Color(0xFF6366F1)),
+                        _chip('360 mins', const Color(0xFFFFFFFF)),
                       ],
                     ),
                   ],
@@ -870,6 +915,49 @@ class _SpiritEvent {
 
 // ── Widgets ───────────────────────────────────────────────────────────────────
 
+class _OverviewLink extends StatelessWidget {
+  final IconData icon;
+  final String title, subtitle;
+  final VoidCallback onTap;
+  const _OverviewLink({required this.icon, required this.title, required this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10), width: 1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
+              child: Icon(icon, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w700)),
+                  Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.35), size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MeditationCard extends StatelessWidget {
   final _Meditation meditation;
   final bool isSelected;
@@ -991,7 +1079,7 @@ class _GoalCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
             color: goal.color.withValues(alpha: 0.2), width: 1),
@@ -1045,10 +1133,10 @@ class _GratitudeCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), width: 1),
+            color: const Color(0xFFFFFFFF).withValues(alpha: 0.15), width: 1),
       ),
       child: Row(
         children: [
@@ -1079,7 +1167,7 @@ class _CharityTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: charity.color.withValues(alpha: 0.25), width: 1),
       ),
@@ -1143,7 +1231,7 @@ class _CampaignCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
       ),
@@ -1157,8 +1245,8 @@ class _CampaignCard extends StatelessWidget {
               height: 110,
               width: double.infinity,
               fit: BoxFit.cover,
-              placeholder: (_, __) => Container(height: 110, color: const Color(0xFF1A1428)),
-              errorWidget: (_, __, ___) => Container(height: 110, color: const Color(0xFF1A1428)),
+              placeholder: (_, __) => Container(height: 110, color: const Color(0xFF0F0F1C)),
+              errorWidget: (_, __, ___) => Container(height: 110, color: const Color(0xFF0F0F1C)),
             ),
           ),
           Padding(
@@ -1175,7 +1263,7 @@ class _CampaignCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: pct,
                     backgroundColor: Colors.white.withValues(alpha: 0.08),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFFFFF)),
                     minHeight: 6,
                   ),
                 ),
@@ -1190,7 +1278,7 @@ class _CampaignCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8B5CF6),
+                          color: const Color(0xFFFFFFFF),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Text('Contribute',
@@ -1219,7 +1307,7 @@ class _TripCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
       ),
@@ -1232,8 +1320,8 @@ class _TripCard extends StatelessWidget {
               width: 100,
               height: 110,
               fit: BoxFit.cover,
-              placeholder: (_, __) => Container(width: 100, height: 110, color: const Color(0xFF1A1428)),
-              errorWidget: (_, __, ___) => Container(width: 100, height: 110, color: const Color(0xFF1A1428)),
+              placeholder: (_, __) => Container(width: 100, height: 110, color: const Color(0xFF0F0F1C)),
+              errorWidget: (_, __, ___) => Container(width: 100, height: 110, color: const Color(0xFF0F0F1C)),
             ),
           ),
           Expanded(
@@ -1248,7 +1336,7 @@ class _TripCard extends StatelessWidget {
                   Text(trip.destination,
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
                   Text(trip.faithTag,
-                      style: const TextStyle(color: Color(0xFFA78BFA), fontSize: 10, fontWeight: FontWeight.w600)),
+                      style: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 10, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1260,7 +1348,7 @@ class _TripCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF8B5CF6),
+                            color: const Color(0xFFFFFFFF),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text('Book',
@@ -1290,7 +1378,7 @@ class _ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
       ),
@@ -1304,8 +1392,8 @@ class _ProductCard extends StatelessWidget {
                 imageUrl: product.imageUrl,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: const Color(0xFF1A1428)),
-                errorWidget: (_, __, ___) => Container(color: const Color(0xFF1A1428)),
+                placeholder: (_, __) => Container(color: const Color(0xFF0F0F1C)),
+                errorWidget: (_, __, ___) => Container(color: const Color(0xFF0F0F1C)),
               ),
             ),
           ),
@@ -1323,13 +1411,13 @@ class _ProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('\$${product.price.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Color(0xFFA78BFA), fontSize: 12, fontWeight: FontWeight.w700)),
+                        style: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 12, fontWeight: FontWeight.w700)),
                     qty == 0
                         ? GestureDetector(
                             onTap: onAdd,
                             child: Container(
                               padding: const EdgeInsets.all(5),
-                              decoration: const BoxDecoration(color: Color(0xFF8B5CF6), shape: BoxShape.circle),
+                              decoration: const BoxDecoration(color: Color(0xFFFFFFFF), shape: BoxShape.circle),
                               child: const Icon(Icons.add_rounded, color: Colors.white, size: 14),
                             ),
                           )
@@ -1345,7 +1433,7 @@ class _ProductCard extends StatelessWidget {
                               ),
                               GestureDetector(
                                 onTap: onAdd,
-                                child: const Icon(Icons.add_circle, color: Color(0xFF8B5CF6), size: 18),
+                                child: const Icon(Icons.add_circle, color: Color(0xFFFFFFFF), size: 18),
                               ),
                             ],
                           ),
@@ -1369,7 +1457,7 @@ class _EventCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.07), width: 1),
       ),
@@ -1382,8 +1470,8 @@ class _EventCard extends StatelessWidget {
               width: 72,
               height: 72,
               fit: BoxFit.cover,
-              placeholder: (_, __) => Container(width: 72, height: 72, color: const Color(0xFF1A1428)),
-              errorWidget: (_, __, ___) => Container(width: 72, height: 72, color: const Color(0xFF1A1428)),
+              placeholder: (_, __) => Container(width: 72, height: 72, color: const Color(0xFF0F0F1C)),
+              errorWidget: (_, __, ___) => Container(width: 72, height: 72, color: const Color(0xFF0F0F1C)),
             ),
           ),
           Expanded(
@@ -1399,7 +1487,7 @@ class _EventCard extends StatelessWidget {
                       style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11)),
                   const SizedBox(height: 3),
                   Text(event.faithTag,
-                      style: const TextStyle(color: Color(0xFFA78BFA), fontSize: 10, fontWeight: FontWeight.w600)),
+                      style: const TextStyle(color: Color(0xFFD1D5DB), fontSize: 10, fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
@@ -1442,7 +1530,7 @@ class _AmountSheetState extends State<_AmountSheet> {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).viewInsets.bottom + 30),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1472,7 +1560,7 @@ class _AmountSheetState extends State<_AmountSheet> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF8B5CF6) : Colors.white.withValues(alpha: 0.06),
+                      color: isSelected ? const Color(0xFFFFFFFF) : Colors.white.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text('\$${p.toStringAsFixed(0)}',
@@ -1513,7 +1601,7 @@ class _AmountSheetState extends State<_AmountSheet> {
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(color: const Color(0xFF8B5CF6), borderRadius: BorderRadius.circular(14)),
+                decoration: BoxDecoration(color: const Color(0xFFFFFFFF), borderRadius: BorderRadius.circular(14)),
                 child: Center(
                   child: _submitting
                       ? const SizedBox(
@@ -1549,7 +1637,7 @@ class _AddGratitudeSheetState extends State<_AddGratitudeSheet> {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Container(
-        color: const Color(0xFF0E0B1A),
+        color: const Color(0xFF0F0F1C),
         padding: EdgeInsets.fromLTRB(
             24, 16, 24, MediaQuery.of(context).viewInsets.bottom + 30),
         child: Column(
@@ -1594,7 +1682,7 @@ class _AddGratitudeSheetState extends State<_AddGratitudeSheet> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6),
+                  color: const Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Center(

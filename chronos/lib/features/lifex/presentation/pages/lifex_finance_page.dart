@@ -16,10 +16,12 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   late TabController _tabs;
   bool _useAvalanche = true;
 
-  static const _bg = Color(0xFF06100A);
-  static const _card = Color(0xFF0C1A10);
-  static const _green = Color(0xFF10B981);
-  static const _greenLight = Color(0xFF34D399);
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  // Kept for genuinely positive financial figures (income, savings, assets)
+  // — matches the app-wide semantic Positive color, not page branding.
+  static const _green = Color(0xFF22C55E);
+  static const _greenLight = Color(0xFF4ADE80);
 
   @override
   void initState() {
@@ -67,9 +69,9 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 Tab(text: 'Budgets'),
                 Tab(text: 'Goals'),
               ],
-              labelColor: _green,
+              labelColor: Colors.white,
               unselectedLabelColor: Colors.white54,
-              indicatorColor: _green,
+              indicatorColor: Colors.white,
               indicatorSize: TabBarIndicatorSize.label,
               labelStyle: const TextStyle(
                   fontWeight: FontWeight.w600, fontSize: 13),
@@ -97,9 +99,9 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               'https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=900',
           fit: BoxFit.cover,
           placeholder: (_, __) =>
-              Container(color: _green.withValues(alpha: 0.15)),
+              Container(color: Colors.white.withValues(alpha: 0.06)),
           errorWidget: (_, __, ___) =>
-              Container(color: _green.withValues(alpha: 0.15)),
+              Container(color: Colors.white.withValues(alpha: 0.06)),
         ),
         Container(
           decoration: BoxDecoration(
@@ -119,8 +121,6 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _tag(Icons.trending_up_rounded, 'FINANCIAL DOMAIN', _green),
-              const SizedBox(height: 10),
               Text('Life\nLedger',
                   style: TextStyles.displaySmall.copyWith(
                       color: Colors.white,
@@ -131,27 +131,6 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           ),
         ),
       ],
-    );
-  }
-
-  Widget _tag(IconData icon, String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
-      ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Icon(icon, color: color, size: 12),
-        const SizedBox(width: 6),
-        Text(text,
-            style: TextStyle(
-                color: color,
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2)),
-      ]),
     );
   }
 
@@ -191,13 +170,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _green.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.10),
                 Colors.white.withValues(alpha: 0.02),
               ],
             ),
             borderRadius: BorderRadius.circular(20),
             border:
-                Border.all(color: _green.withValues(alpha: 0.3), width: 1),
+                Border.all(color: Colors.white.withValues(alpha: 0.14), width: 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,12 +186,12 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _green.withValues(alpha: 0.15),
+                    color: Colors.white.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Text('NET WORTH',
                       style: TextStyle(
-                          color: _green,
+                          color: Colors.white,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.2)),
@@ -358,14 +337,15 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   }
 
   Widget _buildSpendingBreakdown() {
+    const neutral = Color(0xFFC7CAD3);
     const categories = [
-      _SpendCat('Housing & Rent', 1200, 4200, Color(0xFF6366F1)),
-      _SpendCat('Food & Dining', 520, 4200, Color(0xFFF59E0B)),
-      _SpendCat('Transport', 240, 4200, Color(0xFF3B82F6)),
-      _SpendCat('Health', 185, 4200, Color(0xFF14B8A6)),
-      _SpendCat('Subscriptions', 95, 4200, Color(0xFFEC4899)),
-      _SpendCat('Entertainment', 145, 4200, Color(0xFFEF4444)),
-      _SpendCat('Savings (auto)', 600, 4200, Color(0xFF10B981)),
+      _SpendCat('Housing & Rent', 1200, 4200, neutral),
+      _SpendCat('Food & Dining', 520, 4200, neutral),
+      _SpendCat('Transport', 240, 4200, neutral),
+      _SpendCat('Health', 185, 4200, neutral),
+      _SpendCat('Subscriptions', 95, 4200, neutral),
+      _SpendCat('Entertainment', 145, 4200, neutral),
+      _SpendCat('Savings (auto)', 600, 4200, _green),
     ];
     return Column(
       children: categories
@@ -386,7 +366,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
             color: _card,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                color: Colors.white.withValues(alpha: 0.10),
                 width: 1),
           ),
           child: Column(
@@ -398,10 +378,10 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                   height: 38,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+                    color: Colors.white.withValues(alpha: 0.08),
                   ),
                   child: const Icon(Icons.school_rounded,
-                      color: Color(0xFF6366F1), size: 18),
+                      color: Colors.white, size: 18),
                 ),
                 const SizedBox(width: 12),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -418,7 +398,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 const Spacer(),
                 const Text('\$22,500',
                     style: TextStyle(
-                        color: Color(0xFF6366F1),
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w800)),
               ]),
@@ -426,7 +406,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               Row(children: [
                 Expanded(
                     child: _loanStat('Monthly', '\$280',
-                        const Color(0xFF6366F1))),
+                        Colors.white)),
                 Expanded(
                     child: _loanStat('Payoff Date', 'Oct 2031',
                         Colors.white)),
@@ -440,9 +420,9 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 child: LinearProgressIndicator(
                   value: 0.38,
                   backgroundColor:
-                      const Color(0xFF6366F1).withValues(alpha: 0.12),
+                      Colors.white.withValues(alpha: 0.10),
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF6366F1)),
+                      Colors.white),
                   minHeight: 6,
                 ),
               ),
@@ -454,13 +434,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               const SizedBox(height: 14),
               Row(children: [
                 _loanAction('IDR Check', Icons.calculate_rounded,
-                    const Color(0xFF6366F1)),
+                    Colors.white),
                 const SizedBox(width: 8),
                 _loanAction('Forgiveness?', Icons.volunteer_activism_rounded,
-                    const Color(0xFF10B981)),
+                    Colors.white),
                 const SizedBox(width: 8),
                 _loanAction('Refi Options', Icons.sync_alt_rounded,
-                    const Color(0xFFF59E0B)),
+                    Colors.white),
               ]),
             ],
           ),
@@ -514,7 +494,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
         color: _card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: _green.withValues(alpha: 0.25), width: 1),
+            color: Colors.white.withValues(alpha: 0.10), width: 1),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -522,11 +502,11 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           height: 34,
           decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _green.withValues(alpha: 0.12),
+              color: Colors.white.withValues(alpha: 0.08),
               border:
-                  Border.all(color: _green.withValues(alpha: 0.4), width: 1)),
+                  Border.all(color: Colors.white.withValues(alpha: 0.16), width: 1)),
           child: const Icon(Icons.auto_awesome_rounded,
-              color: _green, size: 15),
+              color: Colors.white, size: 15),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -535,7 +515,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 children: [
               const Text("This Week's Nudge",
                   style: TextStyle(
-                      color: _greenLight,
+                      color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
@@ -554,13 +534,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   // ── BUDGETS TAB ─────────────────────────────────────────────────────────────
 
   Widget _buildBudgetsTab() {
+    const neutral = Colors.white;
     const budgets = [
-      _Budget('Groceries', 340, 500, Color(0xFF10B981)),
-      _Budget('Entertainment', 180, 200, Color(0xFFF59E0B)),
-      _Budget('Transport', 95, 150, Color(0xFF3B82F6)),
-      _Budget('Health', 120, 200, Color(0xFF14B8A6)),
-      _Budget('Dining Out', 220, 250, Color(0xFFEF4444)),
-      _Budget('Shopping', 145, 200, Color(0xFFEC4899)),
+      _Budget('Groceries', 340, 500, neutral),
+      _Budget('Entertainment', 180, 200, neutral),
+      _Budget('Transport', 95, 150, neutral),
+      _Budget('Health', 120, 200, neutral),
+      _Budget('Dining Out', 220, 250, neutral),
+      _Budget('Shopping', 145, 200, neutral),
     ];
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 120),
@@ -582,18 +563,18 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border:
-                    Border.all(color: _green.withValues(alpha: 0.3), width: 1),
+                    Border.all(color: Colors.white.withValues(alpha: 0.20), width: 1),
                 borderRadius: BorderRadius.circular(16),
-                color: _green.withValues(alpha: 0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded, color: _green, size: 18),
+                    const Icon(Icons.add_rounded, color: Colors.white, size: 18),
                     const SizedBox(width: 8),
                     const Text('Add Budget Category',
                         style: TextStyle(
-                            color: _green,
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
                   ]),
@@ -616,13 +597,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _green.withValues(alpha: 0.18),
+                Colors.white.withValues(alpha: 0.10),
                 Colors.white.withValues(alpha: 0.02),
               ],
             ),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-                color: _green.withValues(alpha: 0.3), width: 1),
+                color: Colors.white.withValues(alpha: 0.14), width: 1),
           ),
           child: Column(
             children: [
@@ -636,14 +617,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                     color: Colors.white.withValues(alpha: 0.08)),
                 Expanded(
                     child:
-                        _overviewStat('Budget', '\$3,200', _green)),
+                        _overviewStat('Budget', '\$3,200', Colors.white)),
                 Container(
                     width: 1,
                     height: 40,
                     color: Colors.white.withValues(alpha: 0.08)),
                 Expanded(
                     child: _overviewStat(
-                        'Saved', '\$1,215', const Color(0xFF3B82F6))),
+                        'Saved', '\$1,215', _green)),
               ]),
               const SizedBox(height: 14),
               ClipRRect(
@@ -652,7 +633,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                   value: 2485 / 3200,
                   backgroundColor: Colors.white.withValues(alpha: 0.06),
                   valueColor:
-                      const AlwaysStoppedAnimation<Color>(_green),
+                      const AlwaysStoppedAnimation<Color>(Colors.white),
                   minHeight: 6,
                 ),
               ),
@@ -665,7 +646,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 const Spacer(),
                 const Text('11 days left',
                     style: TextStyle(
-                        color: _greenLight,
+                        color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600)),
               ]),
@@ -701,13 +682,13 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           const SizedBox(height: 14),
           ...[
             _PlanCard('Emergency Fund', '\$8,500', '\$10,000',
-                const Color(0xFF10B981), 0.85),
+                Colors.white, 0.85),
             _PlanCard('House Down Payment', '\$22,000', '\$40,000',
-                const Color(0xFF3B82F6), 0.55),
+                Colors.white, 0.55),
             _PlanCard('Investment Portfolio', '\$15,200', '\$50,000',
-                const Color(0xFF8B5CF6), 0.30),
+                Colors.white, 0.30),
             _PlanCard('Vacation Fund', '\$1,800', '\$3,000',
-                const Color(0xFFF59E0B), 0.60),
+                Colors.white, 0.60),
           ].map((p) => Padding(
                 padding: const EdgeInsets.only(bottom: 12), child: p)),
           const SizedBox(height: 6),
@@ -717,18 +698,18 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border:
-                    Border.all(color: _green.withValues(alpha: 0.3), width: 1),
+                    Border.all(color: Colors.white.withValues(alpha: 0.20), width: 1),
                 borderRadius: BorderRadius.circular(16),
-                color: _green.withValues(alpha: 0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded, color: _green, size: 18),
+                    const Icon(Icons.add_rounded, color: Colors.white, size: 18),
                     const SizedBox(width: 8),
                     const Text('Create New Goal',
                         style: TextStyle(
-                            color: _green,
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
                   ]),
@@ -779,11 +760,11 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _green.withValues(alpha: 0.07),
+                  color: Colors.white.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(children: [
-                  const Icon(Icons.flag_rounded, color: _greenLight, size: 16),
+                  const Icon(Icons.flag_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 8),
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(
@@ -818,19 +799,19 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       decoration: BoxDecoration(
         color: selected
-            ? _green.withValues(alpha: 0.15)
+            ? Colors.white.withValues(alpha: 0.14)
             : Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
             color: selected
-                ? _green.withValues(alpha: 0.5)
+                ? Colors.white.withValues(alpha: 0.5)
                 : Colors.white.withValues(alpha: 0.08),
             width: 1),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
             style: TextStyle(
-                color: selected ? _greenLight : Colors.white54,
+                color: selected ? Colors.white : Colors.white54,
                 fontSize: 13,
                 fontWeight: FontWeight.w700)),
         Text(sub,
@@ -846,14 +827,14 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
   List<Widget> _buildDebtList() {
     final debts = _useAvalanche
         ? [
-            _Debt('Credit Card', '\$3,200', '22.9%', const Color(0xFFEF4444)),
-            _Debt('Car Loan', '\$8,500', '6.8%', const Color(0xFFF59E0B)),
-            _Debt('Student Loans', '\$22,500', '6.5%', const Color(0xFF6366F1)),
+            _Debt('Credit Card', '\$3,200', '22.9%', Colors.white),
+            _Debt('Car Loan', '\$8,500', '6.8%', Colors.white),
+            _Debt('Student Loans', '\$22,500', '6.5%', Colors.white),
           ]
         : [
-            _Debt('Credit Card', '\$3,200', '22.9%', const Color(0xFFEF4444)),
-            _Debt('Car Loan', '\$8,500', '6.8%', const Color(0xFFF59E0B)),
-            _Debt('Student Loans', '\$22,500', '6.5%', const Color(0xFF6366F1)),
+            _Debt('Credit Card', '\$3,200', '22.9%', Colors.white),
+            _Debt('Car Loan', '\$8,500', '6.8%', Colors.white),
+            _Debt('Student Loans', '\$22,500', '6.5%', Colors.white),
           ];
 
     return debts
@@ -923,11 +904,11 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
           height: 34,
           decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _green.withValues(alpha: 0.12),
+              color: Colors.white.withValues(alpha: 0.08),
               border:
-                  Border.all(color: _green.withValues(alpha: 0.4), width: 1)),
+                  Border.all(color: Colors.white.withValues(alpha: 0.16), width: 1)),
           child: const Icon(Icons.auto_awesome_rounded,
-              color: _green, size: 15),
+              color: Colors.white, size: 15),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -936,7 +917,7 @@ class _LifeXFinancePageState extends State<LifeXFinancePage>
                 children: [
               const Text('Chris says',
                   style: TextStyle(
-                      color: _green,
+                      color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
