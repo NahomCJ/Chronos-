@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/widgets/coin_icon_scale.dart';
 
 const _k3dAssets = {
   'BTC':  'assets/crypto/btc.png',
@@ -174,7 +175,13 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
                 children: [
                   ClipOval(
                     child: _k3dAssets.containsKey(c.symbol)
-                        ? Image.asset(_k3dAssets[c.symbol]!, width: 22, height: 22, fit: BoxFit.cover)
+                        ? SizedBox(
+                            width: 22, height: 22,
+                            child: Transform.scale(
+                              scale: coinBadgeScale(c.symbol),
+                              child: Image.asset(_k3dAssets[c.symbol]!, width: 22, height: 22, fit: BoxFit.cover),
+                            ),
+                          )
                         : Container(
                             width: 22, height: 22,
                             decoration: BoxDecoration(color: c.color, shape: BoxShape.circle),
@@ -209,7 +216,13 @@ class _SendCryptoPageState extends State<SendCryptoPage> {
         children: [
           ClipOval(
             child: _k3dAssets.containsKey(_coin.symbol)
-                ? Image.asset(_k3dAssets[_coin.symbol]!, width: 40, height: 40, fit: BoxFit.cover)
+                ? SizedBox(
+                    width: 40, height: 40,
+                    child: Transform.scale(
+                      scale: coinBadgeScale(_coin.symbol),
+                      child: Image.asset(_k3dAssets[_coin.symbol]!, width: 40, height: 40, fit: BoxFit.cover),
+                    ),
+                  )
                 : Container(
                     width: 40, height: 40,
                     decoration: BoxDecoration(color: _coin.color, shape: BoxShape.circle),

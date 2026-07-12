@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/widgets/coin_icon_scale.dart';
 import 'sell_btc_order_type_page.dart';
 
 const _k3dAssets = {
@@ -153,7 +154,13 @@ class _SellBtcPageState extends State<SellBtcPage> {
                                   children: [
                                     ClipOval(
                                       child: _k3dAssets.containsKey(c.symbol)
-                                          ? Image.asset(_k3dAssets[c.symbol]!, width: 22, height: 22, fit: BoxFit.cover)
+                                          ? SizedBox(
+                                              width: 22, height: 22,
+                                              child: Transform.scale(
+                                                scale: coinBadgeScale(c.symbol),
+                                                child: Image.asset(_k3dAssets[c.symbol]!, width: 22, height: 22, fit: BoxFit.cover),
+                                              ),
+                                            )
                                           : Container(
                                               width: 22, height: 22,
                                               decoration: BoxDecoration(color: c.color, shape: BoxShape.circle),
@@ -195,7 +202,8 @@ class _SellBtcPageState extends State<SellBtcPage> {
                                     width: 100, height: 100,
                                     child: Transform(
                                       alignment: const Alignment(0, -0.15),
-                                      transform: Matrix4.identity()..scale(1.6, 1.2),
+                                      transform: Matrix4.identity()
+                                        ..scale(1.6 * coinPreviewScale(_coin.symbol), 1.2 * coinPreviewScale(_coin.symbol)),
                                       child: Image.asset(
                                         _k3dAssets[_coin.symbol]!,
                                         fit: BoxFit.contain,

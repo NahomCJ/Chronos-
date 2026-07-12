@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/widgets/coin_icon_scale.dart';
 import 'buy/buy_btc_page.dart';
 import 'sell/sell_btc_page.dart';
 import 'wallets/send_crypto_page.dart';
@@ -106,9 +107,12 @@ Widget _buildFlatCoinIcon(_CoinData coin, double size, {bool showCircle = true})
     // Scale X to counteract horizontal foreshortening from the baked-in tilt.
     // Scale Y slightly to zoom into the face and push the bottom rim off-frame.
     // Pivot above center so the rim falls further below the clip boundary.
+    // fillScale additionally normalizes each coin's baked-in transparent
+    // padding so every coin renders at the same apparent size as Bitcoin.
+    final fillScale = coinPreviewScale(coin.symbol);
     final coinImage = Transform(
       alignment: const Alignment(0, -0.15),
-      transform: Matrix4.identity()..scale(1.6, 1.2),
+      transform: Matrix4.identity()..scale(1.6 * fillScale, 1.2 * fillScale),
       child: Image.asset(localAsset, fit: BoxFit.contain, width: size, height: size),
     );
     if (!showCircle) {
