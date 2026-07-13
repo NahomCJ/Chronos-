@@ -27,22 +27,22 @@ class _BillsManagementPageState extends State<BillsManagementPage>
   static const _border = Color(0xFFE8EAF0);
 
   static const _bills = [
-    _Bill('Rent / Mortgage', '\$1,850', 'Jun 1', Icons.home_rounded, Color(0xFF6366F1), true),
+    _Bill('Rent / Mortgage', '\$1,850', 'Jun 1', Icons.home_rounded, Color(0xFF7C6EF0), true),
     _Bill('Electricity', '\$94', 'Jun 5', Icons.bolt_rounded, Color(0xFFF59E0B), false),
     _Bill('Internet', '\$79', 'Jun 8', Icons.wifi_rounded, Color(0xFF3B82F6), true),
     _Bill('Netflix', '\$22', 'Jun 10', Icons.play_circle_rounded, Color(0xFFEF4444), true),
-    _Bill('Gym Membership', '\$45', 'Jun 12', Icons.fitness_center_rounded, Color(0xFF10B981), false),
-    _Bill('Car Insurance', '\$186', 'Jun 15', Icons.directions_car_rounded, Color(0xFF8B5CF6), false),
-    _Bill('Phone', '\$65', 'Jun 20', Icons.phone_android_rounded, Color(0xFF14B8A6), true),
+    _Bill('Gym Membership', '\$45', 'Jun 12', Icons.fitness_center_rounded, Color(0xFF22C55E), false),
+    _Bill('Car Insurance', '\$186', 'Jun 15', Icons.directions_car_rounded, Color(0xFF7C6EF0), false),
+    _Bill('Phone', '\$65', 'Jun 20', Icons.phone_android_rounded, Color(0xFF7C6EF0), true),
   ];
 
   static const _categories = [
-    _Category('Housing', 1850, Color(0xFF6366F1)),
+    _Category('Housing', 1850, Color(0xFF7C6EF0)),
     _Category('Utilities', 173, Color(0xFFF59E0B)),
     _Category('Entertainment', 22, Color(0xFFEF4444)),
-    _Category('Transport', 186, Color(0xFF8B5CF6)),
-    _Category('Health', 45, Color(0xFF10B981)),
-    _Category('Communication', 65, Color(0xFF14B8A6)),
+    _Category('Transport', 186, Color(0xFF7C6EF0)),
+    _Category('Health', 45, Color(0xFF22C55E)),
+    _Category('Communication', 65, Color(0xFF7C6EF0)),
   ];
 
   double get _totalMonthly =>

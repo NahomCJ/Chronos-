@@ -25,15 +25,15 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
   static const _assets = [
     _NWItem('Checking & Savings', 14200, Color(0xFF22C55E), Icons.account_balance_rounded),
     _NWItem('Investment Portfolio', 45890, Color(0xFF3B82F6), Icons.show_chart_rounded),
-    _NWItem('Real Estate', 320000, Color(0xFF6366F1), Icons.home_rounded),
-    _NWItem('Retirement (401k)', 38400, Color(0xFF14B8A6), Icons.savings_rounded),
+    _NWItem('Real Estate', 320000, Color(0xFF7C6EF0), Icons.home_rounded),
+    _NWItem('Retirement (401k)', 38400, Color(0xFF7C6EF0), Icons.savings_rounded),
     _NWItem('Crypto', 4200, Color(0xFFF59E0B), Icons.currency_bitcoin_rounded),
   ];
 
   static const _liabilities = [
     _NWItem('Mortgage', 285000, Color(0xFFEF4444), Icons.home_outlined),
-    _NWItem('Car Loan', 12400, Color(0xFFEC4899), Icons.directions_car_outlined),
-    _NWItem('Student Loan', 18200, Color(0xFF8B5CF6), Icons.school_outlined),
+    _NWItem('Car Loan', 12400, Color(0xFF7C6EF0), Icons.directions_car_outlined),
+    _NWItem('Student Loan', 18200, Color(0xFF7C6EF0), Icons.school_outlined),
     _NWItem('Credit Card', 3200, Color(0xFFF59E0B), Icons.credit_card_outlined),
   ];
 

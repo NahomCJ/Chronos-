@@ -29,15 +29,15 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
   static const _breakdown = [
     _TaxItem('Federal Income', 2840, Color(0xFFEF4444)),
     _TaxItem('State Income', 680, Color(0xFFF59E0B)),
-    _TaxItem('FICA / Social Security', 520, Color(0xFF6366F1)),
-    _TaxItem('Medicare', 160, Color(0xFF14B8A6)),
+    _TaxItem('FICA / Social Security', 520, Color(0xFF7C6EF0)),
+    _TaxItem('Medicare', 160, Color(0xFF7C6EF0)),
   ];
 
   static const _deductions = [
     _Deduction('401(k) Contributions', '\$4,200', Color(0xFF22C55E)),
     _Deduction('Health Insurance (pre-tax)', '\$1,800', Color(0xFF22C55E)),
     _Deduction('Home Office Deduction', '\$960', Color(0xFF22C55E)),
-    _Deduction('Student Loan Interest', '\$350', Color(0xFF6366F1)),
+    _Deduction('Student Loan Interest', '\$350', Color(0xFF7C6EF0)),
   ];
 
   double get _total => _breakdown.fold(0, (s, e) => s + e.amount);

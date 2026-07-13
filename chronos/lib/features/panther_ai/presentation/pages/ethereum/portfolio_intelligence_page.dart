@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class EthFlowPortfolioIntelligencePage extends StatelessWidget {
@@ -9,12 +10,13 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -74,7 +76,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               Text(
                 'AI health monitoring',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -89,9 +91,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +104,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           Text(
             'Total Portfolio Value',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -107,7 +112,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           Text(
             '\$45,890',
             style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 32,
               fontWeight: FontWeight.w700,
             ),
@@ -115,12 +120,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.trending_up, color: Color(0xFF05DF72), size: 16),
+              const Icon(Icons.trending_up, color: PantherColors.positive, size: 16),
               const SizedBox(width: 4),
               Text(
                 '+\$5,240 (12.4%)',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF05DF72),
+                  color: PantherColors.positive,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -129,7 +134,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Divider(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
           ),
@@ -143,7 +148,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   Text(
                     'AI Status',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -151,7 +156,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   Text(
                     'Stable',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -164,16 +169,16 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   vertical: 5,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+                  color: PantherColors.positive.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: const Color(0xFF05DF72).withValues(alpha: 0.3),
+                    color: PantherColors.positive.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   'Low Risk',
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFF05DF72),
+                    color: PantherColors.positive,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -212,9 +217,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,12 +234,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0B100).withValues(alpha: 0.15),
+                  color: PantherColors.warning.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.warning_amber_rounded,
-                  color: Color(0xFFF0B100),
+                  color: PantherColors.warning,
                   size: 20,
                 ),
               ),
@@ -243,7 +251,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     Text(
                       'Overexposed to BTC',
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -252,7 +260,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     Text(
                       'Your portfolio is 22% overweight in Bitcoin compared to optimal allocation',
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.55),
+                        color: PantherColors.textSecondary,
                         fontSize: 12.5,
                         height: 1.4,
                       ),
@@ -260,18 +268,18 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     const SizedBox(height: 14),
                     Row(
                       children: [
-                        _buildStatChip('Current', '56%', Colors.white),
+                        _buildStatChip('Current', '56%', PantherColors.textPrimary),
                         const SizedBox(width: 20),
                         _buildStatChip(
                           'Optimal',
                           '34%',
-                          const Color(0xFF00D4FF),
+                          PantherColors.info,
                         ),
                         const SizedBox(width: 20),
                         _buildStatChip(
                           'Difference',
                           '+22%',
-                          const Color(0xFFFDC700),
+                          PantherColors.warning,
                         ),
                       ],
                     ),
@@ -289,13 +297,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     RouteConstants.ethFlowSimulateRebalance.toPath,
                   ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.1),
+                backgroundColor: PantherColors.brand,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                 ),
               ),
               child: Text(
@@ -320,7 +327,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.45),
+            color: PantherColors.textSubtle,
             fontSize: 11,
           ),
         ),
@@ -341,9 +348,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,12 +362,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: const Color(0xFFFF6467).withValues(alpha: 0.15),
+              color: PantherColors.negative.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.warning_rounded,
-              color: Color(0xFFFF6467),
+              color: PantherColors.negative,
               size: 20,
             ),
           ),
@@ -369,7 +379,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 Text(
                   'Risk concentration',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -378,7 +388,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 Text(
                   '3 assets (BTC, ETH, SOL) contribute 71% of your total portfolio risk',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.55),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.4,
                   ),
@@ -392,15 +402,15 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 48,
-                          child: Container(color: const Color(0xFF00D4FF)),
+                          child: Container(color: PantherColors.info),
                         ),
                         Expanded(
                           flex: 31,
-                          child: Container(color: const Color(0xFFB366FF)),
+                          child: Container(color: PantherColors.brand),
                         ),
                         Expanded(
                           flex: 21,
-                          child: Container(color: const Color(0xFFF0B100)),
+                          child: Container(color: PantherColors.warning),
                         ),
                       ],
                     ),
@@ -418,9 +428,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,12 +442,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+              color: PantherColors.positive.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.check_circle_outline,
-              color: Color(0xFF05DF72),
+              color: PantherColors.positive,
               size: 20,
             ),
           ),
@@ -446,7 +459,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 Text(
                   'Diversification improving',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -455,7 +468,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 Text(
                   'Your recent additions to altcoins have improved portfolio diversification by 18%',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.55),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.4,
                   ),
@@ -472,9 +485,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         children: [
@@ -488,7 +504,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   Text(
                     'Portfolio Health Score',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -496,7 +512,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   Text(
                     '78/100',
                     style: TextStyles.titleLarge.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                     ),
@@ -506,15 +522,15 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               Container(
                 width: 62,
                 height: 62,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFDC8F4A), width: 3),
+                  border: Border.fromBorderSide(BorderSide(color: PantherColors.warning, width: 3)),
                 ),
                 child: Center(
                   child: Text(
                     'Good',
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFFDC8F4A),
+                      color: PantherColors.warning,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -525,16 +541,16 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Divider(
-            color: Colors.white.withValues(alpha: 0.07),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
           ),
           const SizedBox(height: 14),
-          _buildScoreRow('Diversification', '82/100', const Color(0xFF05DF72)),
+          _buildScoreRow('Diversification', '82/100', PantherColors.positive),
           const SizedBox(height: 10),
-          _buildScoreRow('Risk balance', '68/100', const Color(0xFFFDC700)),
+          _buildScoreRow('Risk balance', '68/100', PantherColors.warning),
           const SizedBox(height: 10),
-          _buildScoreRow('Performance', '85/100', const Color(0xFF05DF72)),
+          _buildScoreRow('Performance', '85/100', PantherColors.positive),
         ],
       ),
     );
@@ -547,7 +563,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.55),
+            color: PantherColors.textSecondary,
             fontSize: 13,
           ),
         ),
@@ -578,9 +594,12 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -589,10 +608,10 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '0.24 BTC',
                 '\$25,702',
                 '+8.2%',
-                const Color(0xFFFF8904),
-                const Color(0x33FF6900),
+                const Color(0xFFDC8F4A),
+                const Color(0x1ADC8F4A),
                 '₿',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
                 false,
               ),
               _buildAssetRow(
@@ -600,10 +619,10 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '3.44 ETH',
                 '\$8,448',
                 '+12.7%',
-                const Color(0xFFC27AFF),
-                const Color(0x33AD46FF),
+                PantherColors.brand,
+                PantherColors.brandLight,
                 'Ξ',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
                 false,
               ),
               _buildAssetRow(
@@ -611,10 +630,10 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '11,740 USDC',
                 '\$11,740',
                 '+0.0%',
-                const Color(0xFF51A2FF),
-                const Color(0x332B7FFF),
+                PantherColors.info,
+                const Color(0x1A3B82F6),
                 'S',
-                const Color(0xFFA1A1A1),
+                PantherColors.textSubtle,
                 true,
               ),
             ],
@@ -667,7 +686,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     Text(
                       name,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -675,7 +694,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                     Text(
                       amount,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: PantherColors.textSubtle,
                         fontSize: 12,
                       ),
                     ),
@@ -688,7 +707,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                   Text(
                     value,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -706,7 +725,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               const SizedBox(width: 8),
               Icon(
                 Icons.chevron_right,
-                color: Colors.white.withValues(alpha: 0.4),
+                color: PantherColors.textSubtle,
                 size: 18,
               ),
             ],
@@ -714,7 +733,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         ),
         if (!isLast)
           Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
             indent: 14,
@@ -732,8 +751,8 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -745,7 +764,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -756,13 +775,13 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -770,7 +789,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),

@@ -101,7 +101,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             width: 34, height: 34,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [Color(0xFF20C55D), Color(0xFF0A8E42)]),
+              gradient: LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF0A8E42)]),
             ),
             child: const Icon(Icons.schedule_rounded, color: Colors.white, size: 17),
           ),
@@ -111,11 +111,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('TickPay', style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 18, fontWeight: FontWeight.w700)),
-                Text('Buy Now, Pay Later · 0% APR', style: TextStyle(color: Color(0xFF20C55D), fontSize: 11, fontWeight: FontWeight.w500)),
+                Text('Buy Now, Pay Later · 0% APR', style: TextStyle(color: Color(0xFF22C55E), fontSize: 11, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
-          _chip(Icons.notifications_active_rounded, '1 due', const Color(0xFFF0B100)),
+          _chip(Icons.notifications_active_rounded, '1 due', const Color(0xFFF59E0B)),
           const SizedBox(width: 8),
           _chip(Icons.account_balance_wallet_outlined, 'Wallet', Colors.white),
         ],
@@ -162,7 +162,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(colors: [Color(0xFF20C55D), Color(0xFF0A8E42)]),
+            gradient: const LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF0A8E42)]),
           ),
           labelColor: Colors.white,
           unselectedLabelColor: const Color(0xFF6B7080),
@@ -197,9 +197,9 @@ class _TickPayAiPageState extends State<TickPayAiPage>
               const SizedBox(height: 20),
               _sectionLabel('Active Plans'),
               const SizedBox(height: 12),
-              _buildActivePlanCard('Nike Air Max 270', 'Afterpay', 3, 4, '\$262.50', '\$87.50', const Color(0xFF00D4FF), PexelsService.photoUrl(1598505, w: 120, h: 120)),
+              _buildActivePlanCard('Nike Air Max 270', 'Afterpay', 3, 4, '\$262.50', '\$87.50', const Color(0xFF7C6EF0), PexelsService.photoUrl(1598505, w: 120, h: 120)),
               const SizedBox(height: 10),
-              _buildActivePlanCard('AirPods Pro', 'Klarna', 2, 3, '\$124.50', '\$62.25', const Color(0xFF20C55D), PexelsService.photoUrl(3394650, w: 120, h: 120)),
+              _buildActivePlanCard('AirPods Pro', 'Klarna', 2, 3, '\$124.50', '\$62.25', const Color(0xFF22C55E), PexelsService.photoUrl(3394650, w: 120, h: 120)),
               const SizedBox(height: 10),
               _buildActivePlanCard('Zara Jacket', 'Afterpay', 2, 4, '\$89.75', '\$44.88', const Color(0xFFDC8F4A), PexelsService.photoUrl(1536619, w: 120, h: 120)),
               const SizedBox(height: 20),
@@ -253,11 +253,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF20C55D).withValues(alpha: 0.2),
+                          color: const Color(0xFF22C55E).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF20C55D).withValues(alpha: 0.5), width: 0.6),
+                          border: Border.all(color: const Color(0xFF22C55E).withValues(alpha: 0.5), width: 0.6),
                         ),
-                        child: const Text('TICKPAY CREDIT', style: TextStyle(color: Color(0xFF20C55D), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
+                        child: const Text('TICKPAY CREDIT', style: TextStyle(color: Color(0xFF22C55E), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
                       ),
                       const Text('0% APR', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
                     ],
@@ -294,11 +294,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
 
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
-      (Icons.shopping_bag_outlined, 'Shop', const Color(0xFF20C55D), () => context.push(RouteConstants.productDiscovery.toPath)),
-      (Icons.payment_outlined, 'Pay', const Color(0xFF00D4FF), null),
+      (Icons.shopping_bag_outlined, 'Shop', const Color(0xFF22C55E), () => context.push(RouteConstants.productDiscovery.toPath)),
+      (Icons.payment_outlined, 'Pay', const Color(0xFF7C6EF0), null),
       (Icons.receipt_long_outlined, 'Orders', const Color(0xFFDC8F4A), null),
-      (Icons.replay_outlined, 'Repay', const Color(0xFFE879F9), null),
-      (Icons.card_giftcard_outlined, 'Rewards', const Color(0xFFF0B100), () => _tabCtrl.animateTo(2)),
+      (Icons.replay_outlined, 'Repay', const Color(0xFF7C6EF0), null),
+      (Icons.card_giftcard_outlined, 'Rewards', const Color(0xFFF59E0B), () => _tabCtrl.animateTo(2)),
     ];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -325,16 +325,16 @@ class _TickPayAiPageState extends State<TickPayAiPage>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.08),
+        color: const Color(0xFFF59E0B).withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFF0B100).withValues(alpha: 0.3), width: 0.6),
+        border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3), width: 0.6),
       ),
       child: Row(
         children: [
           Container(
             width: 36, height: 36,
-            decoration: BoxDecoration(color: const Color(0xFFF0B100).withValues(alpha: 0.15), shape: BoxShape.circle),
-            child: const Icon(Icons.access_time_rounded, color: Color(0xFFF0B100), size: 18),
+            decoration: BoxDecoration(color: const Color(0xFFF59E0B).withValues(alpha: 0.15), shape: BoxShape.circle),
+            child: const Icon(Icons.access_time_rounded, color: Color(0xFFF59E0B), size: 18),
           ),
           const SizedBox(width: 12),
           const Expanded(
@@ -349,11 +349,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0B100).withValues(alpha: 0.15),
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFF0B100).withValues(alpha: 0.4), width: 0.5),
+                border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4), width: 0.5),
               ),
-              child: const Text('Pay Now', style: TextStyle(color: Color(0xFFF0B100), fontSize: 11, fontWeight: FontWeight.w700)),
+              child: const Text('Pay Now', style: TextStyle(color: Color(0xFFF59E0B), fontSize: 11, fontWeight: FontWeight.w700)),
             ),
           ),
         ],
@@ -455,7 +455,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
             width: 36, height: 36,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [Color(0xFF9B59F5), Color(0xFF4A00E0)]),
+              gradient: LinearGradient(colors: [Color(0xFF7C6EF0), Color(0xFF5B3FC4)]),
             ),
             child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 18),
           ),
@@ -520,8 +520,8 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           child: Switch(
             value: _remindersOn,
             onChanged: (v) => setState(() => _remindersOn = v),
-            activeColor: const Color(0xFF20C55D),
-            activeTrackColor: const Color(0xFF20C55D).withValues(alpha: 0.3),
+            activeColor: const Color(0xFF22C55E),
+            activeTrackColor: const Color(0xFF22C55E).withValues(alpha: 0.3),
             inactiveThumbColor: const Color(0xFF9CA3AF),
             inactiveTrackColor: const Color(0xFFE8EAF0),
           ),
@@ -538,7 +538,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           _sectionLabel('Discover'),
           GestureDetector(
             onTap: () => context.push(RouteConstants.productDiscovery.toPath),
-            child: const Text('See all', style: TextStyle(color: Color(0xFF20C55D), fontSize: 12, fontWeight: FontWeight.w600)),
+            child: const Text('See all', style: TextStyle(color: Color(0xFF22C55E), fontSize: 12, fontWeight: FontWeight.w600)),
           ),
         ]),
         const SizedBox(height: 12),
@@ -547,13 +547,13 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              _discoverCard('Nike', PexelsService.photoUrl(1598505, w: 240, h: 260), const Color(0xFF00D4FF), context),
+              _discoverCard('Nike', PexelsService.photoUrl(1598505, w: 240, h: 260), const Color(0xFF7C6EF0), context),
               const SizedBox(width: 10),
-              _discoverCard('Apple', PexelsService.photoUrl(3394650, w: 240, h: 260), const Color(0xFFE879F9), context),
+              _discoverCard('Apple', PexelsService.photoUrl(3394650, w: 240, h: 260), const Color(0xFF7C6EF0), context),
               const SizedBox(width: 10),
               _discoverCard('Luxury', PexelsService.photoUrl(2220316, w: 240, h: 260), const Color(0xFFDC8F4A), context),
               const SizedBox(width: 10),
-              _discoverCard('Fashion', PexelsService.photoUrl(1536619, w: 240, h: 260), const Color(0xFF20C55D), context),
+              _discoverCard('Fashion', PexelsService.photoUrl(1536619, w: 240, h: 260), const Color(0xFF22C55E), context),
             ],
           ),
         ),
@@ -604,9 +604,9 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           const SizedBox(height: 20),
           _sectionLabel('Active Plans'),
           const SizedBox(height: 12),
-          _buildDetailedPlan('Nike Air Max 270', 'Afterpay', 3, 4, 262.50, 87.50, 'Jun 15', PexelsService.photoUrl(1598505, w: 120, h: 120), const Color(0xFF00D4FF)),
+          _buildDetailedPlan('Nike Air Max 270', 'Afterpay', 3, 4, 262.50, 87.50, 'Jun 15', PexelsService.photoUrl(1598505, w: 120, h: 120), const Color(0xFF7C6EF0)),
           const SizedBox(height: 12),
-          _buildDetailedPlan('AirPods Pro', 'Klarna', 2, 3, 124.50, 62.25, 'Jun 22', PexelsService.photoUrl(3394650, w: 120, h: 120), const Color(0xFF20C55D)),
+          _buildDetailedPlan('AirPods Pro', 'Klarna', 2, 3, 124.50, 62.25, 'Jun 22', PexelsService.photoUrl(3394650, w: 120, h: 120), const Color(0xFF22C55E)),
           const SizedBox(height: 12),
           _buildDetailedPlan('Zara Jacket', 'Afterpay', 2, 4, 89.75, 44.88, 'Jun 28', PexelsService.photoUrl(1536619, w: 120, h: 120), const Color(0xFFDC8F4A)),
           const SizedBox(height: 20),
@@ -625,11 +625,11 @@ class _TickPayAiPageState extends State<TickPayAiPage>
   Widget _buildPlanSummaryRow() {
     return Row(
       children: [
-        Expanded(child: _summaryBox('Total Owed', '\$476.75', const Color(0xFFF0B100))),
+        Expanded(child: _summaryBox('Total Owed', '\$476.75', const Color(0xFFF59E0B))),
         const SizedBox(width: 10),
-        Expanded(child: _summaryBox('Active Plans', '3', const Color(0xFF00D4FF))),
+        Expanded(child: _summaryBox('Active Plans', '3', const Color(0xFF7C6EF0))),
         const SizedBox(width: 10),
-        Expanded(child: _summaryBox('On-time', '100%', const Color(0xFF20C55D))),
+        Expanded(child: _summaryBox('On-time', '100%', const Color(0xFF22C55E))),
       ],
     );
   }
@@ -737,17 +737,17 @@ class _TickPayAiPageState extends State<TickPayAiPage>
         Container(
           width: 32, height: 32,
           decoration: BoxDecoration(
-            color: const Color(0xFF20C55D).withValues(alpha: 0.12),
+            color: const Color(0xFF22C55E).withValues(alpha: 0.12),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check_rounded, color: Color(0xFF20C55D), size: 16),
+          child: const Icon(Icons.check_rounded, color: Color(0xFF22C55E), size: 16),
         ),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(name, style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 12, fontWeight: FontWeight.w500)),
           Text(date, style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10)),
         ])),
-        Text(amount, style: const TextStyle(color: Color(0xFF20C55D), fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(amount, style: const TextStyle(color: Color(0xFF22C55E), fontSize: 13, fontWeight: FontWeight.w600)),
       ]),
     );
   }
@@ -756,7 +756,7 @@ class _TickPayAiPageState extends State<TickPayAiPage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [const Color(0xFFDC8F4A).withValues(alpha: 0.15), const Color(0xFFF0B100).withValues(alpha: 0.08)]),
+        gradient: LinearGradient(colors: [const Color(0xFFDC8F4A).withValues(alpha: 0.15), const Color(0xFFF59E0B).withValues(alpha: 0.08)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFDC8F4A).withValues(alpha: 0.3)),
       ),
@@ -798,19 +798,19 @@ class _TickPayAiPageState extends State<TickPayAiPage>
           const SizedBox(height: 20),
           _sectionLabel('How to Earn'),
           const SizedBox(height: 12),
-          _rewardTile(Icons.check_circle_outline_rounded, 'On-time Payments', '50 pts per payment', const Color(0xFF20C55D)),
+          _rewardTile(Icons.check_circle_outline_rounded, 'On-time Payments', '50 pts per payment', const Color(0xFF22C55E)),
           const SizedBox(height: 8),
-          _rewardTile(Icons.shopping_bag_outlined, 'Shop via TickPay', '2x pts on purchases', const Color(0xFF00D4FF)),
+          _rewardTile(Icons.shopping_bag_outlined, 'Shop via TickPay', '2x pts on purchases', const Color(0xFF7C6EF0)),
           const SizedBox(height: 8),
-          _rewardTile(Icons.people_outline_rounded, 'Refer a Friend', '500 pts per referral', const Color(0xFFE879F9)),
+          _rewardTile(Icons.people_outline_rounded, 'Refer a Friend', '500 pts per referral', const Color(0xFF7C6EF0)),
           const SizedBox(height: 8),
           _rewardTile(Icons.star_outline_rounded, 'Full Repayment', '200 pts bonus', const Color(0xFFDC8F4A)),
           const SizedBox(height: 20),
           _sectionLabel('Redeem Points'),
           const SizedBox(height: 12),
-          _redeemOption('Cashback', '\$12.40', '1,240 pts', const Color(0xFF20C55D)),
+          _redeemOption('Cashback', '\$12.40', '1,240 pts', const Color(0xFF22C55E)),
           const SizedBox(height: 8),
-          _redeemOption('Fee Waiver', '1 month free', '2,000 pts', const Color(0xFF00D4FF)),
+          _redeemOption('Fee Waiver', '1 month free', '2,000 pts', const Color(0xFF7C6EF0)),
           const SizedBox(height: 8),
           _redeemOption('Shop Credit', '\$25.00', '2,500 pts', const Color(0xFFDC8F4A)),
         ],
