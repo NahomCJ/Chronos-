@@ -72,7 +72,7 @@ lib/
 - Use `parentNavigatorKey: _rootNavigatorKey` (full-screen)
 - Route under `/panther/<name>`
 - Mark `[STUB]` until Plaid data is wired
-- Follow the pattern in `tax_intelligence_page.dart`: dark bg `0xFF06060E`, card `0xFF0F0F1C`, animated with `CurvedAnimation`
+- Use `core/theme/panther_colors.dart`'s `PantherColors` — light theme (bg `#F5F6FA`, card white, text `#1A1A2E`/`#6B7080`), semantic accents (positive/warning/negative/info below), single brand accent `PantherColors.brand` (`#7C6EF0`). Follow `tax_intelligence_page.dart`. (This entry previously said "dark bg `0x06060E`" — that pattern was never actually implemented anywhere in the codebase; every Panther page had drifted into its own ad hoc palette until this was unified.)
 
 ### Adding a new LifeX sub-page
 - **No** `parentNavigatorKey` in GoRoute
@@ -85,8 +85,8 @@ No yoga imagery. Use Pexels nature photos only (forests, oceans, mountains, star
 ### Design system
 - App dark base: `#08080F` (search, global)
 - LifeX bg: `#0D0D22`
-- Panther cards: `#0F0F1C`
-- Positive: `#22C55E` | Warning: `#F59E0B` | Info: `#3B82F6` | Negative: `#EF4444`
+- Panther AI + TickPay: light theme, `core/theme/panther_colors.dart` (`PantherColors`) / `features/tickpay/presentation/constants/tickpay_colors.dart` (`TickpayColors`) — bg `#F5F6FA`/`#F8F9FA`, white cards, brand accent purple `#7C6EF0` (Panther) / brand red `#E53935` (TickPay)
+- Positive: `#22C55E` | Warning: `#F59E0B` | Info: `#3B82F6` | Negative: `#EF4444` — shared across the whole app, not just Panther/TickPay
 - No purple on the search page — use white/subtle for all UI elements there
 
 ### Video on web

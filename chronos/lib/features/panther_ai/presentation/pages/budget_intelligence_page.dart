@@ -22,7 +22,7 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
   static const _textPrimary = Color(0xFF1A1A2E);
   static const _textSecondary = Color(0xFF6B7080);
   static const _textSubtle = Color(0xFF9CA3AF);
-  static const _teal = Color(0xFF14B8A6);
+  static const _teal = Color(0xFF7C6EF0);
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
   static const _amber = Color(0xFFF59E0B);
@@ -31,12 +31,12 @@ class _BudgetIntelligencePageState extends State<BudgetIntelligencePage>
   static const _periods = ['This Month', 'Last Month', 'YTD'];
 
   static const _categories = [
-    _BudgetCat('Housing', 2100, 2100, Color(0xFF6366F1), Icons.home_rounded),
-    _BudgetCat('Food & Dining', 480, 600, Color(0xFF10B981), Icons.restaurant_rounded),
-    _BudgetCat('Transport', 320, 400, Color(0xFF8B5CF6), Icons.directions_car_rounded),
-    _BudgetCat('Entertainment', 165, 200, Color(0xFFEC4899), Icons.movie_rounded),
+    _BudgetCat('Housing', 2100, 2100, Color(0xFF7C6EF0), Icons.home_rounded),
+    _BudgetCat('Food & Dining', 480, 600, Color(0xFF22C55E), Icons.restaurant_rounded),
+    _BudgetCat('Transport', 320, 400, Color(0xFF7C6EF0), Icons.directions_car_rounded),
+    _BudgetCat('Entertainment', 165, 200, Color(0xFF7C6EF0), Icons.movie_rounded),
     _BudgetCat('Shopping', 390, 300, Color(0xFFEF4444), Icons.shopping_bag_rounded),
-    _BudgetCat('Health', 95, 150, Color(0xFF14B8A6), Icons.favorite_rounded),
+    _BudgetCat('Health', 95, 150, Color(0xFF7C6EF0), Icons.favorite_rounded),
     _BudgetCat('Savings', 500, 500, Color(0xFF22C55E), Icons.savings_rounded),
   ];
 

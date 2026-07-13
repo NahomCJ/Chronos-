@@ -26,9 +26,9 @@ class _LiabilitiesIntelligencePageState
 
   static const _debts = [
     _Debt('Mortgage', 285000, 320000, 3.8, 'Jan 2048',
-        Color(0xFF6366F1), Icons.home_rounded),
+        Color(0xFF7C6EF0), Icons.home_rounded),
     _Debt('Car Loan', 12400, 22000, 5.9, 'Mar 2027',
-        Color(0xFF8B5CF6), Icons.directions_car_rounded),
+        Color(0xFF7C6EF0), Icons.directions_car_rounded),
     _Debt('Student Loan', 18200, 35000, 4.5, 'Aug 2031',
         Color(0xFF3B82F6), Icons.school_rounded),
     _Debt('Credit Card', 3200, 3200, 22.4, 'Revolving',

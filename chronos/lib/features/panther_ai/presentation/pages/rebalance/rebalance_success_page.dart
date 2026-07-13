@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class RebalanceSuccessPage extends StatelessWidget {
@@ -9,12 +10,13 @@ class RebalanceSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -52,13 +54,13 @@ class RebalanceSuccessPage extends StatelessWidget {
           width: 72,
           height: 72,
           decoration: BoxDecoration(
-            color: const Color(0xFF00C950).withValues(alpha: 0.12),
+            color: PantherColors.positive.withValues(alpha: 0.15),
             shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF00C950), width: 1.5),
+            border: Border.all(color: PantherColors.positive, width: 1.5),
           ),
           child: const Icon(
             Icons.check_circle_outline,
-            color: Color(0xFF00C950),
+            color: PantherColors.positive,
             size: 36,
           ),
         ),
@@ -79,7 +81,7 @@ class RebalanceSuccessPage extends StatelessWidget {
             'Your portfolio has been successfully rebalanced to match your target allocation',
             textAlign: TextAlign.center,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.55),
+              color: Colors.white.withValues(alpha: 0.75),
               fontSize: 13.5,
               height: 1.5,
             ),
@@ -94,9 +96,12 @@ class RebalanceSuccessPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +109,7 @@ class RebalanceSuccessPage extends StatelessWidget {
           Text(
             'Transaction Details',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
@@ -135,14 +140,14 @@ class RebalanceSuccessPage extends StatelessWidget {
           Text(
             label,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSecondary,
               fontSize: 14,
             ),
           ),
           Text(
             value,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -154,7 +159,7 @@ class RebalanceSuccessPage extends StatelessWidget {
 
   Widget _buildDivider() {
     return Divider(
-      color: Colors.white.withValues(alpha: 0.07),
+      color: PantherColors.border,
       height: 1,
       thickness: 0.5,
     );
@@ -165,9 +170,9 @@ class RebalanceSuccessPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.0),
+        color: PantherColors.cardAlt,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Column(
         children: [
@@ -175,7 +180,7 @@ class RebalanceSuccessPage extends StatelessWidget {
             'Risk Reduction',
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -184,7 +189,7 @@ class RebalanceSuccessPage extends StatelessWidget {
             '45 → 38',
             textAlign: TextAlign.center,
             style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 32,
               fontWeight: FontWeight.w600,
             ),
@@ -194,7 +199,7 @@ class RebalanceSuccessPage extends StatelessWidget {
             '-15.6%',
             textAlign: TextAlign.center,
             style: TextStyles.bodyMedium.copyWith(
-              color: const Color(0xFF05DF72),
+              color: PantherColors.positive,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -208,10 +213,10 @@ class RebalanceSuccessPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.1),
+        color: PantherColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.45),
+          color: PantherColors.warning.withValues(alpha: 0.4),
         ),
       ),
       child: Row(
@@ -219,7 +224,7 @@ class RebalanceSuccessPage extends StatelessWidget {
         children: [
           const Icon(
             Icons.check_circle_outline,
-            color: Color(0xFFF0B100),
+            color: PantherColors.warning,
             size: 20,
           ),
           const SizedBox(width: 10),
@@ -230,7 +235,7 @@ class RebalanceSuccessPage extends StatelessWidget {
                 Text(
                   'AI Monitoring Active',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -239,7 +244,7 @@ class RebalanceSuccessPage extends StatelessWidget {
                 Text(
                   'Panther will continue monitoring this action and notify you of any important changes',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.45,
                   ),
@@ -275,19 +280,19 @@ class RebalanceSuccessPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Column(
         children: [
-          Icon(icon, color: const Color(0xFFCD853F), size: 20),
+          Icon(icon, color: PantherColors.brand, size: 20),
           const SizedBox(height: 6),
           Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: PantherColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -304,8 +309,8 @@ class RebalanceSuccessPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => context.go(RouteConstants.home.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -317,7 +322,7 @@ class RebalanceSuccessPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -328,13 +333,13 @@ class RebalanceSuccessPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -342,7 +347,7 @@ class RebalanceSuccessPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),

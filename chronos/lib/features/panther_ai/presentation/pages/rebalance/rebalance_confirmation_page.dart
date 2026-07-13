@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class RebalanceConfirmationPage extends StatelessWidget {
@@ -9,12 +10,13 @@ class RebalanceConfirmationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -76,7 +78,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Review before proceeding',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -92,9 +94,12 @@ class RebalanceConfirmationPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,12 +108,12 @@ class RebalanceConfirmationPage extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: const Color(0x33F0B100),
+              color: PantherColors.warning.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(18),
             ),
             child: const Icon(
               Icons.trending_up,
-              color: Color(0xFFF0B100),
+              color: PantherColors.warning,
               size: 18,
             ),
           ),
@@ -116,7 +121,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
           Text(
             'Auto-Rebalance Portfolio',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontWeight: FontWeight.w700,
               fontSize: 17,
             ),
@@ -125,7 +130,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
           Text(
             'Panther AI will automatically adjust your portfolio to match your target allocation',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: PantherColors.textSecondary,
               fontSize: 13,
               height: 1.5,
             ),
@@ -151,9 +156,12 @@ class RebalanceConfirmationPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -182,17 +190,16 @@ class RebalanceConfirmationPage extends StatelessWidget {
           width: 26,
           height: 26,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: PantherColors.brand.withValues(alpha: 0.12),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
           ),
           child: Center(
             child: Text(
               number,
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.black,
+                color: PantherColors.brand,
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -204,7 +211,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
             child: Text(
               text,
               style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: PantherColors.textSecondary,
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -231,24 +238,27 @@ class RebalanceConfirmationPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
               _buildImpactRow(
                 'Risk Impact',
                 'Risk Score: 45 → 38',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
               ),
 
-              _buildImpactRow('Fees', 'Estimated fees: \$12.50', Colors.white),
+              _buildImpactRow('Fees', 'Estimated fees: \$12.50', PantherColors.textPrimary),
 
               _buildImpactRow(
                 'Time',
                 'Execution time: ~2 minutes',
-                Colors.white,
+                PantherColors.textPrimary,
               ),
             ],
           ),
@@ -267,7 +277,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
           Text(
             label,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.55),
+              color: PantherColors.textSecondary,
               fontSize: 14,
             ),
           ),
@@ -288,10 +298,11 @@ class RebalanceConfirmationPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.08),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.4),
+          color: PantherColors.warning.withValues(alpha: 0.5),
+          width: 1.5,
         ),
       ),
       child: Row(
@@ -301,17 +312,17 @@ class RebalanceConfirmationPage extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: const Color(0xFFF0B100).withValues(alpha: 0.2),
+              color: PantherColors.warning.withValues(alpha: 0.15),
               shape: BoxShape.circle,
               border: Border.all(
-                color: const Color(0xFFF0B100).withValues(alpha: 0.5),
+                color: PantherColors.warning.withValues(alpha: 0.5),
               ),
             ),
             child: const Center(
               child: Text(
                 '!',
                 style: TextStyle(
-                  color: Color(0xFFF0B100),
+                  color: PantherColors.warning,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -326,7 +337,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'Important Notice',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -335,7 +346,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'This action will execute market orders. Review carefully before confirming.',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.45,
                   ),
@@ -352,9 +363,12 @@ class RebalanceConfirmationPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -363,14 +377,14 @@ class RebalanceConfirmationPage extends StatelessWidget {
             children: [
               const Icon(
                 Icons.shield_outlined,
-                color: Color(0xFFCD853F),
+                color: PantherColors.brand,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Text(
                 'AI Recommendation Strength',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                 ),
               ),
@@ -379,7 +393,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
           Text(
             '95%',
             style: TextStyles.bodyMedium.copyWith(
-              color: const Color(0xFF20C55D),
+              color: PantherColors.positive,
               fontSize: 15,
               fontWeight: FontWeight.w700,
             ),
@@ -399,8 +413,8 @@ class RebalanceConfirmationPage extends StatelessWidget {
               context.push(RouteConstants.rebalanceSuccess.toPath);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -412,7 +426,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -423,13 +437,13 @@ class RebalanceConfirmationPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => context.pop(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -437,7 +451,7 @@ class RebalanceConfirmationPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),

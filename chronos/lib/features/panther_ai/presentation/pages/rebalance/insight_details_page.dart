@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class InsightDetailsPage extends StatelessWidget {
@@ -9,12 +10,13 @@ class InsightDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -72,7 +74,7 @@ class InsightDetailsPage extends StatelessWidget {
               Text(
                 '87% confidence',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -88,9 +90,12 @@ class InsightDetailsPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +104,7 @@ class InsightDetailsPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFF0B100),
+              color: PantherColors.warning,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -122,7 +127,7 @@ class InsightDetailsPage extends StatelessWidget {
           Text(
             'Portfolio rebalance recommended',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 17,
             ),
@@ -131,7 +136,7 @@ class InsightDetailsPage extends StatelessWidget {
           Text(
             'Your BTC exposure is 22% above optimal allocation based on your risk profile and market conditions.',
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.65),
+              color: PantherColors.textSecondary,
               fontSize: 13,
               height: 1.5,
             ),
@@ -157,19 +162,19 @@ class InsightDetailsPage extends StatelessWidget {
         _buildMetricRow(
           'Current BTC allocation',
           '42%',
-          const Color(0xFFF0B100),
+          PantherColors.warning,
         ),
-        _buildMetricRow('Target BTC allocation', '20%', Colors.white),
+        _buildMetricRow('Target BTC allocation', '20%', PantherColors.textPrimary),
         _buildMetricRow(
           'Recommended action',
           'Reduce by 22%',
-          Colors.white,
+          PantherColors.textPrimary,
           valueBold: true,
         ),
         _buildMetricRow(
           'Estimated impact',
           '+\$2,340',
-          const Color(0xFF20C55D),
+          PantherColors.positive,
           isLast: true,
         ),
       ],
@@ -187,9 +192,9 @@ class InsightDetailsPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       margin: EdgeInsets.only(bottom: isLast ? 0 : 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,7 +202,7 @@ class InsightDetailsPage extends StatelessWidget {
           Text(
             label,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: PantherColors.textSecondary,
               fontSize: 14,
             ),
           ),
@@ -222,7 +227,7 @@ class InsightDetailsPage extends StatelessWidget {
           children: [
             const Icon(
               Icons.shield_outlined,
-              color: Color(0xFFCD853F),
+              color: PantherColors.brand,
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -240,9 +245,12 @@ class InsightDetailsPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -277,17 +285,17 @@ class InsightDetailsPage extends StatelessWidget {
           width: 22,
           height: 22,
           decoration: BoxDecoration(
-            color: const Color(0xFFCD853F).withValues(alpha: 0.15),
+            color: PantherColors.brand.withValues(alpha: 0.12),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.check, color: Color(0xFFCD853F), size: 14),
+          child: const Icon(Icons.check, color: PantherColors.brand, size: 14),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: PantherColors.textPrimary,
               fontSize: 13.5,
               height: 1.45,
             ),
@@ -315,7 +323,7 @@ class InsightDetailsPage extends StatelessWidget {
             Text(
               '87%',
               style: TextStyles.titleMedium.copyWith(
-                color: const Color(0xFF20C55D),
+                color: PantherColors.positive,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -328,15 +336,15 @@ class InsightDetailsPage extends StatelessWidget {
           child: LinearProgressIndicator(
             value: 0.87,
             minHeight: 7,
-            backgroundColor: Colors.white.withValues(alpha: 0.1),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF20C55D)),
+            backgroundColor: Colors.white.withValues(alpha: 0.25),
+            valueColor: const AlwaysStoppedAnimation<Color>(PantherColors.positive),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Based on 83 data points and historical patterns',
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.45),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 12,
           ),
         ),
@@ -354,8 +362,8 @@ class InsightDetailsPage extends StatelessWidget {
               context.push(RouteConstants.rebalanceConfirmation.toPath);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -367,7 +375,7 @@ class InsightDetailsPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -378,13 +386,13 @@ class InsightDetailsPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -392,7 +400,7 @@ class InsightDetailsPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
@@ -410,7 +418,7 @@ class InsightDetailsPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withValues(alpha: 0.55),
+                color: Colors.white.withValues(alpha: 0.85),
               ),
             ),
           ),

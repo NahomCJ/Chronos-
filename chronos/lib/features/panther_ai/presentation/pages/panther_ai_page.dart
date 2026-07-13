@@ -34,7 +34,7 @@ class _PantherAiPageState extends State<PantherAiPage>
   static const _textSecondary = Color(0xFF6B7080);
   static const _purple = Color(0xFF7C6EF0);
   static const _green = Color(0xFF22C55E);
-  static const _teal = Color(0xFF14B8A6);
+  static const _teal = Color(0xFF7C6EF0);
 
   static const _awareness = [
     'Tracking 4 spending patterns',

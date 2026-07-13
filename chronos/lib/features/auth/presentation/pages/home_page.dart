@@ -120,10 +120,6 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
               ],
             ),
           ),
-          floatingActionButton: Container(
-            margin: const EdgeInsets.only(bottom: 90),
-            child: const ChrisHomeFab(),
-          ),
         );
       },
     );
@@ -255,6 +251,8 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                           ),
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      ChrisHomeFab(size: 40 * scale),
                     ],
                   ),
                   SizedBox(height: 26 * scale),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/route_constants.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 
 class EthFlowTradingAssistantPage extends StatelessWidget {
   const EthFlowTradingAssistantPage({super.key});
@@ -9,12 +10,13 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -72,7 +74,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               Text(
                 'AI-powered signals',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -87,9 +89,12 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +105,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               Text(
                 'Trading Status',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -108,7 +113,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               Text(
                 'Active',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                 ),
@@ -118,16 +123,16 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+              color: PantherColors.positive.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(100),
               border: Border.all(
-                color: const Color(0xFF05DF72).withValues(alpha: 0.3),
+                color: PantherColors.positive.withValues(alpha: 0.3),
               ),
             ),
             child: Text(
               'Monitoring',
               style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFF05DF72),
+                color: PantherColors.positive,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -162,9 +167,12 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,12 +184,12 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+                  color: PantherColors.positive.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.trending_up,
-                  color: Color(0xFF05DF72),
+                  color: PantherColors.positive,
                   size: 20,
                 ),
               ),
@@ -196,7 +204,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                         Text(
                           'ETH Entry Signal',
                           style: TextStyles.bodyMedium.copyWith(
-                            color: Colors.white,
+                            color: PantherColors.textPrimary,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -204,7 +212,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                         Text(
                           '91% confident',
                           style: TextStyles.bodySmall.copyWith(
-                            color: const Color(0xFF05DF72),
+                            color: PantherColors.positive,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -215,7 +223,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                     Text(
                       'Strong buying momentum detected. Optimal entry zone: \$2,280 - \$2,320',
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.55),
+                        color: PantherColors.textSecondary,
                         fontSize: 12.5,
                         height: 1.4,
                       ),
@@ -227,14 +235,14 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                           child: _buildStatChip(
                             'Entry',
                             '\$2,300',
-                            Colors.white,
+                            PantherColors.textPrimary,
                           ),
                         ),
                         Expanded(
                           child: _buildStatChip(
                             'Target',
                             '\$2,580 (+12%)',
-                            const Color(0xFF05DF72),
+                            PantherColors.positive,
                           ),
                         ),
                       ],
@@ -246,14 +254,14 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                           child: _buildStatChip(
                             'Stop Loss',
                             '\$2,180 (-5%)',
-                            const Color(0xFFFF6467),
+                            PantherColors.negative,
                           ),
                         ),
                         Expanded(
                           child: _buildStatChip(
                             'Risk/Reward',
                             '1:2.4',
-                            const Color(0xFF05DF72),
+                            PantherColors.positive,
                           ),
                         ),
                       ],
@@ -273,8 +281,8 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                         RouteConstants.ethFlowSimulateRebalance.toPath,
                       ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: PantherColors.brand,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -285,7 +293,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                     'Simulate trade',
                     style: TextStyles.labelMedium.copyWith(
                       fontSize: 13,
-                      color: Colors.black,
+                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -296,15 +304,15 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: PantherColors.cardAlt,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: PantherColors.border,
                   ),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.visibility_outlined,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   size: 18,
                 ),
               ),
@@ -322,7 +330,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.45),
+            color: PantherColors.textSubtle,
             fontSize: 11,
           ),
         ),
@@ -343,9 +351,12 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,12 +368,12 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF6467).withValues(alpha: 0.15),
+                  color: PantherColors.negative.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.trending_down,
-                  color: Color(0xFFFF6467),
+                  color: PantherColors.negative,
                   size: 20,
                 ),
               ),
@@ -375,7 +386,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                       child: Text(
                         'High volatility warning',
                         style: TextStyles.bodyMedium.copyWith(
-                          color: Colors.white,
+                          color: PantherColors.textPrimary,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -388,13 +399,13 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF6467).withValues(alpha: 0.15),
+                        color: PantherColors.negative.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         'High Risk',
                         style: TextStyles.bodySmall.copyWith(
-                          color: const Color(0xFFFF6467),
+                          color: PantherColors.negative,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -411,7 +422,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
             child: Text(
               'BTC volatility spike detected. Avoid new positions for 24-48 hours.',
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.55),
+                color: PantherColors.textSecondary,
                 fontSize: 12.5,
                 height: 1.4,
               ),
@@ -425,20 +436,20 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
                   () =>
                       context.push(RouteConstants.fullPortfolioAnalysis.toPath),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: PantherColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                  side: const BorderSide(color: PantherColors.border),
                 ),
               ),
               child: Text(
                 'View Analysis',
                 style: TextStyles.labelMedium.copyWith(
                   fontSize: 14,
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -486,9 +497,9 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
   Widget _buildAnalysisChip(String symbol) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -496,7 +507,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           Text(
             symbol,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -505,7 +516,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           Text(
             'Analyze',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.4),
+              color: PantherColors.textSubtle,
               fontSize: 11,
             ),
           ),
@@ -522,8 +533,8 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -535,7 +546,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -546,13 +557,13 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -560,7 +571,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
