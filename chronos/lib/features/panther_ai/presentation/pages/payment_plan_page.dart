@@ -1,4 +1,5 @@
 import 'package:chronos_bank/core/router/route_constants.dart';
+import 'package:chronos_bank/core/theme/panther_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
@@ -9,12 +10,13 @@ class PaymentPlanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -74,7 +76,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'After Pay',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -89,9 +91,12 @@ class PaymentPlanPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,12 +107,12 @@ class PaymentPlanPage extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                  color: PantherColors.brand.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.credit_card,
-                  color: Color(0xFFAB7FF8),
+                  color: PantherColors.brand,
                   size: 22,
                 ),
               ),
@@ -116,7 +121,7 @@ class PaymentPlanPage extends StatelessWidget {
                 child: Text(
                   'Nike Air Max Sneakers',
                   style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -128,7 +133,7 @@ class PaymentPlanPage extends StatelessWidget {
           Text(
             '\$350.00',
             style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 30,
               fontWeight: FontWeight.w700,
             ),
@@ -136,7 +141,7 @@ class PaymentPlanPage extends StatelessWidget {
           Text(
             'Total purchase amount',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -147,14 +152,14 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'Payment progress',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
               Text(
                 '25%',
                 style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF05DF72),
+                  color: PantherColors.positive,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -167,9 +172,9 @@ class PaymentPlanPage extends StatelessWidget {
             child: LinearProgressIndicator(
               value: 0.25,
               minHeight: 7,
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              backgroundColor: PantherColors.cardAlt,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF05DF72),
+                PantherColors.positive,
               ),
             ),
           ),
@@ -183,7 +188,7 @@ class PaymentPlanPage extends StatelessWidget {
                   Text(
                     'Paid',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -191,7 +196,7 @@ class PaymentPlanPage extends StatelessWidget {
                   Text(
                     '\$87.50',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -204,7 +209,7 @@ class PaymentPlanPage extends StatelessWidget {
                   Text(
                     'Remaining',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -212,7 +217,7 @@ class PaymentPlanPage extends StatelessWidget {
                   Text(
                     '\$262.50',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -230,10 +235,11 @@ class PaymentPlanPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFF3B30).withValues(alpha: 0.12),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: const Color(0xFFFF3B30).withValues(alpha: 0.35),
+          color: PantherColors.negative.withValues(alpha: 0.4),
+          width: 1.5,
         ),
       ),
       child: Column(
@@ -245,17 +251,17 @@ class PaymentPlanPage extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF3B30).withValues(alpha: 0.2),
+                  color: PantherColors.negative.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFFFF3B30).withValues(alpha: 0.5),
+                    color: PantherColors.negative.withValues(alpha: 0.5),
                   ),
                 ),
                 child: const Center(
                   child: Text(
                     '!',
                     style: TextStyle(
-                      color: Color(0xFFFF3B30),
+                      color: PantherColors.negative,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -266,7 +272,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'Payment Due Soon',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -279,7 +285,7 @@ class PaymentPlanPage extends StatelessWidget {
             child: Text(
               '\$87.50 due in 3 days',
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.65),
+                color: PantherColors.textSecondary,
                 fontSize: 13,
               ),
             ),
@@ -290,7 +296,7 @@ class PaymentPlanPage extends StatelessWidget {
             child: Text(
               'Schedule payment →',
               style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFDC8F4A),
+                color: PantherColors.brand,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -316,9 +322,12 @@ class PaymentPlanPage extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -373,25 +382,25 @@ class PaymentPlanPage extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+            color: PantherColors.positive.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.check_circle_outline,
-            color: Color(0xFF05DF72),
+            color: PantherColors.positive,
             size: 18,
           ),
         );
         badge = Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           decoration: BoxDecoration(
-            color: const Color(0xFF05DF72).withValues(alpha: 0.15),
+            color: PantherColors.positive.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             'Paid',
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFF05DF72),
+              color: PantherColors.positive,
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -403,25 +412,25 @@ class PaymentPlanPage extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFFF0B100).withValues(alpha: 0.15),
+            color: PantherColors.warning.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.access_time,
-            color: Color(0xFFF0B100),
+            color: PantherColors.warning,
             size: 18,
           ),
         );
         badge = Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           decoration: BoxDecoration(
-            color: const Color(0xFFF0B100).withValues(alpha: 0.15),
+            color: PantherColors.warning.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             'Due',
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFF0B100),
+              color: PantherColors.warning,
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
@@ -433,12 +442,12 @@ class PaymentPlanPage extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.07),
+            color: PantherColors.cardAlt,
             shape: BoxShape.circle,
           ),
-          child: Icon(
+          child: const Icon(
             Icons.calendar_today_outlined,
-            color: Colors.white.withValues(alpha: 0.4),
+            color: PantherColors.textSubtle,
             size: 16,
           ),
         );
@@ -461,7 +470,7 @@ class PaymentPlanPage extends StatelessWidget {
                     Text(
                       label,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -469,7 +478,7 @@ class PaymentPlanPage extends StatelessWidget {
                     Text(
                       date,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: PantherColors.textSubtle,
                         fontSize: 12,
                       ),
                     ),
@@ -479,7 +488,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 amount,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -490,7 +499,7 @@ class PaymentPlanPage extends StatelessWidget {
         ),
         if (!isLast)
           Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
             indent: 16,
@@ -516,9 +525,12 @@ class PaymentPlanPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -529,17 +541,17 @@ class PaymentPlanPage extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0B100).withValues(alpha: 0.15),
+                      color: PantherColors.warning.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFF0B100).withValues(alpha: 0.4),
+                        color: PantherColors.warning.withValues(alpha: 0.4),
                       ),
                     ),
                     child: const Center(
                       child: Text(
                         '!',
                         style: TextStyle(
-                          color: Color(0xFFF0B100),
+                          color: PantherColors.warning,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
@@ -550,7 +562,7 @@ class PaymentPlanPage extends StatelessWidget {
                   Text(
                     'Payment Optimization',
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -561,7 +573,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'Consider paying off this balance early to save on potential fees and improve your credit utilization.',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: PantherColors.textSecondary,
                   fontSize: 13,
                   height: 1.45,
                 ),
@@ -572,7 +584,7 @@ class PaymentPlanPage extends StatelessWidget {
                 child: Text(
                   'See early payoff options →',
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFFDC8F4A),
+                    color: PantherColors.brand,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -594,8 +606,8 @@ class PaymentPlanPage extends StatelessWidget {
             onPressed:
                 () => context.push(RouteConstants.rebalanceConfirmation.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -607,7 +619,7 @@ class PaymentPlanPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -618,13 +630,13 @@ class PaymentPlanPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -632,7 +644,7 @@ class PaymentPlanPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
@@ -643,13 +655,13 @@ class PaymentPlanPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => context.push(RouteConstants.tickpayPaymentHistory.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -657,7 +669,7 @@ class PaymentPlanPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),

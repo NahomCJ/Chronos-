@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class SimulateRebalancePage extends StatefulWidget {
@@ -16,13 +17,14 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           // Background image
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           // Content
           SafeArea(
             child: Column(
@@ -83,7 +85,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               Text(
                 'AI-powered optimization',
                 style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFFA1A1A1),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               ),
@@ -97,9 +99,9 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
   Widget _buildPortfolioComparison() {
     return Row(
       children: [
-        Expanded(child: _buildPortfolioCard('Current', 62, Colors.red)),
+        Expanded(child: _buildPortfolioCard('Current', 62, PantherColors.negative)),
         const SizedBox(width: 12),
-        Expanded(child: _buildPortfolioCard('Target', 45, Colors.green)),
+        Expanded(child: _buildPortfolioCard('Target', 45, PantherColors.positive)),
       ],
     );
   }
@@ -108,16 +110,19 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(17),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         children: [
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 12,
             ),
           ),
@@ -130,10 +135,10 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               shape: BoxShape.circle,
               gradient: SweepGradient(
                 colors: [
-                  const Color(0xFFF0B100),
-                  const Color(0xFF00D4FF),
-                  const Color(0xFF05DF72),
-                  const Color(0xFFF0B100),
+                  PantherColors.warning,
+                  PantherColors.info,
+                  PantherColors.positive,
+                  PantherColors.warning,
                 ],
               ),
             ),
@@ -142,7 +147,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 width: 60,
                 height: 60,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF1A1A2E),
+                  color: Colors.white,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -181,8 +186,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Lower risk, higher stability',
           '8-12%',
           'Low',
-          const Color(0x3300C950),
-          const Color(0xFF05DF72),
+          PantherColors.positive.withValues(alpha: 0.15),
+          PantherColors.positive,
         ),
         const SizedBox(height: 7),
         _buildStrategyOption(
@@ -192,8 +197,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Balanced risk and growth',
           '12-18%',
           'Medium',
-          const Color(0x33F0B100),
-          const Color(0xFFFDC700),
+          PantherColors.warning.withValues(alpha: 0.15),
+          PantherColors.warning,
         ),
         const SizedBox(height: 7),
         _buildStrategyOption(
@@ -203,8 +208,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Higher risk, maximum growth',
           '18-25%',
           'High',
-          const Color(0x33FB2C36),
-          const Color(0xFFFF6467),
+          PantherColors.negative.withValues(alpha: 0.15),
+          PantherColors.negative,
         ),
       ],
     );
@@ -226,12 +231,15 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFFDC8F4A) : Colors.transparent,
-            width: isSelected ? 1 : 0.61,
+            color: isSelected ? PantherColors.brand : PantherColors.border,
+            width: isSelected ? 1.5 : 1,
           ),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
         ),
         child: Row(
           children: [
@@ -242,7 +250,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 color:
                     isSelected
                         ? badgeColor
-                        : Colors.white.withValues(alpha: 0.05),
+                        : PantherColors.cardAlt,
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Icon(
@@ -250,7 +258,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 color:
                     isSelected
                         ? badgeTextColor
-                        : Colors.white.withValues(alpha: 0.5),
+                        : PantherColors.textSubtle,
                 size: 18,
               ),
             ),
@@ -265,7 +273,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                       Text(
                         title,
                         style: TextStyles.bodyMedium.copyWith(
-                          color: Colors.white,
+                          color: PantherColors.textPrimary,
                           fontSize: 15,
                         ),
                       ),
@@ -292,7 +300,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                   Text(
                     description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFFA1A1A1),
+                      color: PantherColors.textSecondary,
                       fontSize: 11,
                     ),
                   ),
@@ -306,14 +314,14 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                             Text(
                               'Expected Return',
                               style: TextStyles.bodySmall.copyWith(
-                                color: const Color(0xFFA1A1A1),
+                                color: PantherColors.textSubtle,
                                 fontSize: 11,
                               ),
                             ),
                             Text(
                               expectedReturn,
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white,
+                                color: PantherColors.textPrimary,
                                 fontSize: 11,
                               ),
                             ),
@@ -327,14 +335,14 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                             Text(
                               'Volatility',
                               style: TextStyles.bodySmall.copyWith(
-                                color: const Color(0xFFA1A1A1),
+                                color: PantherColors.textSubtle,
                                 fontSize: 11,
                               ),
                             ),
                             Text(
                               volatility,
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white,
+                                color: PantherColors.textPrimary,
                                 fontSize: 11,
                               ),
                             ),
@@ -369,8 +377,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Sell BTC',
           '0.08 BTC',
           '\$3,406',
-          const Color(0x33FB2C36),
-          const Color(0xFFFF6467),
+          PantherColors.negative.withValues(alpha: 0.12),
+          PantherColors.negative,
         ),
         const SizedBox(height: 8),
         _buildTradeItem(
@@ -378,8 +386,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Buy ETH',
           '0.45 ETH',
           '\$1,105',
-          const Color(0x3300C950),
-          const Color(0xFF05DF72),
+          PantherColors.positive.withValues(alpha: 0.12),
+          PantherColors.positive,
         ),
         const SizedBox(height: 8),
         _buildTradeItem(
@@ -387,8 +395,8 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           'Buy USDC',
           '6,000 USDC',
           '\$6,000',
-          const Color(0x3300C950),
-          const Color(0xFF05DF72),
+          PantherColors.positive.withValues(alpha: 0.12),
+          PantherColors.positive,
         ),
       ],
     );
@@ -405,9 +413,9 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Row(
         children: [
@@ -431,14 +439,14 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                     Text(
                       title,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 13,
                       ),
                     ),
                     Text(
                       value,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 15,
                       ),
                     ),
@@ -448,7 +456,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 Text(
                   amount,
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFFA1A1A1),
+                    color: PantherColors.textSubtle,
                     fontSize: 11,
                   ),
                 ),
@@ -464,9 +472,12 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -474,7 +485,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           Text(
             'Estimated Impact',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 16,
             ),
           ),
@@ -482,14 +493,14 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           _buildImpactRow(
             'Risk Reduction',
             '62 → 45 (-27%)',
-            const Color(0xFF05DF72),
+            PantherColors.positive,
           ),
           const SizedBox(height: 11),
-          _buildImpactRow('Trading Fees', '~\$18.50', Colors.white),
+          _buildImpactRow('Trading Fees', '~\$18.50', PantherColors.textPrimary),
           const SizedBox(height: 11),
-          _buildImpactRow('Execution Time', '~3 minutes', Colors.white),
+          _buildImpactRow('Execution Time', '~3 minutes', PantherColors.textPrimary),
           const SizedBox(height: 11),
-          _buildImpactRow('AI Confidence', '89%', const Color(0xFF00D4FF)),
+          _buildImpactRow('AI Confidence', '89%', PantherColors.info),
         ],
       ),
     );
@@ -502,7 +513,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
         Text(
           label,
           style: TextStyles.bodyMedium.copyWith(
-            color: const Color(0xFFA1A1A1),
+            color: PantherColors.textSecondary,
             fontSize: 13,
           ),
         ),
@@ -521,16 +532,16 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: const Color(0x7FF0B100), width: 4),
+        border: Border.all(color: PantherColors.warning.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(
             Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
+            color: PantherColors.warning,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -541,7 +552,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 Text(
                   'Tax Considerations',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                   ),
                 ),
@@ -549,7 +560,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
                 Text(
                   'Selling assets may trigger capital gains taxes. Consult with a tax advisor before proceeding.',
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFFA1A1A1),
+                    color: PantherColors.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -571,12 +582,11 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               context.push(RouteConstants.rebalanceConfirmation.toPath);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB0B0B0),
+              backgroundColor: PantherColors.brand,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(color: Color(0x7F05DF72), width: 0.74),
               ),
               elevation: 0,
             ),
@@ -598,12 +608,12 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               // TODO: View full analysis
             },
             style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: BorderSide(
-                color: Colors.white.withValues(alpha: 0.5),
-                width: 0.74,
+              side: const BorderSide(
+                color: PantherColors.border,
+                width: 1,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -614,7 +624,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
@@ -625,12 +635,12 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
           child: OutlinedButton(
             onPressed: () => context.pop(),
             style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: BorderSide(
-                color: Colors.white.withValues(alpha: 0.5),
-                width: 0.74,
+              side: const BorderSide(
+                color: PantherColors.border,
+                width: 1,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -641,7 +651,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
