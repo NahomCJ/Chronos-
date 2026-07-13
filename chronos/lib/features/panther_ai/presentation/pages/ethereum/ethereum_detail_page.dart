@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class EthFlowDetailPage extends StatelessWidget {
@@ -9,12 +10,13 @@ class EthFlowDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -73,7 +75,7 @@ class EthFlowDetailPage extends StatelessWidget {
               Text(
                 'ETH',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -88,9 +90,12 @@ class EthFlowDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +103,7 @@ class EthFlowDetailPage extends StatelessWidget {
           Text(
             '\$2,456',
             style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 32,
               fontWeight: FontWeight.w700,
             ),
@@ -106,12 +111,12 @@ class EthFlowDetailPage extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.trending_up, color: Color(0xFF05DF72), size: 16),
+              const Icon(Icons.trending_up, color: PantherColors.positive, size: 16),
               const SizedBox(width: 4),
               Text(
                 '+3.2%',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF05DF72),
+                  color: PantherColors.positive,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -120,7 +125,7 @@ class EthFlowDetailPage extends StatelessWidget {
               Text(
                 '(+\$76)',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: PantherColors.textSecondary,
                   fontSize: 13,
                 ),
               ),
@@ -175,9 +180,9 @@ class EthFlowDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -186,7 +191,7 @@ class EthFlowDetailPage extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.45),
+              color: PantherColors.textSubtle,
               fontSize: 11,
             ),
           ),
@@ -195,7 +200,7 @@ class EthFlowDetailPage extends StatelessWidget {
             value,
             textAlign: TextAlign.center,
             style: TextStyles.bodyMedium.copyWith(
-              color: valueColor ?? Colors.white,
+              color: valueColor ?? PantherColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -220,9 +225,12 @@ class EthFlowDetailPage extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -248,14 +256,14 @@ class EthFlowDetailPage extends StatelessWidget {
               Text(
                 label,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: PantherColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
               Text(
                 value,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -265,7 +273,7 @@ class EthFlowDetailPage extends StatelessWidget {
         ),
         if (!isLast)
           Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
             indent: 16,
@@ -291,7 +299,7 @@ class EthFlowDetailPage extends StatelessWidget {
         _buildAnalysisCard(
           'Positive momentum with increasing trading volume',
           '88% confidence',
-          const Color(0xFF05DF72),
+          PantherColors.positive,
         ),
         const SizedBox(height: 10),
         _buildAnalysisCard(
@@ -311,9 +319,12 @@ class EthFlowDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +338,7 @@ class EthFlowDetailPage extends StatelessWidget {
                 Text(
                   description,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 13.5,
                     height: 1.4,
                   ),
@@ -353,9 +364,9 @@ class EthFlowDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.6),
+        color: Colors.white.withValues(alpha: 0.92),
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+          top: BorderSide(color: PantherColors.border),
         ),
       ),
       child: Column(
@@ -367,8 +378,8 @@ class EthFlowDetailPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: PantherColors.brand,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
@@ -381,7 +392,7 @@ class EthFlowDetailPage extends StatelessWidget {
                       const Icon(
                         Icons.south_west,
                         size: 16,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -389,7 +400,7 @@ class EthFlowDetailPage extends StatelessWidget {
                         style: TextStyles.labelLarge.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -401,15 +412,13 @@ class EthFlowDetailPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.15),
-                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.white,
+                    foregroundColor: PantherColors.textPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
-                      side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.15),
-                      ),
+                      side: const BorderSide(color: PantherColors.border),
                     ),
                   ),
                   child: Row(
@@ -418,7 +427,7 @@ class EthFlowDetailPage extends StatelessWidget {
                       const Icon(
                         Icons.north_east,
                         size: 16,
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -426,7 +435,7 @@ class EthFlowDetailPage extends StatelessWidget {
                         style: TextStyles.labelLarge.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: PantherColors.textPrimary,
                         ),
                       ),
                     ],
@@ -443,13 +452,13 @@ class EthFlowDetailPage extends StatelessWidget {
                 context.push(RouteConstants.paymentPlan.toPath);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: PantherColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                  side: const BorderSide(color: PantherColors.border),
                 ),
               ),
               child: Text(
@@ -457,7 +466,7 @@ class EthFlowDetailPage extends StatelessWidget {
                 style: TextStyles.labelLarge.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                 ),
               ),
             ),
@@ -473,7 +482,7 @@ class _FlatLineChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = const Color(0xFF05DF72)
+          ..color = PantherColors.positive
           ..strokeWidth = 2
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round;
@@ -484,8 +493,8 @@ class _FlatLineChartPainter extends CustomPainter {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF05DF72).withValues(alpha: 0.2),
-              const Color(0xFF05DF72).withValues(alpha: 0.0),
+              PantherColors.positive.withValues(alpha: 0.2),
+              PantherColors.positive.withValues(alpha: 0.0),
             ],
           ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
           ..style = PaintingStyle.fill;

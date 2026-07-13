@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class EthFlowRebalanceConfirmationPage extends StatelessWidget {
@@ -9,13 +10,14 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           // Background image
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           // Content
           SafeArea(
             child: Column(
@@ -76,7 +78,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Review before proceeding',
                 style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFFA1A1A1),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               ),
@@ -91,9 +93,12 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         children: [
@@ -101,12 +106,12 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: const Color(0x33F0B100),
+              color: PantherColors.brand.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(13),
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: Color(0xFFF0B100),
+              color: PantherColors.brand,
               size: 13,
             ),
           ),
@@ -118,7 +123,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'Auto-Rebalance Portfolio',
                   style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 18,
                   ),
                 ),
@@ -126,7 +131,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'Panther AI will automatically adjust your portfolio to match your target allocation',
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFFA1A1A1),
+                    color: PantherColors.textSecondary,
                     fontSize: 14,
                   ),
                 ),
@@ -153,9 +158,12 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(17),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -184,15 +192,16 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: const Color(0xFFC29D7B),
+            color: PantherColors.brand.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(
             child: Text(
               number,
               style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFF8C630),
+                color: PantherColors.brand,
                 fontSize: 12,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -202,7 +211,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
           child: Text(
             text,
             style: TextStyles.bodyMedium.copyWith(
-              color: const Color(0xFFA1A1A1),
+              color: PantherColors.textSecondary,
               fontSize: 14,
             ),
           ),
@@ -226,24 +235,27 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(17),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
               _buildImpactRow(
                 'Risk Impact',
                 'Risk Score: 45 → 38',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
               ),
               const SizedBox(height: 12),
-              _buildImpactRow('Fees', 'Estimated fees: \$12.50', Colors.white),
+              _buildImpactRow('Fees', 'Estimated fees: \$12.50', PantherColors.textPrimary),
               const SizedBox(height: 12),
               _buildImpactRow(
                 'Time',
                 'Execution time: ~2 minutes',
-                Colors.white,
+                PantherColors.textPrimary,
               ),
             ],
           ),
@@ -259,7 +271,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodyMedium.copyWith(
-            color: const Color(0xFFA1A1A1),
+            color: PantherColors.textSecondary,
             fontSize: 14,
           ),
         ),
@@ -278,16 +290,16 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0x7FF0B100), width: 3),
+        border: Border.all(color: PantherColors.warning.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(
             Icons.warning_amber_rounded,
-            color: Color(0xFFF0B100),
+            color: PantherColors.warning,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -298,7 +310,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'Important Notice',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                   ),
                 ),
@@ -306,7 +318,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
                 Text(
                   'This action will execute market orders. Review carefully before confirming.',
                   style: TextStyles.bodySmall.copyWith(
-                    color: const Color(0xFFA1A1A1),
+                    color: PantherColors.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -322,9 +334,12 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,14 +348,14 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
             children: [
               const Icon(
                 Icons.auto_awesome,
-                color: Color(0xFFCD853F),
+                color: PantherColors.brand,
                 size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 'AI Recommendation Strength',
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                 ),
               ),
@@ -349,7 +364,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
           Text(
             '95%',
             style: TextStyles.bodyMedium.copyWith(
-              color: const Color(0xFF20C55D),
+              color: PantherColors.positive,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -369,12 +384,11 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               context.push(RouteConstants.ethFlowRebalanceSuccess.toPath);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB0B0B0),
+              backgroundColor: PantherColors.brand,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(color: Color(0x7F05DF72), width: 0.74),
               ),
               elevation: 0,
             ),
@@ -394,12 +408,12 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () => context.pop(),
             style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.1),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: BorderSide(
-                color: Colors.white.withValues(alpha: 0.5),
-                width: 0.74,
+              side: const BorderSide(
+                color: PantherColors.border,
+                width: 1,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -410,7 +424,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),

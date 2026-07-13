@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class EthFlowSimulateRebalancePage extends StatefulWidget {
@@ -18,12 +19,13 @@ class _EthFlowSimulateRebalancePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -85,7 +87,7 @@ class _EthFlowSimulateRebalancePageState
               Text(
                 'AI-powered optimization',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -103,7 +105,7 @@ class _EthFlowSimulateRebalancePageState
           child: _buildRiskCard(
             'Current',
             'Risk Score: 82',
-            const Color(0xFFFF6467),
+            PantherColors.negative,
           ),
         ),
         const SizedBox(width: 12),
@@ -111,7 +113,7 @@ class _EthFlowSimulateRebalancePageState
           child: _buildRiskCard(
             'Target',
             'Risk Score: 45',
-            const Color(0xFF05DF72),
+            PantherColors.positive,
           ),
         ),
       ],
@@ -122,9 +124,12 @@ class _EthFlowSimulateRebalancePageState
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +137,7 @@ class _EthFlowSimulateRebalancePageState
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: PantherColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -170,8 +175,8 @@ class _EthFlowSimulateRebalancePageState
           'Lower risk, higher stability',
           '8-12%',
           'Low',
-          const Color(0xFF05DF72),
-          const Color(0xFF05DF72).withValues(alpha: 0.15),
+          PantherColors.positive,
+          PantherColors.positive.withValues(alpha: 0.15),
         ),
         const SizedBox(height: 8),
         _buildStrategyCard(
@@ -181,8 +186,8 @@ class _EthFlowSimulateRebalancePageState
           'Balanced risk and growth',
           '12-18%',
           'Medium',
-          const Color(0xFFF0B100),
-          const Color(0xFFF0B100).withValues(alpha: 0.15),
+          PantherColors.warning,
+          PantherColors.warning.withValues(alpha: 0.15),
         ),
         const SizedBox(height: 8),
         _buildStrategyCard(
@@ -192,8 +197,8 @@ class _EthFlowSimulateRebalancePageState
           'Higher risk, maximum growth',
           '18-25%',
           'High',
-          const Color(0xFFFF6467),
-          const Color(0xFFFF6467).withValues(alpha: 0.15),
+          PantherColors.negative,
+          PantherColors.negative.withValues(alpha: 0.15),
         ),
       ],
     );
@@ -215,15 +220,18 @@ class _EthFlowSimulateRebalancePageState
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color:
                 isSelected
-                    ? const Color(0xFFDC8F4A)
-                    : Colors.white.withValues(alpha: 0.08),
-            width: isSelected ? 1.2 : 0.6,
+                    ? PantherColors.brand
+                    : PantherColors.border,
+            width: isSelected ? 1.5 : 1,
           ),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +241,7 @@ class _EthFlowSimulateRebalancePageState
               height: 36,
               decoration: BoxDecoration(
                 color:
-                    isSelected ? iconBg : Colors.white.withValues(alpha: 0.06),
+                    isSelected ? iconBg : PantherColors.cardAlt,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -241,7 +249,7 @@ class _EthFlowSimulateRebalancePageState
                 color:
                     isSelected
                         ? accentColor
-                        : Colors.white.withValues(alpha: 0.4),
+                        : PantherColors.textSubtle,
                 size: 18,
               ),
             ),
@@ -256,7 +264,7 @@ class _EthFlowSimulateRebalancePageState
                       Text(
                         title,
                         style: TextStyles.bodyMedium.copyWith(
-                          color: Colors.white,
+                          color: PantherColors.textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -285,7 +293,7 @@ class _EthFlowSimulateRebalancePageState
                   Text(
                     description,
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -299,14 +307,14 @@ class _EthFlowSimulateRebalancePageState
                             Text(
                               'Expected Return',
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white.withValues(alpha: 0.45),
+                                color: PantherColors.textSubtle,
                                 fontSize: 11,
                               ),
                             ),
                             Text(
                               expectedReturn,
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white,
+                                color: PantherColors.textPrimary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -321,14 +329,14 @@ class _EthFlowSimulateRebalancePageState
                             Text(
                               'Volatility',
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white.withValues(alpha: 0.45),
+                                color: PantherColors.textSubtle,
                                 fontSize: 11,
                               ),
                             ),
                             Text(
                               volatility,
                               style: TextStyles.bodySmall.copyWith(
-                                color: Colors.white,
+                                color: PantherColors.textPrimary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -362,9 +370,12 @@ class _EthFlowSimulateRebalancePageState
         const SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -373,8 +384,8 @@ class _EthFlowSimulateRebalancePageState
                 'Sell BTC',
                 '0.08 BTC',
                 '\$3,406',
-                const Color(0xFFFF6467),
-                const Color(0xFFFF6467).withValues(alpha: 0.15),
+                PantherColors.negative,
+                PantherColors.negative.withValues(alpha: 0.12),
                 false,
               ),
               _buildTradeRow(
@@ -382,8 +393,8 @@ class _EthFlowSimulateRebalancePageState
                 'Buy ETH',
                 '0.45 ETH',
                 '\$1,105',
-                const Color(0xFF05DF72),
-                const Color(0xFF05DF72).withValues(alpha: 0.15),
+                PantherColors.positive,
+                PantherColors.positive.withValues(alpha: 0.12),
                 false,
               ),
               _buildTradeRow(
@@ -391,8 +402,8 @@ class _EthFlowSimulateRebalancePageState
                 'Buy USDC',
                 '6,000 USDC',
                 '\$6,000',
-                const Color(0xFF05DF72),
-                const Color(0xFF05DF72).withValues(alpha: 0.15),
+                PantherColors.positive,
+                PantherColors.positive.withValues(alpha: 0.12),
                 true,
               ),
             ],
@@ -434,7 +445,7 @@ class _EthFlowSimulateRebalancePageState
                     Text(
                       title,
                       style: TextStyles.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -442,7 +453,7 @@ class _EthFlowSimulateRebalancePageState
                     Text(
                       amount,
                       style: TextStyles.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: PantherColors.textSubtle,
                         fontSize: 12,
                       ),
                     ),
@@ -452,7 +463,7 @@ class _EthFlowSimulateRebalancePageState
               Text(
                 value,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -462,7 +473,7 @@ class _EthFlowSimulateRebalancePageState
         ),
         if (!isLast)
           Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
             indent: 14,
@@ -476,9 +487,12 @@ class _EthFlowSimulateRebalancePageState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,7 +500,7 @@ class _EthFlowSimulateRebalancePageState
           Text(
             'Estimated Impact',
             style: TextStyles.titleMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
@@ -495,15 +509,15 @@ class _EthFlowSimulateRebalancePageState
           _buildImpactRow(
             'Risk Reduction',
             '62 → 45 (-27%)',
-            const Color(0xFF05DF72),
+            PantherColors.positive,
             false,
           ),
-          _buildImpactRow('Trading Fees', '~\$18.50', Colors.white, false),
-          _buildImpactRow('Execution Time', '~3 minutes', Colors.white, false),
+          _buildImpactRow('Trading Fees', '~\$18.50', PantherColors.textPrimary, false),
+          _buildImpactRow('Execution Time', '~3 minutes', PantherColors.textPrimary, false),
           _buildImpactRow(
             'AI Confidence',
             '89%',
-            const Color(0xFF00D4FF),
+            PantherColors.info,
             true,
           ),
         ],
@@ -527,7 +541,7 @@ class _EthFlowSimulateRebalancePageState
               Text(
                 label,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white.withValues(alpha: 0.55),
+                  color: PantherColors.textSecondary,
                   fontSize: 13.5,
                 ),
               ),
@@ -544,7 +558,7 @@ class _EthFlowSimulateRebalancePageState
         ),
         if (!isLast)
           Divider(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: PantherColors.border,
             height: 1,
             thickness: 0.5,
           ),
@@ -556,10 +570,10 @@ class _EthFlowSimulateRebalancePageState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0B100).withValues(alpha: 0.08),
+        color: PantherColors.warning.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: const Color(0xFFF0B100).withValues(alpha: 0.4),
+          color: PantherColors.warning.withValues(alpha: 0.4),
         ),
       ),
       child: Row(
@@ -569,17 +583,17 @@ class _EthFlowSimulateRebalancePageState
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: const Color(0xFFF0B100).withValues(alpha: 0.2),
+              color: PantherColors.warning.withValues(alpha: 0.2),
               shape: BoxShape.circle,
               border: Border.all(
-                color: const Color(0xFFF0B100).withValues(alpha: 0.5),
+                color: PantherColors.warning.withValues(alpha: 0.5),
               ),
             ),
             child: const Center(
               child: Text(
                 '!',
                 style: TextStyle(
-                  color: Color(0xFFF0B100),
+                  color: PantherColors.warning,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -594,7 +608,7 @@ class _EthFlowSimulateRebalancePageState
                 Text(
                   'Tax Considerations',
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -603,7 +617,7 @@ class _EthFlowSimulateRebalancePageState
                 Text(
                   'Selling assets may trigger capital gains taxes. Consult with a tax advisor before proceeding.',
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.45,
                   ),
@@ -626,8 +640,8 @@ class _EthFlowSimulateRebalancePageState
                 () =>
                     context.push(RouteConstants.ethFlowRebalanceSuccess.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -639,7 +653,7 @@ class _EthFlowSimulateRebalancePageState
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -651,13 +665,13 @@ class _EthFlowSimulateRebalancePageState
             onPressed:
                 () => context.push(RouteConstants.fullPortfolioAnalysis.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -665,7 +679,7 @@ class _EthFlowSimulateRebalancePageState
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
@@ -676,13 +690,13 @@ class _EthFlowSimulateRebalancePageState
           child: ElevatedButton(
             onPressed: () => context.pop(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -690,7 +704,7 @@ class _EthFlowSimulateRebalancePageState
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
