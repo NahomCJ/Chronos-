@@ -368,11 +368,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
 }
 
 // ── Strands Painter ────────────────────────────────────────────────────────────
-// Orbiting rings around a solid black disc — each strand is an ellipse that
-// squashes from edge-on (a thin vertical line) to face-on (a wide oval) and
-// back as it rotates, the way a ring around a spinning globe looks from the
-// side. Phase-staggered per strand so several rings cross mid-rotation at
-// any given moment.
+// Port of the Strands WebGL shader to Flutter CustomPainter.
+// Matches the shader math: uv-space sinusoidal strands with per-pixel glow.
 class _StrandsPainter extends CustomPainter {
   final double time;
   final double pulseValue;
@@ -385,8 +382,14 @@ class _StrandsPainter extends CustomPainter {
   });
   static const _colors = [Color(0xFF7C3AED), Color(0xFF06B6D4)];
   static const _count = 4;
+  static const _amplitude = 1.9;
+  static const _waviness = 2.0;
   static const _thickness = 1.1;
-  static const _ringRadius = 0.62;
+  static const _glow = 2.1;
+  static const _taper = 0.5;
+  static const _spread = 1.05;
+  static const _scale = 1.5;
+  static const _intensity = 0.6;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -398,48 +401,64 @@ class _StrandsPainter extends CustomPainter {
     final circleRect = Rect.fromCircle(center: Offset(cx, cy), radius: r);
     canvas.clipPath(Path()..addOval(circleRect));
 
-    // Solid backdrop — previously the button had no fill at all, so the
-    // page behind it (a light, near-white background) showed through the
-    // gaps between the strands.
-    canvas.drawCircle(Offset(cx, cy), r, Paint()..color = Colors.black);
-
+    // tt mirrors `float tt = uTime * uSpeed` in the shader.
     final tt = time * speed;
-    final vRadius = r * _ringRadius;
 
     for (int i = 0; i < _count; i++) {
       final fi = i.toDouble();
-      // Evenly stagger each ring's rotation phase around a full turn.
-      final ph = fi * math.pi / _count;
-      final rotation = tt + ph;
+      // Strand-specific parameters — same formulas as the fragment shader.
+      final ph = fi * 1.7 * _spread;
+      final freq = (2.0 + fi * 0.35) * _waviness;
+      final spd = 1.4 + fi * 1.2;
       final color = _colors[i % _colors.length];
 
-      // Horizontal squash simulates the ring rotating in and out of view —
-      // 0 = edge-on, vRadius = face-on — while it keeps sweeping in one
-      // direction so it always reads as a continuous circular rotation.
-      final hRadius = vRadius * math.cos(rotation).abs();
-
       final path = Path();
+
       for (int step = 0; step <= 80; step++) {
-        final theta = step / 80 * 2 * math.pi;
-        final x = cx + hRadius * math.cos(theta);
-        final y = cy + vRadius * math.sin(theta);
+        final t = step / 80;
+        // uvx: normalised by resolution.y then divided by scale, same as shader.
+        final uvx = (t - 0.5) / _scale;
+
+        // Envelope: cos-based taper that fades strands toward the horizontal edges.
+        final envRaw = math.cos(uvx * math.pi * 1.3);
+        final env = envRaw > 0 ? math.pow(envRaw, _taper).toDouble() : 0.0;
+
+        // Two-term sine sum — matches FRAG shader `w` calculation.
+        final w = math.sin(uvx * freq + tt * spd + ph) * 0.60
+                + math.sin(uvx * freq * 1.1 - tt * spd * 0.7 + ph * 1.7) * 0.40;
+
+        final amp = (0.1 + 0.02 * _intensity) * env * _amplitude;
+
+        // Screen mapping: x spans full canvas; y displacement scales with
+        // size.height * scale (mirroring how the shader maps uv back to pixels).
+        final screenX = t * size.width;
+        final screenY = cy + w * amp * size.height * _scale;
+
         if (step == 0) {
-          path.moveTo(x, y);
+          path.moveTo(screenX, screenY);
         } else {
-          path.lineTo(x, y);
+          path.lineTo(screenX, screenY);
         }
       }
-      path.close();
 
       final baseStroke = _thickness * r * 0.07;
       final pulseBoost = 1.0 + pulseValue * 0.5;
 
-      // Soft halo → bright core. No heavy outer bloom — that's what read
-      // as a shadow smeared across the top and bottom of the button.
+      // Three-layer glow: outer bloom → inner halo → bright core.
       canvas.drawPath(
         path,
         Paint()
-          ..color = color.withValues(alpha: 0.55 * pulseBoost)
+          ..color = color.withValues(alpha: 0.22)
+          ..strokeWidth = baseStroke * 7 * _glow * pulseBoost
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
+
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = color.withValues(alpha: 0.60)
           ..strokeWidth = baseStroke * 2.5
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
