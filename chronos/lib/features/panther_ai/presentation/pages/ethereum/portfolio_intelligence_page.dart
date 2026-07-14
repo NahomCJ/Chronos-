@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
 import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
+import '../../../../../core/widgets/crypto_coin_icon.dart';
 
 class EthFlowPortfolioIntelligencePage extends StatelessWidget {
   const EthFlowPortfolioIntelligencePage({super.key});
@@ -604,9 +605,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '0.24 BTC',
                 '\$25,702',
                 '+8.2%',
-                const Color(0xFFDC8F4A),
-                const Color(0x1ADC8F4A),
-                '₿',
+                'BTC',
                 PantherColors.positive,
                 false,
               ),
@@ -615,9 +614,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '3.44 ETH',
                 '\$8,448',
                 '+12.7%',
-                PantherColors.brand,
-                PantherColors.brandLight,
-                'Ξ',
+                'ETH',
                 PantherColors.positive,
                 false,
               ),
@@ -626,9 +623,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
                 '11,740 USDC',
                 '\$11,740',
                 '+0.0%',
-                PantherColors.info,
-                const Color(0x1A3B82F6),
-                'S',
+                'USDC',
                 PantherColors.textSubtle,
                 true,
               ),
@@ -644,9 +639,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
     String amount,
     String value,
     String change,
-    Color iconColor,
-    Color iconBg,
-    String iconText,
+    String symbol,
     Color changeColor,
     bool isLast,
   ) {
@@ -656,24 +649,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    iconText,
-                    style: TextStyle(
-                      color: iconColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
+              CryptoCoinIcon(symbol: symbol, size: 38),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

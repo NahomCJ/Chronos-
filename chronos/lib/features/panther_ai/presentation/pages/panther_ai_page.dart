@@ -751,7 +751,7 @@ class _PantherAiPageState extends State<PantherAiPage>
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
           child: Text(
-            'Intelligence',
+            'Your Money',
             style: TextStyles.titleMedium.copyWith(
               color: _textPrimary,
               fontSize: 17,

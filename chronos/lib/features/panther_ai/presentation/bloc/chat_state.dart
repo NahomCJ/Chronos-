@@ -1,3 +1,5 @@
+import 'chat_visual.dart';
+
 abstract class ChatState {
   const ChatState();
 }
@@ -13,7 +15,8 @@ class ChatThinking extends ChatState {
 class ChatReplied extends ChatState {
   final String reply;
   final String domain;
-  const ChatReplied({required this.reply, required this.domain});
+  final ChatVisual? visual;
+  const ChatReplied({required this.reply, required this.domain, this.visual});
 }
 
 class ChatError extends ChatState {
