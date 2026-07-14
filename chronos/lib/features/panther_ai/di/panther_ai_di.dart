@@ -40,7 +40,12 @@ void initPantherAiDi(GetIt sl) {
         generateAlerts: sl(),
         dismissAlert: sl(),
       ));
-  sl.registerFactory(() => ChatBloc(sendMessage: sl()));
+  sl.registerFactory(() => ChatBloc(
+        sendMessage: sl(),
+        getNetWorthDashboard: sl(),
+        getSpendingSummary: sl(),
+        searchProducts: sl(),
+      ));
   sl.registerFactory(() => AffordabilityBloc(checkAffordability: sl()));
   sl.registerFactory(() => SpendingBloc(getSpendingSummary: sl()));
   sl.registerFactory(() => MarketplaceBloc(searchProducts: sl()));

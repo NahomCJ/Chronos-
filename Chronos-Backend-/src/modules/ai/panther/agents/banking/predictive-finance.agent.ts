@@ -30,7 +30,7 @@ Focus on PREDICTION tasks: future balance projection, cashflow forecast, overdra
   return callLLM({
     systemPrompt,
     messages: [...history, { role: "user", content: prompt }],
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     maxTokens: 1024,
   });
 }

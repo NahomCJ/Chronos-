@@ -7,7 +7,9 @@ import '../../../../core/theme/text_theme.dart';
 import '../bloc/chat_bloc.dart';
 import '../bloc/chat_event.dart';
 import '../bloc/chat_state.dart';
+import '../bloc/chat_visual.dart';
 import '../widgets/chris_voice_orb.dart';
+import '../widgets/panther_ring_chart.dart';
 
 class PantherAiChatPage extends StatefulWidget {
   const PantherAiChatPage({super.key});
@@ -42,10 +44,10 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   bool _isListening = false;
 
   final List<String> _suggestions = [
-    'Show my balance',
-    'Why is my spending high?',
-    'Rebalance portfolio',
-    'Credit score tips',
+    'Show my net worth',
+    'Where did my money go this month?',
+    "What's in my portfolio?",
+    'Should I buy a MacBook?',
   ];
 
   static const _bg = Color(0xFFF5F6FA);
@@ -197,6 +199,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
                 text: state.reply,
                 isUser: false,
                 time: _currentTime(),
+                visual: state.visual,
               ));
             });
             _scrollToBottom();
@@ -390,6 +393,10 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
                 ),
               ),
             ),
+            if (msg.visual != null) ...[
+              const SizedBox(height: 8),
+              _buildVisual(msg.visual!),
+            ],
             if (msg.time.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(
@@ -402,6 +409,80 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildVisual(ChatVisual visual) {
+    final width = MediaQuery.of(context).size.width * 0.78;
+    if (visual.isProducts) {
+      return SizedBox(
+        width: width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 2, bottom: 8),
+              child: Text(
+                visual.title,
+                style: TextStyles.bodySmall.copyWith(
+                  color: _textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 168,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: visual.products.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, i) => _ProductVisualCard(product: visual.products[i]),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      width: width,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            visual.title,
+            style: TextStyles.bodySmall.copyWith(
+              color: _textPrimary,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 14),
+          PantherRingChart(
+            size: 120,
+            centerLabel: visual.centerLabel ?? '',
+            centerSubLabel: visual.centerSubLabel ?? '',
+            slices: visual.slices
+                .map((s) => PantherRingSlice(label: s.label, value: s.value, color: s.color))
+                .toList(),
+          ),
+        ],
       ),
     );
   }
@@ -871,9 +952,106 @@ class _ChatMessage {
   final String text;
   final bool isUser;
   final String time;
+  final ChatVisual? visual;
   const _ChatMessage({
     required this.text,
     required this.isUser,
     required this.time,
+    this.visual,
   });
+}
+
+class _ProductVisualCard extends StatelessWidget {
+  final ChatProductCard product;
+  const _ProductVisualCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 140,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: SizedBox(
+              height: 88,
+              width: double.infinity,
+              child: product.imageUrl.isNotEmpty
+                  ? Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: const Color(0xFFF3F4F6),
+                        child: const Icon(Icons.shopping_bag_outlined,
+                            color: Color(0xFF9CA3AF), size: 28),
+                      ),
+                    )
+                  : Container(
+                      color: const Color(0xFFF3F4F6),
+                      child: const Icon(Icons.shopping_bag_outlined,
+                          color: Color(0xFF9CA3AF), size: 28),
+                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF1A1A2E),
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${product.price.toStringAsFixed(0)} · ${product.vendor}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Color(0xFF6B7080), fontSize: 10),
+                ),
+                if (product.bnplEligible) ...[
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF22C55E).withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'BNPL eligible',
+                      style: TextStyle(
+                        color: Color(0xFF22C55E),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

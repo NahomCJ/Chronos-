@@ -65,7 +65,7 @@ Provide personalized, actionable guidance for this life domain. Connect their fi
   return callLLM({
     systemPrompt,
     messages: [...history, { role: "user", content: prompt }],
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     maxTokens: 1024,
   });
 }

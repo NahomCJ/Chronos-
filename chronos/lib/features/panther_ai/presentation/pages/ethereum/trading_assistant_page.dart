@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/router/route_constants.dart';
 import '../../../../../core/theme/text_theme.dart';
 import '../../../../../core/theme/panther_colors.dart';
+import '../../../../../core/widgets/crypto_coin_icon.dart';
 
 class EthFlowTradingAssistantPage extends StatelessWidget {
   const EthFlowTradingAssistantPage({super.key});
@@ -475,7 +476,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
-          childAspectRatio: 1.6,
+          childAspectRatio: 1.3,
           children:
               [
                 'BTC',
@@ -500,6 +501,8 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          CryptoCoinIcon(symbol: symbol, size: 26),
+          const SizedBox(height: 5),
           Text(
             symbol,
             style: TextStyles.bodyMedium.copyWith(

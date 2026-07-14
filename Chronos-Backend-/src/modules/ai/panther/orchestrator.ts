@@ -100,7 +100,7 @@ Provide a unified answer that draws on all relevant domains (banking, TickPay/BN
       rawReply = await callLLM({
         systemPrompt,
         messages: [...history, { role: "user", content: unifiedPrompt }],
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-5",
         maxTokens: 1200,
       });
       results.push({ domain: "UNIFIED", content: rawReply });
