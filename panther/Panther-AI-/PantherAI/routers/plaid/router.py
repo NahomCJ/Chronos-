@@ -132,13 +132,18 @@ def exchange_token(request: ExchangeTokenRequest):
         access_token = exchange_response["access_token"]
         item_id      = exchange_response["item_id"]
 
-        # Upsert into Supabase (replace if user already has a token)
+        # Upsert into Supabase (replace if user already has a token).
+        # authorized_products records what this Link token actually requested
+        # (see PLAID_PRODUCTS) — services/investments and services/liabilities
+        # read this column to decide whether a real Plaid fetch is authorized
+        # for this user, vs. falling back to demo fixtures.
         _get_supabase().table("plaid_tokens").upsert({
-            "user_id":      request.user_id,
-            "access_token": access_token,
-            "item_id":      item_id,
-            "institution":  request.institution,
-            "updated_at":   datetime.utcnow().isoformat(),
+            "user_id":            request.user_id,
+            "access_token":       access_token,
+            "item_id":            item_id,
+            "institution":        request.institution,
+            "authorized_products": PLAID_PRODUCTS,
+            "updated_at":         datetime.utcnow().isoformat(),
         }, on_conflict="user_id").execute()
 
         return ExchangeTokenResponse(

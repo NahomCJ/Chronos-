@@ -67,6 +67,12 @@ def get_plaid_client() -> Any:
 
 # ---------------------------------------------------------------------------
 # Constants used across Plaid modules
+#
+# "investments" and "liabilities" were added so the Link token actually
+# requests entitlement for the Investments Holdings and Liabilities products —
+# services/investments/ingestion.py and services/liabilities/ingestion.py call
+# investments_holdings_get/liabilities_get against whatever access token this
+# Link flow produces, so the token needs to carry that product entitlement.
 # ---------------------------------------------------------------------------
-PLAID_PRODUCTS = ["transactions"]
+PLAID_PRODUCTS = ["transactions", "investments", "liabilities"]
 PLAID_COUNTRY_CODES = ["US"]
