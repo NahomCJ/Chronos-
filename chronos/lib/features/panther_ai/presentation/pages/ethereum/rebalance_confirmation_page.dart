@@ -45,13 +45,17 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: PantherColors.border)),
+      ),
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Column(
@@ -60,7 +64,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Confirm Action',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
                 ),
@@ -68,7 +72,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Review before proceeding',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -140,7 +144,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Text(
           'What will happen',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 18,
           ),
         ),
@@ -217,7 +221,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Text(
           'Impact Summary',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 18,
           ),
         ),
