@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayLinkWalletsPage extends StatefulWidget {
   const TickPayLinkWalletsPage({super.key});
@@ -15,7 +16,7 @@ class _TickPayLinkWalletsPageState extends State<TickPayLinkWalletsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
         children: [
           Positioned.fill(
@@ -175,16 +176,16 @@ class _TickPayLinkWalletsPageState extends State<TickPayLinkWalletsPage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00C853).withValues(alpha: 0.2),
+                        color: TickpayColors.positive.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: const Color(0xFF00C853).withValues(alpha: 0.4),
+                          color: TickpayColors.positive.withValues(alpha: 0.4),
                         ),
                       ),
                       child: const Text(
                         'Recommended',
                         style: TextStyle(
-                          color: Color(0xFF00C853),
+                          color: TickpayColors.positive,
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),

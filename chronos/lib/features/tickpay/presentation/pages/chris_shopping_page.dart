@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/services/tts_service.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 // ── Product model ─────────────────────────────────────────────────────────────
@@ -68,8 +69,8 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
 
   final List<_ChatMsg> _msgs = [];
 
-  static const _teal = Color(0xFF14B8A6);
-  static const _bg = Color(0xFF0D0D1A);
+  static const _teal = TickpayColors.accentPurple;
+  static const _bg = TickpayColors.scaffoldDark;
 
   @override
   void initState() {
@@ -356,7 +357,7 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
                     ],
                   ),
                 ),
-                const Divider(height: 1, color: Color(0x18FFFFFF)),
+                const Divider(height: 1, color: TickpayColors.glassBorder),
 
                 // Messages
                 Expanded(

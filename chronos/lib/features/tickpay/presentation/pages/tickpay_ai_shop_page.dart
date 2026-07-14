@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_catalog.dart';
 
 class TickPayAiShopPage extends StatefulWidget {
@@ -30,9 +31,9 @@ class _TickPayAiShopPageState extends State<TickPayAiShopPage>
   String _selectedCat = 'all';
   bool _onlyBnpl = false;
 
-  static const _teal = Color(0xFF14B8A6);
-  static const _bg = Color(0xFF0D0D1A);
-  static const _pink = Color(0xFFFF2D87);
+  static const _teal = TickpayColors.accentPurple;
+  static const _bg = TickpayColors.scaffoldDark;
+  static const _pink = TickpayColors.negative;
 
   final _categories = const [
     ('all', 'All'),
@@ -508,7 +509,7 @@ class _TickPayAiShopPageState extends State<TickPayAiShopPage>
   void _showFilters(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.lightSheet,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModal) => Padding(
@@ -520,20 +521,20 @@ class _TickPayAiShopPageState extends State<TickPayAiShopPage>
               Center(
                 child: Container(
                   width: 40, height: 4,
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(2)),
+                  decoration: BoxDecoration(color: TickpayColors.divider, borderRadius: BorderRadius.circular(2)),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('Filters', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700)),
+              const Text('Filters', style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 17, fontWeight: FontWeight.w700)),
               const SizedBox(height: 16),
-              Text('Max price: \$${_maxPrice.toInt()}', style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13)),
+              Text('Max price: \$${_maxPrice.toInt()}', style: const TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
               Slider(
                 value: _maxPrice,
                 min: 25,
                 max: 2000,
                 divisions: 50,
                 activeColor: _teal,
-                inactiveColor: Colors.white.withValues(alpha: 0.15),
+                inactiveColor: TickpayColors.divider,
                 onChanged: (v) => setModal(() => _maxPrice = v),
               ),
               const SizedBox(height: 8),
@@ -546,13 +547,13 @@ class _TickPayAiShopPageState extends State<TickPayAiShopPage>
                       decoration: BoxDecoration(
                         color: _onlyBnpl ? _teal : Colors.transparent,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: _onlyBnpl ? _teal : Colors.white.withValues(alpha: 0.3)),
+                        border: Border.all(color: _onlyBnpl ? _teal : TickpayColors.divider),
                       ),
                       child: _onlyBnpl ? const Icon(Icons.check, color: Colors.white, size: 14) : null,
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Text('BNPL available only', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  const Text('BNPL available only', style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 13)),
                 ],
               ),
               const SizedBox(height: 20),

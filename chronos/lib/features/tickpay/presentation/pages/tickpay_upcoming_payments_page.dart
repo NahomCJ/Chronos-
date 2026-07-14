@@ -5,6 +5,7 @@ import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../utils/tickpay_formatters.dart';
 import '../../../../core/widgets/fluid_glass.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayUpcomingPaymentsPage extends StatefulWidget {
   const TickPayUpcomingPaymentsPage({super.key});
@@ -41,9 +42,9 @@ class _TickPayUpcomingPaymentsPageState
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'Due Today': return const Color(0xFFEF4444);
-      case 'Due Soon':  return const Color(0xFFF59E0B);
-      default:          return const Color(0xFF7C3AED);
+      case 'Due Today': return TickpayColors.negative;
+      case 'Due Soon':  return TickpayColors.warning;
+      default:          return TickpayColors.accentPurple;
     }
   }
 
@@ -118,7 +119,7 @@ class _TickPayUpcomingPaymentsPageState
                   const SizedBox(height: 14),
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xFFF8F9FB),
+                      color: TickpayColors.lightSheet,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(24)),
                     ),
@@ -132,7 +133,7 @@ class _TickPayUpcomingPaymentsPageState
                           Text(
                             'Payments on ${_monthName(_focusedMonth.month)} $_selectedDay',
                             style: const TextStyle(
-                                color: Color(0xFF1A1A2E),
+                                color: TickpayColors.textPrimaryLight,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -143,7 +144,7 @@ class _TickPayUpcomingPaymentsPageState
                         ],
                         const Text('All Payments',
                             style: TextStyle(
-                                color: Color(0xFF1A1A2E),
+                                color: TickpayColors.textPrimaryLight,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(height: 12),
@@ -235,11 +236,11 @@ class _TickPayUpcomingPaymentsPageState
                             width: 26,
                             height: 26,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.18),
+                              color: TickpayColors.negative.withValues(alpha: 0.18),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(Icons.event_busy_rounded,
-                                color: Color(0xFFEF4444), size: 14),
+                                color: TickpayColors.negative, size: 14),
                           ),
                           const SizedBox(width: 8),
                           Text('Due Today',
@@ -277,7 +278,7 @@ class _TickPayUpcomingPaymentsPageState
                       Text(
                         '${today.length}',
                         style: const TextStyle(
-                            color: Color(0xFFEF4444),
+                            color: TickpayColors.negative,
                             fontSize: 28,
                             fontWeight: FontWeight.bold),
                       ),
@@ -311,7 +312,7 @@ class _TickPayUpcomingPaymentsPageState
               Text(
                 '${_monthName(_focusedMonth.month)} ${_focusedMonth.year}',
                 style: const TextStyle(
-                    color: Color(0xFF1A1A2E),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 15,
                     fontWeight: FontWeight.w700),
               ),
@@ -321,11 +322,11 @@ class _TickPayUpcomingPaymentsPageState
                   child: Container(
                     width: 28, height: 28,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                      color: TickpayColors.accentPurple.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.chevron_left,
-                        color: Color(0xFF7C3AED), size: 20),
+                        color: TickpayColors.accentPurple, size: 20),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -334,11 +335,11 @@ class _TickPayUpcomingPaymentsPageState
                   child: Container(
                     width: 28, height: 28,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                      color: TickpayColors.accentPurple.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.chevron_right,
-                        color: Color(0xFF7C3AED), size: 20),
+                        color: TickpayColors.accentPurple, size: 20),
                   ),
                 ),
               ]),
@@ -353,7 +354,7 @@ class _TickPayUpcomingPaymentsPageState
                       child: Text(d,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: Colors.grey.shade400,
+                              color: TickpayColors.textMutedLight,
                               fontSize: 11,
                               fontWeight: FontWeight.w600)),
                     ))
@@ -381,16 +382,16 @@ class _TickPayUpcomingPaymentsPageState
                       height: 32,
                       decoration: BoxDecoration(
                         color: isPayment
-                            ? const Color(0xFF7C3AED)
+                            ? TickpayColors.accentPurple
                             : isSelected
-                                ? const Color(0xFF7C3AED).withValues(alpha: 0.12)
+                                ? TickpayColors.accentPurple.withValues(alpha: 0.12)
                                 : Colors.transparent,
                         shape: BoxShape.circle,
                         border: isToday && !isPayment
-                            ? Border.all(color: const Color(0xFF7C3AED), width: 1.5)
+                            ? Border.all(color: TickpayColors.accentPurple, width: 1.5)
                             : isSelected && !isPayment
                                 ? Border.all(
-                                    color: const Color(0xFF7C3AED).withValues(alpha: 0.4))
+                                    color: TickpayColors.accentPurple.withValues(alpha: 0.4))
                                 : null,
                       ),
                       child: Center(
@@ -399,8 +400,8 @@ class _TickPayUpcomingPaymentsPageState
                               color: isPayment
                                   ? Colors.white
                                   : isSelected || isToday
-                                      ? const Color(0xFF7C3AED)
-                                      : const Color(0xFF1A1A2E),
+                                      ? TickpayColors.accentPurple
+                                      : TickpayColors.textPrimaryLight,
                               fontSize: 13,
                               fontWeight: isPayment || isSelected
                                   ? FontWeight.bold
@@ -419,22 +420,22 @@ class _TickPayUpcomingPaymentsPageState
               Container(
                 width: 10, height: 10,
                 decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED), shape: BoxShape.circle),
+                    color: TickpayColors.accentPurple, shape: BoxShape.circle),
               ),
               const SizedBox(width: 6),
               Text('Payment due',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
               const SizedBox(width: 14),
               Container(
                 width: 10, height: 10,
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF7C3AED), width: 1.5),
+                  border: Border.all(color: TickpayColors.accentPurple, width: 1.5),
                   shape: BoxShape.circle,
                 ),
               ),
               const SizedBox(width: 6),
               Text('Today',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
             ],
           ),
         ],
@@ -475,12 +476,12 @@ class _TickPayUpcomingPaymentsPageState
                 children: [
                   Text(p.name,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A2E),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 14,
                           fontWeight: FontWeight.w600)),
                   Text(p.store,
                       style: TextStyle(
-                          color: Colors.grey.shade500, fontSize: 12)),
+                          color: TickpayColors.textMutedLight, fontSize: 12)),
                 ],
               ),
             ),
@@ -489,7 +490,7 @@ class _TickPayUpcomingPaymentsPageState
               children: [
                 Text(p.amount,
                     style: const TextStyle(
-                        color: Color(0xFF1A1A2E),
+                        color: TickpayColors.textPrimaryLight,
                         fontSize: 14,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
@@ -512,12 +513,12 @@ class _TickPayUpcomingPaymentsPageState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 7, vertical: 2),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00C853).withValues(alpha: 0.1),
+                      color: TickpayColors.positive.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text('Auto-pay',
                         style: TextStyle(
-                            color: Color(0xFF00C853),
+                            color: TickpayColors.positive,
                             fontSize: 10,
                             fontWeight: FontWeight.w500)),
                   ),

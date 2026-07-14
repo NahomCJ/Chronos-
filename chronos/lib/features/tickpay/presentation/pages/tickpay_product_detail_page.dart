@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayProductDetailPage extends StatefulWidget {
@@ -63,7 +64,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
     );
   }
 
-  Widget _buildDivider() => const Divider(height: 1, color: Color(0xFFF0F0F0));
+  Widget _buildDivider() => const Divider(height: 1, color: TickpayColors.divider);
 
   Widget _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
@@ -80,7 +81,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             color: Colors.black.withValues(alpha: 0.07),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.arrow_back, color: Colors.black87, size: 20),
+          child: const Icon(Icons.arrow_back, color: TickpayColors.textPrimaryLight, size: 20),
         ),
       ),
       actions: [
@@ -94,7 +95,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             ),
             child: Icon(
               _wishlisted ? Icons.favorite : Icons.favorite_border,
-              color: _wishlisted ? const Color(0xFFFF2D87) : Colors.black87,
+              color: _wishlisted ? TickpayColors.negative : TickpayColors.textPrimaryLight,
               size: 20,
             ),
           ),
@@ -107,7 +108,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
           ),
           child: IconButton(
             icon: const Icon(Icons.share_outlined,
-                color: Colors.black87, size: 18),
+                color: TickpayColors.textPrimaryLight, size: 18),
             onPressed: () {},
           ),
         ),
@@ -116,7 +117,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Container(color: const Color(0xFFF8F8F8)),
+            Container(color: TickpayColors.neutralSurface),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 60, 24, 20),
               child: TickPayImage(widget.asset, fit: BoxFit.contain),
@@ -129,7 +130,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF2D87),
+                    color: TickpayColors.negative,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text('-17% OFF',
@@ -160,14 +161,14 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                 context.push(RouteConstants.tickpayShopDetail.toPath),
             child: Text('Apple Store',
                 style: const TextStyle(
-                    color: Color(0xFFFF2D87),
+                    color: TickpayColors.negative,
                     fontSize: 12,
                     fontWeight: FontWeight.w500)),
           ),
           const SizedBox(height: 6),
           Text(widget.name,
               style: const TextStyle(
-                  color: Color(0xFF111111),
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.3)),
@@ -178,29 +179,29 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                   5,
                   (i) => Icon(
                         i < 4 ? Icons.star_rounded : Icons.star_half_rounded,
-                        color: const Color(0xFFFFB800),
+                        color: TickpayColors.warning,
                         size: 16,
                       )),
               const SizedBox(width: 6),
               const Text('4.8',
                   style: TextStyle(
-                      color: Color(0xFF1A1A1A),
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 13,
                       fontWeight: FontWeight.w600)),
               Text(' (2,847 reviews)',
                   style: TextStyle(
-                      color: Colors.grey.shade400, fontSize: 12)),
+                      color: TickpayColors.textMutedLight, fontSize: 12)),
               const SizedBox(width: 12),
               Container(
                 width: 7,
                 height: 7,
                 decoration: const BoxDecoration(
-                    color: Color(0xFF00C853), shape: BoxShape.circle),
+                    color: TickpayColors.positive, shape: BoxShape.circle),
               ),
               const SizedBox(width: 4),
               const Text('In Stock',
                   style:
-                      TextStyle(color: Color(0xFF00C853), fontSize: 12)),
+                      TextStyle(color: TickpayColors.positive, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 14),
@@ -209,7 +210,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             children: [
               Text(widget.price,
                   style: const TextStyle(
-                      color: Color(0xFF111111),
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5)),
@@ -218,7 +219,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                 padding: const EdgeInsets.only(bottom: 3),
                 child: Text('\$$msrp',
                     style: TextStyle(
-                        color: Colors.grey.shade400,
+                        color: TickpayColors.textMutedLight,
                         fontSize: 15,
                         decoration: TextDecoration.lineThrough)),
               ),
@@ -229,12 +230,12 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF2D87).withValues(alpha: 0.1),
+                    color: TickpayColors.negative.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text('Save \$200',
                       style: TextStyle(
-                          color: Color(0xFFFF2D87),
+                          color: TickpayColors.negative,
                           fontSize: 11,
                           fontWeight: FontWeight.w600)),
                 ),
@@ -258,24 +259,24 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                 width: 26,
                 height: 26,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00A693).withValues(alpha: 0.12),
+                  color: TickpayColors.accentPurple.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: const Icon(Icons.attach_money,
-                    color: Color(0xFF00A693), size: 15),
+                    color: TickpayColors.accentPurple, size: 15),
               ),
               const SizedBox(width: 8),
               const Text(
                 'Buy Now, Pay Later',
                 style: TextStyle(
-                    color: Color(0xFF111111),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 15,
                     fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Text('0% APR',
                   style: TextStyle(
-                      color: const Color(0xFF00C853).withValues(alpha: 0.9),
+                      color: TickpayColors.positive.withValues(alpha: 0.9),
                       fontSize: 12,
                       fontWeight: FontWeight.w600)),
             ],
@@ -294,13 +295,13 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF00A693).withValues(alpha: 0.07)
-                      : const Color(0xFFF8F8F8),
+                      ? TickpayColors.accentPurple.withValues(alpha: 0.07)
+                      : TickpayColors.neutralSurface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF00A693)
-                        : const Color(0xFFEEEEEE),
+                        ? TickpayColors.accentPurple
+                        : TickpayColors.divider,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
@@ -315,12 +316,12 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFF00A693)
+                                  ? TickpayColors.accentPurple
                                   : const Color(0xFFCCCCCC),
                               width: 1.5,
                             ),
                             color: isSelected
-                                ? const Color(0xFF00A693)
+                                ? TickpayColors.accentPurple
                                 : Colors.transparent,
                           ),
                           child: isSelected
@@ -335,13 +336,13 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                             Text(
                               '${plan.$1} Payments',
                               style: const TextStyle(
-                                  color: Color(0xFF111111),
+                                  color: TickpayColors.textPrimaryLight,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600),
                             ),
                             Text(plan.$2,
                                 style: const TextStyle(
-                                    color: Color(0xFF888888), fontSize: 11)),
+                                    color: TickpayColors.textMutedLight, fontSize: 11)),
                           ],
                         ),
                         const Spacer(),
@@ -351,13 +352,13 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                             Text(
                               '\$${plan.$3.toStringAsFixed(2)}',
                               style: const TextStyle(
-                                  color: Color(0xFF111111),
+                                  color: TickpayColors.textPrimaryLight,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold),
                             ),
                             const Text('per payment',
                                 style: TextStyle(
-                                    color: Color(0xFF999999), fontSize: 10)),
+                                    color: TickpayColors.textMutedLight, fontSize: 10)),
                           ],
                         ),
                       ],
@@ -370,7 +371,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF00A693),
+                            color: TickpayColors.accentPurple,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text('Popular',
@@ -402,7 +403,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
         children: [
           const Text('Payment Schedule',
               style: TextStyle(
-                  color: Color(0xFF111111),
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 15,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
@@ -414,7 +415,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
               decoration: BoxDecoration(
                 border: e.key < count - 1
                     ? const Border(
-                        bottom: BorderSide(color: Color(0xFFF0F0F0)))
+                        bottom: BorderSide(color: TickpayColors.divider))
                     : null,
               ),
               child: Row(
@@ -424,17 +425,17 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                     height: 26,
                     decoration: BoxDecoration(
                       color: isFirst
-                          ? const Color(0xFF00A693).withValues(alpha: 0.12)
-                          : const Color(0xFFF5F5F5),
+                          ? TickpayColors.accentPurple.withValues(alpha: 0.12)
+                          : TickpayColors.neutralSurface,
                       shape: BoxShape.circle,
                     ),
                     child: isFirst
                         ? const Icon(Icons.check,
-                            color: Color(0xFF00A693), size: 13)
+                            color: TickpayColors.accentPurple, size: 13)
                         : Center(
                             child: Text('${e.key + 1}',
                                 style: const TextStyle(
-                                    color: Color(0xFF888888),
+                                    color: TickpayColors.textMutedLight,
                                     fontSize: 10))),
                   ),
                   const SizedBox(width: 12),
@@ -445,19 +446,19 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                         Text(e.value,
                             style: TextStyle(
                                 color: isFirst
-                                    ? const Color(0xFF111111)
-                                    : const Color(0xFF555555),
+                                    ? TickpayColors.textPrimaryLight
+                                    : TickpayColors.textMutedLight,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500)),
                         Text('Payment ${e.key + 1} of $count',
                             style: const TextStyle(
-                                color: Color(0xFFBBBBBB), fontSize: 10)),
+                                color: TickpayColors.textMutedLight, fontSize: 10)),
                       ],
                     ),
                   ),
                   Text('\$${amount.toStringAsFixed(2)}',
                       style: const TextStyle(
-                          color: Color(0xFF111111),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 13,
                           fontWeight: FontWeight.w600)),
                 ],
@@ -485,11 +486,11 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: _agreedToTerms
-                      ? const Color(0xFF00A693)
+                      ? TickpayColors.accentPurple
                       : const Color(0xFFCCCCCC),
                 ),
                 color: _agreedToTerms
-                    ? const Color(0xFF00A693)
+                    ? TickpayColors.accentPurple
                     : Colors.transparent,
               ),
               child: _agreedToTerms
@@ -503,7 +504,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             child: Text(
               'I agree to the Terms of Service and Payment Agreement. I understand that missing payments may result in fees.',
               style: TextStyle(
-                  color: Color(0xFF888888), fontSize: 11, height: 1.4),
+                  color: TickpayColors.textMutedLight, fontSize: 11, height: 1.4),
             ),
           ),
         ],
@@ -520,11 +521,11 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
         title: const Text('Description',
             style: TextStyle(
-                color: Color(0xFF111111),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 15,
                 fontWeight: FontWeight.bold)),
-        iconColor: const Color(0xFF111111),
-        collapsedIconColor: const Color(0xFF111111),
+        iconColor: TickpayColors.textPrimaryLight,
+        collapsedIconColor: TickpayColors.textPrimaryLight,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
@@ -533,7 +534,7 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
               'Featuring advanced processing, premium build quality, and long-lasting battery life, '
               "it's engineered for those who demand the best.",
               style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: TickpayColors.textMutedLight,
                   fontSize: 13,
                   height: 1.5),
             ),
@@ -559,11 +560,11 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
             const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
         title: const Text('Key Features',
             style: TextStyle(
-                color: Color(0xFF111111),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 15,
                 fontWeight: FontWeight.bold)),
-        iconColor: const Color(0xFF111111),
-        collapsedIconColor: const Color(0xFF111111),
+        iconColor: TickpayColors.textPrimaryLight,
+        collapsedIconColor: TickpayColors.textPrimaryLight,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
@@ -576,12 +577,12 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                               CrossAxisAlignment.start,
                           children: [
                             const Icon(Icons.check_circle,
-                                color: Color(0xFF00C853), size: 15),
+                                color: TickpayColors.positive, size: 15),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(f,
                                   style: TextStyle(
-                                      color: Colors.grey.shade600,
+                                      color: TickpayColors.textMutedLight,
                                       fontSize: 13)),
                             ),
                           ],
@@ -616,13 +617,13 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
               onPressed: () {},
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 13),
-                side: const BorderSide(color: Color(0xFF111111)),
+                side: const BorderSide(color: TickpayColors.textPrimaryLight),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
               ),
               child: const Text('Add to Cart',
                   style: TextStyle(
-                      color: Color(0xFF111111),
+                      color: TickpayColors.textPrimaryLight,
                       fontWeight: FontWeight.w600,
                       fontSize: 14)),
             ),
@@ -636,14 +637,14 @@ class _TickPayProductDetailPageState extends State<TickPayProductDetailPage> {
                       .push(RouteConstants.tickpayBnplCheckout.toPath)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF111111),
+                backgroundColor: TickpayColors.textPrimaryLight,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
-                disabledBackgroundColor: const Color(0xFFDDDDDD),
-                disabledForegroundColor: const Color(0xFF999999),
+                disabledBackgroundColor: TickpayColors.divider,
+                disabledForegroundColor: TickpayColors.textMutedLight,
               ),
               child: Text(
                 'Buy · \$${_bnplPlans[_selectedPlan].$3.toStringAsFixed(2)}/mo',

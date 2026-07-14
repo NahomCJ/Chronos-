@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPaySetupCompletePage extends StatelessWidget {
   const TickPaySetupCompletePage({super.key});
@@ -8,6 +9,7 @@ class TickPaySetupCompletePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
         children: [
           Positioned.fill(

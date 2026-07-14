@@ -39,7 +39,7 @@ class TickpayShortcutsPage extends StatelessWidget {
     final shortcuts = sl<TickpayRepository>().getShortcuts();
 
     return Scaffold(
-      backgroundColor: TickpayColors.scaffoldDark,
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -77,9 +77,16 @@ class TickpayShortcutsPage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: TickpayColors.glassFill,
+                    color: TickpayColors.cardWhite,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: TickpayColors.glassBorder),
+                    border: Border.all(color: TickpayColors.divider),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,11 +95,11 @@ class TickpayShortcutsPage extends StatelessWidget {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: TickpayColors.glassStrong,
+                          color: TickpayColors.info.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(Icons.info_outline,
-                            color: TickpayColors.textMutedDark, size: 18),
+                            color: TickpayColors.info, size: 18),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -102,7 +109,7 @@ class TickpayShortcutsPage extends StatelessWidget {
                             Text(
                               'Customize Shortcuts',
                               style: TextStyles.titleMedium.copyWith(
-                                color: TickpayColors.textOnDark,
+                                color: TickpayColors.textPrimaryLight,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -111,7 +118,7 @@ class TickpayShortcutsPage extends StatelessWidget {
                               'Long press any shortcut to rearrange or add '
                               'new ones to your home screen',
                               style: TextStyles.bodySmall.copyWith(
-                                color: TickpayColors.textMutedDark,
+                                color: TickpayColors.textMutedLight,
                                 height: 1.4,
                               ),
                             ),

@@ -5,6 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_catalog.dart';
 import '../utils/tickpay_media.dart';
 
@@ -209,7 +210,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFFF8F9FB),
+                    color: TickpayColors.scaffoldLight,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
                   ),
                   child: ClipRRect(
@@ -271,7 +272,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
           Container(
             width: 36,
             height: 36,
-            decoration: const BoxDecoration(color: Color(0xFFDC8F4A), shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: TickpayColors.warning, shape: BoxShape.circle),
             child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
@@ -297,7 +298,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
         child: Row(
           children: [
             const SizedBox(width: 18),
-            Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+            Icon(Icons.search, color: TickpayColors.textMutedLight, size: 20),
             const SizedBox(width: 10),
             Expanded(
               child: TextField(
@@ -306,10 +307,10 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                 onChanged: (v) {
                   if (v.isEmpty) _clearSearch();
                 },
-                style: const TextStyle(color: Color(0xFF1A1A1A), fontSize: 14),
+                style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Ask Chris to find anything...',
-                  hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                  hintStyle: TextStyle(color: TickpayColors.textMutedLight, fontSize: 14),
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -319,7 +320,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
             if (_isAiMode)
               GestureDetector(
                 onTap: _clearSearch,
-                child: Icon(Icons.close, color: Colors.grey.shade400, size: 18),
+                child: Icon(Icons.close, color: TickpayColors.textMutedLight, size: 18),
               ),
             const SizedBox(width: 8),
             GestureDetector(
@@ -331,7 +332,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                 decoration: BoxDecoration(
                   color: _voiceActive
                       ? const Color(0xFFFF2D87)
-                      : const Color(0xFF8B5CF6),
+                      : TickpayColors.accentPurple,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -419,11 +420,11 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
           const SizedBox(height: 28),
           _buildSection(context, 'Sports & Fitness', _sportsProducts, const Color(0xFF00A693)),
           const SizedBox(height: 28),
-          _buildSection(context, 'Home & Living', _homeProducts, const Color(0xFFDC8F4A)),
+          _buildSection(context, 'Home & Living', _homeProducts, TickpayColors.warning),
           const SizedBox(height: 28),
           _buildSection(context, 'Beauty & Care', _beautyProducts, const Color(0xFFFF6EB4)),
           const SizedBox(height: 28),
-          _buildSection(context, 'Gaming', _gamingProducts, const Color(0xFF8B5CF6)),
+          _buildSection(context, 'Gaming', _gamingProducts, TickpayColors.accentPurple),
           const SizedBox(height: 28),
           _buildRecommended(context),
           const SizedBox(height: 40),
@@ -448,7 +449,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                 child: Text(title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold)),
               ),
               if (_isAiMode)
                 GestureDetector(
@@ -480,7 +481,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text('No results for "${_ctrl.text}" — try another search',
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+                style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
           )
         else
           SizedBox(
@@ -517,7 +518,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
             children: [
               Text(title,
                   style: const TextStyle(
-                      color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
+                      color: TickpayColors.textPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: () {
                   _ctrl.text = title;
@@ -570,21 +571,21 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                   width: 22,
                   height: 22,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                    color: TickpayColors.accentPurple.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.auto_awesome, color: Color(0xFF8B5CF6), size: 13),
+                  child: const Icon(Icons.auto_awesome, color: TickpayColors.accentPurple, size: 13),
                 ),
                 const SizedBox(width: 6),
                 const Text('Recommended for You',
-                    style: TextStyle(color: Color(0xFF111111), fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold)),
               ]),
               GestureDetector(
                 onTap: () {
                   _ctrl.text = 'recommended';
                   _search('recommended');
                 },
-                child: const Text('View', style: TextStyle(color: Color(0xFF8B5CF6), fontSize: 13)),
+                child: const Text('View', style: TextStyle(color: TickpayColors.accentPurple, fontSize: 13)),
               ),
             ],
           ),
@@ -642,13 +643,13 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 2),
                       Text(price,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -664,7 +665,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                 height: 28,
                 decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.9), shape: BoxShape.circle),
-                child: const Icon(Icons.favorite_border, color: Color(0xFF888888), size: 14),
+                child: const Icon(Icons.favorite_border, color: TickpayColors.textMutedLight, size: 14),
               ),
             ),
             if (discount > 0)
@@ -721,13 +722,13 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 2),
                       Text(price,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -741,7 +742,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6),
+                    color: TickpayColors.accentPurple,
                     borderRadius: BorderRadius.circular(6)),
                 child: const Text('AI',
                     style: TextStyle(
@@ -756,7 +757,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
                 height: 28,
                 decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.9), shape: BoxShape.circle),
-                child: const Icon(Icons.favorite_border, color: Color(0xFF888888), size: 14),
+                child: const Icon(Icons.favorite_border, color: TickpayColors.textMutedLight, size: 14),
               ),
             ),
           ],
@@ -797,7 +798,7 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
       decoration: const BoxDecoration(
-        color: Color(0xFFF8F9FB),
+        color: TickpayColors.scaffoldLight,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
@@ -821,24 +822,24 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                 width: 22,
                 height: 22,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A2E).withValues(alpha: 0.08),
+                  color: TickpayColors.textPrimaryLight.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.auto_awesome, color: Color(0xFF1A1A2E), size: 12),
+                child: const Icon(Icons.auto_awesome, color: TickpayColors.textPrimaryLight, size: 12),
               ),
               const SizedBox(width: 8),
               const Text('Chris says:',
-                  style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 13, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             'I found "${widget.product.name}" for ${widget.product.price}. How would you like to pay?',
-            style: const TextStyle(color: Color(0xFF1A1A1A), fontSize: 15),
+            style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 15),
           ),
           const SizedBox(height: 20),
           const Text('Choose your plan:',
-              style: TextStyle(color: Color(0xFF555555), fontSize: 13, fontWeight: FontWeight.w500)),
+              style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13, fontWeight: FontWeight.w500)),
           const SizedBox(height: 10),
           Row(
             children: [2, 3, 4, 6].map((n) {
@@ -851,11 +852,11 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                     margin: const EdgeInsets.symmetric(horizontal: 3),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: selected ? const Color(0xFF1A1A2E) : Colors.white,
+                      color: selected ? TickpayColors.textPrimaryLight : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: selected
-                            ? const Color(0xFF1A1A2E)
+                            ? TickpayColors.textPrimaryLight
                             : Colors.grey.shade200,
                       ),
                     ),
@@ -863,12 +864,12 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                       children: [
                         Text('$n',
                             style: TextStyle(
-                                color: selected ? Colors.white : const Color(0xFF1A1A1A),
+                                color: selected ? Colors.white : TickpayColors.textPrimaryLight,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold)),
                         Text('payments',
                             style: TextStyle(
-                                color: selected ? Colors.white.withValues(alpha: 0.8) : const Color(0xFF888888),
+                                color: selected ? Colors.white.withValues(alpha: 0.8) : TickpayColors.textMutedLight,
                                 fontSize: 9)),
                       ],
                     ),
@@ -881,7 +882,7 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A2E).withValues(alpha: 0.05),
+              color: TickpayColors.textPrimaryLight.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -890,11 +891,11 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Per payment', style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    const Text('Per payment', style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
                     Text(
                       '\$${_perInstallment.toStringAsFixed(2)}',
                       style: const TextStyle(
-                          color: Color(0xFF1A1A2E),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
@@ -903,11 +904,11 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text('Total', style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                    const Text('Total', style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
                     Text(
                       widget.product.price,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 15,
                           fontWeight: FontWeight.w600),
                     ),
@@ -923,7 +924,7 @@ class _CheckoutSheetState extends State<_CheckoutSheet> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 13),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1A2E),
+                color: TickpayColors.textPrimaryLight,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Text(

@@ -5,6 +5,7 @@ import '../../../../core/router/route_constants.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
 import '../utils/tickpay_media.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayBnplCheckoutPage extends StatefulWidget {
   const TickPayBnplCheckoutPage({super.key});
@@ -28,7 +29,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -36,7 +37,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
             Column(
         children: [
           Container(
-            color: const Color(0xFF0D0D1A),
+            color: TickpayColors.scaffoldDark,
             child: SafeArea(
               bottom: false,
               child: _buildHeader(context),
@@ -65,7 +66,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                   const Center(
                     child: Text(
                       'Your first payment of \$249.75 will be charged today',
-                      style: TextStyle(color: Color(0xFFBBBBBB), fontSize: 11),
+                      style: TextStyle(color: TickpayColors.textMutedDark, fontSize: 11),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -112,10 +113,13 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF2D1B4E), Color(0xFF3D2B5E)],
+          colors: [
+            TickpayColors.accentPurple.withValues(alpha: 0.85),
+            TickpayColors.accentPurple,
+          ],
         ),
         borderRadius: BorderRadius.circular(14),
       ),
@@ -161,7 +165,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       children: [
         const Text('Choose Your Plan',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
@@ -176,12 +180,14 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFFF0EBFF) : Colors.white,
+                color: isSelected
+                    ? TickpayColors.accentPurple.withValues(alpha: 0.1)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF7C3AED)
-                        : const Color(0xFFEEEEEE)),
+                        ? TickpayColors.accentPurple
+                        : TickpayColors.divider),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.04),
@@ -201,11 +207,11 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                           shape: BoxShape.circle,
                           border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFF7C3AED)
-                                  : const Color(0xFFCCCCCC),
+                                  ? TickpayColors.accentPurple
+                                  : TickpayColors.divider,
                               width: 1.5),
                           color: isSelected
-                              ? const Color(0xFF7C3AED)
+                              ? TickpayColors.accentPurple
                               : Colors.transparent,
                         ),
                         child: isSelected
@@ -219,12 +225,12 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                         children: [
                           Text('${plan.count} Payments',
                               style: const TextStyle(
-                                  color: Color(0xFF1A1A1A),
+                                  color: TickpayColors.textPrimaryLight,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600)),
                           Text(plan.frequency,
                               style: const TextStyle(
-                                  color: Color(0xFF888888), fontSize: 12)),
+                                  color: TickpayColors.textMutedLight, fontSize: 12)),
                         ],
                       ),
                       const Spacer(),
@@ -233,16 +239,16 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                         children: [
                           Text('\$${plan.amount.toStringAsFixed(2)}',
                               style: const TextStyle(
-                                  color: Color(0xFF1A1A1A),
+                                  color: TickpayColors.textPrimaryLight,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold)),
                           const Text('per payment',
                               style: TextStyle(
-                                  color: Color(0xFF999999), fontSize: 11)),
+                                  color: TickpayColors.textMutedLight, fontSize: 11)),
                           const SizedBox(height: 2),
                           const Text('0% APR',
                               style: TextStyle(
-                                  color: Color(0xFF00C853),
+                                  color: TickpayColors.positive,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500)),
                         ],
@@ -257,8 +263,11 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF4C1D95), Color(0xFF7C3AED)],
+                          gradient: LinearGradient(
+                            colors: [
+                              TickpayColors.accentPurple.withValues(alpha: 0.85),
+                              TickpayColors.accentPurple,
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -285,7 +294,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       children: [
         const Text('Payment Schedule',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
@@ -293,7 +302,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFEEEEEE)),
+            border: Border.all(color: TickpayColors.divider),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
@@ -310,7 +319,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                 decoration: BoxDecoration(
                   border: e.key < dates.length - 1
                       ? const Border(
-                          bottom: BorderSide(color: Color(0xFFF0F0F0)))
+                          bottom: BorderSide(color: TickpayColors.divider))
                       : null,
                 ),
                 child: Row(
@@ -320,17 +329,17 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                       height: 28,
                       decoration: BoxDecoration(
                         color: isFirst
-                            ? const Color(0xFF00A693).withValues(alpha: 0.15)
-                            : const Color(0xFFF5F5F5),
+                            ? TickpayColors.positive.withValues(alpha: 0.15)
+                            : TickpayColors.neutralSurface,
                         shape: BoxShape.circle,
                       ),
                       child: isFirst
                           ? const Icon(Icons.check,
-                              color: Color(0xFF00A693), size: 14)
+                              color: TickpayColors.positive, size: 14)
                           : Center(
                               child: Text('${e.key + 1}',
                                   style: const TextStyle(
-                                      color: Color(0xFF888888), fontSize: 11))),
+                                      color: TickpayColors.textMutedLight, fontSize: 11))),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -340,19 +349,19 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                           Text(e.value,
                               style: TextStyle(
                                   color: isFirst
-                                      ? const Color(0xFF1A1A1A)
-                                      : const Color(0xFF555555),
+                                      ? TickpayColors.textPrimaryLight
+                                      : TickpayColors.textMutedLight,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500)),
                           Text('Payment ${e.key + 1} of 4',
                               style: const TextStyle(
-                                  color: Color(0xFFBBBBBB), fontSize: 11)),
+                                  color: TickpayColors.textMutedLight, fontSize: 11)),
                         ],
                       ),
                     ),
                     const Text('\$249.75',
                         style: TextStyle(
-                            color: Color(0xFF1A1A1A),
+                            color: TickpayColors.textPrimaryLight,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
                   ],
@@ -371,12 +380,12 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       children: [
         Text('Total Amount',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         Text('\$999.00',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 17,
                 fontWeight: FontWeight.bold)),
       ],
@@ -389,7 +398,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
       children: [
         const Text('Payment Method',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
@@ -410,12 +419,14 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF0EBFF) : Colors.white,
+          color: isSelected
+              ? TickpayColors.accentPurple.withValues(alpha: 0.1)
+              : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
               color: isSelected
-                  ? const Color(0xFF7C3AED)
-                  : const Color(0xFFEEEEEE)),
+                  ? TickpayColors.accentPurple
+                  : TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -430,10 +441,10 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: TickpayColors.accentPurple.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: const Color(0xFF7C3AED), size: 20),
+              child: Icon(icon, color: TickpayColors.accentPurple, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -442,12 +453,12 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                 children: [
                   Text(title,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
                   Text(subtitle,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12)),
+                          color: TickpayColors.textMutedLight, fontSize: 12)),
                 ],
               ),
             ),
@@ -456,7 +467,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                 width: 22,
                 height: 22,
                 decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED), shape: BoxShape.circle),
+                    color: TickpayColors.accentPurple, shape: BoxShape.circle),
                 child: const Icon(Icons.check, color: Colors.white, size: 14),
               ),
           ],
@@ -478,10 +489,10 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
                   color: _agreedToTerms
-                      ? const Color(0xFF00A693)
-                      : const Color(0xFFCCCCCC)),
+                      ? TickpayColors.positive
+                      : TickpayColors.divider),
               color: _agreedToTerms
-                  ? const Color(0xFF00A693)
+                  ? TickpayColors.positive
                   : Colors.transparent,
             ),
             child: _agreedToTerms
@@ -493,19 +504,19 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
         Expanded(
           child: RichText(
             text: const TextSpan(
-              style: TextStyle(color: Color(0xFF888888), fontSize: 12),
+              style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12),
               children: [
                 TextSpan(text: 'I agree to the '),
                 TextSpan(
                     text: 'Terms of Service',
                     style: TextStyle(
-                        color: Color(0xFF7C3AED),
+                        color: TickpayColors.accentPurple,
                         decoration: TextDecoration.underline)),
                 TextSpan(text: ' and '),
                 TextSpan(
                     text: 'Payment Agreement',
                     style: TextStyle(
-                        color: Color(0xFF7C3AED),
+                        color: TickpayColors.accentPurple,
                         decoration: TextDecoration.underline)),
                 TextSpan(
                     text:
@@ -527,7 +538,7 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: TickpayColors.negative,
             ),
           );
         }
@@ -547,14 +558,14 @@ class _TickPayBnplCheckoutPageState extends State<TickPayBnplCheckoutPage> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0D0D1A),
+              backgroundColor: TickpayColors.brandRed,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32)),
               elevation: 0,
-              disabledBackgroundColor: const Color(0xFFDDDDDD),
-              disabledForegroundColor: const Color(0xFF999999),
+              disabledBackgroundColor: TickpayColors.neutralSurface,
+              disabledForegroundColor: TickpayColors.textMutedLight,
             ),
             child: isLoading
                 ? const SizedBox(
