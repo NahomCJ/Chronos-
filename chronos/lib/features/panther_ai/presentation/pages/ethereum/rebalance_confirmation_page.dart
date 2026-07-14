@@ -11,45 +11,35 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          // Background image
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        _buildActionCard(),
-                        const SizedBox(height: 24),
-                        _buildWhatWillHappen(),
-                        const SizedBox(height: 24),
-                        _buildImpactSummary(),
-                        const SizedBox(height: 24),
-                        _buildImportantNotice(),
-                        const SizedBox(height: 24),
-                        _buildAIRecommendation(),
-                        const SizedBox(height: 24),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 100),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    _buildActionCard(),
+                    const SizedBox(height: 24),
+                    _buildWhatWillHappen(),
+                    const SizedBox(height: 24),
+                    _buildImpactSummary(),
+                    const SizedBox(height: 24),
+                    _buildImportantNotice(),
+                    const SizedBox(height: 24),
+                    _buildAIRecommendation(),
+                    const SizedBox(height: 24),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

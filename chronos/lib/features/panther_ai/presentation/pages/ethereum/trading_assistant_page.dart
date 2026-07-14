@@ -41,7 +41,11 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: PantherColors.border)),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Stack(
         alignment: Alignment.center,
@@ -50,7 +54,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: IconButton(
               onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+              icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary, size: 22),
             ),
           ),
           Column(
@@ -58,7 +62,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               Text(
                 'Trading Assistant',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -66,7 +70,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
               Text(
                 'AI-powered signals',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -142,7 +146,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
         Text(
           "Today's Signals",
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -459,7 +463,7 @@ class EthFlowTradingAssistantPage extends StatelessWidget {
         Text(
           'Quick Analysis',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),

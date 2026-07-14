@@ -307,7 +307,7 @@ class PaymentPlanPage extends StatelessWidget {
         Text(
           'Payment Schedule',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -509,7 +509,7 @@ class PaymentPlanPage extends StatelessWidget {
         Text(
           'AI Recommendations',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
