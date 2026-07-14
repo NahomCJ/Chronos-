@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/theme/panther_colors.dart';
 import '../bloc/affordability_bloc.dart';
 import '../bloc/affordability_event.dart';
 import '../bloc/affordability_state.dart';
@@ -50,12 +51,13 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
     return BlocProvider.value(
       value: _bloc,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: PantherColors.bg,
         body: Stack(
           children: [
             Positioned.fill(
               child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
             ),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
             SafeArea(
               child: Column(
                 children: [
@@ -77,7 +79,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                                     padding: EdgeInsets.symmetric(vertical: 32),
                                     child: CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white),
+                                          PantherColors.brand),
                                     ),
                                   ),
                                 );
@@ -92,7 +94,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                                   child: Text(
                                     state.message,
                                     style: TextStyles.bodyMedium.copyWith(
-                                      color: Colors.redAccent,
+                                      color: PantherColors.negative,
                                     ),
                                   ),
                                 );
@@ -144,7 +146,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
               Text(
                 'Prevent financial regret',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -159,9 +161,12 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +174,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
           Text(
             'Check Affordability',
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.55),
+              color: PantherColors.textSecondary,
               fontSize: 13,
             ),
           ),
@@ -179,19 +184,19 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
             keyboardType:
                 const TextInputType.numberWithOptions(decimal: true),
             style: TextStyles.titleLarge.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 28,
               fontWeight: FontWeight.w700,
             ),
             decoration: InputDecoration(
               hintText: '0.00',
               hintStyle: TextStyles.titleLarge.copyWith(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: PantherColors.textSubtle,
                 fontSize: 28,
               ),
               prefixText: '\$ ',
               prefixStyle: TextStyles.titleLarge.copyWith(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: PantherColors.textSecondary,
                 fontSize: 28,
               ),
               border: InputBorder.none,
@@ -202,18 +207,18 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
           TextField(
             controller: _merchantController,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 14,
             ),
             decoration: InputDecoration(
               hintText: 'Merchant / purpose',
               hintStyle: TextStyles.bodyMedium.copyWith(
-                color: Colors.white.withValues(alpha: 0.35),
+                color: PantherColors.textSubtle,
               ),
-              prefixIcon: Icon(Icons.storefront_outlined,
-                  color: Colors.white.withValues(alpha: 0.4), size: 18),
+              prefixIcon: const Icon(Icons.storefront_outlined,
+                  color: PantherColors.textSubtle, size: 18),
               filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.05),
+              fillColor: PantherColors.cardAlt,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide.none,
@@ -229,8 +234,8 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
             child: ElevatedButton(
               onPressed: _runCheck,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
+                backgroundColor: PantherColors.brand,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -241,7 +246,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                 'Check Now',
                 style: TextStyles.labelMedium.copyWith(
                   fontSize: 14,
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -259,14 +264,14 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
         result.verdict.toUpperCase().contains('SAFE') ||
         result.verdict.toUpperCase().contains('CAN');
     final verdictColor =
-        isApproved ? const Color(0xFF05DF72) : const Color(0xFFFF6467);
+        isApproved ? PantherColors.positive : PantherColors.negative;
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: verdictColor.withValues(alpha: 0.3)),
+        border: Border.all(color: verdictColor.withValues(alpha: 0.4), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +298,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
           Text(
             result.summary,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: PantherColors.textPrimary,
               fontSize: 14,
               height: 1.5,
             ),
@@ -303,7 +308,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
             Text(
               'Safe amount: \$${result.safeAmount!.toStringAsFixed(2)}',
               style: TextStyles.bodyMedium.copyWith(
-                color: const Color(0xFF05DF72),
+                color: PantherColors.positive,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -318,20 +323,20 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
       ),
       child: Row(
         children: [
-          Icon(Icons.auto_awesome,
-              color: Colors.white.withValues(alpha: 0.3), size: 20),
+          const Icon(Icons.auto_awesome,
+              color: PantherColors.brand, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Enter an amount above and tap "Check Now" to get an AI-powered affordability assessment.',
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white.withValues(alpha: 0.45),
+                color: PantherColors.textSecondary,
                 fontSize: 13,
                 height: 1.5,
               ),
@@ -362,7 +367,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                 'Active BNPL',
                 'Credit used',
                 '-2%',
-                Colors.white,
+                PantherColors.textSecondary,
                 _ChartType.slight,
               ),
             ),
@@ -372,7 +377,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                 'Spending Pattern',
                 'Stable',
                 '+1%',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
                 _ChartType.wavy,
               ),
             ),
@@ -386,7 +391,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                 'Affordability Level',
                 '75%',
                 '+1%',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
                 _ChartType.rising,
               ),
             ),
@@ -396,7 +401,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
                 'Balance Trend',
                 'Growing',
                 '+3%',
-                const Color(0xFF05DF72),
+                PantherColors.positive,
                 _ChartType.flat,
               ),
             ),
@@ -416,9 +421,12 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,7 +434,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
           Text(
             title,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white,
+              color: PantherColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -434,7 +442,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
           Text(
             subtitle,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.45),
+              color: PantherColors.textSubtle,
               fontSize: 11,
             ),
           ),
@@ -451,8 +459,8 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
             change,
             style: TextStyles.bodySmall.copyWith(
               color: change.startsWith('-')
-                  ? const Color(0xFFFF6467)
-                  : const Color(0xFF05DF72),
+                  ? PantherColors.negative
+                  : PantherColors.positive,
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),

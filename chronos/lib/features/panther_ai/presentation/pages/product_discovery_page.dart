@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/theme/panther_colors.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../domain/entities/marketplace_product.dart';
 import '../bloc/marketplace_bloc.dart';
@@ -46,12 +47,13 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
     return BlocProvider.value(
       value: _marketplaceBloc,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: PantherColors.bg,
         body: Stack(
           children: [
             Positioned.fill(
               child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
             ),
+            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
             SafeArea(
               child: Column(
                 children: [
@@ -63,7 +65,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                         if (state is MarketplaceLoading) {
                           return const Center(
                             child: CircularProgressIndicator(
-                              color: Color(0xFFF59E0B),
+                              color: PantherColors.brand,
                             ),
                           );
                         }
@@ -127,7 +129,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
               Text(
                 'AI-Powered Shopping',
                 style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
+                    color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
               ),
             ],
           ),
@@ -144,26 +146,26 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border:
-                    Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                    Border.all(color: PantherColors.border),
               ),
               child: TextField(
                 controller: _searchController,
                 style: TextStyles.bodyMedium
-                    .copyWith(color: Colors.white, fontSize: 14),
+                    .copyWith(color: PantherColors.textPrimary, fontSize: 14),
                 onSubmitted: (_) => _search(),
                 decoration: InputDecoration(
                   hintText: 'Search products…',
                   hintStyle: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: PantherColors.textSubtle,
                       fontSize: 14),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 12),
-                  prefixIcon: Icon(Icons.search,
-                      color: Colors.white.withValues(alpha: 0.5), size: 20),
+                  prefixIcon: const Icon(Icons.search,
+                      color: PantherColors.textSubtle, size: 20),
                 ),
               ),
             ),
@@ -174,10 +176,10 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: PantherColors.brand,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.search, color: Colors.black, size: 20),
+              child: const Icon(Icons.search, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -206,90 +208,102 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
       BuildContext context, MarketplaceProduct product) {
     return GestureDetector(
       onTap: () => context.push(RouteConstants.affordabilityCheck.toPath),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.shopping_bag_outlined,
-                      color: Colors.white.withValues(alpha: 0.3),
-                      size: 48,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: PantherColors.border),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: PantherColors.cardAlt,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.shopping_bag_outlined,
+                        color: PantherColors.textSubtle,
+                        size: 48,
+                      ),
                     ),
                   ),
-                ),
-                if (product.bnplEligible)
+                  if (product.bnplEligible)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: PantherColors.positive,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'BNPL',
+                          style: TextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
                   Positioned(
                     top: 8,
-                    left: 8,
+                    right: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 3),
+                      width: 30,
+                      height: 30,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF05DF72),
-                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: PantherColors.border),
                       ),
-                      child: Text(
-                        'BNPL',
-                        style: TextStyles.bodySmall.copyWith(
-                            color: Colors.black,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700),
+                      child: const Icon(
+                        Icons.favorite_border,
+                        color: PantherColors.textSecondary,
+                        size: 16,
                       ),
                     ),
                   ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.favorite_border,
-                      color: Colors.black.withValues(alpha: 0.6),
-                      size: 16,
-                    ),
-                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              product.name,
+              style: TextStyles.bodyMedium.copyWith(
+                  color: PantherColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Text(
+                  '\$${product.price.toStringAsFixed(2)}',
+                  style: TextStyles.bodySmall.copyWith(
+                      color: PantherColors.textSecondary, fontSize: 12),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  product.vendor,
+                  style: TextStyles.bodySmall.copyWith(
+                      color: PantherColors.textSubtle, fontSize: 11),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            product.name,
-            style: TextStyles.bodyMedium.copyWith(
-                color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Text(
-                '\$${product.price.toStringAsFixed(2)}',
-                style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                product.vendor,
-                style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.3), fontSize: 11),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -313,13 +327,14 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: PantherColors.warning.withValues(alpha: 0.4)),
               ),
               child: Text(
                 'Using sample products: $errorMessage',
                 style: TextStyles.bodySmall.copyWith(
-                    color: Colors.orange, fontSize: 11),
+                    color: PantherColors.warning, fontSize: 11),
               ),
             ),
           ],
@@ -348,59 +363,71 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
   Widget _buildFallbackCard(BuildContext context, _FallbackProduct product) {
     return GestureDetector(
       onTap: () => context.push(RouteConstants.affordabilityCheck.toPath),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    product.imagePath,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: PantherColors.border),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      product.imagePath,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        decoration: BoxDecoration(
+                          color: PantherColors.cardAlt,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(Icons.shopping_bag_outlined,
+                            color: PantherColors.textSubtle, size: 40),
                       ),
-                      child: Icon(Icons.shopping_bag_outlined,
-                          color: Colors.white.withValues(alpha: 0.3), size: 40),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: PantherColors.border),
+                      ),
+                      child: const Icon(Icons.favorite_border,
+                          color: PantherColors.textSecondary, size: 16),
                     ),
-                    child: Icon(Icons.favorite_border,
-                        color: Colors.black.withValues(alpha: 0.6), size: 16),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(product.name,
-              style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 2),
-          Text(product.price,
-              style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
-        ],
+            const SizedBox(height: 8),
+            Text(product.name,
+                style: TextStyles.bodyMedium.copyWith(
+                    color: PantherColors.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 2),
+            Text(product.price,
+                style: TextStyles.bodySmall.copyWith(
+                    color: PantherColors.textSecondary, fontSize: 12)),
+          ],
+        ),
       ),
     );
   }
@@ -421,7 +448,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
               onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
               child: Text('See All',
                   style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5), fontSize: 13)),
+                      color: Colors.white.withValues(alpha: 0.7), fontSize: 13)),
             ),
           ],
         ),
@@ -436,8 +463,8 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                       : 'electronics'));
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50)),
@@ -447,7 +474,7 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
                 style: TextStyles.labelLarge.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black)),
+                    color: Colors.white)),
           ),
         ),
         const SizedBox(height: 10),
@@ -456,21 +483,21 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
           child: ElevatedButton(
             onPressed: () => context.push(RouteConstants.affordabilityCheck.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(
+                    color: PantherColors.border),
               ),
             ),
             child: Text('Best Value',
                 style: TextStyles.labelLarge.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white)),
+                    color: PantherColors.textPrimary)),
           ),
         ),
         const SizedBox(height: 10),
@@ -479,21 +506,21 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(
+                    color: PantherColors.border),
               ),
             ),
             child: Text('Lowest Stress Purchase',
                 style: TextStyles.labelLarge.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white)),
+                    color: PantherColors.textPrimary)),
           ),
         ),
       ],
