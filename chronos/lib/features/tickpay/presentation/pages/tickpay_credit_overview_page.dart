@@ -377,8 +377,8 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 color: isPositive
-                    ? const Color(0xFFE8F5E9)
-                    : const Color(0xFFFFEBEE),
+                    ? TickpayColors.positive.withValues(alpha: 0.12)
+                    : TickpayColors.negative.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -427,7 +427,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0D0D1A),
+              backgroundColor: TickpayColors.brandRed,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -445,7 +445,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF0D0D1A),
+              foregroundColor: TickpayColors.textPrimaryLight,
               padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: TickpayColors.divider),
               shape: RoundedRectangleBorder(
