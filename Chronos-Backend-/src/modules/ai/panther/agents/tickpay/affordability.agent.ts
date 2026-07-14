@@ -56,7 +56,7 @@ Return ONLY valid JSON (no markdown):
     const raw = await callLLM({
       systemPrompt,
       messages: [{ role: "user", content: prompt }],
-      model: "claude-sonnet-4-6",
+      model: "claude-sonnet-5",
       maxTokens: 512,
     });
 
@@ -97,7 +97,7 @@ Answer based strictly on their data. Cover: available credit, repayment schedule
   return callLLM({
     systemPrompt,
     messages: [...history, { role: "user", content: prompt }],
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     maxTokens: 768,
   });
 }

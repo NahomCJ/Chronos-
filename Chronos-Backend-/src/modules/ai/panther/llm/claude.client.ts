@@ -11,7 +11,7 @@ function getClient(): Anthropic {
   return _client;
 }
 
-export type ClaudeModel = "claude-haiku-4-5-20251001" | "claude-sonnet-4-6";
+export type ClaudeModel = "claude-haiku-4-5-20251001" | "claude-sonnet-5";
 
 export interface LLMMessage {
   role: "user" | "assistant";
@@ -29,7 +29,7 @@ export async function callLLM(options: LLMCallOptions): Promise<string> {
   const {
     systemPrompt,
     messages,
-    model = "claude-sonnet-4-6",
+    model = "claude-sonnet-5",
     maxTokens = 1024,
   } = options;
 

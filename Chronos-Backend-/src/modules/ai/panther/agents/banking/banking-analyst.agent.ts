@@ -30,7 +30,7 @@ Analyze their spending patterns, account activity, and financial health. Provide
   return callLLM({
     systemPrompt,
     messages: [...history, { role: "user", content: prompt }],
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5",
     maxTokens: 1024,
   });
 }
