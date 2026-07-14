@@ -11,38 +11,30 @@ class EthFlowRebalanceSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 40),
-                        _buildSuccessHeader(),
-                        const SizedBox(height: 32),
-                        _buildTransactionCard(),
-                        const SizedBox(height: 16),
-                        _buildQuickActions(),
-                        const SizedBox(height: 28),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 40),
+                    _buildSuccessHeader(),
+                    const SizedBox(height: 32),
+                    _buildTransactionCard(),
+                    const SizedBox(height: 16),
+                    _buildQuickActions(),
+                    const SizedBox(height: 28),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -69,7 +61,7 @@ class EthFlowRebalanceSuccessPage extends StatelessWidget {
           'Portfolio Rebalanced!',
           textAlign: TextAlign.center,
           style: TextStyles.titleLarge.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
@@ -81,7 +73,7 @@ class EthFlowRebalanceSuccessPage extends StatelessWidget {
             'Your portfolio has been successfully rebalanced to match your target allocation',
             textAlign: TextAlign.center,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.75),
+              color: PantherColors.textSecondary,
               fontSize: 13.5,
               height: 1.5,
             ),

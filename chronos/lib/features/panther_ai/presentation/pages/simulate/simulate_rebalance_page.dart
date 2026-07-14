@@ -18,45 +18,35 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          // Background image
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 7),
-                        _buildPortfolioComparison(),
-                        const SizedBox(height: 24),
-                        _buildStrategySelection(),
-                        const SizedBox(height: 24),
-                        _buildRequiredTrades(),
-                        const SizedBox(height: 24),
-                        _buildEstimatedImpact(),
-                        const SizedBox(height: 24),
-                        _buildTaxConsiderations(),
-                        const SizedBox(height: 24),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 100),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 7),
+                    _buildPortfolioComparison(),
+                    const SizedBox(height: 24),
+                    _buildStrategySelection(),
+                    const SizedBox(height: 24),
+                    _buildRequiredTrades(),
+                    const SizedBox(height: 24),
+                    _buildEstimatedImpact(),
+                    const SizedBox(height: 24),
+                    _buildTaxConsiderations(),
+                    const SizedBox(height: 24),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -68,7 +58,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
         children: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Column(
@@ -77,7 +67,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               Text(
                 'Rebalance Simulation',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
                 ),
@@ -85,7 +75,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
               Text(
                 'AI-powered optimization',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -174,7 +164,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
         Text(
           'Select Strategy',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 16,
           ),
         ),
@@ -367,7 +357,7 @@ class _SimulateRebalancePageState extends State<SimulateRebalancePage> {
         Text(
           'Required Trades',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 16,
           ),
         ),

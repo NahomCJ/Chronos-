@@ -11,41 +11,33 @@ class PaymentPlanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildProductCard(),
-                        const SizedBox(height: 14),
-                        _buildDueAlert(),
-                        const SizedBox(height: 22),
-                        _buildPaymentSchedule(),
-                        const SizedBox(height: 22),
-                        _buildAIRecommendations(),
-                        const SizedBox(height: 28),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildProductCard(),
+                    const SizedBox(height: 14),
+                    _buildDueAlert(),
+                    const SizedBox(height: 22),
+                    _buildPaymentSchedule(),
+                    const SizedBox(height: 22),
+                    _buildAIRecommendations(),
+                    const SizedBox(height: 28),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -60,7 +52,8 @@ class PaymentPlanPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: IconButton(
               onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+              icon: const Icon(Icons.arrow_back,
+                  color: PantherColors.textPrimary, size: 22),
             ),
           ),
           Column(
@@ -68,7 +61,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'Payment Plan',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -76,7 +69,7 @@ class PaymentPlanPage extends StatelessWidget {
               Text(
                 'After Pay',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -314,7 +307,7 @@ class PaymentPlanPage extends StatelessWidget {
         Text(
           'Payment Schedule',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -516,7 +509,7 @@ class PaymentPlanPage extends StatelessWidget {
         Text(
           'AI Recommendations',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),

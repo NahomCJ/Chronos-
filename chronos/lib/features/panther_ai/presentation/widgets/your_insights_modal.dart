@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/theme/panther_colors.dart';
 
 class YourInsightsModal extends StatelessWidget {
   const YourInsightsModal({super.key});
@@ -22,7 +23,7 @@ class YourInsightsModal extends StatelessWidget {
     return Container(
       height: size.height * 0.85,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 0, 0, 0),
+        color: PantherColors.bg,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20 * scale),
           topRight: Radius.circular(20 * scale),
@@ -42,13 +43,13 @@ class YourInsightsModal extends StatelessWidget {
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
                     padding: EdgeInsets.all(8 * scale),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                    decoration: const BoxDecoration(
+                      color: PantherColors.cardAlt,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.arrow_back,
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       size: 20 * scale,
                     ),
                   ),
@@ -56,20 +57,20 @@ class YourInsightsModal extends StatelessWidget {
                 Text(
                   'Your Insights',
                   style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 18 * scale,
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.all(8 * scale),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                  decoration: const BoxDecoration(
+                    color: PantherColors.cardAlt,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.filter_alt_sharp,
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     size: 20 * scale,
                   ),
                 ),
@@ -168,12 +169,16 @@ class YourInsightsModal extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16 * scale),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: PantherColors.card,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 0.74,
-        ),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +199,7 @@ class YourInsightsModal extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 15 * scale,
                   ),
@@ -214,7 +219,7 @@ class YourInsightsModal extends StatelessWidget {
           Text(
             description,
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFA1A1A1),
+              color: PantherColors.textSecondary,
               fontSize: 13 * scale,
             ),
           ),
@@ -246,23 +251,23 @@ class YourInsightsModal extends StatelessWidget {
                       horizontal: 12 * scale,
                       vertical: 8 * scale,
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(100),
+                    decoration: const BoxDecoration(
+                      color: PantherColors.cardAlt,
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.close,
-                          color: const Color(0xFFA1A1A1),
+                          color: PantherColors.textSecondary,
                           size: 14 * scale,
                         ),
                         SizedBox(width: 4 * scale),
                         Text(
                           'Ignore',
                           style: TextStyles.bodySmall.copyWith(
-                            color: const Color(0xFFA1A1A1),
+                            color: PantherColors.textSecondary,
                             fontSize: 13 * scale,
                           ),
                         ),

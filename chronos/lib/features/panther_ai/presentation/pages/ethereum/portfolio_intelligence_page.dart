@@ -11,47 +11,43 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildPortfolioValue(),
-                        const SizedBox(height: 20),
-                        _buildKeyInsights(context),
-                        const SizedBox(height: 20),
-                        _buildPortfolioHealthScore(),
-                        const SizedBox(height: 20),
-                        _buildYourAssets(),
-                        const SizedBox(height: 28),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildPortfolioValue(),
+                    const SizedBox(height: 20),
+                    _buildKeyInsights(context),
+                    const SizedBox(height: 20),
+                    _buildPortfolioHealthScore(),
+                    const SizedBox(height: 20),
+                    _buildYourAssets(),
+                    const SizedBox(height: 28),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: PantherColors.border)),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Stack(
         alignment: Alignment.center,
@@ -60,7 +56,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: IconButton(
               onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+              icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary, size: 22),
             ),
           ),
           Column(
@@ -68,7 +64,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               Text(
                 'Portfolio Intelligence',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -76,7 +72,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
               Text(
                 'AI health monitoring',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -198,7 +194,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         Text(
           'Key Insights',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -586,7 +582,7 @@ class EthFlowPortfolioIntelligencePage extends StatelessWidget {
         Text(
           'Your Assets',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),

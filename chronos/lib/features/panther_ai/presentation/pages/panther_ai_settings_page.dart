@@ -20,39 +20,31 @@ class _PantherAiSettingsPageState extends State<PantherAiSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildAIPreferences(),
-                        const SizedBox(height: 22),
-                        _buildNotifications(),
-                        const SizedBox(height: 22),
-                        _buildSecurityPrivacy(),
-                        const SizedBox(height: 22),
-                        _buildAccount(),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildAIPreferences(),
+                    const SizedBox(height: 22),
+                    _buildNotifications(),
+                    const SizedBox(height: 22),
+                    _buildSecurityPrivacy(),
+                    const SizedBox(height: 22),
+                    _buildAccount(),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -65,9 +57,18 @@ class _PantherAiSettingsPageState extends State<PantherAiSettingsPage> {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: () => context.pop(),
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PantherColors.cardAlt,
+                ),
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: PantherColors.textPrimary, size: 16),
+              ),
             ),
           ),
           Column(
@@ -75,7 +76,7 @@ class _PantherAiSettingsPageState extends State<PantherAiSettingsPage> {
               Text(
                 'Settings',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -83,7 +84,7 @@ class _PantherAiSettingsPageState extends State<PantherAiSettingsPage> {
               Text(
                 'Personalize Panther AI',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -100,7 +101,7 @@ class _PantherAiSettingsPageState extends State<PantherAiSettingsPage> {
       child: Text(
         title,
         style: TextStyles.titleMedium.copyWith(
-          color: Colors.white,
+          color: PantherColors.textPrimary,
           fontWeight: FontWeight.w600,
           fontSize: 17,
         ),

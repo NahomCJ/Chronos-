@@ -11,41 +11,33 @@ class InsightDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 8),
-                        _buildTopCard(),
-                        const SizedBox(height: 20),
-                        _buildKeyMetrics(),
-                        const SizedBox(height: 20),
-                        _buildAIAnalysis(),
-                        const SizedBox(height: 20),
-                        _buildConfidenceScore(),
-                        const SizedBox(height: 28),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 40),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildTopCard(),
+                    const SizedBox(height: 20),
+                    _buildKeyMetrics(),
+                    const SizedBox(height: 20),
+                    _buildAIAnalysis(),
+                    const SizedBox(height: 20),
+                    _buildConfidenceScore(),
+                    const SizedBox(height: 28),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -57,7 +49,7 @@ class InsightDetailsPage extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+            icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary, size: 22),
           ),
           const SizedBox(width: 4),
           Column(
@@ -66,7 +58,7 @@ class InsightDetailsPage extends StatelessWidget {
               Text(
                 'Insight Details',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
                 ),
@@ -74,7 +66,7 @@ class InsightDetailsPage extends StatelessWidget {
               Text(
                 '87% confidence',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -153,7 +145,7 @@ class InsightDetailsPage extends StatelessWidget {
         Text(
           'Key Metrics',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w500,
             fontSize: 17,
           ),
@@ -234,7 +226,7 @@ class InsightDetailsPage extends StatelessWidget {
             Text(
               'AI Analysis',
               style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+                color: PantherColors.textPrimary,
                 fontWeight: FontWeight.w500,
                 fontSize: 17,
               ),
@@ -315,7 +307,7 @@ class InsightDetailsPage extends StatelessWidget {
             Text(
               'Confidence Score',
               style: TextStyles.titleMedium.copyWith(
-                color: Colors.white,
+                color: PantherColors.textPrimary,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
@@ -336,7 +328,7 @@ class InsightDetailsPage extends StatelessWidget {
           child: LinearProgressIndicator(
             value: 0.87,
             minHeight: 7,
-            backgroundColor: Colors.white.withValues(alpha: 0.25),
+            backgroundColor: PantherColors.border,
             valueColor: const AlwaysStoppedAnimation<Color>(PantherColors.positive),
           ),
         ),
@@ -344,7 +336,7 @@ class InsightDetailsPage extends StatelessWidget {
         Text(
           'Based on 83 data points and historical patterns',
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: PantherColors.textSecondary,
             fontSize: 12,
           ),
         ),
@@ -418,7 +410,7 @@ class InsightDetailsPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withValues(alpha: 0.85),
+                color: PantherColors.textSecondary,
               ),
             ),
           ),

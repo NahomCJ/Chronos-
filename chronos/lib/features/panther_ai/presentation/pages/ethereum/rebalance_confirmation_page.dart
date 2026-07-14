@@ -11,57 +11,51 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PantherColors.bg,
-      body: Stack(
-        children: [
-          // Background image
-          Positioned.fill(
-            child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-          ),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        _buildActionCard(),
-                        const SizedBox(height: 24),
-                        _buildWhatWillHappen(),
-                        const SizedBox(height: 24),
-                        _buildImpactSummary(),
-                        const SizedBox(height: 24),
-                        _buildImportantNotice(),
-                        const SizedBox(height: 24),
-                        _buildAIRecommendation(),
-                        const SizedBox(height: 24),
-                        _buildActionButtons(context),
-                        const SizedBox(height: 100),
-                      ],
-                    ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    _buildActionCard(),
+                    const SizedBox(height: 24),
+                    _buildWhatWillHappen(),
+                    const SizedBox(height: 24),
+                    _buildImpactSummary(),
+                    const SizedBox(height: 24),
+                    _buildImportantNotice(),
+                    const SizedBox(height: 24),
+                    _buildAIRecommendation(),
+                    const SizedBox(height: 24),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: PantherColors.border)),
+      ),
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           IconButton(
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: PantherColors.textPrimary),
           ),
           const SizedBox(width: 8),
           Column(
@@ -70,7 +64,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Confirm Action',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
                 ),
@@ -78,7 +72,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
               Text(
                 'Review before proceeding',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -150,7 +144,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Text(
           'What will happen',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 18,
           ),
         ),
@@ -227,7 +221,7 @@ class EthFlowRebalanceConfirmationPage extends StatelessWidget {
         Text(
           'Impact Summary',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontSize: 18,
           ),
         ),
