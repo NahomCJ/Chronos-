@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayAlertsPage extends StatefulWidget {
   const TickPayAlertsPage({super.key});
@@ -35,7 +36,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -43,7 +44,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
             Column(
         children: [
           Container(
-            color: const Color(0xFF1A0A2E),
+            color: TickpayColors.scaffoldDark,
             child: SafeArea(
               bottom: false,
               child: Column(
@@ -130,7 +131,7 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
             Switch(
               value: _notificationsOn,
               onChanged: (v) => setState(() => _notificationsOn = v),
-              activeColor: const Color(0xFF3B82F6),
+              activeColor: TickpayColors.info,
             ),
           ],
         ),
@@ -176,19 +177,19 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
                     Expanded(
                       child: Text(alert.title,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 14,
                               fontWeight: FontWeight.w600)),
                     ),
                     Text(alert.time,
                         style: const TextStyle(
-                            color: Color(0xFFBBBBBB), fontSize: 11)),
+                            color: TickpayColors.textMutedLight, fontSize: 11)),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(alert.body,
                     style: const TextStyle(
-                        color: Color(0xFF666666), fontSize: 12, height: 1.4)),
+                        color: TickpayColors.textMutedLight, fontSize: 12, height: 1.4)),
                 if (alert.amount != null) ...[
                   const SizedBox(height: 8),
                   Row(
@@ -197,14 +198,14 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF5F5F5),
+                          color: TickpayColors.neutralSurface,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFEEEEEE)),
+                          border: Border.all(color: TickpayColors.divider),
                         ),
                         child: Text(
                             '${alert.amount}  ${alert.store ?? ''}',
                             style: const TextStyle(
-                                color: Color(0xFF1A1A1A),
+                                color: TickpayColors.textPrimaryLight,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500)),
                       ),
@@ -236,15 +237,15 @@ class _TickPayAlertsPageState extends State<TickPayAlertsPage> {
   (Color, IconData) _alertColors(_AlertType type) {
     switch (type) {
       case _AlertType.warning:
-        return (const Color(0xFFDC8F4A), Icons.schedule);
+        return (TickpayColors.warning, Icons.schedule);
       case _AlertType.danger:
-        return (const Color(0xFFFF5252), Icons.warning_amber);
+        return (TickpayColors.negative, Icons.warning_amber);
       case _AlertType.info:
-        return (const Color(0xFF3B82F6), Icons.calendar_today);
+        return (TickpayColors.info, Icons.calendar_today);
       case _AlertType.success:
-        return (const Color(0xFF00C853), Icons.star_border);
+        return (TickpayColors.positive, Icons.star_border);
       case _AlertType.insight:
-        return (const Color(0xFF7C3AED), Icons.lightbulb_outline);
+        return (TickpayColors.accentPurple, Icons.lightbulb_outline);
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayNotificationsPage extends StatelessWidget {
   const TickPayNotificationsPage({super.key});
@@ -131,12 +132,12 @@ class TickPayNotificationsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: notif.unread ? const Color(0xFFF3EFFF) : Colors.white,
+        color: notif.unread ? TickpayColors.accentPurple.withValues(alpha: 0.08) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: notif.unread
-              ? const Color(0xFFD4C8FF)
-              : const Color(0xFFEEEEEE),
+              ? TickpayColors.accentPurple.withValues(alpha: 0.4)
+              : TickpayColors.divider,
         ),
         boxShadow: [
           BoxShadow(
@@ -154,14 +155,14 @@ class TickPayNotificationsPage extends StatelessWidget {
             height: 38,
             decoration: BoxDecoration(
               color: notif.unread
-                  ? const Color(0xFFEDE7FF)
-                  : const Color(0xFFF5F5F5),
+                  ? TickpayColors.accentPurple.withValues(alpha: 0.12)
+                  : TickpayColors.neutralSurface,
               shape: BoxShape.circle,
             ),
             child: Icon(notif.icon,
                 color: notif.unread
-                    ? const Color(0xFF7C3AED)
-                    : const Color(0xFF888888),
+                    ? TickpayColors.accentPurple
+                    : TickpayColors.textMutedLight,
                 size: 18),
           ),
           const SizedBox(width: 12),
@@ -172,7 +173,7 @@ class TickPayNotificationsPage extends StatelessWidget {
                 Text(
                   notif.title,
                   style: TextStyle(
-                    color: const Color(0xFF1A1A1A),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 14,
                     fontWeight:
                         notif.unread ? FontWeight.w600 : FontWeight.w500,
@@ -182,7 +183,7 @@ class TickPayNotificationsPage extends StatelessWidget {
                 Text(
                   notif.body,
                   style: const TextStyle(
-                    color: Color(0xFF888888),
+                    color: TickpayColors.textMutedLight,
                     fontSize: 12,
                     height: 1.4,
                   ),

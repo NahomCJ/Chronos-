@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayShopDetailPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -44,16 +45,16 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                     children: [
                       const Text('All Products',
                           style: TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 16,
                               fontWeight: FontWeight.bold)),
                       const Row(
                         children: [
                           Text('Sort by',
                               style: TextStyle(
-                                  color: Color(0xFF888888), fontSize: 13)),
+                                  color: TickpayColors.textMutedLight, fontSize: 13)),
                           Icon(Icons.keyboard_arrow_down,
-                              color: Color(0xFF888888), size: 16),
+                              color: TickpayColors.textMutedLight, size: 16),
                         ],
                       ),
                     ],
@@ -153,35 +154,35 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
             children: [
               const Text('Apple Store',
                   style: TextStyle(
-                      color: Color(0xFF1A1A1A),
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
               const SizedBox(width: 6),
-              const Icon(Icons.verified, color: Color(0xFF3B82F6), size: 18),
+              const Icon(Icons.verified, color: TickpayColors.info, size: 18),
             ],
           ),
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+              const Icon(Icons.star, color: TickpayColors.warning, size: 14),
               const SizedBox(width: 4),
               const Text('4.9',
                   style: TextStyle(
-                      color: Color(0xFF1A1A1A),
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 13,
                       fontWeight: FontWeight.w500)),
               const Text(' (13,xxx reviews)',
-                  style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
               const SizedBox(width: 12),
               const Text('2.4M products',
-                  style: TextStyle(color: Color(0xFF888888), fontSize: 12)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 10),
           const Text(
             'Official Apple products and accessories. Authorized retailer offering the latest iPhones, MacBooks, iPads, and more with manufacturer warranty.',
             style: TextStyle(
-                color: Color(0xFF666666), fontSize: 12, height: 1.5),
+                color: TickpayColors.textMutedLight, fontSize: 12, height: 1.5),
           ),
         ],
       ),
@@ -211,12 +212,12 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                   border: Border.all(
                     color: isSelected
                         ? const Color(0xFF0D0D1A)
-                        : const Color(0xFFDDDDDD),
+                        : TickpayColors.divider,
                   ),
                 ),
                 child: Text(e.value,
                     style: TextStyle(
-                        color: isSelected ? Colors.white : const Color(0xFF555555),
+                        color: isSelected ? Colors.white : TickpayColors.textMutedLight,
                         fontSize: 13,
                         fontWeight: isSelected
                             ? FontWeight.w600
@@ -237,7 +238,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFEEEEEE)),
+          border: Border.all(color: TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -266,13 +267,13 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 12,
                               fontWeight: FontWeight.w500)),
                       const SizedBox(height: 3),
                       Text(p.$2,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 13,
                               fontWeight: FontWeight.bold)),
                     ],
@@ -290,7 +291,7 @@ class _TickPayShopDetailPageState extends State<TickPayShopDetailPage> {
                     color: Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle),
                 child: const Icon(Icons.favorite_border,
-                    color: Color(0xFF444444), size: 14),
+                    color: TickpayColors.textMutedLight, size: 14),
               ),
             ),
           ],

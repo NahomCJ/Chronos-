@@ -17,6 +17,7 @@ from routers.insights.router import router as insights_router
 from routers.income.router import router as income_router
 from routers.liabilities.router import router as liabilities_router
 from routers.net_worth.router import router as net_worth_router
+from routers.plaid.router import router as plaid_router
 from routers.voice.router import router as voice_router
 
 app = FastAPI(
@@ -45,6 +46,9 @@ app.include_router(chris_router, prefix="/api")
 app.include_router(voice_router, prefix="/api")
 app.include_router(transactions_router)
 app.include_router(plaid_webhook_router)
+# plaid_router already declares prefix="/api/plaid" on itself — no extra
+# "/api" prefix here, or routes would double up to /api/api/plaid/*.
+app.include_router(plaid_router)
 app.include_router(insights_router, prefix="/api")
 app.include_router(income_router, prefix="/api")
 app.include_router(liabilities_router, prefix="/api")

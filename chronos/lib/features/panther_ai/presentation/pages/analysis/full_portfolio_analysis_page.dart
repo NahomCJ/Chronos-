@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/text_theme.dart';
+import '../../../../../core/theme/panther_colors.dart';
 import '../../../../../core/router/route_constants.dart';
 
 class FullPortfolioAnalysisPage extends StatelessWidget {
@@ -9,12 +10,13 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       body: Stack(
         children: [
           Positioned.fill(
             child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
           ),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
           SafeArea(
             child: Column(
               children: [
@@ -76,7 +78,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
               Text(
                 'AI Deep Dive',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                 ),
               ),
@@ -91,9 +93,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 3)),
+        ],
       ),
       child: Column(
         children: [
@@ -107,7 +112,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                   Text(
                     'Portfolio Value',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -115,7 +120,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                   Text(
                     '\$45,890',
                     style: TextStyles.titleLarge.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
                     ),
@@ -128,7 +133,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                   Text(
                     '6M Return',
                     style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: PantherColors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -137,14 +142,14 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.trending_up,
-                        color: Color(0xFF05DF72),
+                        color: PantherColors.positive,
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '+19.2%',
                         style: TextStyles.titleMedium.copyWith(
-                          color: const Color(0xFF05DF72),
+                          color: PantherColors.positive,
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
                         ),
@@ -177,7 +182,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                       (label) => Text(
                         label,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: PantherColors.textSubtle,
                           fontSize: 10,
                         ),
                       ),
@@ -209,7 +214,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 'Sharpe Ratio',
                 '1.85',
                 'Risk-adjusted returns',
-                Colors.white,
+                PantherColors.textPrimary,
               ),
             ),
             const SizedBox(width: 10),
@@ -218,7 +223,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 'Max Drawdown',
                 '-18%',
                 'Largest decline from peak',
-                const Color(0xFFFDC700),
+                PantherColors.warning,
               ),
             ),
           ],
@@ -231,7 +236,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 'Win Rate',
                 '68%',
                 'Profitable trades',
-                Colors.white,
+                PantherColors.textPrimary,
               ),
             ),
             const SizedBox(width: 10),
@@ -240,7 +245,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 'Avg Hold Time',
                 '45d',
                 'Average position duration',
-                Colors.white,
+                PantherColors.textPrimary,
               ),
             ),
           ],
@@ -258,9 +263,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,7 +276,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           Text(
             label,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSecondary,
               fontSize: 11,
             ),
           ),
@@ -285,7 +293,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           Text(
             description,
             style: TextStyles.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.4),
+              color: PantherColors.textSubtle,
               fontSize: 11,
             ),
           ),
@@ -310,9 +318,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: PantherColors.border),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+            ],
           ),
           child: Column(
             children: [
@@ -344,7 +355,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           width: 48,
           height: 110 * heightFactor,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.25),
+            color: PantherColors.brand.withValues(alpha: 0.5),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           ),
         ),
@@ -352,7 +363,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
         Text(
           label,
           style: TextStyles.bodySmall.copyWith(
-            color: Colors.white.withValues(alpha: 0.45),
+            color: PantherColors.textSecondary,
             fontSize: 11,
           ),
         ),
@@ -366,7 +377,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.auto_awesome, color: Color(0xFFCD853F), size: 18),
+            const Icon(Icons.auto_awesome, color: PantherColors.brand, size: 18),
             const SizedBox(width: 8),
             Text(
               'AI Insights',
@@ -383,32 +394,32 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           Icons.check_circle_outline,
           'Strong Diversification',
           'Your portfolio is well-diversified across 8 assets, reducing concentration risk by 45%',
-          const Color(0xFF05DF72).withValues(alpha: 0.15),
-          const Color(0xFF05DF72),
+          PantherColors.positive.withValues(alpha: 0.12),
+          PantherColors.positive,
         ),
         const SizedBox(height: 10),
         _buildInsightCard(
           Icons.warning_amber_rounded,
           'BTC Overexposure',
           'Bitcoin allocation (56%) is 22% above recommended levels for your risk profile',
-          const Color(0xFFF0B100).withValues(alpha: 0.15),
-          const Color(0xFFF0B100),
+          PantherColors.warning.withValues(alpha: 0.12),
+          PantherColors.warning,
         ),
         const SizedBox(height: 10),
         _buildInsightCard(
           Icons.trending_up,
           'Growth Opportunity',
           'Adding 15% exposure to DeFi protocols could increase returns by 8-12% annually',
-          const Color(0xFF2B7FFF).withValues(alpha: 0.15),
-          const Color(0xFF2B7FFF),
+          PantherColors.info.withValues(alpha: 0.12),
+          PantherColors.info,
         ),
         const SizedBox(height: 10),
         _buildInsightCard(
           Icons.show_chart,
           'Volatility Alert',
           'Portfolio volatility (42%) is elevated. Consider increasing stablecoin allocation',
-          const Color(0xFFFF6467).withValues(alpha: 0.15),
-          const Color(0xFFFF6467),
+          PantherColors.negative.withValues(alpha: 0.12),
+          PantherColors.negative,
         ),
       ],
     );
@@ -424,9 +435,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,7 +459,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -454,7 +468,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 Text(
                   description,
                   style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.55),
+                    color: PantherColors.textSecondary,
                     fontSize: 12.5,
                     height: 1.4,
                   ),
@@ -471,9 +485,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: PantherColors.border),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -484,12 +501,12 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                  color: PantherColors.brand.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.lightbulb_outline,
-                  color: Color(0xFFAB7FF8),
+                  color: PantherColors.brand,
                   size: 18,
                 ),
               ),
@@ -497,7 +514,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
               Text(
                 'AI Recommendations',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -508,7 +525,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           Text(
             'Based on your risk profile and market conditions, we recommend:',
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: PantherColors.textSecondary,
               fontSize: 13,
               height: 1.45,
             ),
@@ -540,7 +557,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
             width: 6,
             height: 6,
             decoration: const BoxDecoration(
-              color: Color(0xFF00D4FF),
+              color: PantherColors.brand,
               shape: BoxShape.circle,
             ),
           ),
@@ -550,7 +567,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           child: Text(
             text,
             style: TextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.75),
+              color: PantherColors.textPrimary,
               fontSize: 13.5,
               height: 1.4,
             ),
@@ -569,8 +586,8 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
             onPressed:
                 () => context.push(RouteConstants.simulateRebalance.toPath),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: PantherColors.brand,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -582,7 +599,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -593,13 +610,13 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => context.pop(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              foregroundColor: Colors.white,
+              backgroundColor: Colors.white,
+              foregroundColor: PantherColors.textPrimary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                side: const BorderSide(color: PantherColors.border),
               ),
             ),
             child: Text(
@@ -607,7 +624,7 @@ class FullPortfolioAnalysisPage extends StatelessWidget {
               style: TextStyles.labelLarge.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: PantherColors.textPrimary,
               ),
             ),
           ),
@@ -622,7 +639,7 @@ class _LineChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = const Color(0xFF00D4FF)
+          ..color = PantherColors.brand
           ..strokeWidth = 2
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round;
@@ -633,8 +650,8 @@ class _LineChartPainter extends CustomPainter {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF00D4FF).withValues(alpha: 0.25),
-              const Color(0xFF00D4FF).withValues(alpha: 0.0),
+              PantherColors.brand.withValues(alpha: 0.25),
+              PantherColors.brand.withValues(alpha: 0.0),
             ],
           ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
           ..style = PaintingStyle.fill;
@@ -675,7 +692,7 @@ class _LineChartPainter extends CustomPainter {
     canvas.drawCircle(
       Offset(lastX, lastY),
       4,
-      Paint()..color = const Color(0xFF00D4FF),
+      Paint()..color = PantherColors.brand,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayAiPicksPage extends StatelessWidget {
@@ -18,7 +19,7 @@ class TickPayAiPicksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -27,7 +28,7 @@ class TickPayAiPicksPage extends StatelessWidget {
         children: [
           // ── Dark header + AI chat card ────────────────────────────────────
           Container(
-            color: const Color(0xFF1A0A2E),
+            color: TickpayColors.scaffoldDark,
             child: SafeArea(
               bottom: false,
               child: Column(
@@ -47,12 +48,12 @@ class TickPayAiPicksPage extends StatelessWidget {
               children: [
                 const Text('Top Picks for You',
                     style: TextStyle(
-                        color: Color(0xFF1A1A1A),
+                        color: TickpayColors.textPrimaryLight,
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
                 Text('${_picks.length} items',
                     style: const TextStyle(
-                        color: Color(0xFF888888), fontSize: 13)),
+                        color: TickpayColors.textMutedLight, fontSize: 13)),
               ],
             ),
           ),
@@ -116,7 +117,7 @@ class TickPayAiPicksPage extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: const BoxDecoration(
-                color: Color(0xFFDC8F4A), shape: BoxShape.circle),
+                color: TickpayColors.warning, shape: BoxShape.circle),
             child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
@@ -133,7 +134,7 @@ class TickPayAiPicksPage extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF4C1D95), Color(0xFF7C3AED)],
+            colors: [Color(0xFF4C1D95), TickpayColors.accentPurple],
           ),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -198,10 +199,10 @@ class TickPayAiPicksPage extends StatelessWidget {
 
   Widget _buildPickRow(BuildContext context, _Pick pick) {
     final matchColor = pick.match >= 90
-        ? const Color(0xFF00C853)
+        ? TickpayColors.positive
         : pick.match >= 80
-            ? const Color(0xFF7C3AED)
-            : const Color(0xFFDC8F4A);
+            ? TickpayColors.accentPurple
+            : TickpayColors.warning;
 
     return GestureDetector(
       onTap: () => context.push(RouteConstants.tickpayProductDetail.toPath,
@@ -211,7 +212,7 @@ class TickPayAiPicksPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFEEEEEE)),
+          border: Border.all(color: TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -235,19 +236,19 @@ class TickPayAiPicksPage extends StatelessWidget {
                 children: [
                   Text(pick.name,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 14,
                           fontWeight: FontWeight.w600)),
                   const SizedBox(height: 2),
                   Text(pick.store,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12)),
+                          color: TickpayColors.textMutedLight, fontSize: 12)),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       Text(pick.price,
                           style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 15,
                               fontWeight: FontWeight.bold)),
                       const SizedBox(width: 8),
@@ -255,15 +256,15 @@ class TickPayAiPicksPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00A693).withValues(alpha: 0.12),
+                          color: TickpayColors.positive.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                              color: const Color(0xFF00A693)
+                              color: TickpayColors.positive
                                   .withValues(alpha: 0.35)),
                         ),
                         child: const Text('BNPL',
                             style: TextStyle(
-                                color: Color(0xFF00A693),
+                                color: TickpayColors.positive,
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold)),
                       ),

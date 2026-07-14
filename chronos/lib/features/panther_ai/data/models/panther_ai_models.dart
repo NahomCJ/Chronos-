@@ -1,6 +1,7 @@
 import '../../domain/entities/ai_alert.dart';
 import '../../domain/entities/chat_response.dart';
 import '../../domain/entities/affordability_result.dart';
+import '../../domain/entities/net_worth.dart';
 import '../../domain/entities/spending_summary.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/entities/marketplace_product.dart';
@@ -359,5 +360,265 @@ class PaymentAuthorizationModel {
         status: status,
         cashFlow: cashFlow?.toEntity(),
         combinedMessage: combinedMessage,
+      );
+}
+
+// ── Net Worth ────────────────────────────────────────────────────────────
+
+class InvestmentHoldingModel {
+  final String name;
+  final String? tickerSymbol;
+  final String assetClass;
+  final double value;
+
+  const InvestmentHoldingModel({
+    required this.name,
+    this.tickerSymbol,
+    required this.assetClass,
+    required this.value,
+  });
+
+  factory InvestmentHoldingModel.fromJson(Map<String, dynamic> json) {
+    return InvestmentHoldingModel(
+      name: json['name'] as String? ?? 'Holding',
+      tickerSymbol: json['ticker_symbol'] as String?,
+      assetClass: json['asset_class'] as String? ?? 'other',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  InvestmentHolding toEntity() => InvestmentHolding(
+        name: name,
+        tickerSymbol: tickerSymbol,
+        assetClass: assetClass,
+        value: value,
+      );
+}
+
+class LiabilityItemModel {
+  final String name;
+  final String category;
+  final double value;
+
+  const LiabilityItemModel({
+    required this.name,
+    required this.category,
+    required this.value,
+  });
+
+  factory LiabilityItemModel.fromJson(Map<String, dynamic> json) {
+    return LiabilityItemModel(
+      name: json['name'] as String? ?? 'Liability',
+      category: json['category'] as String? ?? 'other',
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  LiabilityItem toEntity() =>
+      LiabilityItem(name: name, category: category, value: value);
+}
+
+class NetWorthTrendPointModel {
+  final String date;
+  final double netWorth;
+
+  const NetWorthTrendPointModel({required this.date, required this.netWorth});
+
+  factory NetWorthTrendPointModel.fromJson(Map<String, dynamic> json) {
+    return NetWorthTrendPointModel(
+      date: json['date'] as String? ?? '',
+      netWorth: (json['net_worth'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  NetWorthTrendPoint toEntity() =>
+      NetWorthTrendPoint(date: date, netWorth: netWorth);
+}
+
+class NetWorthSummaryModel {
+  final double netWorth;
+  final double totalAssets;
+  final double totalLiabilities;
+  final double bankBalances;
+  final double investments;
+  final double crypto;
+  final double otherSavings;
+  final double creditCardDebt;
+  final double loans;
+  final double mortgage;
+  final List<InvestmentHoldingModel> investmentHoldings;
+  final List<LiabilityItemModel> liabilityItems;
+  final List<NetWorthTrendPointModel> trend;
+  final double changeAmount;
+  final double changePct;
+  final String insight;
+
+  const NetWorthSummaryModel({
+    required this.netWorth,
+    required this.totalAssets,
+    required this.totalLiabilities,
+    required this.bankBalances,
+    required this.investments,
+    required this.crypto,
+    required this.otherSavings,
+    required this.creditCardDebt,
+    required this.loans,
+    required this.mortgage,
+    required this.investmentHoldings,
+    required this.liabilityItems,
+    required this.trend,
+    required this.changeAmount,
+    required this.changePct,
+    required this.insight,
+  });
+
+  factory NetWorthSummaryModel.fromDashboardJson(Map<String, dynamic> json) {
+    final netWorthJson = json['net_worth'] as Map<String, dynamic>? ?? {};
+    final assets =
+        netWorthJson['assets_breakdown'] as Map<String, dynamic>? ?? {};
+    final liabilities =
+        netWorthJson['liabilities_breakdown'] as Map<String, dynamic>? ?? {};
+    final holdings = netWorthJson['investment_holdings'] as List<dynamic>? ?? [];
+    final liabilityItems =
+        netWorthJson['liability_items'] as List<dynamic>? ?? [];
+    final trendJson = json['trend'] as Map<String, dynamic>? ?? {};
+    final dataPoints = trendJson['data_points'] as List<dynamic>? ?? [];
+
+    return NetWorthSummaryModel(
+      netWorth: (netWorthJson['net_worth'] as num?)?.toDouble() ?? 0.0,
+      totalAssets: (netWorthJson['total_assets'] as num?)?.toDouble() ?? 0.0,
+      totalLiabilities:
+          (netWorthJson['total_liabilities'] as num?)?.toDouble() ?? 0.0,
+      bankBalances: (assets['bank_balances'] as num?)?.toDouble() ?? 0.0,
+      investments: (assets['investments'] as num?)?.toDouble() ?? 0.0,
+      crypto: (assets['crypto'] as num?)?.toDouble() ?? 0.0,
+      otherSavings: (assets['other_savings'] as num?)?.toDouble() ?? 0.0,
+      creditCardDebt:
+          (liabilities['credit_card_debt'] as num?)?.toDouble() ?? 0.0,
+      loans: (liabilities['loans'] as num?)?.toDouble() ?? 0.0,
+      mortgage: (liabilities['mortgage'] as num?)?.toDouble() ?? 0.0,
+      investmentHoldings: holdings
+          .map((e) =>
+              InvestmentHoldingModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      liabilityItems: liabilityItems
+          .map((e) => LiabilityItemModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      trend: dataPoints
+          .map((e) =>
+              NetWorthTrendPointModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      changeAmount: (trendJson['change_amount'] as num?)?.toDouble() ?? 0.0,
+      changePct: (trendJson['change_pct'] as num?)?.toDouble() ?? 0.0,
+      insight: netWorthJson['insight'] as String? ?? '',
+    );
+  }
+
+  NetWorthSummary toEntity() => NetWorthSummary(
+        netWorth: netWorth,
+        totalAssets: totalAssets,
+        totalLiabilities: totalLiabilities,
+        bankBalances: bankBalances,
+        investments: investments,
+        crypto: crypto,
+        otherSavings: otherSavings,
+        creditCardDebt: creditCardDebt,
+        loans: loans,
+        mortgage: mortgage,
+        investmentHoldings:
+            investmentHoldings.map((e) => e.toEntity()).toList(),
+        liabilityItems: liabilityItems.map((e) => e.toEntity()).toList(),
+        trend: trend.map((e) => e.toEntity()).toList(),
+        changeAmount: changeAmount,
+        changePct: changePct,
+        insight: insight,
+      );
+}
+
+class NetWorthProjectionPointModel {
+  final int month;
+  final String date;
+  final double netWorth;
+
+  const NetWorthProjectionPointModel({
+    required this.month,
+    required this.date,
+    required this.netWorth,
+  });
+
+  factory NetWorthProjectionPointModel.fromJson(Map<String, dynamic> json) {
+    return NetWorthProjectionPointModel(
+      month: (json['month'] as num?)?.toInt() ?? 0,
+      date: json['date'] as String? ?? '',
+      netWorth: (json['net_worth'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  NetWorthProjectionPoint toEntity() =>
+      NetWorthProjectionPoint(month: month, date: date, netWorth: netWorth);
+}
+
+class NetWorthProjectionModel {
+  final int months;
+  final double startingNetWorth;
+  final double monthlyContributionDelta;
+  final List<NetWorthProjectionPointModel> baseline;
+  final List<NetWorthProjectionPointModel> scenario;
+  final double baselineEnd;
+  final double scenarioEnd;
+  final double difference;
+  final String insight;
+
+  const NetWorthProjectionModel({
+    required this.months,
+    required this.startingNetWorth,
+    required this.monthlyContributionDelta,
+    required this.baseline,
+    required this.scenario,
+    required this.baselineEnd,
+    required this.scenarioEnd,
+    required this.difference,
+    required this.insight,
+  });
+
+  factory NetWorthProjectionModel.fromJson(Map<String, dynamic> json) {
+    final assumptions = json['assumptions'] as Map<String, dynamic>? ?? {};
+    final atEnd =
+        json['projected_net_worth_at_end'] as Map<String, dynamic>? ?? {};
+    final baseline = json['baseline_projection'] as List<dynamic>? ?? [];
+    final scenario = json['scenario_projection'] as List<dynamic>? ?? [];
+
+    return NetWorthProjectionModel(
+      months: (json['months'] as num?)?.toInt() ?? 0,
+      startingNetWorth:
+          (json['starting_net_worth'] as num?)?.toDouble() ?? 0.0,
+      monthlyContributionDelta:
+          (assumptions['monthly_contribution_delta'] as num?)?.toDouble() ??
+              0.0,
+      baseline: baseline
+          .map((e) => NetWorthProjectionPointModel.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
+      scenario: scenario
+          .map((e) => NetWorthProjectionPointModel.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
+      baselineEnd: (atEnd['baseline'] as num?)?.toDouble() ?? 0.0,
+      scenarioEnd: (atEnd['scenario'] as num?)?.toDouble() ?? 0.0,
+      difference: (atEnd['difference'] as num?)?.toDouble() ?? 0.0,
+      insight: json['insight'] as String? ?? '',
+    );
+  }
+
+  NetWorthProjection toEntity() => NetWorthProjection(
+        months: months,
+        startingNetWorth: startingNetWorth,
+        monthlyContributionDelta: monthlyContributionDelta,
+        baseline: baseline.map((e) => e.toEntity()).toList(),
+        scenario: scenario.map((e) => e.toEntity()).toList(),
+        baselineEnd: baselineEnd,
+        scenarioEnd: scenarioEnd,
+        difference: difference,
+        insight: insight,
       );
 }

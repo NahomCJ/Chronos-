@@ -1,9 +1,13 @@
 """Net worth aggregation across connected financial sources.
 
-Week 1 intentionally uses deterministic mocks for investment, crypto, and
-source-connection metadata. Banking, income, and liabilities already have local
-lane services, so this module calls them and treats missing consent/data as a
-partial picture rather than a hard failure.
+Investments now sync from real Plaid Investments Holdings via
+services/investments/ingestion.py (falling back to deterministic mock
+holdings when a user hasn't authorized/connected that product). Crypto and
+"other savings" still use deterministic mocks — crypto lives in BlockHub, not
+Plaid, so wiring it up is a separate cross-service integration; banking,
+income, and liabilities already have local lane services, so this module
+calls them and treats missing consent/data as a partial picture rather than a
+hard failure.
 """
 
 from __future__ import annotations
@@ -13,14 +17,14 @@ from typing import Any
 
 from services.banking.mock_api import get_balance
 from services.income.ingestion import IncomeConsentError
-from services.liabilities.ingestion import LiabilitiesConsentError
+from services.investments.ingestion import InvestmentsConsentError, get_investments_data
+from services.liabilities.ingestion import LiabilitiesConsentError, get_liabilities_data
 
 from .mock_data import (
     EXPECTED_SOURCES,
     connected_sources,
     crypto_fixture,
     has_source,
-    investment_fixture,
     normalize_user_id,
     other_savings_fixture,
 )
@@ -48,10 +52,14 @@ def calculate_net_worth(user_id: str) -> dict[str, Any]:
     if "banking" not in connected:
         connected.add("banking")
 
-    investments = _investment_value(normalized_user_id, missing_sources)
+    investments, investment_holdings = _investment_value(
+        normalized_user_id, missing_sources
+    )
     crypto = _crypto_value(normalized_user_id, missing_sources)
     other_savings = _other_savings_value(normalized_user_id)
-    liabilities, liabilities_connected = _liabilities_breakdown(normalized_user_id)
+    liabilities, liability_items, liabilities_connected = _liabilities_breakdown(
+        normalized_user_id
+    )
     if not liabilities_connected:
         missing_sources.append("liabilities")
         connected.discard("liabilities")
@@ -89,6 +97,8 @@ def calculate_net_worth(user_id: str) -> dict[str, Any]:
         "total_liabilities": total_liabilities,
         "assets_breakdown": assets_breakdown,
         "liabilities_breakdown": liabilities_breakdown,
+        "investment_holdings": investment_holdings,
+        "liability_items": liability_items,
         "data_completeness": data_completeness,
         "missing_sources": sorted(set(missing_sources), key=EXPECTED_SOURCES.index),
         "calculated_at": datetime.now(timezone.utc).isoformat(),
@@ -100,11 +110,15 @@ def _bank_balance(user_id: str) -> float:
     return float(get_balance(user_id))
 
 
-def _investment_value(user_id: str, missing_sources: list[str]) -> float:
-    if not has_source(user_id, "investments"):
+def _investment_value(
+    user_id: str, missing_sources: list[str]
+) -> tuple[float, list[dict[str, Any]]]:
+    try:
+        data = get_investments_data(user_id)
+        return float(data.get("total_value") or 0.0), data.get("holdings", [])
+    except InvestmentsConsentError:
         missing_sources.append("investments")
-        return 0.0
-    return float(investment_fixture(user_id).get("total_value") or 0.0)
+        return 0.0, []
 
 
 def _crypto_value(user_id: str, missing_sources: list[str]) -> float:
@@ -118,7 +132,9 @@ def _other_savings_value(user_id: str) -> float:
     return other_savings_fixture(user_id)
 
 
-def _liabilities_breakdown(user_id: str) -> tuple[dict[str, float], bool]:
+def _liabilities_breakdown(
+    user_id: str,
+) -> tuple[dict[str, float], list[dict[str, Any]], bool]:
     try:
         from services.liabilities.credit_card import analyze_credit_cards
         from services.liabilities.loans import analyze_loans
@@ -127,18 +143,67 @@ def _liabilities_breakdown(user_id: str) -> tuple[dict[str, float], bool]:
         credit_cards = analyze_credit_cards(user_id)
         loans = analyze_loans(user_id)
         mortgage = analyze_mortgage(user_id)
-        return (
-            {
-                "credit_card_debt": float(
-                    credit_cards.get("total_credit_card_debt") or 0.0
-                ),
-                "loans": float(loans.get("total_loan_debt") or 0.0),
-                "mortgage": float(mortgage.get("outstanding_balance") or 0.0),
-            },
-            True,
-        )
+        raw = get_liabilities_data(user_id)
+        breakdown = {
+            "credit_card_debt": float(
+                credit_cards.get("total_credit_card_debt") or 0.0
+            ),
+            "loans": float(loans.get("total_loan_debt") or 0.0),
+            "mortgage": float(mortgage.get("outstanding_balance") or 0.0),
+        }
+        return breakdown, _liability_items(raw), True
     except LiabilitiesConsentError:
-        return ({"credit_card_debt": 0.0, "loans": 0.0, "mortgage": 0.0}, False)
+        return ({"credit_card_debt": 0.0, "loans": 0.0, "mortgage": 0.0}, [], False)
+
+
+def _liability_items(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    for card in raw.get("credit_cards", []):
+        items.append(
+            {
+                "name": "Credit Card",
+                "category": "credit_card",
+                "value": round(float(card.get("balance") or 0.0), 2),
+                "account_id": card.get("account_id"),
+            }
+        )
+    for loan in raw.get("student_loans", []):
+        items.append(
+            {
+                "name": "Student Loan",
+                "category": "student_loan",
+                "value": round(float(loan.get("outstanding_balance") or 0.0), 2),
+                "account_id": loan.get("account_id"),
+            }
+        )
+    for loan in raw.get("auto_loans", []):
+        items.append(
+            {
+                "name": "Auto Loan",
+                "category": "auto_loan",
+                "value": round(float(loan.get("outstanding_balance") or 0.0), 2),
+                "account_id": loan.get("account_id"),
+            }
+        )
+    for loan in raw.get("personal_loans", []):
+        items.append(
+            {
+                "name": "Personal Loan",
+                "category": "personal_loan",
+                "value": round(float(loan.get("outstanding_balance") or 0.0), 2),
+                "account_id": loan.get("account_id"),
+            }
+        )
+    for mortgage in raw.get("mortgages", []):
+        items.append(
+            {
+                "name": "Mortgage",
+                "category": "mortgage",
+                "value": round(float(mortgage.get("outstanding_balance") or 0.0), 2),
+                "account_id": mortgage.get("account_id"),
+            }
+        )
+    return items
 
 
 def _income_connected(user_id: str) -> bool:

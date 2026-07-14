@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayActivePlansPage extends StatefulWidget {
   const TickPayActivePlansPage({super.key});
@@ -15,8 +16,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
     _Plan(
       brand: 'Amazon',
       tag: 'Electronics',
-      tagColor: Color(0xFF5B21B6),
-      tagBg: Color(0x335B21B6),
+      tagColor: TickpayColors.chipElectronicsText,
+      tagBg: TickpayColors.chipElectronicsBg,
       icon: Icons.shopping_cart_outlined,
       iconColor: Color(0xFFFF9900),
       paid: 3,
@@ -31,8 +32,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
     _Plan(
       brand: 'Nike',
       tag: 'Fashion',
-      tagColor: Color(0xFFBE185D),
-      tagBg: Color(0x33BE185D),
+      tagColor: TickpayColors.chipFashionText,
+      tagBg: TickpayColors.chipFashionBg,
       icon: Icons.check_circle_outline,
       iconColor: Colors.white,
       paid: 2,
@@ -47,8 +48,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
     _Plan(
       brand: 'Apple Store',
       tag: 'Electronics',
-      tagColor: Color(0xFF5B21B6),
-      tagBg: Color(0x335B21B6),
+      tagColor: TickpayColors.chipElectronicsText,
+      tagBg: TickpayColors.chipElectronicsBg,
       icon: Icons.apple,
       iconColor: Colors.white,
       paid: 2,
@@ -63,8 +64,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
     _Plan(
       brand: 'IKEA',
       tag: 'Home',
-      tagColor: Color(0xFF065F46),
-      tagBg: Color(0x33065F46),
+      tagColor: TickpayColors.chipHomeText,
+      tagBg: TickpayColors.chipHomeBg,
       icon: Icons.home_outlined,
       iconColor: Color(0xFF34D399),
       paid: 1,
@@ -81,7 +82,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -90,7 +91,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: const Color(0xFF0D0D1A),
+            color: TickpayColors.scaffoldDark,
             child: SafeArea(
               bottom: false,
               child: Column(
@@ -172,7 +173,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
             width: 36,
             height: 36,
             decoration: const BoxDecoration(
-              color: Color(0xFFDC8F4A),
+              color: TickpayColors.warning,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.person, color: Colors.white, size: 20),
@@ -189,7 +190,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF2D1B4E), const Color(0xFF0D0D1A)],
+            colors: [TickpayColors.accentPurple, TickpayColors.scaffoldDark],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -264,7 +265,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFEEEEEE)),
+          border: Border.all(color: TickpayColors.divider),
         ),
         child: Column(
           children: [
@@ -289,7 +290,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
                           Text(
                             plan.brand,
                             style: const TextStyle(
-                              color: Color(0xFF1A1A1A),
+                              color: TickpayColors.textPrimaryLight,
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -317,7 +318,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
                       Text(
                         '${plan.paid} of ${plan.total} payments made',
                         style: const TextStyle(
-                          color: Color(0xFF888888),
+                          color: TickpayColors.textMutedLight,
                           fontSize: 12,
                         ),
                       ),
@@ -327,7 +328,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
                 Text(
                   plan.totalAmount,
                   style: const TextStyle(
-                    color: Color(0xFF1A1A1A),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -347,7 +348,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
                 child: const Text(
                   'See Less',
                   style: TextStyle(
-                    color: Color(0xFF7C3AED),
+                    color: TickpayColors.accentPurple,
                     fontSize: 13,
                   ),
                 ),
@@ -372,14 +373,14 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
             const Text(
               'Progress',
               style: TextStyle(
-                color: Color(0xFF888888),
+                color: TickpayColors.textMutedLight,
                 fontSize: 12,
               ),
             ),
             Text(
               '${(plan.progress * 100).toInt()}%',
               style: const TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -391,8 +392,8 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: plan.progress,
-            backgroundColor: const Color(0xFFEEEEEE),
-            valueColor: const AlwaysStoppedAnimation(Color(0xFF7C3AED)),
+            backgroundColor: TickpayColors.divider,
+            valueColor: const AlwaysStoppedAnimation(TickpayColors.accentPurple),
             minHeight: 6,
           ),
         ),
@@ -404,31 +405,31 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: TickpayColors.neutralSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        border: Border.all(color: TickpayColors.divider),
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _detailCol('Paid', plan.paidAmount, const Color(0xFF00C853)),
-              _detailCol('Remaining', plan.remaining, const Color(0xFF1A1A1A)),
+              _detailCol('Paid', plan.paidAmount, TickpayColors.positive),
+              _detailCol('Remaining', plan.remaining, TickpayColors.textPrimaryLight),
             ],
           ),
-          const Divider(color: Color(0xFFEEEEEE), height: 24),
+          const Divider(color: TickpayColors.divider, height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'Next Payment',
-                style: TextStyle(color: Color(0xFF888888), fontSize: 12),
+                style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12),
               ),
               Text(
                 plan.nextPayment,
                 style: const TextStyle(
-                  color: Color(0xFF1A1A1A),
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
@@ -445,7 +446,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: const TextStyle(color: Color(0xFF888888), fontSize: 12)),
+            style: const TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
         const SizedBox(height: 2),
         Text(value,
             style: TextStyle(
@@ -460,7 +461,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
       child: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0D0D1A),
+          backgroundColor: TickpayColors.scaffoldDark,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(

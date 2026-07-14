@@ -6,12 +6,10 @@ import 'package:intl/intl.dart';
 import '../../../../core/router/route_constants.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayCreditOverviewPage extends StatelessWidget {
   const TickPayCreditOverviewPage({super.key});
-
-  static const _kDark = const Color(0xFF0D0D1A);
-  static const _kLight = Color(0xFFF8F9FA);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +17,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
       builder: (context, state) {
         final account = state is TickpayAccountLoaded ? state : null;
         return Scaffold(
-          backgroundColor: _kLight,
+          backgroundColor: TickpayColors.scaffoldLight,
           body: Stack(
               children: [
                 Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -27,7 +25,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                 Column(
             children: [
               Container(
-                color: _kDark,
+                color: TickpayColors.scaffoldDark,
                 child: SafeArea(
                   bottom: false,
                   child: _buildHeader(context),
@@ -110,7 +108,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        border: Border.all(color: TickpayColors.divider),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -124,7 +122,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
         children: [
           const Text(
             'Available Credit',
-            style: TextStyle(color: Color(0xFF888888), fontSize: 13),
+            style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13),
           ),
           const SizedBox(height: 4),
           Row(
@@ -133,7 +131,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               Text(
                 account == null ? '---' : '\$${fmt.format(available)}',
                 style: const TextStyle(
-                  color: Color(0xFF1A1A1A),
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                 ),
@@ -146,7 +144,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                       ? 'of --- limit'
                       : 'of \$${fmt.format(limit)} limit',
                   style: const TextStyle(
-                      color: Color(0xFF999999), fontSize: 13),
+                      color: TickpayColors.textMutedLight, fontSize: 13),
                 ),
               ),
             ],
@@ -154,25 +152,25 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           const SizedBox(height: 4),
           const Text(
             'TickPay Credit Line',
-            style: TextStyle(color: Color(0xFF999999), fontSize: 12),
+            style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12),
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: TickpayColors.neutralSurface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFEEEEEE)),
+              border: Border.all(color: TickpayColors.divider),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Credit Used',
-                    style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
+                    style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
                 Text(
                   account == null ? '---' : '\$${fmt.format(used)}',
                   style: const TextStyle(
-                    color: Color(0xFF1A1A1A),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -192,7 +190,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        border: Border.all(color: TickpayColors.divider),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -207,7 +205,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           const Text(
             'Credit Utilization',
             style: TextStyle(
-              color: Color(0xFF1A1A1A),
+              color: TickpayColors.textPrimaryLight,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -233,7 +231,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                             ? '0%'
                             : '${(account.creditLimit == 0 ? 0 : (account.creditUsed / account.creditLimit * 100)).toStringAsFixed(0)}%',
                         style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
                         ),
@@ -241,7 +239,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                       const Text(
                         'Used',
                         style: TextStyle(
-                          color: Color(0xFF888888),
+                          color: TickpayColors.textMutedLight,
                           fontSize: 12,
                         ),
                       ),
@@ -258,7 +256,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               account == null || account.creditLimit == 0
                   ? 0.0
                   : math.min(account.creditUsed / account.creditLimit, 1.0),
-              const Color(0xFF7C3AED)),
+              TickpayColors.accentPurple),
           const SizedBox(height: 10),
           _buildUtilRow(
               'Available',
@@ -266,7 +264,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               account == null || account.creditLimit == 0
                   ? 1.0
                   : math.min(account.available / account.creditLimit, 1.0),
-              const Color(0xFF2E7D32)),
+              TickpayColors.positive),
         ],
       ),
     );
@@ -287,12 +285,12 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(label,
-                    style: const TextStyle(color: Color(0xFF555555), fontSize: 13)),
+                    style: const TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
               ],
             ),
             Text(
               '$amount (${(ratio * 100).toStringAsFixed(1)}%)',
-              style: const TextStyle(color: Color(0xFF1A1A1A), fontSize: 13),
+              style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 13),
             ),
           ],
         ),
@@ -301,7 +299,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: ratio,
-            backgroundColor: const Color(0xFFEEEEEE),
+            backgroundColor: TickpayColors.divider,
             valueColor: AlwaysStoppedAnimation(color),
             minHeight: 4,
           ),
@@ -322,7 +320,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
             const Text(
               'Recent Activity',
               style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -331,7 +329,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               onTap: () => context.push(RouteConstants.tickpayPaymentHistory.toPath),
               child: const Text(
                 'View All',
-                style: TextStyle(color: Color(0xFF7C3AED), fontSize: 13),
+                style: TextStyle(color: TickpayColors.accentPurple, fontSize: 13),
               ),
             ),
           ],
@@ -341,7 +339,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Text('No transactions yet.',
-                style: TextStyle(color: Color(0xFF888888), fontSize: 13)),
+                style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
           )
         else
           ...txs.map((tx) => _buildActivityRow(
@@ -363,7 +361,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFEEEEEE)),
+          border: Border.all(color: TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -379,15 +377,15 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 color: isPositive
-                    ? const Color(0xFFE8F5E9)
-                    : const Color(0xFFFFEBEE),
+                    ? TickpayColors.positive.withValues(alpha: 0.12)
+                    : TickpayColors.negative.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 isPositive ? Icons.arrow_upward : Icons.arrow_downward,
                 color: isPositive
-                    ? const Color(0xFF2E7D32)
-                    : const Color(0xFFC62828),
+                    ? TickpayColors.positive
+                    : TickpayColors.negative,
                 size: 16,
               ),
             ),
@@ -398,10 +396,10 @@ class TickPayCreditOverviewPage extends StatelessWidget {
                 children: [
                   Text(title,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A), fontSize: 14)),
+                          color: TickpayColors.textPrimaryLight, fontSize: 14)),
                   Text(subtitle,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12)),
+                          color: TickpayColors.textMutedLight, fontSize: 12)),
                 ],
               ),
             ),
@@ -409,8 +407,8 @@ class TickPayCreditOverviewPage extends StatelessWidget {
               amount,
               style: TextStyle(
                 color: isPositive
-                    ? const Color(0xFF00C853)
-                    : const Color(0xFFFF5252),
+                    ? TickpayColors.positive
+                    : TickpayColors.negative,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -429,7 +427,7 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0D0D1A),
+              backgroundColor: TickpayColors.brandRed,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -447,9 +445,9 @@ class TickPayCreditOverviewPage extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF0D0D1A),
+              foregroundColor: TickpayColors.textPrimaryLight,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(color: Color(0xFFCCCCCC)),
+              side: const BorderSide(color: TickpayColors.divider),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
@@ -475,13 +473,13 @@ class _DonutPainter extends CustomPainter {
     final bg = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 16
-      ..color = const Color(0xFFEEEEEE);
+      ..color = TickpayColors.divider;
     canvas.drawCircle(center, radius, bg);
     final fg = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 16
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFF7C3AED);
+      ..color = TickpayColors.accentPurple;
     canvas.drawArc(rect, -math.pi / 2, 2 * math.pi * value, false, fg);
   }
 

@@ -14,6 +14,7 @@ from services.net_worth import (
     calculate_health_score,
     calculate_net_worth,
     get_net_worth_trend,
+    project_net_worth,
     snapshot_net_worth,
 )
 
@@ -63,6 +64,25 @@ def trend(
 def dta(user_id: str = _user_query()):
     try:
         return calculate_dta(user_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+
+
+@router.get("/projection")
+@contract
+def projection(
+    user_id: str = _user_query(),
+    months: int = Query(12, ge=1, le=60),
+    monthly_contribution_delta: float = Query(0.0),
+    annual_investment_return_pct: float = Query(7.0, ge=0, le=30),
+):
+    try:
+        return project_net_worth(
+            user_id,
+            months=months,
+            monthly_contribution_delta=monthly_contribution_delta,
+            annual_investment_return_pct=annual_investment_return_pct,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayPaymentHistoryPage extends StatefulWidget {
   const TickPayPaymentHistoryPage({super.key});
@@ -25,17 +26,17 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
 
   Color _statusColor(String s) {
     switch (s) {
-      case 'Paid':      return const Color(0xFF00C853);
-      case 'Paid Late': return const Color(0xFFF59E0B);
-      case 'Refunded':  return const Color(0xFF3B82F6);
-      default:          return Colors.grey;
+      case 'Paid':      return TickpayColors.positive;
+      case 'Paid Late': return TickpayColors.warning;
+      case 'Refunded':  return TickpayColors.info;
+      default:          return TickpayColors.textMutedLight;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -68,7 +69,7 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
                 color: Colors.white, shape: BoxShape.circle,
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 8)],
               ),
-              child: const Icon(Icons.arrow_back, color: Color(0xFF1A1A2E), size: 18),
+              child: const Icon(Icons.arrow_back, color: TickpayColors.textPrimaryLight, size: 18),
             ),
           ),
           const SizedBox(width: 14),
@@ -76,9 +77,9 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Payment History',
-                  style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 18, fontWeight: FontWeight.bold)),
               Text('Your transaction records',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
             ],
           ),
         ],
@@ -91,11 +92,11 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Row(
         children: [
-          Expanded(child: _statCard('Total Paid', '\$764', const Color(0xFF7C3AED))),
+          Expanded(child: _statCard('Total Paid', '\$764', TickpayColors.accentPurple)),
           const SizedBox(width: 10),
-          Expanded(child: _statCard('On Time', '95%', const Color(0xFF00C853))),
+          Expanded(child: _statCard('On Time', '95%', TickpayColors.positive)),
           const SizedBox(width: 10),
-          Expanded(child: _statCard('Total', '${_transactions.length}', const Color(0xFF1A1A2E))),
+          Expanded(child: _statCard('Total', '${_transactions.length}', TickpayColors.textPrimaryLight)),
         ],
       ),
     );
@@ -113,7 +114,7 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
         children: [
           Text(value, style: TextStyle(color: valueColor, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 2),
-          Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+          Text(label, style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
         ],
       ),
     );
@@ -132,14 +133,14 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF7C3AED) : Colors.white,
+                color: isSelected ? TickpayColors.accentPurple : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: isSelected ? [] :
                     [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
               ),
               child: Text(e.value,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey.shade600,
+                    color: isSelected ? Colors.white : TickpayColors.textMutedLight,
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   )),
@@ -175,13 +176,13 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
             width: 40, height: 40,
             decoration: BoxDecoration(
               color: isPositive
-                  ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
-                  : const Color(0xFFF3F4F6),
+                  ? TickpayColors.info.withValues(alpha: 0.1)
+                  : TickpayColors.neutralSurface,
               shape: BoxShape.circle,
             ),
             child: Icon(
               isPositive ? Icons.undo : Icons.arrow_upward,
-              color: isPositive ? const Color(0xFF3B82F6) : Colors.grey.shade500,
+              color: isPositive ? TickpayColors.info : TickpayColors.textMutedLight,
               size: 16,
             ),
           ),
@@ -191,8 +192,8 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(tx.name,
-                    style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
-                Text(tx.store, style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                    style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 14, fontWeight: FontWeight.w600)),
+                Text(tx.store, style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
                 const SizedBox(height: 4),
                 Row(
                   children: [
@@ -207,7 +208,7 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
                     ),
                     const SizedBox(width: 6),
                     Text(tx.installment,
-                        style: TextStyle(color: Colors.grey.shade400, fontSize: 11)),
+                        style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
                   ],
                 ),
               ],
@@ -218,11 +219,11 @@ class _TickPayPaymentHistoryPageState extends State<TickPayPaymentHistoryPage> {
             children: [
               Text(tx.amount,
                   style: TextStyle(
-                    color: isPositive ? const Color(0xFF3B82F6) : const Color(0xFF1A1A2E),
+                    color: isPositive ? TickpayColors.info : TickpayColors.textPrimaryLight,
                     fontSize: 14, fontWeight: FontWeight.bold,
                   )),
               const SizedBox(height: 4),
-              Text(tx.date, style: TextStyle(color: Colors.grey.shade400, fontSize: 11)),
+              Text(tx.date, style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
             ],
           ),
         ],

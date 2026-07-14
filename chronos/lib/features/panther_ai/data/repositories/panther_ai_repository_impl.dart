@@ -1,6 +1,7 @@
 import '../../domain/entities/ai_alert.dart';
 import '../../domain/entities/chat_response.dart';
 import '../../domain/entities/affordability_result.dart';
+import '../../domain/entities/net_worth.dart';
 import '../../domain/entities/spending_summary.dart';
 import '../../domain/entities/transaction.dart';
 import '../../domain/entities/marketplace_product.dart';
@@ -73,6 +74,26 @@ class PantherAiRepositoryImpl implements PantherAiRepository {
       merchant: merchant,
       paymentType: paymentType,
       numPayments: numPayments,
+    );
+    return model.toEntity();
+  }
+
+  @override
+  Future<NetWorthSummary> getNetWorthDashboard() async {
+    final model = await dataSource.getNetWorthDashboard();
+    return model.toEntity();
+  }
+
+  @override
+  Future<NetWorthProjection> getNetWorthProjection({
+    int months = 12,
+    double monthlyContributionDelta = 0,
+    double annualInvestmentReturnPct = 7,
+  }) async {
+    final model = await dataSource.getNetWorthProjection(
+      months: months,
+      monthlyContributionDelta: monthlyContributionDelta,
+      annualInvestmentReturnPct: annualInvestmentReturnPct,
     );
     return model.toEntity();
   }

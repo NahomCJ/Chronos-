@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 
 class TickPayAutoPayPage extends StatefulWidget {
   const TickPayAutoPayPage({super.key});
@@ -24,7 +25,7 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
   Widget build(BuildContext context) {
     final activeCount = _enabled.where((e) => e).length;
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: TickpayColors.scaffoldLight,
       body: Stack(
           children: [
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
@@ -73,7 +74,7 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
                 color: Colors.white, shape: BoxShape.circle,
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 8)],
               ),
-              child: const Icon(Icons.arrow_back, color: Color(0xFF1A1A2E), size: 18),
+              child: const Icon(Icons.arrow_back, color: TickpayColors.textPrimaryLight, size: 18),
             ),
           ),
           const SizedBox(width: 14),
@@ -81,15 +82,15 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Auto-Pay',
-                  style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 18, fontWeight: FontWeight.bold)),
               Text('Manage automatic payments',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
             ],
           ),
           const Spacer(),
           Container(
             width: 36, height: 36,
-            decoration: const BoxDecoration(color: Color(0xFFDC8F4A), shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: TickpayColors.accentPurple, shape: BoxShape.circle),
             child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
@@ -101,19 +102,19 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFECFDF5),
+        color: TickpayColors.positive.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF00C853).withValues(alpha: 0.3)),
+        border: Border.all(color: TickpayColors.positive.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Container(
             width: 44, height: 44,
             decoration: BoxDecoration(
-              color: const Color(0xFF00C853).withValues(alpha: 0.15),
+              color: TickpayColors.positive.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check_circle_outline, color: Color(0xFF00C853), size: 22),
+            child: const Icon(Icons.check_circle_outline, color: TickpayColors.positive, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -121,10 +122,10 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('$count Active Auto-Pays',
-                    style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 15, fontWeight: FontWeight.w700)),
+                    style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 15, fontWeight: FontWeight.w700)),
                 Text(
                   'Payments deducted on due dates. Notified 2 days before.',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11, height: 1.4),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11, height: 1.4),
                 ),
               ],
             ),
@@ -139,7 +140,7 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Payment Method',
-            style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _methodRow(0, Icons.account_balance_outlined, 'Bank Account', 'Checking ****4892'),
         const SizedBox(height: 10),
@@ -158,7 +159,7 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSel ? const Color(0xFF7C3AED) : Colors.grey.shade200,
+            color: isSel ? TickpayColors.accentPurple : TickpayColors.divider,
             width: isSel ? 1.5 : 1,
           ),
           boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
@@ -168,10 +169,10 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
             Container(
               width: 40, height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                color: TickpayColors.accentPurple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: const Color(0xFF7C3AED), size: 20),
+              child: Icon(icon, color: TickpayColors.accentPurple, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -179,15 +180,15 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w500)),
-                  Text(subtitle, style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                      style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 14, fontWeight: FontWeight.w500)),
+                  Text(subtitle, style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12)),
                 ],
               ),
             ),
             if (isSel)
               Container(
                 width: 22, height: 22,
-                decoration: const BoxDecoration(color: Color(0xFF7C3AED), shape: BoxShape.circle),
+                decoration: const BoxDecoration(color: TickpayColors.accentPurple, shape: BoxShape.circle),
                 child: const Icon(Icons.check, color: Colors.white, size: 14),
               ),
           ],
@@ -204,10 +205,10 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Payment Plans',
-                style: TextStyle(color: Color(0xFF1A1A2E), fontSize: 16, fontWeight: FontWeight.bold)),
+                style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold)),
             GestureDetector(
               onTap: () => context.push(RouteConstants.tickpayActivePlans.toPath),
-              child: Text('View All', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+              child: Text('View All', style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13)),
             ),
           ],
         ),
@@ -231,12 +232,12 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
                     width: 42, height: 42,
                     decoration: BoxDecoration(
                       color: on
-                          ? const Color(0xFF00C853).withValues(alpha: 0.1)
-                          : const Color(0xFFF3F4F6),
+                          ? TickpayColors.positive.withValues(alpha: 0.1)
+                          : TickpayColors.neutralSurface,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.shopping_bag_outlined,
-                        color: on ? const Color(0xFF00C853) : Colors.grey.shade400, size: 20),
+                        color: on ? TickpayColors.positive : TickpayColors.textMutedLight, size: 20),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -244,32 +245,32 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(plan.name,
-                            style: const TextStyle(color: Color(0xFF1A1A2E), fontSize: 14, fontWeight: FontWeight.w600)),
+                            style: const TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 14, fontWeight: FontWeight.w600)),
                         Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF00C853).withValues(alpha: 0.1),
+                                color: TickpayColors.positive.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(plan.installment,
-                                  style: const TextStyle(color: Color(0xFF00C853), fontSize: 9, fontWeight: FontWeight.bold)),
+                                  style: const TextStyle(color: TickpayColors.positive, fontSize: 9, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(width: 6),
                             Text('Next ${plan.nextDate}',
-                                style: TextStyle(color: Colors.grey.shade400, fontSize: 11)),
+                                style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
                           ],
                         ),
                         Text('Next payment  ${plan.amount}',
-                            style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                            style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 11)),
                       ],
                     ),
                   ),
                   Switch(
                     value: on,
                     onChanged: (v) => setState(() => _enabled[i] = v),
-                    activeColor: const Color(0xFF00C853),
+                    activeColor: TickpayColors.positive,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ],
@@ -300,10 +301,10 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.grey.shade400, size: 16),
+              Icon(Icons.info_outline, color: TickpayColors.textMutedLight, size: 16),
               const SizedBox(width: 8),
               Text('How Auto-Pay Works',
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 13, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 10),
@@ -315,11 +316,11 @@ class _TickPayAutoPayPageState extends State<TickPayAutoPayPage> {
                 Container(
                   width: 5, height: 5,
                   margin: const EdgeInsets.only(top: 5),
-                  decoration: BoxDecoration(color: Colors.grey.shade400, shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: TickpayColors.textMutedLight, shape: BoxShape.circle),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(p, style: TextStyle(color: Colors.grey.shade600, fontSize: 12, height: 1.4)),
+                  child: Text(p, style: TextStyle(color: TickpayColors.textMutedLight, fontSize: 12, height: 1.4)),
                 ),
               ],
             ),

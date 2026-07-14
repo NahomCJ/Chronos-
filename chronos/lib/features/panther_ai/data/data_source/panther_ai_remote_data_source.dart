@@ -135,6 +135,30 @@ class PantherAiRemoteDataSource {
     return PaymentAuthorizationModel.fromJson(data);
   }
 
+  // ── Net Worth ─────────────────────────────────────────────────────────────
+
+  Future<NetWorthSummaryModel> getNetWorthDashboard() async {
+    final data = await _client.getWithBase(
+      _kPantherBase,
+      '/api/net-worth/dashboard?user_id=$_userId',
+    );
+    return NetWorthSummaryModel.fromDashboardJson(data);
+  }
+
+  Future<NetWorthProjectionModel> getNetWorthProjection({
+    int months = 12,
+    double monthlyContributionDelta = 0,
+    double annualInvestmentReturnPct = 7,
+  }) async {
+    final data = await _client.getWithBase(
+      _kPantherBase,
+      '/api/net-worth/projection?user_id=$_userId&months=$months'
+      '&monthly_contribution_delta=$monthlyContributionDelta'
+      '&annual_investment_return_pct=$annualInvestmentReturnPct',
+    );
+    return NetWorthProjectionModel.fromJson(data);
+  }
+
   // ── Affordability (legacy, maps to authorize-payment) ────────────────────
 
   Future<AffordabilityResultModel> checkAffordability(

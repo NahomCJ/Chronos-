@@ -1,6 +1,7 @@
 import '../entities/ai_alert.dart';
 import '../entities/chat_response.dart';
 import '../entities/affordability_result.dart';
+import '../entities/net_worth.dart';
 import '../entities/spending_summary.dart';
 import '../entities/transaction.dart';
 import '../entities/marketplace_product.dart';
@@ -24,5 +25,12 @@ abstract class PantherAiRepository {
     required String merchant,
     String paymentType,
     int? numPayments,
+  });
+
+  Future<NetWorthSummary> getNetWorthDashboard();
+  Future<NetWorthProjection> getNetWorthProjection({
+    int months,
+    double monthlyContributionDelta,
+    double annualInvestmentReturnPct,
   });
 }

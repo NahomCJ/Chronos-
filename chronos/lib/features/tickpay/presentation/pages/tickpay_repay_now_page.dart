@@ -6,6 +6,7 @@ import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayRepayNowPage extends StatefulWidget {
@@ -60,7 +61,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xFFF8F9FA),
+                    color: TickpayColors.lightSheet,
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(24)),
                   ),
@@ -86,7 +87,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                             child: Text(
                               'Payment will be processed immediately',
                               style: TextStyle(
-                                  color: Color(0xFFBBBBBB), fontSize: 11),
+                                  color: TickpayColors.textMutedLight, fontSize: 11),
                             ),
                           ),
                           const SizedBox(height: 120),
@@ -149,7 +150,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        border: Border.all(color: TickpayColors.divider),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -175,12 +176,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                   children: [
                     const Text('iPhone 15 Pro',
                         style: TextStyle(
-                            color: Color(0xFF1A1A2E),
+                            color: TickpayColors.textPrimaryLight,
                             fontSize: 15,
                             fontWeight: FontWeight.w600)),
                     Text('Apple Store',
                         style: TextStyle(
-                            color: Colors.grey.shade500, fontSize: 12)),
+                            color: TickpayColors.textMutedLight, fontSize: 12)),
                   ],
                 ),
               ),
@@ -190,20 +191,20 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF8F0),
+              color: TickpayColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                  color: const Color(0xFFDC8F4A).withValues(alpha: 0.3)),
+                  color: TickpayColors.warning.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Payment 1 of 4',
                     style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 12)),
+                        color: TickpayColors.textMutedLight, fontSize: 12)),
                 const Text('Due',
                     style: TextStyle(
-                        color: Color(0xFFDC8F4A),
+                        color: TickpayColors.warning,
                         fontSize: 12,
                         fontWeight: FontWeight.bold)),
               ],
@@ -228,11 +229,11 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       children: [
         Text(label,
             style: TextStyle(
-                color: Colors.grey.shade500, fontSize: 11)),
+                color: TickpayColors.textMutedLight, fontSize: 11)),
         const SizedBox(height: 2),
         Text(value,
             style: const TextStyle(
-                color: Color(0xFF1A1A2E),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
       ],
@@ -245,7 +246,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       children: [
         const Text('Payment Amount',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
@@ -267,12 +268,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF0EBFF) : Colors.white,
+          color: isSelected ? TickpayColors.accentPurple.withValues(alpha: 0.08) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
               color: isSelected
-                  ? const Color(0xFF7C3AED)
-                  : const Color(0xFFEEEEEE)),
+                  ? TickpayColors.accentPurple
+                  : TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -290,11 +291,11 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 shape: BoxShape.circle,
                 border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF7C3AED)
+                        ? TickpayColors.accentPurple
                         : const Color(0xFFCCCCCC),
                     width: 1.5),
                 color: isSelected
-                    ? const Color(0xFF7C3AED)
+                    ? TickpayColors.accentPurple
                     : Colors.transparent,
               ),
               child: isSelected
@@ -309,18 +310,18 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 children: [
                   Text(title,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
                   Text(subtitle,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 11)),
+                          color: TickpayColors.textMutedLight, fontSize: 11)),
                 ],
               ),
             ),
             Text(amount,
                 style: const TextStyle(
-                    color: Color(0xFF1A1A1A),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 15,
                     fontWeight: FontWeight.bold)),
           ],
@@ -338,14 +339,14 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
           children: [
             const Text('Payment Method',
                 style: TextStyle(
-                    color: Color(0xFF1A1A1A),
+                    color: TickpayColors.textPrimaryLight,
                     fontSize: 16,
                     fontWeight: FontWeight.bold)),
             GestureDetector(
               onTap: () => context.push(RouteConstants.tickpayLinkWallets.toPath),
               child: const Text('View All',
                   style: TextStyle(
-                      color: Color(0xFF7C3AED), fontSize: 13)),
+                      color: TickpayColors.accentPurple, fontSize: 13)),
             ),
           ],
         ),
@@ -367,12 +368,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF0EBFF) : Colors.white,
+          color: isSelected ? TickpayColors.accentPurple.withValues(alpha: 0.08) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
               color: isSelected
-                  ? const Color(0xFF7C3AED)
-                  : const Color(0xFFEEEEEE)),
+                  ? TickpayColors.accentPurple
+                  : TickpayColors.divider),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -387,11 +388,11 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                color: TickpayColors.accentPurple.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child:
-                  Icon(icon, color: const Color(0xFF7C3AED), size: 18),
+                  Icon(icon, color: TickpayColors.accentPurple, size: 18),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -400,12 +401,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 children: [
                   Text(title,
                       style: const TextStyle(
-                          color: Color(0xFF1A1A1A),
+                          color: TickpayColors.textPrimaryLight,
                           fontSize: 14,
                           fontWeight: FontWeight.w500)),
                   Text(subtitle,
                       style: const TextStyle(
-                          color: Color(0xFF888888), fontSize: 12)),
+                          color: TickpayColors.textMutedLight, fontSize: 12)),
                 ],
               ),
             ),
@@ -414,7 +415,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                 width: 22,
                 height: 22,
                 decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED),
+                    color: TickpayColors.accentPurple,
                     shape: BoxShape.circle),
                 child: const Icon(Icons.check,
                     color: Colors.white, size: 14),
@@ -433,12 +434,12 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
       children: [
         const Text('Total Payment',
             style: TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         Text(total,
             style: const TextStyle(
-                color: Color(0xFF1A1A1A),
+                color: TickpayColors.textPrimaryLight,
                 fontSize: 18,
                 fontWeight: FontWeight.bold)),
       ],
@@ -452,7 +453,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Payment successful!'),
-              backgroundColor: Color(0xFF2E7D32),
+              backgroundColor: TickpayColors.positive,
             ),
           );
           context.pop();
@@ -460,7 +461,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: TickpayColors.negative,
             ),
           );
         }
@@ -490,7 +491,7 @@ class _TickPayRepayNowPageState extends State<TickPayRepayNowPage> {
                         );
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0D0D1A),
+              backgroundColor: TickpayColors.brandRed,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
