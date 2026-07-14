@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../domain/entities/net_worth.dart';
+import '../bloc/net_worth_bloc.dart';
+import '../bloc/net_worth_event.dart';
+import '../bloc/net_worth_state.dart';
 
 class NetWorthIntelligencePage extends StatefulWidget {
   const NetWorthIntelligencePage({super.key});
@@ -12,6 +19,7 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animCtrl;
   late Animation<double> _anim;
+  late final NetWorthBloc _bloc;
 
   static const _bg = Color(0xFFF5F6FA);
   static const _card = Colors.white;
@@ -21,38 +29,14 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
   static const _green = Color(0xFF22C55E);
   static const _red = Color(0xFFEF4444);
   static const _blue = Color(0xFF3B82F6);
-
-  static const _assets = [
-    _NWItem('Checking & Savings', 14200, Color(0xFF22C55E), Icons.account_balance_rounded),
-    _NWItem('Investment Portfolio', 45890, Color(0xFF3B82F6), Icons.show_chart_rounded),
-    _NWItem('Real Estate', 320000, Color(0xFF7C6EF0), Icons.home_rounded),
-    _NWItem('Retirement (401k)', 38400, Color(0xFF7C6EF0), Icons.savings_rounded),
-    _NWItem('Crypto', 4200, Color(0xFFF59E0B), Icons.currency_bitcoin_rounded),
-  ];
-
-  static const _liabilities = [
-    _NWItem('Mortgage', 285000, Color(0xFFEF4444), Icons.home_outlined),
-    _NWItem('Car Loan', 12400, Color(0xFF7C6EF0), Icons.directions_car_outlined),
-    _NWItem('Student Loan', 18200, Color(0xFF7C6EF0), Icons.school_outlined),
-    _NWItem('Credit Card', 3200, Color(0xFFF59E0B), Icons.credit_card_outlined),
-  ];
-
-  static const _history = [
-    ('Jan', 38200.0),
-    ('Feb', 40100.0),
-    ('Mar', 43800.0),
-    ('Apr', 42200.0),
-    ('May', 45600.0),
-    ('Jun', 47200.0),
-  ];
-
-  double get _totalAssets => _assets.fold(0.0, (s, a) => s + a.value);
-  double get _totalLiabilities => _liabilities.fold(0.0, (s, l) => s + l.value);
-  double get _netWorth => _totalAssets - _totalLiabilities;
+  static const _amber = Color(0xFFF59E0B);
+  static const _purple = Color(0xFF7C6EF0);
 
   @override
   void initState() {
     super.initState();
+    _bloc = GetIt.I<NetWorthBloc>();
+    _bloc.add(const NetWorthLoadRequested());
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -69,87 +53,157 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _bg,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFF3F4F6)),
-            child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Color(0xFF374151), size: 16),
-          ),
-        ),
-        title: const Text('Net Worth',
-            style: TextStyle(
-                color: _textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600)),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: _border),
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: _green.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.trending_up_rounded, color: _green, size: 13),
-                const SizedBox(width: 4),
-                const Text('+8.2% YTD',
-                    style: TextStyle(
-                        color: _green,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600)),
-              ],
+    return BlocProvider.value(
+      value: _bloc,
+      child: Scaffold(
+        backgroundColor: _bg,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          leading: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFF3F4F6)),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF374151), size: 16),
             ),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          AnimatedBuilder(
-            animation: _anim,
-            builder: (_, __) => SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeroCard(),
-                  const SizedBox(height: 24),
-                  _buildLineChart(),
-                  const SizedBox(height: 24),
-                  _buildAssetLiabilityBars(),
-                  const SizedBox(height: 24),
-                  _buildAssetsList(),
-                  const SizedBox(height: 24),
-                  _buildLiabilitiesList(),
-                  const SizedBox(height: 24),
-                  _buildChrisInsight(),
-                ],
+          title: const Text('Net Worth',
+              style: TextStyle(
+                  color: _textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600)),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(height: 1, color: _border),
+          ),
+          actions: [
+            BlocBuilder<NetWorthBloc, NetWorthState>(
+              builder: (context, state) {
+                if (state is! NetWorthLoaded) return const SizedBox.shrink();
+                final changePct = state.summary.changePct;
+                final positive = changePct >= 0;
+                final color = positive ? _green : _red;
+                return Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                          positive
+                              ? Icons.trending_up_rounded
+                              : Icons.trending_down_rounded,
+                          color: color,
+                          size: 13),
+                      const SizedBox(width: 4),
+                      Text(
+                          '${positive ? '+' : ''}${changePct.toStringAsFixed(1)}% · 90d',
+                          style: TextStyle(
+                              color: color,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.network(
+                'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    Container(color: const Color(0xFF1A2A3A)),
               ),
             ),
-          ),
-        ],
+            Positioned.fill(
+                child: Container(color: Colors.black.withValues(alpha: 0.20))),
+            BlocBuilder<NetWorthBloc, NetWorthState>(
+              builder: (context, state) {
+                if (state is NetWorthError) {
+                  return _buildErrorState(state.message);
+                }
+                if (state is! NetWorthLoaded) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+                return AnimatedBuilder(
+                  animation: _anim,
+                  builder: (_, __) => SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeroCard(state.summary),
+                        const SizedBox(height: 24),
+                        _buildLineChart(state.summary.trend),
+                        const SizedBox(height: 24),
+                        _buildAssetLiabilityBars(state.summary),
+                        const SizedBox(height: 24),
+                        _buildAssetsList(state.summary),
+                        const SizedBox(height: 24),
+                        _buildLiabilitiesList(state.summary),
+                        const SizedBox(height: 24),
+                        _buildWhatIfCard(state),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHeroCard() {
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                color: Colors.white, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              style: const TextStyle(color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _bloc.add(const NetWorthLoadRequested()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _purple,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroCard(NetWorthSummary summary) {
+    final positive = summary.changeAmount >= 0;
+    final changeColor = positive ? _green : _red;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -175,10 +229,10 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Net Worth',
+          const Text('Net Worth',
               style: TextStyle(color: _textSecondary, fontSize: 13)),
           const SizedBox(height: 6),
-          Text('\$${_fmtK(_netWorth)}',
+          Text('\$${_fmtK(summary.netWorth)}',
               style: const TextStyle(
                   color: _textPrimary,
                   fontSize: 40,
@@ -187,11 +241,17 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.arrow_upward_rounded, color: _green, size: 14),
+              Icon(
+                  positive
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
+                  color: changeColor,
+                  size: 14),
               const SizedBox(width: 4),
-              const Text('+\$3,600 since last month',
+              Text(
+                  '${positive ? '+' : '-'}\$${_fmtK(summary.changeAmount.abs())} over the last 90 days',
                   style: TextStyle(
-                      color: _green,
+                      color: changeColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600)),
             ],
@@ -199,9 +259,11 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           const SizedBox(height: 20),
           Row(
             children: [
-              _netStatCol('Total Assets', '\$${_fmtK(_totalAssets)}', _green),
+              _netStatCol('Total Assets', '\$${_fmtK(summary.totalAssets)}',
+                  _green),
               Container(width: 1, height: 40, color: _border),
-              _netStatCol('Total Liabilities', '-\$${_fmtK(_totalLiabilities)}', _red),
+              _netStatCol('Total Liabilities',
+                  '-\$${_fmtK(summary.totalLiabilities)}', _red),
             ],
           ),
         ],
@@ -227,7 +289,8 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     );
   }
 
-  Widget _buildLineChart() {
+  Widget _buildLineChart(List<NetWorthTrendPoint> trend) {
+    final points = _historyPoints(trend);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -244,35 +307,45 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('6-Month Trend',
+          const Text('90-Day Trend',
               style: TextStyle(
                   color: _textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 120,
-            child: CustomPaint(
-              size: const Size(double.infinity, 120),
-              painter: _LineChartPainter(
-                  data: _history, progress: _anim.value, color: _green),
+          if (points.length < 2)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                'Not enough history yet to chart a trend.',
+                style: TextStyle(color: _textSecondary, fontSize: 12),
+              ),
+            )
+          else ...[
+            SizedBox(
+              height: 120,
+              child: CustomPaint(
+                size: const Size(double.infinity, 120),
+                painter: _LineChartPainter(
+                    data: points, progress: _anim.value, color: _green),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: _history
-                .map((h) => Text(h.$1,
-                    style: TextStyle(color: _textSecondary, fontSize: 10)))
-                .toList(),
-          ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: points
+                  .map((h) => Text(h.$1,
+                      style: TextStyle(color: _textSecondary, fontSize: 10)))
+                  .toList(),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildAssetLiabilityBars() {
-    final max = _totalAssets;
+  Widget _buildAssetLiabilityBars(NetWorthSummary summary) {
+    final max = summary.totalAssets <= 0 ? 1.0 : summary.totalAssets;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -295,11 +368,11 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
-          _barRow('Assets', _totalAssets, max, _green),
+          _barRow('Assets', summary.totalAssets, max, _green),
           const SizedBox(height: 10),
-          _barRow('Liabilities', _totalLiabilities, max, _red),
+          _barRow('Liabilities', summary.totalLiabilities, max, _red),
           const SizedBox(height: 10),
-          _barRow('Net Worth', _netWorth, max, _blue),
+          _barRow('Net Worth', summary.netWorth, max, _blue),
         ],
       ),
     );
@@ -331,9 +404,10 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     );
   }
 
-  Widget _buildAssetsList() => _buildNWSection('Assets', _assets, _green);
-  Widget _buildLiabilitiesList() =>
-      _buildNWSection('Liabilities', _liabilities, _red);
+  Widget _buildAssetsList(NetWorthSummary summary) =>
+      _buildNWSection('Assets', _assetItems(summary), _green);
+  Widget _buildLiabilitiesList(NetWorthSummary summary) =>
+      _buildNWSection('Liabilities', _liabilityRows(summary), _red);
 
   Widget _buildNWSection(String title, List<_NWItem> items, Color accent) {
     return Column(
@@ -407,7 +481,79 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
     );
   }
 
-  Widget _buildChrisInsight() {
+  List<_NWItem> _assetItems(NetWorthSummary summary) {
+    final items = <_NWItem>[
+      _NWItem('Bank & Savings', summary.bankBalances, _green,
+          Icons.account_balance_rounded),
+    ];
+    if (summary.investmentHoldings.isNotEmpty) {
+      items.addAll(summary.investmentHoldings.map((h) => _NWItem(
+            h.tickerSymbol != null ? '${h.name} (${h.tickerSymbol})' : h.name,
+            h.value,
+            _blue,
+            _iconForAssetClass(h.assetClass),
+          )));
+    } else {
+      items.add(_NWItem(
+          'Investments', summary.investments, _blue, Icons.show_chart_rounded));
+    }
+    items.add(_NWItem(
+        'Crypto', summary.crypto, _amber, Icons.currency_bitcoin_rounded));
+    items.add(_NWItem(
+        'Other Savings', summary.otherSavings, _purple, Icons.savings_rounded));
+    return items;
+  }
+
+  List<_NWItem> _liabilityRows(NetWorthSummary summary) {
+    if (summary.liabilityItems.isEmpty) {
+      return [
+        _NWItem('No liabilities connected', 0, _textSecondary,
+            Icons.info_outline_rounded),
+      ];
+    }
+    return summary.liabilityItems
+        .map((l) =>
+            _NWItem(l.name, l.value, _red, _iconForLiabilityCategory(l.category)))
+        .toList();
+  }
+
+  IconData _iconForAssetClass(String assetClass) {
+    switch (assetClass) {
+      case 'equities':
+        return Icons.show_chart_rounded;
+      case 'bonds':
+        return Icons.account_balance_rounded;
+      case 'retirement':
+        return Icons.savings_rounded;
+      case 'cash':
+        return Icons.attach_money_rounded;
+      case 'crypto':
+        return Icons.currency_bitcoin_rounded;
+      default:
+        return Icons.pie_chart_rounded;
+    }
+  }
+
+  IconData _iconForLiabilityCategory(String category) {
+    switch (category) {
+      case 'mortgage':
+        return Icons.home_outlined;
+      case 'auto_loan':
+        return Icons.directions_car_outlined;
+      case 'student_loan':
+        return Icons.school_outlined;
+      case 'personal_loan':
+        return Icons.request_quote_outlined;
+      case 'credit_card':
+        return Icons.credit_card_outlined;
+      default:
+        return Icons.receipt_long_outlined;
+    }
+  }
+
+  Widget _buildWhatIfCard(NetWorthLoaded state) {
+    final projection = state.projection;
+    const presets = [100.0, 300.0, 500.0];
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -415,40 +561,115 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _green.withValues(alpha: 0.2), width: 1),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _green.withValues(alpha: 0.10)),
-            child: const Icon(Icons.auto_awesome_rounded,
-                color: _green, size: 16),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Chris says',
-                    style: TextStyle(
-                        color: _green,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700)),
-                const SizedBox(height: 5),
-                Text(
-                  "You're on track to hit \$100k net worth by Q3 2027 at your current savings rate. Increasing monthly savings by \$300 would get you there 8 months sooner.",
-                  style: TextStyle(
-                      color: _textSecondary, fontSize: 12, height: 1.5),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _green.withValues(alpha: 0.10)),
+                child: const Icon(Icons.auto_awesome_rounded,
+                    color: _green, size: 16),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Chris says',
+                        style: TextStyle(
+                            color: _green,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 5),
+                    if (state.projectionLoading)
+                      const Text('Crunching your what-if scenario…',
+                          style: TextStyle(
+                              color: _textSecondary, fontSize: 12, height: 1.5))
+                    else
+                      Text(
+                        projection?.insight ??
+                            'Connect more accounts to unlock a personalized net worth projection.',
+                        style: const TextStyle(
+                            color: _textSecondary, fontSize: 12, height: 1.5),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          const Text('If I save extra per month:',
+              style: TextStyle(
+                  color: _textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Row(
+            children: presets.map((delta) {
+              final selected = projection?.monthlyContributionDelta == delta;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: GestureDetector(
+                  onTap: () => _bloc.add(
+                      NetWorthProjectionRequested(monthlyContributionDelta: delta)),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: selected ? _green.withValues(alpha: 0.12) : _bg,
+                      borderRadius: BorderRadius.circular(20),
+                      border:
+                          Border.all(color: selected ? _green : _border),
+                    ),
+                    child: Text(
+                      '+\$${delta.toStringAsFixed(0)}/mo',
+                      style: TextStyle(
+                        color: selected ? _green : _textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
     );
+  }
+
+  List<(String, double)> _historyPoints(List<NetWorthTrendPoint> trend) {
+    if (trend.isEmpty) return [];
+    const maxPoints = 6;
+    final step = (trend.length / maxPoints).ceil().clamp(1, trend.length);
+    final sampled = <NetWorthTrendPoint>[];
+    for (int i = 0; i < trend.length; i += step) {
+      sampled.add(trend[i]);
+    }
+    if (sampled.isEmpty || sampled.last != trend.last) {
+      sampled.add(trend.last);
+    }
+    return sampled.map((p) => (_shortDate(p.date), p.netWorth)).toList();
+  }
+
+  String _shortDate(String iso) {
+    try {
+      final d = DateTime.parse(iso);
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      ];
+      return '${months[d.month - 1]} ${d.day}';
+    } catch (_) {
+      return iso;
+    }
   }
 
   String _fmtK(double v) {
@@ -470,7 +691,7 @@ class _LineChartPainter extends CustomPainter {
     if (data.isEmpty) return;
     final min = data.map((e) => e.$2).reduce(mathMin);
     final max = data.map((e) => e.$2).reduce(mathMax);
-    final range = max - min;
+    final range = max - min == 0 ? 1.0 : max - min;
 
     List<Offset> points = [];
     for (int i = 0; i < data.length; i++) {
