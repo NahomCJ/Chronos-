@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' hide TextDirection;
+import '../widgets/panther_ring_chart.dart';
 
 final NumberFormat _moneyFormatWhole = NumberFormat('#,##0');
 String _moneyWhole(double value) => '\$${_moneyFormatWhole.format(value)}';
@@ -105,34 +105,28 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          AnimatedBuilder(
-            animation: _anim,
-            builder: (_, __) => SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  _buildSummaryCard(),
-                  const SizedBox(height: 24),
-                  _buildPieChart(),
-                  const SizedBox(height: 24),
-                  _buildBreakdownSection(),
-                  const SizedBox(height: 24),
-                  _buildDeductionsSection(),
-                  const SizedBox(height: 24),
-                  _buildChrisInsight(),
-                  const SizedBox(height: 24),
-                  _buildQuarterlyTimeline(),
-                ],
-              ),
-            ),
+      body: AnimatedBuilder(
+        animation: _anim,
+        builder: (_, __) => SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              _buildSummaryCard(),
+              const SizedBox(height: 20),
+              _buildChrisInsight(),
+              const SizedBox(height: 24),
+              _buildPieChart(),
+              const SizedBox(height: 24),
+              _buildBreakdownSection(),
+              const SizedBox(height: 24),
+              _buildDeductionsSection(),
+              const SizedBox(height: 24),
+              _buildQuarterlyTimeline(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -272,58 +266,14 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 200,
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomPaint(
-                    painter: _PieChartPainter(
-                      items: _breakdown,
-                      total: _total,
-                      progress: _anim.value,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _breakdown
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: e.color)),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(e.name,
-                                        style: const TextStyle(
-                                            color: _textSecondary,
-                                            fontSize: 11)),
-                                    Text(
-                                        _moneyWhole(e.amount),
-                                        style: const TextStyle(
-                                            color: _textPrimary,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ],
-            ),
+          PantherRingChart(
+            centerLabel: _moneyWhole(_total),
+            centerSubLabel: 'total',
+            progress: _anim.value,
+            slices: _breakdown
+                .map((e) => PantherRingSlice(
+                    label: e.name, value: e.amount, color: e.color))
+                .toList(),
           ),
         ],
       ),
@@ -586,62 +536,6 @@ class _TaxIntelligencePageState extends State<TaxIntelligencePage>
       ],
     );
   }
-}
-
-class _PieChartPainter extends CustomPainter {
-  final List<_TaxItem> items;
-  final double total;
-  final double progress;
-  const _PieChartPainter(
-      {required this.items, required this.total, required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width, size.height) / 2 - 10;
-    double startAngle = -pi / 2;
-
-    for (final item in items) {
-      final sweep = (item.amount / total) * 2 * pi * progress;
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweep,
-        true,
-        Paint()..color = item.color,
-      );
-      startAngle += sweep;
-    }
-
-    canvas.drawCircle(center, radius * 0.55,
-        Paint()..color = Colors.white);
-
-    final tp = TextPainter(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '${_moneyWhole(total)}\n',
-            style: const TextStyle(
-                color: Color(0xFF1A1A2E),
-                fontSize: 14,
-                fontWeight: FontWeight.w700),
-          ),
-          const TextSpan(
-            text: 'total',
-            style: TextStyle(
-                color: Color(0xFF6B7080), fontSize: 10),
-          ),
-        ],
-      ),
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
-    )..layout();
-    tp.paint(canvas,
-        center - Offset(tp.width / 2, tp.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(_PieChartPainter old) => old.progress != progress;
 }
 
 class _DeductionTile extends StatelessWidget {

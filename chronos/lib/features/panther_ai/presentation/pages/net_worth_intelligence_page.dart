@@ -119,53 +119,39 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
             ),
           ],
         ),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    Container(color: const Color(0xFF1A2A3A)),
+        body: BlocBuilder<NetWorthBloc, NetWorthState>(
+          builder: (context, state) {
+            if (state is NetWorthError) {
+              return _buildErrorState(state.message);
+            }
+            if (state is! NetWorthLoaded) {
+              return const Center(
+                child: CircularProgressIndicator(color: _purple),
+              );
+            }
+            return AnimatedBuilder(
+              animation: _anim,
+              builder: (_, __) => SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeroCard(state.summary),
+                    const SizedBox(height: 24),
+                    _buildLineChart(state.summary.trend),
+                    const SizedBox(height: 24),
+                    _buildAssetLiabilityBars(state.summary),
+                    const SizedBox(height: 24),
+                    _buildAssetsList(state.summary),
+                    const SizedBox(height: 24),
+                    _buildLiabilitiesList(state.summary),
+                    const SizedBox(height: 24),
+                    _buildWhatIfCard(state),
+                  ],
+                ),
               ),
-            ),
-            Positioned.fill(
-                child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            BlocBuilder<NetWorthBloc, NetWorthState>(
-              builder: (context, state) {
-                if (state is NetWorthError) {
-                  return _buildErrorState(state.message);
-                }
-                if (state is! NetWorthLoaded) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Colors.white),
-                  );
-                }
-                return AnimatedBuilder(
-                  animation: _anim,
-                  builder: (_, __) => SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildHeroCard(state.summary),
-                        const SizedBox(height: 24),
-                        _buildLineChart(state.summary.trend),
-                        const SizedBox(height: 24),
-                        _buildAssetLiabilityBars(state.summary),
-                        const SizedBox(height: 24),
-                        _buildAssetsList(state.summary),
-                        const SizedBox(height: 24),
-                        _buildLiabilitiesList(state.summary),
-                        const SizedBox(height: 24),
-                        _buildWhatIfCard(state),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
@@ -179,11 +165,11 @@ class _NetWorthIntelligencePageState extends State<NetWorthIntelligencePage>
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.error_outline_rounded,
-                color: Colors.white, size: 32),
+                color: _red, size: 32),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(color: Colors.white70),
+              style: const TextStyle(color: _textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),

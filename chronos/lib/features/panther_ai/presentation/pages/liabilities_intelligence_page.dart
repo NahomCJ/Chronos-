@@ -1,5 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/panther_colors.dart';
+import '../widgets/panther_ring_chart.dart';
 
 class LiabilitiesIntelligencePage extends StatefulWidget {
   const LiabilitiesIntelligencePage({super.key});
@@ -15,22 +16,17 @@ class _LiabilitiesIntelligencePageState
   late AnimationController _animCtrl;
   late Animation<double> _anim;
 
-  static const _bg = Color(0xFFF5F6FA);
-  static const _card = Colors.white;
-  static const _border = Color(0xFFE8EAF0);
-  static const _textPrimary = Color(0xFF1A1A2E);
-  static const _textSecondary = Color(0xFF6B7080);
-  static const _red = Color(0xFFEF4444);
-  static const _green = Color(0xFF22C55E);
-  static const _purple = Color(0xFF7C6EF0);
+  static const _red = PantherColors.negative;
+  static const _green = PantherColors.positive;
+  static const _purple = PantherColors.brand;
 
   static const _debts = [
     _Debt('Mortgage', 285000, 320000, 3.8, 'Jan 2048',
         Color(0xFF7C6EF0), Icons.home_rounded),
     _Debt('Car Loan', 12400, 22000, 5.9, 'Mar 2027',
-        Color(0xFF7C6EF0), Icons.directions_car_rounded),
+        Color(0xFF3B82F6), Icons.directions_car_rounded),
     _Debt('Student Loan', 18200, 35000, 4.5, 'Aug 2031',
-        Color(0xFF3B82F6), Icons.school_rounded),
+        Color(0xFF14B8A6), Icons.school_rounded),
     _Debt('Credit Card', 3200, 3200, 22.4, 'Revolving',
         Color(0xFFEF4444), Icons.credit_card_rounded),
   ];
@@ -57,9 +53,9 @@ class _LiabilitiesIntelligencePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: PantherColors.bg,
       appBar: AppBar(
-        backgroundColor: _card,
+        backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: GestureDetector(
@@ -67,19 +63,19 @@ class _LiabilitiesIntelligencePageState
           child: Container(
             margin: const EdgeInsets.all(10),
             decoration: const BoxDecoration(
-                shape: BoxShape.circle, color: Color(0xFFF3F4F6)),
+                shape: BoxShape.circle, color: PantherColors.cardAlt),
             child: const Icon(Icons.arrow_back_ios_new_rounded,
                 color: Color(0xFF374151), size: 16),
           ),
         ),
         title: const Text('Liabilities',
             style: TextStyle(
-                color: _textPrimary,
+                color: PantherColors.textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600)),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: _border),
+          child: Container(height: 1, color: PantherColors.border),
         ),
         actions: [
           Container(
@@ -97,31 +93,25 @@ class _LiabilitiesIntelligencePageState
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          AnimatedBuilder(
-            animation: _anim,
-            builder: (_, __) => SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSummaryCard(),
-                  const SizedBox(height: 24),
-                  _buildDonutChart(),
-                  const SizedBox(height: 24),
-                  _buildDebtList(),
-                  const SizedBox(height: 24),
-                  _buildPaydownStrategy(),
-                  const SizedBox(height: 24),
-                  _buildChrisInsight(),
-                ],
-              ),
-            ),
+      body: AnimatedBuilder(
+        animation: _anim,
+        builder: (_, __) => SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSummaryCard(),
+              const SizedBox(height: 20),
+              _buildChrisInsight(),
+              const SizedBox(height: 24),
+              _buildDonutChart(),
+              const SizedBox(height: 24),
+              _buildDebtList(),
+              const SizedBox(height: 24),
+              _buildPaydownStrategy(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -130,7 +120,7 @@ class _LiabilitiesIntelligencePageState
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -143,8 +133,8 @@ class _LiabilitiesIntelligencePageState
         border: Border.all(color: _red.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-              color: _red.withValues(alpha: 0.05),
-              blurRadius: 16,
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 12,
               offset: const Offset(0, 4)),
         ],
       ),
@@ -165,11 +155,12 @@ class _LiabilitiesIntelligencePageState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Total Liabilities',
-                      style: TextStyle(color: _textSecondary, fontSize: 12)),
+                  const Text('Total Liabilities',
+                      style: TextStyle(
+                          color: PantherColors.textSecondary, fontSize: 12)),
                   Text('\$${_fmtK(_totalDebt)}',
                       style: const TextStyle(
-                          color: _textPrimary,
+                          color: PantherColors.textPrimary,
                           fontSize: 28,
                           fontWeight: FontWeight.w800)),
                 ],
@@ -178,16 +169,16 @@ class _LiabilitiesIntelligencePageState
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Monthly\nPayments',
+                  const Text('Monthly\nPayments',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                          color: _textSecondary,
+                          color: PantherColors.textSecondary,
                           fontSize: 11,
                           height: 1.3)),
                   const SizedBox(height: 2),
                   const Text('\$2,340',
                       style: TextStyle(
-                          color: _textPrimary,
+                          color: PantherColors.textPrimary,
                           fontSize: 20,
                           fontWeight: FontWeight.w700)),
                 ],
@@ -221,8 +212,8 @@ class _LiabilitiesIntelligencePageState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label,
-                style: TextStyle(
-                    color: _textSecondary,
+                style: const TextStyle(
+                    color: PantherColors.textSecondary,
                     fontSize: 10,
                     height: 1.3)),
             const SizedBox(height: 4),
@@ -241,9 +232,9 @@ class _LiabilitiesIntelligencePageState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _border, width: 1),
+        border: Border.all(color: PantherColors.border, width: 1),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.03),
@@ -256,56 +247,18 @@ class _LiabilitiesIntelligencePageState
         children: [
           const Text('Debt Composition',
               style: TextStyle(
-                  color: _textPrimary,
+                  color: PantherColors.textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 180,
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomPaint(
-                    painter: _DonutPainter(
-                        debts: _debts,
-                        total: _totalDebt,
-                        progress: _anim.value),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _debts.map((d) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle, color: d.color)),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(d.name,
-                                style: TextStyle(
-                                    color: _textSecondary, fontSize: 11)),
-                            Text('\$${_fmtK(d.balance)}',
-                                style: const TextStyle(
-                                    color: _textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ),
-              ],
-            ),
+          PantherRingChart(
+            centerLabel: '\$${_fmtK(_totalDebt)}',
+            centerSubLabel: 'total debt',
+            progress: _anim.value,
+            slices: _debts
+                .map((d) => PantherRingSlice(
+                    label: d.name, value: d.balance, color: d.color))
+                .toList(),
           ),
         ],
       ),
@@ -318,7 +271,7 @@ class _LiabilitiesIntelligencePageState
       children: [
         const Text('Debt Accounts',
             style: TextStyle(
-                color: _textPrimary,
+                color: PantherColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
@@ -328,9 +281,9 @@ class _LiabilitiesIntelligencePageState
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _card,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _border, width: 0.8),
+              border: Border.all(color: PantherColors.border, width: 0.8),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withValues(alpha: 0.03),
@@ -356,12 +309,13 @@ class _LiabilitiesIntelligencePageState
                         children: [
                           Text(d.name,
                               style: const TextStyle(
-                                  color: _textPrimary,
+                                  color: PantherColors.textPrimary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600)),
                           Text('${d.rate}% APR · Due ${d.payoffDate}',
-                              style: TextStyle(
-                                  color: _textSecondary, fontSize: 10)),
+                              style: const TextStyle(
+                                  color: PantherColors.textSecondary,
+                                  fontSize: 10)),
                         ],
                       ),
                     ),
@@ -370,7 +324,7 @@ class _LiabilitiesIntelligencePageState
                       children: [
                         Text('\$${_fmtK(d.balance)}',
                             style: const TextStyle(
-                                color: _textPrimary,
+                                color: PantherColors.textPrimary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700)),
                         Text('${(progress * 100).toStringAsFixed(0)}% paid',
@@ -385,7 +339,7 @@ class _LiabilitiesIntelligencePageState
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress * _anim.value,
-                    backgroundColor: const Color(0xFFE8EAF0),
+                    backgroundColor: PantherColors.border,
                     valueColor: AlwaysStoppedAnimation(d.color),
                     minHeight: 5,
                   ),
@@ -402,7 +356,7 @@ class _LiabilitiesIntelligencePageState
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _purple.withValues(alpha: 0.2), width: 1),
         boxShadow: [
@@ -421,7 +375,7 @@ class _LiabilitiesIntelligencePageState
               const SizedBox(width: 8),
               const Text('Paydown Strategy',
                   style: TextStyle(
-                      color: _textPrimary,
+                      color: PantherColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600)),
             ],
@@ -458,7 +412,8 @@ class _LiabilitiesIntelligencePageState
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
                 Text(desc,
-                    style: TextStyle(color: _textSecondary, fontSize: 11)),
+                    style: const TextStyle(
+                        color: PantherColors.textSecondary, fontSize: 11)),
               ],
             ),
           ),
@@ -474,9 +429,9 @@ class _LiabilitiesIntelligencePageState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _card,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _red.withValues(alpha: 0.15), width: 1),
+        border: Border.all(color: _red.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -501,10 +456,12 @@ class _LiabilitiesIntelligencePageState
                         fontSize: 11,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
-                Text(
+                const Text(
                   'Your credit card at 22.4% is costing you \$60/month in interest. Paying \$500 extra monthly would clear it in 7 months and save \$420.',
                   style: TextStyle(
-                      color: _textSecondary, fontSize: 12, height: 1.5),
+                      color: PantherColors.textSecondary,
+                      fontSize: 12,
+                      height: 1.5),
                 ),
               ],
             ),
@@ -518,40 +475,6 @@ class _LiabilitiesIntelligencePageState
     if (v >= 1000) return '${(v / 1000).toStringAsFixed(1)}k';
     return v.toStringAsFixed(0);
   }
-}
-
-class _DonutPainter extends CustomPainter {
-  final List<_Debt> debts;
-  final double total;
-  final double progress;
-  const _DonutPainter(
-      {required this.debts, required this.total, required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width, size.height) / 2 - 10;
-    double startAngle = -pi / 2;
-
-    for (final d in debts) {
-      final sweep = (d.balance / total) * 2 * pi * progress;
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweep,
-        false,
-        Paint()
-          ..color = d.color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 22
-          ..strokeCap = StrokeCap.butt,
-      );
-      startAngle += sweep;
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DonutPainter old) => old.progress != progress;
 }
 
 class _Debt {

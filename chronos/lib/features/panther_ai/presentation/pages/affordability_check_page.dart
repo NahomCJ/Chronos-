@@ -52,67 +52,59 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
       value: _bloc,
       child: Scaffold(
         backgroundColor: PantherColors.bg,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-            ),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(context),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          _buildInputCard(),
-                          const SizedBox(height: 16),
-                          BlocBuilder<AffordabilityBloc, AffordabilityState>(
-                            builder: (context, state) {
-                              if (state is AffordabilityLoading) {
-                                return const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 32),
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          PantherColors.brand),
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (state is AffordabilityLoaded) {
-                                return _buildResultCard(state);
-                              }
-                              if (state is AffordabilityError) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  child: Text(
-                                    state.message,
-                                    style: TextStyles.bodyMedium.copyWith(
-                                      color: PantherColors.negative,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return _buildPlaceholderCard();
-                            },
-                          ),
-                          const SizedBox(height: 22),
-                          _buildAffordabilityFactors(),
-                          const SizedBox(height: 40),
-                        ],
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      _buildInputCard(),
+                      const SizedBox(height: 16),
+                      BlocBuilder<AffordabilityBloc, AffordabilityState>(
+                        builder: (context, state) {
+                          if (state is AffordabilityLoading) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 32),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      PantherColors.brand),
+                                ),
+                              ),
+                            );
+                          }
+                          if (state is AffordabilityLoaded) {
+                            return _buildResultCard(state);
+                          }
+                          if (state is AffordabilityError) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                state.message,
+                                style: TextStyles.bodyMedium.copyWith(
+                                  color: PantherColors.negative,
+                                ),
+                              ),
+                            );
+                          }
+                          return _buildPlaceholderCard();
+                        },
                       ),
-                    ),
+                      const SizedBox(height: 22),
+                      _buildAffordabilityFactors(),
+                      const SizedBox(height: 40),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -126,10 +118,18 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: () => context.pop(),
-              icon:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: Container(
+                margin: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: PantherColors.cardAlt,
+                ),
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: PantherColors.textPrimary, size: 16),
+              ),
             ),
           ),
           Column(
@@ -137,7 +137,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
               Text(
                 'Affordability & BNPL Readiness',
                 style: TextStyles.titleMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -146,7 +146,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
               Text(
                 'Prevent financial regret',
                 style: TextStyles.bodySmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: PantherColors.textSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -354,7 +354,7 @@ class _AffordabilityCheckPageState extends State<AffordabilityCheckPage> {
         Text(
           'Affordability Factors',
           style: TextStyles.titleMedium.copyWith(
-            color: Colors.white,
+            color: PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),

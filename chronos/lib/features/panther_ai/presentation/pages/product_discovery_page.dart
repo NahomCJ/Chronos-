@@ -48,56 +48,46 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
       value: _marketplaceBloc,
       child: Scaffold(
         backgroundColor: PantherColors.bg,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
-            ),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(context),
-                  _buildSearchBar(),
-                  Expanded(
-                    child: BlocBuilder<MarketplaceBloc, MarketplaceState>(
-                      builder: (context, state) {
-                        if (state is MarketplaceLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: PantherColors.brand,
-                            ),
-                          );
-                        }
-                        if (state is MarketplaceLoaded &&
-                            state.products.isNotEmpty) {
-                          return SingleChildScrollView(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 8),
-                                _buildRealProductGrid(
-                                    context, state.products),
-                                const SizedBox(height: 24),
-                                _buildFilterButtons(context),
-                                const SizedBox(height: 40),
-                              ],
-                            ),
-                          );
-                        }
-                        if (state is MarketplaceError) {
-                          return _buildFallback(context, state.message);
-                        }
-                        return _buildFallback(context, null);
-                      },
-                    ),
-                  ),
-                ],
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              _buildSearchBar(),
+              Expanded(
+                child: BlocBuilder<MarketplaceBloc, MarketplaceState>(
+                  builder: (context, state) {
+                    if (state is MarketplaceLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: PantherColors.brand,
+                        ),
+                      );
+                    }
+                    if (state is MarketplaceLoaded &&
+                        state.products.isNotEmpty) {
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            _buildRealProductGrid(context, state.products),
+                            const SizedBox(height: 24),
+                            _buildFilterButtons(context),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
+                      );
+                    }
+                    if (state is MarketplaceError) {
+                      return _buildFallback(context, state.message);
+                    }
+                    return _buildFallback(context, null);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -113,8 +103,8 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
             alignment: Alignment.centerLeft,
             child: IconButton(
               onPressed: () => context.pop(),
-              icon:
-                  const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+              icon: const Icon(Icons.arrow_back,
+                  color: PantherColors.textPrimary, size: 22),
             ),
           ),
           Column(
@@ -122,14 +112,14 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
               Text(
                 'Product Discovery',
                 style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 18),
               ),
               Text(
                 'AI-Powered Shopping',
                 style: TextStyles.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
+                    color: PantherColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
@@ -441,14 +431,14 @@ class _ProductDiscoveryPageState extends State<ProductDiscoveryPage> {
           children: [
             Text('AI Recommendations',
                 style: TextStyles.titleMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 17)),
             GestureDetector(
               onTap: () => context.push(RouteConstants.tickpayAiPicks.toPath),
               child: Text('See All',
                   style: TextStyles.bodySmall.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7), fontSize: 13)),
+                      color: PantherColors.brand, fontSize: 13)),
             ),
           ],
         ),
