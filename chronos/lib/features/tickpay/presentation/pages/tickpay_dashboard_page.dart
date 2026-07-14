@@ -9,13 +9,13 @@ import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 import 'chris_shopping_page.dart';
 
 // ---------------------------------------------------------------------------
 // Design constants
 // ---------------------------------------------------------------------------
-const _kBorder = Color(0x1AFFFFFF); // white 10%
 
 const _kBrandLogos = <String, String>{
   'amazon':   'https://logo.clearbit.com/amazon.com',
@@ -66,9 +66,9 @@ Widget _brandFallbackIcon(String key) {
   }
   if (key.contains('nike')) {
     return Container(color: Colors.white,
-      child: const Icon(Icons.check_circle, color: Colors.black87, size: 26));
+      child: const Icon(Icons.check_circle, color: TickpayColors.textPrimaryLight, size: 26));
   }
-  return const Icon(Icons.shopping_bag_outlined, color: Color(0xFF8B5CF6), size: 22);
+  return const Icon(Icons.shopping_bag_outlined, color: TickpayColors.accentPurple, size: 22);
 }
 
 class TickPayDashboardPage extends StatefulWidget {
@@ -169,7 +169,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Shop Now, Pay Later',
-                  style: TextStyle(color: Colors.black87, fontSize: 17, fontWeight: FontWeight.w700)),
+                  style: TextStyle(color: TickpayColors.textPrimaryLight, fontSize: 17, fontWeight: FontWeight.w700)),
               GestureDetector(
                 onTap: () => context.push(RouteConstants.tickpayDiscover.toPath),
                 child: const Text('Browse All',
@@ -194,7 +194,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFEEEEEE)),
+                    border: Border.all(color: TickpayColors.divider),
                     boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
                   ),
                   child: Column(
@@ -205,9 +205,9 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                         child: CachedNetworkImage(
                           imageUrl: p.$3,
                           height: 100, width: double.infinity, fit: BoxFit.cover,
-                          placeholder: (_, __) => Container(height: 100, color: Colors.grey.shade100),
-                          errorWidget: (_, __, ___) => Container(height: 100, color: Colors.grey.shade100,
-                              child: const Icon(Icons.image_outlined, color: Colors.grey)),
+                          placeholder: (_, __) => Container(height: 100, color: TickpayColors.neutralSurface),
+                          errorWidget: (_, __, ___) => Container(height: 100, color: TickpayColors.neutralSurface,
+                              child: const Icon(Icons.image_outlined, color: TickpayColors.textMutedLight)),
                         ),
                       ),
                       Padding(
@@ -216,7 +216,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(p.$1, maxLines: 1, overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black87)),
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: TickpayColors.textPrimaryLight)),
                             const SizedBox(height: 2),
                             Text(p.$2, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.black)),
                             const SizedBox(height: 2),
@@ -574,10 +574,10 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
       return (Icons.shopping_cart, const Color(0xFFFF9900));
     }
     if (m.contains('nike')) {
-      return (Icons.check_circle_outline, const Color(0xFFE53935));
+      return (Icons.check_circle_outline, TickpayColors.brandRed);
     }
     if (m.contains('apple')) {
-      return (Icons.apple, const Color(0xFF888888));
+      return (Icons.apple, TickpayColors.textMutedLight);
     }
     if (m.contains('ikea')) {
       return (Icons.home_outlined, const Color(0xFF0058A3));
@@ -589,9 +589,9 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
       return (Icons.stars_outlined, const Color(0xFF0046BE));
     }
     if (m.contains('adidas')) {
-      return (Icons.directions_run, const Color(0xFFAAAAAA));
+      return (Icons.directions_run, TickpayColors.textMutedDark);
     }
-    return (Icons.shopping_bag_outlined, const Color(0xFF8B5CF6));
+    return (Icons.shopping_bag_outlined, TickpayColors.accentPurple);
   }
 
   static String _installmentInfo(double amount, String id) {
@@ -627,7 +627,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               const Text(
                 'Active Plans',
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -638,7 +638,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                 child: const Text(
                   'View All',
                   style: TextStyle(
-                    color: Color(0xFF555555),
+                    color: TickpayColors.textMutedLight,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -703,7 +703,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
           colors: [Color(0xFF1E2240), Color(0xFF0D0D1A)],
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _kBorder, width: 1),
+        border: Border.all(color: TickpayColors.glassBorder, width: 1),
       ),
       child: Column(
         children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_constants.dart';
+import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 class TickPayOrderConfirmedPage extends StatelessWidget {
@@ -9,85 +10,67 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF1A0A2E), Color(0xFF2D1B4E), Color(0xFF0A0014)],
-                  stops: [0.0, 0.45, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
+      backgroundColor: TickpayColors.scaffoldLight,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              _buildCheckmark(),
+              const SizedBox(height: 24),
+              const Text('Order Confirmed!',
+                  style: TextStyle(
+                      color: TickpayColors.textPrimaryLight,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              const Text('Thank you for your purchase',
+                  style: TextStyle(
+                      color: TickpayColors.textMutedLight,
+                      fontSize: 14)),
+              const SizedBox(height: 4),
+              const Text('Order #ORD-2029-1948',
+                  style: TextStyle(
+                      color: TickpayColors.textMutedLight,
+                      fontSize: 12)),
+              const SizedBox(height: 28),
+              _buildBNPLCard(),
+              const SizedBox(height: 20),
+              _buildOrderDetails(),
+              const SizedBox(height: 20),
+              _buildWhatsNext(),
+              const SizedBox(height: 28),
+              _buildPrimaryButton(context),
+              const SizedBox(height: 12),
+              _buildSecondaryButton(context),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
-                  _buildCheckmark(),
-                  const SizedBox(height: 24),
-                  const Text('Order Confirmed!',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text('Thank you for your purchase',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
-                          fontSize: 14)),
-                  const SizedBox(height: 4),
-                  Text('Order #ORD-2029-1948',
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          fontSize: 12)),
-                  const SizedBox(height: 28),
-                  _buildBNPLCard(),
-                  const SizedBox(height: 20),
-                  _buildOrderDetails(),
-                  const SizedBox(height: 20),
-                  _buildWhatsNext(),
-                  const SizedBox(height: 28),
-                  _buildPrimaryButton(context),
-                  const SizedBox(height: 12),
-                  _buildSecondaryButton(context),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.share_outlined,
-                            color: Colors.white54, size: 16),
-                        label: const Text('Share',
-                            style:
-                                TextStyle(color: Colors.white54, fontSize: 13)),
-                      ),
-                      const SizedBox(width: 16),
-                      TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.help_outline,
-                            color: Colors.white54, size: 16),
-                        label: const Text('Help',
-                            style:
-                                TextStyle(color: Colors.white54, fontSize: 13)),
-                      ),
-                    ],
+                  TextButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.share_outlined,
+                        color: TickpayColors.textMutedLight, size: 16),
+                    label: const Text('Share',
+                        style: TextStyle(
+                            color: TickpayColors.textMutedLight, fontSize: 13)),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(width: 16),
+                  TextButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.help_outline,
+                        color: TickpayColors.textMutedLight, size: 16),
+                    label: const Text('Help',
+                        style: TextStyle(
+                            color: TickpayColors.textMutedLight, fontSize: 13)),
+                  ),
                 ],
               ),
-            ),
+              const SizedBox(height: 40),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -98,12 +81,12 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
       height: 90,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF4C1D95), Color(0xFF7C3AED)],
+          colors: [Color(0xFF4C1D95), TickpayColors.accentPurple],
         ),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+            color: TickpayColors.accentPurple.withValues(alpha: 0.35),
             blurRadius: 24,
             spreadRadius: 4,
           ),
@@ -118,16 +101,16 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFF4C1D95).withValues(alpha: 0.6),
-            const Color(0xFF7C3AED).withValues(alpha: 0.4),
-          ],
-        ),
+        color: TickpayColors.cardWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
+        border: Border.all(color: TickpayColors.divider),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,22 +121,22 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: TickpayColors.accentPurple.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.credit_score,
-                    color: Colors.white, size: 16),
+                    color: TickpayColors.accentPurple, size: 16),
               ),
               const SizedBox(width: 8),
               const Text('BNPL Active',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 14,
                       fontWeight: FontWeight.w600)),
               const Spacer(),
-              Text('Pay over time, interest-free',
+              const Text('Pay over time, interest-free',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
+                      color: TickpayColors.textMutedLight, fontSize: 11)),
             ],
           ),
           const SizedBox(height: 14),
@@ -172,11 +155,11 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5), fontSize: 12)),
+              style: const TextStyle(
+                  color: TickpayColors.textMutedLight, fontSize: 12)),
           Text(value,
               style: const TextStyle(
-                  color: Colors.white,
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 13,
                   fontWeight: FontWeight.w500)),
         ],
@@ -188,16 +171,23 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: TickpayColors.cardWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: TickpayColors.divider),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Order Details',
               style: TextStyle(
-                  color: Colors.white,
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 15,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
@@ -216,22 +206,23 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
                   children: [
                     Text('iPhone 15 Pro',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: TickpayColors.textPrimaryLight,
                             fontSize: 14,
                             fontWeight: FontWeight.w500)),
                     Text('Qty: 1',
-                        style: TextStyle(color: Colors.white54, fontSize: 12)),
+                        style: TextStyle(
+                            color: TickpayColors.textMutedLight, fontSize: 12)),
                   ],
                 ),
               ),
               const Text('\$999',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: TickpayColors.textPrimaryLight,
                       fontSize: 15,
                       fontWeight: FontWeight.bold)),
             ],
           ),
-          const Divider(color: Colors.white12, height: 20),
+          const Divider(color: TickpayColors.divider, height: 20),
           _detailRow('Shipping Method', 'Standard Shipping'),
           _detailRow('Estimated Delivery', 'May 12–15, 2026'),
           _detailRow(
@@ -250,13 +241,13 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
           SizedBox(
             width: 130,
             child: Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45), fontSize: 12)),
+                style: const TextStyle(
+                    color: TickpayColors.textMutedLight, fontSize: 12)),
           ),
           Expanded(
             child: Text(value,
-                style:
-                    const TextStyle(color: Colors.white, fontSize: 12)),
+                style: const TextStyle(
+                    color: TickpayColors.textPrimaryLight, fontSize: 12)),
           ),
         ],
       ),
@@ -275,16 +266,23 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.07),
+        color: TickpayColors.cardWhite,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: TickpayColors.divider),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("What's Next?",
               style: TextStyle(
-                  color: Colors.white,
+                  color: TickpayColors.textPrimaryLight,
                   fontSize: 15,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
@@ -297,13 +295,13 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                        color: TickpayColors.accentPurple.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text('${e.key + 1}',
                             style: const TextStyle(
-                                color: Color(0xFF7C3AED),
+                                color: TickpayColors.accentPurple,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold)),
                       ),
@@ -315,13 +313,13 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
                         children: [
                           Text(e.value.$1,
                               style: const TextStyle(
-                                  color: Colors.white,
+                                  color: TickpayColors.textPrimaryLight,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500)),
                           const SizedBox(height: 2),
                           Text(e.value.$2,
-                              style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.45),
+                              style: const TextStyle(
+                                  color: TickpayColors.textMutedLight,
                                   fontSize: 11)),
                         ],
                       ),
@@ -341,7 +339,7 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
         onPressed: () =>
             context.push(RouteConstants.tickpayOrderHistory.toPath),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3B82F6),
+          backgroundColor: TickpayColors.info,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -361,9 +359,9 @@ class TickPayOrderConfirmedPage extends StatelessWidget {
         onPressed: () => context
             .pushReplacement(RouteConstants.tickpayDiscover.toPath),
         style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
+          foregroundColor: TickpayColors.textPrimaryLight,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+          side: const BorderSide(color: TickpayColors.divider),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14)),
         ),
