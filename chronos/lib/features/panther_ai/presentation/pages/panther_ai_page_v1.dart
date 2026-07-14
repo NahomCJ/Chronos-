@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/text_theme.dart';
+import '../../../../core/theme/panther_colors.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/router/route_constants.dart';
 import '../bloc/alerts_bloc.dart';
@@ -45,7 +46,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
     return BlocProvider.value(
       value: _alertsBloc,
       child: Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PantherColors.bg,
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
@@ -64,30 +65,41 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                   child: const SizedBox(),
                 ),
                 // Background image for remaining content
-                Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/background.png'),
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
+                Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/background.png'),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 24),
-                      _buildPriorityActionsSection(scale, textScale),
-                      const SizedBox(height: 24),
-                      _buildIntelligenceHubSection(scale, textScale),
-                      const SizedBox(height: 24),
-                      _buildUpcomingEventsSection(scale, textScale),
-                      const SizedBox(height: 24),
-                      _isFirstTime
-                          ? _buildQuickAccessSection(scale, textScale)
-                          : _buildPantherTabBar(scale, textScale),
-                      const SizedBox(height: 140),
-                    ],
-                  ),
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withValues(alpha: 0.20),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        _buildPriorityActionsSection(scale, textScale),
+                        const SizedBox(height: 24),
+                        _buildIntelligenceHubSection(scale, textScale),
+                        const SizedBox(height: 24),
+                        _buildUpcomingEventsSection(scale, textScale),
+                        const SizedBox(height: 24),
+                        _isFirstTime
+                            ? _buildQuickAccessSection(scale, textScale)
+                            : _buildPantherTabBar(scale, textScale),
+                        const SizedBox(height: 140),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -158,7 +170,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                         children: [
                           CircleAvatar(
                             radius: 15 * scale,
-                            backgroundColor: const Color(0xFFCD853F),
+                            backgroundColor: PantherColors.brand,
                             child: Icon(
                               Icons.person,
                               color: Colors.white,
@@ -180,7 +192,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                               Text(
                                 'Tuesday, February 3',
                                 style: TextStyles.bodySmall.copyWith(
-                                  color: const Color(0xFFE0E0E0),
+                                  color: Colors.white.withValues(alpha: 0.7),
                                   fontSize: 14 * textScale,
                                 ),
                               ),
@@ -205,8 +217,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                           const SizedBox(width: 12),
                           Container(
                             padding: EdgeInsets.all(6 * scale),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFDC8F4A),
+                            decoration: BoxDecoration(
+                              color: PantherColors.brand,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -235,7 +247,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                       children: [
                         Icon(
                           Icons.auto_awesome,
-                          color: const Color(0xFFCD853F),
+                          color: PantherColors.brand,
                           size: 20 * scale,
                         ),
                         const SizedBox(width: 12),
@@ -253,7 +265,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                               Text(
                                 'Observing your portfolio',
                                 style: TextStyles.bodySmall.copyWith(
-                                  color: const Color(0xFFE0E0E0),
+                                  color: Colors.white.withValues(alpha: 0.7),
                                   fontSize: 12 * textScale,
                                 ),
                               ),
@@ -266,17 +278,17 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0x3320C55D),
+                            color: PantherColors.positive.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(100),
                             border: Border.all(
-                              color: const Color(0xFF00FF56),
+                              color: PantherColors.positive,
                               width: 0.5,
                             ),
                           ),
                           child: Text(
                             'Active',
                             style: TextStyles.bodySmall.copyWith(
-                              color: const Color(0xFF20C55D),
+                              color: PantherColors.positive,
                               fontSize: 12 * textScale,
                             ),
                           ),
@@ -309,10 +321,10 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             : 'Your BTC exposure is 22% above optimal allocation';
         final alertType = alerts.isNotEmpty ? alerts.first.type : 'INFO';
         final typeColor = alertType == 'FRAUD'
-            ? Colors.red
+            ? PantherColors.negative
             : alertType == 'BNPL_RISK'
-                ? Colors.orange
-                : const Color(0xFFF0B100);
+                ? PantherColors.warning
+                : PantherColors.warning;
         final typeLabel = alertType == 'FRAUD'
             ? 'High Risk'
             : alertType == 'BNPL_RISK'
@@ -351,12 +363,19 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: PantherColors.border,
                     width: 0.74,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,7 +406,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                                 .add(AlertDismissRequested(alerts.first.id)),
                             child: Icon(
                               Icons.close,
-                              color: Colors.white.withValues(alpha: 0.5),
+                              color: PantherColors.textSubtle,
                               size: 16,
                             ),
                           ),
@@ -397,7 +416,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                     Text(
                       title,
                       style: TextStyles.titleMedium.copyWith(
-                        color: Colors.white,
+                        color: PantherColors.textPrimary,
                         fontWeight: FontWeight.w400,
                         fontSize: 16 * textScale,
                       ),
@@ -406,7 +425,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                     Text(
                       message,
                       style: TextStyles.bodySmall.copyWith(
-                        color: const Color(0xFFE0E0E0),
+                        color: PantherColors.textSecondary,
                         fontSize: 14 * textScale,
                       ),
                     ),
@@ -418,8 +437,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                             onPressed: () => _alertsBloc
                                 .add(const AlertsGenerateRequested()),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFB0B0B0),
-                              foregroundColor: Colors.white,
+                              backgroundColor: PantherColors.cardAlt,
+                              foregroundColor: PantherColors.textPrimary,
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8),
                               shape: RoundedRectangleBorder(
@@ -442,8 +461,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                                   .push(RouteConstants.insightDetails.toPath);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.white.withValues(alpha: 0.1),
+                              backgroundColor: PantherColors.brand,
                               foregroundColor: Colors.white,
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8),
@@ -475,8 +493,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                     height: 8,
                     decoration: BoxDecoration(
                       color: i == 0
-                          ? const Color(0xFFDC8F4A)
-                          : const Color(0x60E2AA78),
+                          ? PantherColors.brand
+                          : Colors.white.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(100),
                     ),
                   ),
@@ -506,8 +524,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
           const SizedBox(height: 16),
           _buildActionCard(
             icon: Icons.sync,
-            iconColor: const Color(0x2200D4FF),
-            iconForeground: const Color(0xFF00D4FF),
+            iconColor: PantherColors.info.withValues(alpha: 0.15),
+            iconForeground: PantherColors.info,
             title: 'Simulate Rebalance',
             subtitle: 'Optimize portfolio allocation',
             scale: scale,
@@ -519,8 +537,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
           const SizedBox(height: 18),
           _buildActionCard(
             icon: Icons.warning_amber_rounded,
-            iconColor: const Color(0x22F0B100),
-            iconForeground: const Color(0xFFF0B100),
+            iconColor: PantherColors.warning.withValues(alpha: 0.15),
+            iconForeground: PantherColors.warning,
             title: 'Review BNPL payment',
             subtitle: 'Due in 3 days',
             scale: scale,
@@ -532,8 +550,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
           const SizedBox(height: 18),
           _buildActionCard(
             icon: Icons.shield_outlined,
-            iconColor: const Color(0x22B366FF),
-            iconForeground: const Color(0xFFB366FF),
+            iconColor: PantherColors.brand.withValues(alpha: 0.15),
+            iconForeground: PantherColors.brand,
             title: 'View Full Analysis',
             subtitle: 'Complete portfolio insights',
             scale: scale,
@@ -545,8 +563,8 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
           const SizedBox(height: 18),
           _buildActionCard(
             icon: Icons.trending_up,
-            iconColor: const Color(0x2200D4FF),
-            iconForeground: const Color(0xFF00D4FF),
+            iconColor: PantherColors.info.withValues(alpha: 0.15),
+            iconForeground: PantherColors.info,
             title: 'ETH entry signal detected',
             subtitle: 'High confidence',
             scale: scale,
@@ -577,15 +595,22 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color:
                 highlighted
-                    ? const Color(0xFFDC8F4A)
-                    : Colors.white.withValues(alpha: 0.1),
+                    ? PantherColors.brand
+                    : PantherColors.border,
             width: highlighted ? 1 : 0.74,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -606,14 +631,14 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                   Text(
                     title,
                     style: TextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
+                      color: PantherColors.textPrimary,
                       fontSize: 14 * textScale,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: TextStyles.bodySmall.copyWith(
-                      color: const Color(0xFFA1A1A1),
+                      color: PantherColors.textSecondary,
                       fontSize: 12 * textScale,
                     ),
                   ),
@@ -622,7 +647,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             ),
             Icon(
               Icons.chevron_right,
-              color: Colors.white.withValues(alpha: 0.5),
+              color: PantherColors.textSubtle,
               size: 20 * scale,
             ),
           ],
@@ -661,7 +686,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                   title: 'Portfolio',
                   value: '\$45,890',
                   change: '+12.4%',
-                  changeColor: const Color(0xFF05DF72),
+                  changeColor: PantherColors.positive,
                   scale: scale,
                   textScale: textScale,
                   onTap: () {
@@ -677,7 +702,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                   title: 'Trading',
                   value: '4 signals',
                   change: '87% confidence',
-                  changeColor: const Color(0xFFDC8F4A),
+                  changeColor: PantherColors.brand,
                   scale: scale,
                   textScale: textScale,
                   onTap: () {
@@ -693,7 +718,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                   title: 'TickPay',
                   value: '\$420 safe',
                   change: 'This month',
-                  changeColor: const Color(0xFF05DF72),
+                  changeColor: PantherColors.positive,
                   scale: scale,
                   textScale: textScale,
                   // highlighted: true,
@@ -778,26 +803,33 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.7),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(17),
           border: Border.all(
             color:
                 highlighted
-                    ? const Color(0xFFDC8F4A)
-                    : Colors.white.withValues(alpha: 0.1),
+                    ? PantherColors.brand
+                    : PantherColors.border,
             width: highlighted ? 1 : 0.65,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: const Color(0xFFCD853F), size: 18 * scale),
+            Icon(icon, color: PantherColors.brand, size: 18 * scale),
             SizedBox(height: 3 * scale),
             Text(
               title,
               style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFA1A1A1),
+                color: PantherColors.textSecondary,
                 fontSize: 9.5 * textScale,
               ),
               maxLines: 1,
@@ -807,7 +839,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             Text(
               value,
               style: TextStyles.titleSmall.copyWith(
-                color: Colors.white,
+                color: PantherColors.textPrimary,
                 fontSize: 12.5 * textScale,
               ),
               maxLines: 1,
@@ -848,19 +880,26 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: PantherColors.border,
                 width: 0.74,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               children: [
                 _buildEventItem(
                   title: 'Netflix payment',
                   subtitle: 'Tomorrow, \$15.99',
-                  color: const Color(0xFFDC8F4A),
+                  color: PantherColors.brand,
                   scale: scale,
                   textScale: textScale,
                 ),
@@ -868,7 +907,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
                 _buildEventItem(
                   title: 'BTC earnings report',
                   subtitle: 'Feb 5, High impact',
-                  color: const Color(0xFFDC8F4A),
+                  color: PantherColors.brand,
                   scale: scale,
                   textScale: textScale,
                 ),
@@ -905,14 +944,14 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
               Text(
                 title,
                 style: TextStyles.bodyMedium.copyWith(
-                  color: Colors.white,
+                  color: PantherColors.textPrimary,
                   fontSize: 14 * textScale,
                 ),
               ),
               Text(
                 subtitle,
                 style: TextStyles.bodySmall.copyWith(
-                  color: const Color(0xFFA1A1A1),
+                  color: PantherColors.textSecondary,
                   fontSize: 12 * textScale,
                 ),
               ),
@@ -932,7 +971,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             'Panther is learning from your actions',
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFA1A1A1),
+              color: Colors.white.withValues(alpha: 0.55),
               fontSize: 12 * textScale,
             ),
           ),
@@ -940,7 +979,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             'Trust score: 94%',
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFDC8F4A),
+              color: PantherColors.warning,
               fontSize: 12 * textScale,
             ),
           ),
@@ -1007,24 +1046,31 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: PantherColors.border,
           width: 0.67,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Row(
             children: [
-              Icon(icon, color: const Color(0xFFCD853F), size: 20 * scale),
+              Icon(icon, color: PantherColors.brand, size: 20 * scale),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
+                    color: PantherColors.textPrimary,
                     fontSize: 14 * textScale,
                   ),
                 ),
@@ -1037,7 +1083,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             child: Text(
               subtitle,
               style: TextStyles.bodySmall.copyWith(
-                color: const Color(0xFFA1A1A1),
+                color: PantherColors.textSecondary,
                 fontSize: 12 * textScale,
               ),
             ),
@@ -1057,7 +1103,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             'Panther is learning from your actions',
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFA1A1A1),
+              color: Colors.white.withValues(alpha: 0.55),
               fontSize: 12 * textScale,
             ),
           ),
@@ -1065,7 +1111,7 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
             'Trust score: 94%',
             textAlign: TextAlign.center,
             style: TextStyles.bodySmall.copyWith(
-              color: const Color(0xFFDC8F4A),
+              color: PantherColors.warning,
               fontSize: 12 * textScale,
             ),
           ),
@@ -1125,19 +1171,26 @@ class _PantherAiPageV1State extends State<PantherAiPageV1> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10 * scale),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: PantherColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 18 * scale),
+            Icon(icon, color: PantherColors.brand, size: 18 * scale),
             SizedBox(height: 4 * scale),
             Text(
               label,
               style: TextStyles.bodySmall.copyWith(
-                color: Colors.white,
+                color: PantherColors.textPrimary,
                 fontSize: 11 * textScale,
               ),
             ),
