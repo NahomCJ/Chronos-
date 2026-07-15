@@ -7,6 +7,18 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
+// Chris chat is served by the Vercel deployment's serverless function
+// (api/chat.js), which holds the Anthropic key as a Vercel env var — this is
+// the environment actually deployed/reachable publicly, unlike the EB
+// Express backend or the Panther AI FastAPI service (_kPantherBase), neither
+// of which is on a public URL. Override for local dev against a locally-run
+// Panther AI instance, e.g. --dart-define=CHRIS_CHAT_BASE_URL=http://localhost:8000
+// and --dart-define=CHRIS_CHAT_PATH=/api/chris/chat.
+const _kChrisChatBase = String.fromEnvironment(
+  'CHRIS_CHAT_BASE_URL',
+  defaultValue: 'https://chronosapp-rosy.vercel.app',
+);
+
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
 class PantherAiRemoteDataSource {
@@ -23,18 +35,16 @@ class PantherAiRemoteDataSource {
     String message, {
     List<Map<String, String>> history = const [],
   }) async {
-    final data = await _client.postWithBase(_kPantherBase, '/api/chris/chat', {
-      'user_id': _userId,
+    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
       'message': message,
-      if (history.isNotEmpty) 'conversation_history': history,
-      // Trusted: history always belongs to this same client's current user.
-      if (history.isNotEmpty) 'history_user_id': _userId,
+      'user_id': _userId,
+      if (history.isNotEmpty) 'history': history,
     });
     return ChatResponseModel.fromJson({
-      'reply': data['response'] as String? ?? '',
-      'domain': data['domain'] as String? ?? 'general',
-      'userLevel': 'BEGINNER',
-      'timestamp': DateTime.now().toIso8601String(),
+      'reply': data['reply'] as String? ?? '',
+      'domain': data['domain'] ?? 'GENERAL',
+      'userLevel': data['userLevel'] ?? 'BEGINNER',
+      'timestamp': data['timestamp'] as String? ?? DateTime.now().toIso8601String(),
     });
   }
 

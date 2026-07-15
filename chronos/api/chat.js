@@ -1,6 +1,16 @@
 const Anthropic = require('@anthropic-ai/sdk').default;
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// Lazy init: constructing eagerly at module load means a single cold start
+// with a missing/not-yet-propagated key permanently breaks this module for
+// every request on that warm container until the next deploy, even after
+// the key is added. Build the client on first use instead.
+let client = null;
+function getClient() {
+  if (!client) {
+    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  }
+  return client;
+}
 
 const CHRIS_SYSTEM = `You are Chris, the AI financial advisor inside Chronos — a premium fintech super-app. \
 You help users understand their finances, spending, savings, investments, taxes, and credit. \
@@ -52,7 +62,7 @@ module.exports = async function handler(req, res) {
     : [];
 
   try {
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: 'claude-sonnet-5',
       max_tokens: 512,
       system: CHRIS_SYSTEM,
