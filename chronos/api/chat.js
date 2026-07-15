@@ -7,7 +7,8 @@ const Anthropic = require('@anthropic-ai/sdk').default;
 let client = null;
 function getClient() {
   if (!client) {
-    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const apiKey = process.env.CHRIS_CLAUDE_API || process.env.ANTHROPIC_API_KEY;
+    client = new Anthropic({ apiKey });
   }
   return client;
 }
