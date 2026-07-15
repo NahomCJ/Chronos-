@@ -1,6 +1,12 @@
-const ELEVEN_API_KEY = process.env.ELEVENLABS_API_KEY || process.env.ELEVEN_API_KEY;
-const ELEVEN_VOICE_ID =
-  process.env.ELEVENLABS_VOICE_ID || process.env.ELEVEN_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+// Read at request time, not module load — a key added on Vercel after this
+// module's first cold start wouldn't be picked up by a top-level const on an
+// already-warm container.
+function getElevenApiKey() {
+  return process.env.ELEVEN_LABS || process.env.ELEVENLABS_API_KEY || process.env.ELEVEN_API_KEY;
+}
+function getElevenVoiceId() {
+  return process.env.ELEVENLABS_VOICE_ID || process.env.ELEVEN_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,6 +22,8 @@ module.exports = async function handler(req, res) {
   if (!text?.trim()) {
     return res.status(400).json({ error: 'text is required' });
   }
+  const ELEVEN_API_KEY = getElevenApiKey();
+  const ELEVEN_VOICE_ID = getElevenVoiceId();
   if (!ELEVEN_API_KEY) {
     return res.status(503).json({ error: 'ElevenLabs API key is not configured on the server.' });
   }
