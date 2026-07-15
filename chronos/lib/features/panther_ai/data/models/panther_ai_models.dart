@@ -263,6 +263,7 @@ class MarketplaceProductModel {
   final int bnplScore;
   final double? rating;
   final bool inStock;
+  final String imageUrl;
 
   MarketplaceProductModel({
     required this.productId,
@@ -273,18 +274,25 @@ class MarketplaceProductModel {
     required this.bnplScore,
     this.rating,
     required this.inStock,
+    this.imageUrl = '',
   });
 
+  // Shape matches services/marketplace/product_search_agent.py + bnpl_filter.py
+  // on the Panther AI backend: no product_id (a URL-fetched listing, not a
+  // fixed catalog), no rating — those are synthesized/omitted here rather
+  // than left to silently default to fake-looking zeros.
   factory MarketplaceProductModel.fromJson(Map<String, dynamic> json) =>
       MarketplaceProductModel(
-        productId: json['product_id'] as String? ?? '',
+        productId: json['url'] as String? ??
+            '${json['vendor']}-${json['name']}',
         name: json['name'] as String? ?? '',
         price: (json['price'] as num? ?? 0).toDouble(),
         vendor: json['vendor'] as String? ?? '',
         bnplEligible: json['bnpl_eligible'] as bool? ?? false,
-        bnplScore: json['bnpl_score'] as int? ?? 0,
+        bnplScore: json['risk_score'] as int? ?? 0,
         rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
-        inStock: json['in_stock'] as bool? ?? true,
+        inStock: json['stock'] as bool? ?? true,
+        imageUrl: json['image_url'] as String? ?? '',
       );
 
   MarketplaceProduct toEntity() => MarketplaceProduct(
@@ -296,6 +304,7 @@ class MarketplaceProductModel {
         bnplScore: bnplScore,
         rating: rating,
         inStock: inStock,
+        imageUrl: imageUrl,
       );
 }
 

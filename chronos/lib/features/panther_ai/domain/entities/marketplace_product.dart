@@ -7,6 +7,7 @@ class MarketplaceProduct {
   final int bnplScore;
   final double? rating;
   final bool inStock;
+  final String imageUrl;
 
   const MarketplaceProduct({
     required this.productId,
@@ -17,5 +18,6 @@ class MarketplaceProduct {
     required this.bnplScore,
     this.rating,
     required this.inStock,
+    this.imageUrl = '',
   });
 }

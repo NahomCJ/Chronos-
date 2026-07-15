@@ -4,5 +4,6 @@ abstract class ChatEvent {
 
 class ChatMessageSent extends ChatEvent {
   final String message;
-  const ChatMessageSent(this.message);
+  final List<Map<String, String>> history;
+  const ChatMessageSent(this.message, {this.history = const []});
 }

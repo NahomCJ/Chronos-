@@ -7,17 +7,6 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
-// Chris chat is served by the Vercel deployment's serverless functions
-// (api/chat.js), which hold the Anthropic key as a Vercel env var — this is
-// the environment actually being run/controlled day to day, not the EB
-// Express backend's (also-live but harder to redeploy) /api/ai/chris/chat.
-// Unauthenticated — Vercel's function doesn't require a JWT — but ApiClient
-// still attaches one harmlessly if present.
-const _kChrisChatBase = String.fromEnvironment(
-  'CHRIS_CHAT_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
-);
-
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
 /// Falls back to demo user "user_marcus" if no persisted userId is available.
 class PantherAiRemoteDataSource {
@@ -34,16 +23,18 @@ class PantherAiRemoteDataSource {
     String message, {
     List<Map<String, String>> history = const [],
   }) async {
-    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
-      'message': message,
+    final data = await _client.postWithBase(_kPantherBase, '/api/chris/chat', {
       'user_id': _userId,
-      if (history.isNotEmpty) 'history': history,
+      'message': message,
+      if (history.isNotEmpty) 'conversation_history': history,
+      // Trusted: history always belongs to this same client's current user.
+      if (history.isNotEmpty) 'history_user_id': _userId,
     });
     return ChatResponseModel.fromJson({
-      'reply': data['reply'] as String? ?? '',
-      'domain': data['domain'] ?? 'GENERAL',
-      'userLevel': data['userLevel'] ?? 'BEGINNER',
-      'timestamp': data['timestamp'] as String? ?? DateTime.now().toIso8601String(),
+      'reply': data['response'] as String? ?? '',
+      'domain': data['domain'] as String? ?? 'general',
+      'userLevel': 'BEGINNER',
+      'timestamp': DateTime.now().toIso8601String(),
     });
   }
 
@@ -100,6 +91,26 @@ class PantherAiRemoteDataSource {
     double? budget,
     int maxResults = 10,
   }) async {
+    final result = await _searchProducts(query, budget: budget, maxResults: maxResults);
+    return result.products;
+  }
+
+  /// Same as [searchProducts] but also surfaces Chris's natural-language
+  /// reasoning (budget/affordability commentary) alongside the results.
+  Future<({List<MarketplaceProductModel> products, String message})>
+      searchProductsWithMessage(
+    String query, {
+    double? budget,
+    int maxResults = 10,
+  }) =>
+          _searchProducts(query, budget: budget, maxResults: maxResults);
+
+  Future<({List<MarketplaceProductModel> products, String message})>
+      _searchProducts(
+    String query, {
+    double? budget,
+    int maxResults = 10,
+  }) async {
     final body = <String, dynamic>{
       'user_id': _userId,
       'query': query,
@@ -113,10 +124,13 @@ class PantherAiRemoteDataSource {
       body,
     );
     final items = data['results'] as List<dynamic>? ?? [];
-    return items
-        .map((e) =>
-            MarketplaceProductModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return (
+      products: items
+          .map((e) =>
+              MarketplaceProductModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      message: data['message'] as String? ?? '',
+    );
   }
 
   // ── Payment Authorization ─────────────────────────────────────────────────

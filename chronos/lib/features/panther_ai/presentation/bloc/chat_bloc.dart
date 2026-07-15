@@ -51,7 +51,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       ChatMessageSent event, Emitter<ChatState> emit) async {
     emit(const ChatThinking());
     try {
-      final response = await sendMessage(event.message);
+      final response = await sendMessage(event.message, history: event.history);
       final visual = await _resolveVisual(event.message);
       emit(ChatReplied(
         reply: response.reply,

@@ -1,32 +1,25 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../../core/services/tts_service.dart';
+import '../../../panther_ai/data/data_source/panther_ai_remote_data_source.dart';
+import '../../../panther_ai/data/models/panther_ai_models.dart';
 import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 
 // ── Product model ─────────────────────────────────────────────────────────────
 class _Product {
-  final String name, price, category, imageUrl;
-  final double priceNum;
-  const _Product(this.name, this.price, this.priceNum, this.category, this.imageUrl);
-}
+  final String name, price, imageUrl;
+  const _Product(this.name, this.price, this.imageUrl);
 
-const _allProducts = [
-  _Product('iPhone 15 Pro', '\$1,199', 1199, 'phone', TickPayMedia.iphone15Pro),
-  _Product('Wireless Headphones', '\$299', 299, 'headphones', TickPayMedia.headphonesBlack),
-  _Product('Apple Watch Series 9', '\$399', 399, 'watch', TickPayMedia.appleWatch),
-  _Product('Nike Air Max', '\$120', 120, 'shoes', TickPayMedia.nikeShoes),
-  _Product('Adidas Ultraboost', '\$89', 89, 'shoes', TickPayMedia.adidasShoes),
-  _Product('MacBook Air M2', '\$1,099', 1099, 'laptop', TickPayMedia.macbook),
-  _Product('iPad Pro', '\$799', 799, 'tablet', TickPayMedia.ipad),
-  _Product('JBL Speaker', '\$149', 149, 'speaker', TickPayMedia.bluetoothSpeaker),
-  _Product('Wireless Earbuds', '\$79', 79, 'earbuds', TickPayMedia.wirelessEarbuds),
-  _Product('Smartwatch Fitness', '\$199', 199, 'watch', TickPayMedia.smartwatch),
-  _Product('Gaming Controller', '\$69', 69, 'gaming', TickPayMedia.gameController),
-  _Product('Coffee Maker', '\$89', 89, 'home', TickPayMedia.coffeeMaker),
-];
+  factory _Product.fromMarketplace(MarketplaceProductModel p) => _Product(
+        p.name,
+        '\$${p.price.toStringAsFixed(p.price.truncateToDouble() == p.price ? 0 : 2)}',
+        p.imageUrl.isNotEmpty ? p.imageUrl : TickPayMedia.smartphone,
+      );
+}
 
 // ── Chat message model ────────────────────────────────────────────────────────
 enum _MsgType { user, chris, products, checkout }
@@ -62,9 +55,7 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
   bool _isTyping = false;
 
   _ChatState _state = _ChatState.greeting;
-  String _detectedCategory = '';
-  double _budget = double.infinity;
-  bool _hasBills = false;
+  String _lastQuery = '';
   _Product? _pendingProduct;
 
   final List<_ChatMsg> _msgs = [];
@@ -127,6 +118,13 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
     _addUser(input);
     _ctrl.clear();
 
+    if (_state == _ChatState.waitingBudget) {
+      _showTyping();
+      await _handleBudgetResponse(input);
+      _hideTyping();
+      return;
+    }
+
     _showTyping();
     await Future.delayed(const Duration(milliseconds: 900));
     _hideTyping();
@@ -135,13 +133,12 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
 
     switch (_state) {
       case _ChatState.waitingProduct:
-        _handleProductRequest(lower);
+        _handleProductRequest(input);
         break;
       case _ChatState.waitingBudget:
-        _handleBudgetResponse(lower, input);
-        break;
+        break; // handled above
       case _ChatState.showingProducts:
-        _handleProductSelection(lower, input);
+        _handleProductSelection(lower);
         break;
       case _ChatState.confirming:
         _handleConfirmation(lower);
@@ -152,87 +149,43 @@ class _ChrisShoppingPageState extends State<ChrisShoppingPage> {
     }
   }
 
-  void _handleProductRequest(String lower) {
-    // Detect product category
-    if (lower.contains('phone') || lower.contains('iphone') || lower.contains('android') || lower.contains('mobile')) {
-      _detectedCategory = 'phone';
-    } else if (lower.contains('laptop') || lower.contains('macbook') || lower.contains('computer')) {
-      _detectedCategory = 'laptop';
-    } else if (lower.contains('headphone') || lower.contains('earphone') || lower.contains('audio')) {
-      _detectedCategory = 'headphones';
-    } else if (lower.contains('earb') || lower.contains('airpod') || lower.contains('earbud')) {
-      _detectedCategory = 'earbuds';
-    } else if (lower.contains('shoe') || lower.contains('sneaker') || lower.contains('boot')) {
-      _detectedCategory = 'shoes';
-    } else if (lower.contains('watch')) {
-      _detectedCategory = 'watch';
-    } else if (lower.contains('tablet') || lower.contains('ipad')) {
-      _detectedCategory = 'tablet';
-    } else if (lower.contains('speaker')) {
-      _detectedCategory = 'speaker';
-    } else if (lower.contains('game') || lower.contains('gaming') || lower.contains('controller')) {
-      _detectedCategory = 'gaming';
-    } else {
-      // Try to guess from general keywords
-      _detectedCategory = 'all';
-    }
-
+  void _handleProductRequest(String input) {
+    _lastQuery = input;
     _addChris('Got it! What\'s your budget? And do you have any upcoming bills I should know about? I want to make sure the timing works for you 😊');
     setState(() => _state = _ChatState.waitingBudget);
   }
 
-  void _handleBudgetResponse(String lower, String original) {
-    // Parse budget
-    final budgetMatch = RegExp(r'\$?(\d+)').firstMatch(lower);
-    if (budgetMatch != null) {
-      _budget = double.tryParse(budgetMatch.group(1)!) ?? double.infinity;
-    } else if (lower.contains('no budget') || lower.contains("don't have") || lower.contains('any')) {
-      _budget = double.infinity;
+  Future<void> _handleBudgetResponse(String original) async {
+    final budgetMatch = RegExp(r'\$?(\d+)').firstMatch(original);
+    final budget = budgetMatch != null ? double.tryParse(budgetMatch.group(1)!) : null;
+
+    try {
+      final result = await GetIt.instance<PantherAiRemoteDataSource>()
+          .searchProductsWithMessage('$_lastQuery. $original', budget: budget, maxResults: 4);
+      if (!mounted) return;
+
+      if (result.products.isEmpty) {
+        _addChris('Couldn\'t find a match for that — want to try a different item or budget?');
+        setState(() => _state = _ChatState.waitingProduct);
+        return;
+      }
+
+      _addChris(result.message.isNotEmpty
+          ? result.message
+          : 'Here\'s what I found for you 👇');
+      setState(() {
+        _msgs.add(_ChatMsg.products(
+            result.products.map(_Product.fromMarketplace).toList()));
+        _state = _ChatState.showingProducts;
+      });
+      _scrollToBottom();
+    } catch (_) {
+      if (!mounted) return;
+      _addChris('Having trouble reaching the store right now — mind trying that again?');
     }
-
-    // Check for bills
-    _hasBills = lower.contains('bill') || lower.contains('rent') || lower.contains('payment')
-        || lower.contains('due') || lower.contains('limited') || lower.contains('tight')
-        || lower.contains('not much') || lower.contains('broke');
-
-    // Filter products
-    var filtered = _detectedCategory == 'all'
-        ? _allProducts.toList()
-        : _allProducts.where((p) => p.category == _detectedCategory).toList();
-
-    // Apply budget (leave 30% buffer if bills mentioned)
-    final effectiveBudget = _hasBills ? _budget * 0.7 : _budget;
-    if (effectiveBudget < double.infinity) {
-      filtered = filtered.where((p) => p.priceNum <= effectiveBudget).toList();
-    }
-
-    // Fallback to cheaper alternatives
-    if (filtered.isEmpty && _budget < double.infinity) {
-      filtered = _allProducts.where((p) => p.priceNum <= _budget).toList();
-    }
-
-    if (filtered.isEmpty) {
-      filtered = _allProducts.take(4).toList();
-    }
-
-    final budgetStr = _budget < double.infinity ? 'under \$${_budget.toStringAsFixed(0)}' : 'any budget';
-
-    String reply;
-    if (_hasBills) {
-      reply = 'Smart thinking! Since you have upcoming bills, I\'ve kept the budget a bit lighter so you stay comfortable. Here are the best options $budgetStr 👇';
-    } else {
-      reply = 'Perfect! Here are the best matches I found for you $budgetStr 👇';
-    }
-
-    _addChris(reply);
-    setState(() {
-      _msgs.add(_ChatMsg.products(filtered.take(4).toList()));
-      _state = _ChatState.showingProducts;
-    });
-    _scrollToBottom();
   }
 
-  void _handleProductSelection(String lower, String original) {
+  void _handleProductSelection(String lower) {
     if (_pendingProduct != null) {
       _handleConfirmation(lower);
     } else {

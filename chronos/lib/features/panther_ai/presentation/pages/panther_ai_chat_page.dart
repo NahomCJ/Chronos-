@@ -143,6 +143,11 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
 
   void _sendMessage(String text) {
     if (text.trim().isEmpty) return;
+    // Snapshot prior turns before appending the new message, so Chris gets
+    // real multi-turn context ("what about crypto?" following a net-worth answer).
+    final history = _messages
+        .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
+        .toList();
     setState(() {
       _messages.add(_ChatMessage(text: text.trim(), isUser: true, time: _currentTime()));
       _controller.clear();
@@ -150,7 +155,7 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       _isListening = false;
     });
     _scrollToBottom();
-    _chatBloc.add(ChatMessageSent(text.trim()));
+    _chatBloc.add(ChatMessageSent(text.trim(), history: history));
   }
 
   // ApiClient surfaces the backend's actual error message (e.g. "message is
