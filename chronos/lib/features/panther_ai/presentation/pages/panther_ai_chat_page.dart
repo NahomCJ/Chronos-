@@ -143,7 +143,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     if (text.trim().isEmpty) return;
     // Snapshot prior turns before appending the new message, so Chris gets
     // real multi-turn context ("what about crypto?" following a net-worth answer).
+    // Skip the hardcoded greeting bubble (index 0) — it's not a real turn,
+    // and Anthropic's Messages API requires the conversation to start with
+    // a user message. Sending it as history made every call in every
+    // session malformed, so the backend always fell back to its generic
+    // "something went wrong" apology no matter what was actually asked.
     final history = _messages
+        .skip(1)
         .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
         .toList();
     _lastInputWasVoice = viaVoice;
