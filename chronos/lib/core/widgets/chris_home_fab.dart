@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -41,6 +42,12 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   int _followUpTurns = 0;
   int _commandGeneration = 0;
   final List<Map<String, String>> _history = [];
+
+  // Tracks an in-flight command-capture listen session so onStatus/onError
+  // (below) can resolve it with whatever was heard even if finalResult
+  // never fires — unreliable on some platforms with ListenMode.dictation.
+  String _pendingTranscript = '';
+  Completer<String>? _commandCompleter;
 
   Offset _offset = Offset.zero;
   late final AnimationController _glowCtrl;
@@ -102,19 +109,32 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     try {
       return await _speech.initialize(
         onStatus: (s) {
-          if ((s == 'done' || s == 'notListening') && mounted) {
-            setState(() => _wakeActive = false);
-            // Only resume passive "Hey Chris" listening once the whole
-            // interaction has settled back to idle — otherwise this races
-            // with the deliberate listen sessions inside a conversation.
-            if (!_isBusy) {
-              _wakeWordTriggered = false;
-              Future.delayed(const Duration(seconds: 3), _startListening);
+          if (s == 'done' || s == 'notListening') {
+            // A command-capture session (see _listenForCommand) may end
+            // without ever firing finalResult — resolve it with whatever
+            // partial transcript was heard instead of hanging forever,
+            // which used to look like Chris only ever responding to the
+            // wake phrase itself and going silent on everything after.
+            if (_commandCompleter != null && !_commandCompleter!.isCompleted) {
+              _commandCompleter!.complete(_pendingTranscript);
+            }
+            if (mounted) {
+              setState(() => _wakeActive = false);
+              // Only resume passive "Hey Chris" listening once the whole
+              // interaction has settled back to idle — otherwise this races
+              // with the deliberate listen sessions inside a conversation.
+              if (!_isBusy) {
+                _wakeWordTriggered = false;
+                Future.delayed(const Duration(seconds: 3), _startListening);
+              }
             }
           }
         },
         onError: (e) {
           debugPrint('Chris speech recognition error: ${e.errorMsg}');
+          if (_commandCompleter != null && !_commandCompleter!.isCompleted) {
+            _commandCompleter!.complete(_pendingTranscript);
+          }
           if (mounted) {
             setState(() => _wakeActive = false);
             if (!_isBusy) {
@@ -140,7 +160,9 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
           if (_wakeWordTriggered) return;
           final words = r.recognizedWords.toLowerCase();
           if (words.contains('hey chris') ||
-              (words.startsWith('hey') && words.contains('chris'))) {
+              words.contains('hi chris') ||
+              (words.startsWith('hey') && words.contains('chris')) ||
+              (words.startsWith('hi') && words.contains('chris'))) {
             _wakeWordTriggered = true;
             _engage();
           }
@@ -233,17 +255,19 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _setChrisState(_ChrisState.listening);
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
+
+    _pendingTranscript = '';
+    final completer = Completer<String>();
+    _commandCompleter = completer;
+
     try {
       await _speech.listen(
-        onResult: (r) async {
-          if (!r.finalResult) return;
-          final text = r.recognizedWords.trim();
-          await _speech.stop();
-          if (text.isEmpty) {
-            _endConversation();
-            return;
+        onResult: (r) {
+          _pendingTranscript = r.recognizedWords.trim();
+          if (r.finalResult && !completer.isCompleted) {
+            completer.complete(_pendingTranscript);
+            _speech.stop();
           }
-          await _handleCommand(text);
         },
         listenOptions: stt.SpeechListenOptions(
           cancelOnError: false,
@@ -253,8 +277,26 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         ),
       );
     } catch (_) {
-      _endConversation();
+      if (!completer.isCompleted) completer.complete(_pendingTranscript);
     }
+
+    // Belt-and-suspenders: some platforms never fire finalResult and rely
+    // on the onStatus 'done'/'notListening' callback instead (handled in
+    // _initSpeechEngine above). If neither shows up in time, fall back to
+    // whatever partial transcript was captured rather than hanging in
+    // "listening" state forever.
+    final text = await completer.future.timeout(
+      const Duration(seconds: 18),
+      onTimeout: () => _pendingTranscript,
+    );
+    if (identical(_commandCompleter, completer)) _commandCompleter = null;
+    if (!mounted) return;
+
+    if (text.isEmpty) {
+      _endConversation();
+      return;
+    }
+    await _handleCommand(text);
   }
 
   void _endConversation() {
