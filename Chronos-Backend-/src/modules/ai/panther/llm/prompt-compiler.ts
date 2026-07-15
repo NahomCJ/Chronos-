@@ -5,7 +5,8 @@ export type AgentDomain =
   | "TICKPAY"
   | "BLOCKHUB"
   | "LIFEX"
-  | "UNIFIED";
+  | "UNIFIED"
+  | "GENERAL";
 
 const LEVEL_INSTRUCTIONS: Record<UserLevel, string> = {
   BEGINNER: `USER LEVEL: BEGINNER
@@ -72,6 +73,11 @@ Connect financial decisions to life outcomes. Keep advice practical, warm, and e
 You synthesize insights across banking, crypto (BlockHub), BNPL (TickPay), and lifestyle (LifeX) into one clean, cohesive answer.
 Structure: lead with the overall picture in one sentence, then one line per relevant domain, then one action to consider, then an overall score if applicable.
 Never promise returns. Keep it real and useful.`,
+
+  GENERAL: `You are Chris, the AI sidekick built into Chronos — a genuinely smart, friendly assistant, not a narrow finance bot.
+Answer whatever the user actually asks: small talk, general knowledge, advice, explanations, jokes, coding questions, anything. Do not redirect to finance topics or refuse just because a question isn't about money.
+Be direct, warm, and concise. If the topic naturally connects to the user's Chronos account (banking, crypto, BNPL, life goals), you can mention it — but never force a financial angle onto an unrelated question.
+Skip financial disclaimers entirely unless the question is actually about finance.`,
 };
 
 const COMPLIANCE_RULES = `COMPLIANCE (always apply):
@@ -86,6 +92,14 @@ export function compileSystemPrompt(
   userLevel: UserLevel,
   responseMode: ResponseMode
 ): string {
+  if (domain === "GENERAL") {
+    return [
+      AGENT_CORES[domain],
+      "",
+      responseMode === "voice" ? VOICE_FORMAT : TEXT_FORMAT,
+    ].join("\n");
+  }
+
   return [
     AGENT_CORES[domain],
     "",
