@@ -84,6 +84,18 @@ export async function runPanther(
       break;
     }
 
+    case "GENERAL": {
+      const systemPrompt = compileSystemPrompt("GENERAL", userLevel, responseMode);
+      rawReply = await callLLM({
+        systemPrompt,
+        messages: [...history, { role: "user", content: message }],
+        model: "claude-sonnet-5",
+        maxTokens: 1024,
+      });
+      results.push({ domain: "GENERAL", content: rawReply });
+      break;
+    }
+
     case "UNIFIED":
     default: {
       const systemPrompt = compileSystemPrompt("UNIFIED", userLevel, responseMode);
