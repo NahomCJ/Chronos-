@@ -93,7 +93,13 @@ module.exports = async function handler(req, res) {
       messages: [...priorTurns, { role: 'user', content: message.trim() }],
     });
 
-    const rawReply = response.content[0]?.text ?? 'I could not generate a response. Please try again.';
+    // claude-sonnet-5 sometimes reasons with an extended-thinking block before
+    // the actual reply, so content[0] isn't reliably the text block -- find
+    // it by type instead of assuming position. This was the real cause of
+    // "I could not generate a response": thinking-block runs (more common on
+    // complex/financial questions) silently hit the fallback below.
+    const textBlock = response.content.find((block) => block.type === 'text');
+    const rawReply = textBlock?.text ?? 'I could not generate a response. Please try again.';
     const reply = sanitizeReply(rawReply);
 
     return res.status(200).json({
