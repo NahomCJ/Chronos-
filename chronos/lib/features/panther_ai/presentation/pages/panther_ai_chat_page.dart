@@ -24,8 +24,12 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   final ScrollController _scrollController = ScrollController();
   late final ChatBloc _chatBloc;
 
-  bool _isVoiceMode = false;
+  // Voice output is spoken automatically when the turn that triggered it
+  // came from the mic (like ChatGPT/Claude's inline voice) — a typed
+  // message never starts talking unprompted. The speaker icon overrides
+  // this either way.
   bool _voiceMuted = false;
+  bool _lastInputWasVoice = false;
 
   final List<_ChatMessage> _messages = [
     _ChatMessage(
@@ -104,20 +108,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
       });
       await _speech.listen(
         onResult: (result) {
-          if (_isVoiceMode) {
-            if (result.finalResult && result.recognizedWords.isNotEmpty) {
-              _sendMessage(result.recognizedWords);
-            }
-          } else {
-            setState(() {
-              _controller.text = result.recognizedWords;
-              _controller.selection = TextSelection.fromPosition(
-                TextPosition(offset: _controller.text.length),
-              );
-            });
-            if (result.finalResult && result.recognizedWords.isNotEmpty) {
-              _sendMessage(result.recognizedWords);
-            }
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controller.text.length),
+            );
+          });
+          if (result.finalResult && result.recognizedWords.isNotEmpty) {
+            _sendMessage(result.recognizedWords, viaVoice: true);
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -141,13 +139,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     super.dispose();
   }
 
-  void _sendMessage(String text) {
+  void _sendMessage(String text, {bool viaVoice = false}) {
     if (text.trim().isEmpty) return;
     // Snapshot prior turns before appending the new message, so Chris gets
     // real multi-turn context ("what about crypto?" following a net-worth answer).
     final history = _messages
         .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
         .toList();
+    _lastInputWasVoice = viaVoice;
     setState(() {
       _messages.add(_ChatMessage(text: text.trim(), isUser: true, time: _currentTime()));
       _controller.clear();
@@ -208,12 +207,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
               ));
             });
             _scrollToBottom();
-            // Only auto-speak in voice mode — a plain typed chat shouldn't
-            // start talking unprompted. Keep the orb in "speaking" state for
-            // as long as Chris is actually talking rather than the fixed
-            // 2.2s placeholder, which used to be purely decorative since
-            // nothing was really being spoken.
-            if (_isVoiceMode && !_voiceMuted) {
+            // Only auto-speak when the turn that triggered this reply came
+            // from the mic — a typed message shouldn't start talking
+            // unprompted. Keep the orb in "speaking" state for as long as
+            // Chris is actually talking rather than the fixed 2.2s
+            // placeholder, which used to be purely decorative since nothing
+            // was really being spoken.
+            if (_lastInputWasVoice && !_voiceMuted) {
               TtsService().speak(state.reply).whenComplete(() {
                 if (mounted) setState(() => _orbState = OrbState.idle);
               });
@@ -237,14 +237,14 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
         child: Scaffold(
           backgroundColor: _bg,
           body: SafeArea(
-            child: _isVoiceMode ? _buildVoiceView() : _buildTextView(),
+            child: _buildTextView(),
           ),
         ),
       ),
     );
   }
 
-  // ── Text Chat View ──────────────────────────────────────────────────────────
+  // ── Chat View (text + inline voice, ChatGPT/Claude-style) ────────────────────
 
   Widget _buildTextView() {
     return Column(
@@ -297,15 +297,34 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
             ),
           ),
           const Spacer(),
-          _ModeToggle(
-            isVoiceMode: _isVoiceMode,
-            onTextTap: () {},
-            onVoiceTap: () => setState(() {
-              _isVoiceMode = true;
-              _orbState = OrbState.idle;
-            }),
+          Text(
+            'Chris',
+            style: TextStyles.titleMedium.copyWith(
+              color: _textPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const Spacer(),
+          GestureDetector(
+            onTap: () {
+              setState(() => _voiceMuted = !_voiceMuted);
+              if (_voiceMuted) TtsService().stop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _voiceMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                color: const Color(0xFF374151),
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -321,11 +340,13 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
   }
 
   Widget _buildOrbSection() {
-    final label = switch (_orbState) {
-      OrbState.idle => 'Chris · AI Financial Advisor',
-      OrbState.thinking => 'Thinking...',
-      OrbState.speaking => 'Responding',
-    };
+    final label = _isListening
+        ? 'Listening...'
+        : switch (_orbState) {
+            OrbState.idle => 'Chris · AI Financial Advisor',
+            OrbState.thinking => 'Thinking...',
+            OrbState.speaking => 'Responding',
+          };
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 350),
@@ -591,13 +612,20 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
           const SizedBox(width: 8),
           GestureDetector(
             onTap: _toggleListening,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                _isListening ? Icons.mic : Icons.mic_none_outlined,
-                key: ValueKey(_isListening),
-                color: _isListening ? _purple : _textSecondary,
-                size: 20,
+            child: AnimatedBuilder(
+              animation: _pulseController,
+              builder: (_, child) {
+                final scale = _isListening ? 1.0 + _pulseController.value * 0.18 : 1.0;
+                return Transform.scale(scale: scale, child: child);
+              },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  _isListening ? Icons.mic : Icons.mic_none_outlined,
+                  key: ValueKey(_isListening),
+                  color: _isListening ? _purple : _textSecondary,
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -619,304 +647,9 @@ class _PantherAiChatPageState extends State<PantherAiChatPage>
     );
   }
 
-  // ── Voice Chat View ─────────────────────────────────────────────────────────
-
-  Widget _buildVoiceView() {
-    final statusText = switch (_orbState) {
-      OrbState.idle => _isListening ? 'AI is listening...' : 'Tap mic to speak',
-      OrbState.thinking => 'Chris is thinking...',
-      OrbState.speaking => 'Chris is speaking...',
-    };
-
-    return Column(
-      children: [
-        _buildVoiceHeader(),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedBuilder(
-                  animation: _pulseController,
-                  builder: (_, child) {
-                    final scale = _isListening
-                        ? 1.0 + _pulseController.value * 0.10
-                        : 1.0;
-                    return Transform.scale(scale: scale, child: child);
-                  },
-                  child: Container(
-                    width: 216,
-                    height: 216,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: _purple.withValues(alpha: _isListening ? 0.22 : 0.10),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Center(
-                      child: ChrisVoiceOrb(state: _orbState, size: 185),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    statusText,
-                    key: ValueKey(statusText),
-                    style: TextStyles.titleMedium.copyWith(
-                      color: _textPrimary,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        _buildVoiceControls(),
-        const SizedBox(height: 36),
-      ],
-    );
-  }
-
-  Widget _buildVoiceHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: _cardBg,
-        border: Border(bottom: BorderSide(color: _borderColor)),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F6),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Color(0xFF374151), size: 16),
-            ),
-          ),
-          const Spacer(),
-          _ModeToggle(
-            isVoiceMode: _isVoiceMode,
-            onTextTap: () => setState(() {
-              _isVoiceMode = false;
-              TtsService().stop();
-              if (_isListening) {
-                _speech.stop();
-                _isListening = false;
-                _orbState = OrbState.idle;
-              }
-            }),
-            onVoiceTap: () {},
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.settings_outlined,
-                color: Color(0xFF374151), size: 18),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVoiceControls() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _VoiceControlBtn(
-            icon: _voiceMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
-            onTap: () {
-              setState(() => _voiceMuted = !_voiceMuted);
-              if (_voiceMuted) TtsService().stop();
-            },
-          ),
-          GestureDetector(
-            onTap: _toggleListening,
-            child: AnimatedBuilder(
-              animation: _pulseController,
-              builder: (_, __) => Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _purple,
-                  boxShadow: [
-                    BoxShadow(
-                      color: _purple.withValues(
-                        alpha: _isListening
-                            ? 0.35 + _pulseController.value * 0.2
-                            : 0.2,
-                      ),
-                      blurRadius: _isListening ? 24 : 12,
-                      spreadRadius: _isListening ? 4 : 0,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ),
-            ),
-          ),
-          _VoiceControlBtn(
-              icon: Icons.switch_access_shortcut_rounded, onTap: () {}),
-        ],
-      ),
-    );
-  }
 }
 
 // ── Shared widgets ─────────────────────────────────────────────────────────────
-
-class _ModeToggle extends StatelessWidget {
-  final bool isVoiceMode;
-  final VoidCallback onTextTap;
-  final VoidCallback onVoiceTap;
-
-  const _ModeToggle({
-    required this.isVoiceMode,
-    required this.onTextTap,
-    required this.onVoiceTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ModeTab(
-            icon: Icons.chat_bubble_outline_rounded,
-            label: 'Text',
-            isActive: !isVoiceMode,
-            onTap: onTextTap,
-          ),
-          _ModeTab(
-            icon: Icons.graphic_eq_rounded,
-            label: 'Voice',
-            isActive: isVoiceMode,
-            onTap: onVoiceTap,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ModeTab extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _ModeTab({
-    required this.icon,
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  )
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isActive
-                  ? const Color(0xFF1A1A2E)
-                  : const Color(0xFF6B7080),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive
-                    ? const Color(0xFF1A1A2E)
-                    : const Color(0xFF6B7080),
-                fontSize: 12,
-                fontWeight:
-                    isActive ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _VoiceControlBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _VoiceControlBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFE8EAF0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Icon(icon, color: const Color(0xFF374151), size: 22),
-      ),
-    );
-  }
-}
 
 class _ThinkingDots extends StatelessWidget {
   final AnimationController controller;
