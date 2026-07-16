@@ -32,6 +32,8 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
 
   List<PexelsPhoto> _gymPhotos = [];
   List<PexelsPhoto> _techPhotos = [];
+  List<PexelsPhoto> _heroPhotos = [];
+  final Map<String, String?> _insurancePhotos = {};
 
   // Neutral palette — one primary (white) and one secondary (light gray)
   // accent used everywhere on this page, instead of a different color per
@@ -92,11 +94,19 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
     final results = await Future.wait([
       PexelsService.searchPhotos('modern gym interior', perPage: 6),
       PexelsService.searchPhotos('fitness tracker smartwatch', perPage: 4),
+      PexelsService.searchPhotos('healthy lifestyle wellness care', perPage: 3),
+      PexelsService.searchPhotos('doctor medical checkup stethoscope', perPage: 2),
+      PexelsService.searchPhotos('dentist dental care smile', perPage: 2),
+      PexelsService.searchPhotos('eye exam optometry glasses', perPage: 2),
     ]);
     if (!mounted) return;
     setState(() {
       _gymPhotos = results[0];
       _techPhotos = results[1];
+      _heroPhotos = results[2];
+      _insurancePhotos['health'] = results[3].isNotEmpty ? results[3].first.large : null;
+      _insurancePhotos['dental'] = results[4].isNotEmpty ? results[4].first.large : null;
+      _insurancePhotos['vision'] = results[5].isNotEmpty ? results[5].first.large : null;
     });
   }
 
@@ -261,29 +271,42 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   }
 
   Widget _buildHero() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white.withValues(alpha: 0.06), _bg],
+    final heroImage = _heroPhotos.isNotEmpty ? _heroPhotos.first.large : null;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        heroImage != null
+            ? Image.network(
+                heroImage,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.white.withValues(alpha: 0.06)),
+              )
+            : Container(color: Colors.white.withValues(alpha: 0.06)),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black.withValues(alpha: 0.15), _bg.withValues(alpha: 0.96)],
+            ),
+          ),
         ),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 56),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text('Your Health\nAccount',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 26,
-                    height: 1.1)),
-          ],
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 56),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Your Health\nAccount',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 26,
+                      height: 1.1)),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -294,6 +317,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
   Widget _buildOverviewTab() {
     final balance = (_hsa?['balance'] as num?)?.toDouble() ?? 0.0;
     final contributions = (_hsa?['contributions'] as num?)?.toDouble() ?? 0.0;
+    final banner = _heroPhotos.length > 1 ? _heroPhotos[1].large : null;
 
     return RefreshIndicator(
       onRefresh: _loadAll,
@@ -303,6 +327,19 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (banner != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  banner,
+                  height: 110,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
             _buildHsaCard(balance, contributions),
             const SizedBox(height: 18),
             if (_insights.isNotEmpty) ...[
@@ -438,6 +475,7 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
                 plan: p,
                 enrolled: _myInsurance.any((e) => e['planName'] == p.name),
                 busy: _busy,
+                imageUrl: _insurancePhotos[p.coverageType],
                 onEnroll: () => _runAction(
                   () => _api.enrollInsurance({
                     'provider': p.provider,
@@ -708,8 +746,16 @@ class _InsurancePlanCard extends StatelessWidget {
   final _InsurancePlan plan;
   final bool enrolled;
   final bool busy;
+  final String? imageUrl;
   final VoidCallback onEnroll;
-  const _InsurancePlanCard({required this.plan, required this.enrolled, required this.busy, required this.onEnroll});
+  const _InsurancePlanCard({required this.plan, required this.enrolled, required this.busy, required this.imageUrl, required this.onEnroll});
+
+  Widget _iconFallback() {
+    return Container(
+      color: Colors.white.withValues(alpha: 0.08),
+      child: Icon(plan.icon, color: Colors.white, size: 20),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -723,11 +769,15 @@ class _InsurancePlanCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
-            child: Icon(plan.icon, color: Colors.white, size: 20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: imageUrl != null
+                  ? Image.network(imageUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => _iconFallback())
+                  : _iconFallback(),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
