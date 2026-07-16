@@ -92,9 +92,9 @@ class _LifeXHealthPageState extends State<LifeXHealthPage>
 
   Future<void> _loadPhotos() async {
     final results = await Future.wait([
-      PexelsService.searchPhotos('modern gym interior', perPage: 6),
-      PexelsService.searchPhotos('fitness tracker smartwatch', perPage: 4),
-      PexelsService.searchPhotos('healthy lifestyle wellness care', perPage: 3),
+      PexelsService.searchPhotos('man working out gym weight training', perPage: 6),
+      PexelsService.searchPhotos('man running fitness tracker workout', perPage: 4),
+      PexelsService.searchPhotos('man running workout routine athletic training', perPage: 4),
       PexelsService.searchPhotos('doctor medical checkup stethoscope', perPage: 2),
       PexelsService.searchPhotos('dentist dental care smile', perPage: 2),
       PexelsService.searchPhotos('eye exam optometry glasses', perPage: 2),
