@@ -3902,6 +3902,19 @@
               }
             },
             {
+              "name": "Create Paxos Sandbox Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/account"
+              }
+            },
+            {
               "name": "Get Crypto History",
               "request": {
                 "method": "GET",

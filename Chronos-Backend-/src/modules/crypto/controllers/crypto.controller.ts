@@ -41,6 +41,17 @@ export class CryptoController {
     }
   }
 
+  async account(req: Request, res: Response) {
+    try {
+      const userId = getUserId(req);
+      if (!userId) return res.status(401).json({ code: "UNAUTHORIZED", message: "Unauthorized" });
+      const account = await cryptoService.provisionAccount(userId);
+      return res.status(account.created ? 201 : 200).json(account);
+    } catch (err) {
+      return handleError(res, err);
+    }
+  }
+
   async buy(req: Request, res: Response) {
     try {
       const userId = getUserId(req);

@@ -541,6 +541,113 @@ describe("CryptoService", () => {
     expect(dashboard.balances).toEqual([]);
   });
 
+  it("returns an existing Paxos account without creating another identity", async () => {
+    const account = await cryptoService.provisionAccount("user-1");
+
+    expect(account).toMatchObject({
+      created: false,
+      paxos: { configured: true },
+      wallet: {
+        status: "ready",
+        id: "wallet-1",
+        paxosCustomerId: "identity-1",
+        paxosWalletId: "profile-1",
+      },
+    });
+    expect(mockPaxos.assertConfigured).not.toHaveBeenCalled();
+    expect(mockPaxos.createIdentity).not.toHaveBeenCalled();
+    expect(mockPaxos.createProfile).not.toHaveBeenCalled();
+    expect(mockPrisma.cryptoWallet.create).not.toHaveBeenCalled();
+  });
+
+  it("creates a Paxos sandbox account for an approved user", async () => {
+    const createdWallet = {
+      ...wallet,
+      id: "wallet-created",
+      paxosCustomerId: "identity-created",
+      paxosWalletId: "profile-created",
+    };
+    mockPrisma.cryptoWallet.findUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null);
+    mockPrisma.user.findUnique.mockResolvedValue({
+      email: "test@example.com",
+      firstName: "Test",
+      lastName: "User",
+    });
+    mockPaxos.createIdentity.mockResolvedValue({ id: "identity-created" });
+    mockPaxos.createProfile.mockResolvedValue({ id: "profile-created" });
+    mockPrisma.cryptoWallet.create.mockResolvedValue(createdWallet);
+
+    const account = await cryptoService.provisionAccount("user-1");
+
+    expect(mockPaxos.assertConfigured).toHaveBeenCalled();
+    expect(mockPrisma.bankingProfile.findUnique).toHaveBeenCalledWith({
+      where: { userId: "user-1" },
+    });
+    expect(mockPaxos.createIdentity).toHaveBeenCalledWith({
+      userId: "user-1",
+      email: "test@example.com",
+      firstName: "Test",
+      lastName: "User",
+    });
+    expect(mockPaxos.createProfile).toHaveBeenCalledWith(
+      "user-1-crypto",
+      "Chronos crypto profile for test@example.com",
+    );
+    expect(account).toMatchObject({
+      created: true,
+      wallet: {
+        status: "ready",
+        id: "wallet-created",
+        paxosCustomerId: "identity-created",
+        paxosWalletId: "profile-created",
+      },
+    });
+  });
+
+  it("blocks Paxos account provisioning until KYC is approved", async () => {
+    mockPrisma.cryptoWallet.findUnique.mockResolvedValue(null);
+    mockPrisma.bankingProfile.findUnique.mockResolvedValue({
+      userId: "user-1",
+      status: "PENDING",
+      kycVerified: false,
+      frozen: false,
+    });
+
+    await expect(cryptoService.provisionAccount("user-1")).rejects.toMatchObject({
+      code: "KYC_NOT_VERIFIED",
+      status: 403,
+    });
+
+    expect(mockPaxos.createIdentity).not.toHaveBeenCalled();
+    expect(mockPaxos.createProfile).not.toHaveBeenCalled();
+    expect(mockAudit.log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "COMPLIANCE_REJECTED",
+        metadata: expect.objectContaining({ reason: "KYC_NOT_VERIFIED" }),
+      }),
+    );
+  });
+
+  it("returns Paxos configuration errors before provisioning a new account", async () => {
+    mockPrisma.cryptoWallet.findUnique.mockResolvedValue(null);
+    mockPaxos.assertConfigured.mockImplementationOnce(() => {
+      throw Object.assign(new Error("Paxos disabled"), {
+        code: "PAXOS_NOT_CONFIGURED",
+        status: 503,
+      });
+    });
+
+    await expect(cryptoService.provisionAccount("user-1")).rejects.toMatchObject({
+      code: "PAXOS_NOT_CONFIGURED",
+      status: 503,
+    });
+
+    expect(mockPrisma.bankingProfile.findUnique).not.toHaveBeenCalled();
+    expect(mockPaxos.createIdentity).not.toHaveBeenCalled();
+  });
+
   it("idempotently returns an existing wallet without Paxos calls", async () => {
     await expect(cryptoService.ensureWalletForUser("user-1")).resolves.toBe(wallet);
 

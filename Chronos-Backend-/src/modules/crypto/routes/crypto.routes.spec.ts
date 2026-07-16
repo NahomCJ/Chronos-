@@ -4,6 +4,7 @@ import { Duplex } from "stream";
 
 const mockCryptoService = {
   getDashboard: jest.fn(),
+  provisionAccount: jest.fn(),
   buy: jest.fn(),
   sell: jest.fn(),
   getHistory: jest.fn(),
@@ -107,6 +108,17 @@ describe("crypto routes", () => {
       wallet: { status: "ready" },
       supported_assets: ["BTC", "ETH", "SOL", "UNI", "AAVE", "LINK"],
     });
+    mockCryptoService.provisionAccount.mockResolvedValue({
+      created: true,
+      paxos: { configured: true, environment: "sandbox" },
+      wallet: {
+        status: "ready",
+        id: "wallet-1",
+        paxosCustomerId: "identity-1",
+        paxosWalletId: "profile-1",
+        createdAt: "2026-06-06T00:00:00.000Z",
+      },
+    });
     mockCryptoService.buy.mockResolvedValue({ trade_id: "trade-buy-1", status: "filled" });
     mockCryptoService.sell.mockResolvedValue({ trade_id: "trade-sell-1", status: "filled" });
     mockCryptoService.getHistory.mockResolvedValue({ trades: [], pagination: { page: 2, limit: 10 } });
@@ -125,6 +137,21 @@ describe("crypto routes", () => {
     expect(response.body).toMatchObject({ wallet: { status: "ready" } });
     expect(mockRequireAuth).toHaveBeenCalled();
     expect(mockCryptoService.getDashboard).toHaveBeenCalledWith("user-1");
+  });
+
+  it("routes POST /api/v1/crypto/account to Paxos account provisioning", async () => {
+    const response = await dispatch(createApp(), {
+      method: "POST",
+      path: "/api/v1/crypto/account",
+    });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toMatchObject({
+      created: true,
+      wallet: { status: "ready", paxosWalletId: "profile-1" },
+    });
+    expect(mockRequireAuth).toHaveBeenCalled();
+    expect(mockCryptoService.provisionAccount).toHaveBeenCalledWith("user-1");
   });
 
   it("routes POST /api/v1/crypto/buy with the buy payload", async () => {

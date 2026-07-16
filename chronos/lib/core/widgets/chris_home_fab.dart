@@ -11,6 +11,7 @@ import '../../features/auth/data/services/token_storage_service.dart';
 import '../../features/panther_ai/domain/usecases/send_message.dart';
 import '../router/route_constants.dart';
 import '../services/chris_action_service.dart';
+import '../services/chris_wake_word.dart';
 import '../services/tts_service.dart';
 import 'voice_confirmation_sheet.dart';
 
@@ -158,13 +159,10 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
       await _speech.listen(
         onResult: (r) {
           if (_wakeWordTriggered) return;
-          final words = r.recognizedWords.toLowerCase();
-          if (words.contains('hey chris') ||
-              words.contains('hi chris') ||
-              (words.startsWith('hey') && words.contains('chris')) ||
-              (words.startsWith('hi') && words.contains('chris'))) {
+          final wake = ChrisWakeWord.parse(r.recognizedWords);
+          if (wake.triggered) {
             _wakeWordTriggered = true;
-            _engage();
+            _engage(initialCommand: wake.command);
           }
         },
         listenOptions: stt.SpeechListenOptions(
@@ -209,7 +207,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   // Shared entry point for "Hey Chris", a tap while idle, or a tap that
   // interrupts Chris mid-response. No sheet or overlay pops up; the strands
   // are the only visual feedback (their speed reflects the current state).
-  Future<void> _engage() async {
+  Future<void> _engage({String? initialCommand}) async {
     final interrupting = _isBusy;
     _speech.stop();
     await TtsService().stop();
@@ -231,6 +229,13 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     if (!_micAvailable) {
       _endConversation();
       _warnMicUnavailable();
+      return;
+    }
+
+    final spokenCommand = initialCommand?.trim() ?? '';
+    if (spokenCommand.isNotEmpty) {
+      _commandGeneration++;
+      await _handleCommand(spokenCommand);
       return;
     }
 
@@ -385,7 +390,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: widget.onTap ?? _engage,
+        onTap: widget.onTap ?? () => _engage(),
         onPanUpdate: (d) => setState(() => _offset += d.delta),
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeNotifier, _glowAnim]),

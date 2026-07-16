@@ -749,10 +749,28 @@ Response:
 
 ```
 GET /api/v1/crypto              → Wallet status, Paxos balances, holdings, supported assets
+POST /api/v1/crypto/account     → Create or return the user's Paxos sandbox identity/profile
 GET /api/v1/crypto/history      → Trade history plus Paxos transfer references
 ```
 
 Query params for transactions: `?page=1&limit=20&asset=BTC&from=2026-01-01&to=2026-04-30`
+
+`POST /api/v1/crypto/account` is idempotent. It returns `201` when a new Paxos identity/profile is created and `200` when the local Paxos account mapping already exists. The user must have approved KYC and Paxos credentials must be configured.
+
+Response:
+```json
+{
+  "created": true,
+  "paxos": { "configured": true, "environment": "sandbox" },
+  "wallet": {
+    "status": "ready",
+    "id": "wallet-id",
+    "paxosCustomerId": "identity-id",
+    "paxosWalletId": "profile-id",
+    "createdAt": "2026-06-06T00:00:00.000Z"
+  }
+}
+```
 
 ### Crypto Trading
 

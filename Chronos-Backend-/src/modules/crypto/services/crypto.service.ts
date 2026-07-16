@@ -24,6 +24,13 @@ interface NormalizedOrderFill {
   filledAt?: Date;
 }
 
+interface CryptoWalletRecord {
+  id: string;
+  paxosCustomerId: string;
+  paxosWalletId: string;
+  createdAt: Date;
+}
+
 export class CryptoService {
   async getDashboard(userId: string) {
     const lazyProvision = await this.tryLazyProvisionWallet(userId);
@@ -335,6 +342,27 @@ export class CryptoService {
     };
   }
 
+  async provisionAccount(userId: string) {
+    const existing = await prisma.cryptoWallet.findUnique({ where: { userId } });
+    if (existing) {
+      return {
+        created: false,
+        paxos: this.paxosStatus(),
+        wallet: this.publicWallet(existing),
+      };
+    }
+
+    paxos.assertConfigured();
+    await this.assertCryptoAccountProvisionAllowed(userId);
+
+    const wallet = await this.ensureWalletForUser(userId);
+    return {
+      created: true,
+      paxos: this.paxosStatus(),
+      wallet: this.publicWallet(wallet),
+    };
+  }
+
   async ensureWalletForUser(userId: string) {
     const existing = await prisma.cryptoWallet.findUnique({ where: { userId } });
     if (existing) return existing;
@@ -386,6 +414,43 @@ export class CryptoService {
         metadata: this.errorMetadata(err),
       });
       throw err;
+    }
+  }
+
+  private publicWallet(wallet: CryptoWalletRecord) {
+    return {
+      status: "ready",
+      id: wallet.id,
+      paxosCustomerId: wallet.paxosCustomerId,
+      paxosWalletId: wallet.paxosWalletId,
+      createdAt: wallet.createdAt,
+    };
+  }
+
+  private paxosStatus() {
+    return {
+      configured: paxos.isConfigured(),
+      environment: process.env.PAXOS_ENV || process.env.NODE_ENV || "sandbox",
+    };
+  }
+
+  private async assertCryptoAccountProvisionAllowed(userId: string) {
+    const profile = await prisma.bankingProfile.findUnique({ where: { userId } });
+    if (profile?.frozen || profile?.status === "SUSPENDED") {
+      await this.auditComplianceRejection(userId, "ACCOUNT_SUSPENDED");
+      throw new CryptoApiError(
+        "ACCOUNT_SUSPENDED",
+        "This account is suspended for crypto account provisioning.",
+        403,
+      );
+    }
+    if (!profile || !profile.kycVerified || profile.status !== "APPROVED") {
+      await this.auditComplianceRejection(userId, "KYC_NOT_VERIFIED");
+      throw new CryptoApiError(
+        "KYC_NOT_VERIFIED",
+        "KYC approval is required before creating a Paxos crypto account.",
+        403,
+      );
     }
   }
 
