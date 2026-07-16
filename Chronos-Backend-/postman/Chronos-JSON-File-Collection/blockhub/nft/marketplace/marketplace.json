@@ -1,0 +1,15 @@
+{
+  "info": {
+    "name": "BlockHub — NFT / Marketplace",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Browse Listings", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace" } },
+    { "name": "Get Listing by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/{{listingId}}" } },
+    { "name": "My Listings", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/my/listings" } },
+    { "name": "My Purchases", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/my/purchases" } },
+    { "name": "Create Listing", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nftId\": \"{{nftId}}\",\n  \"priceUsd\": 250,\n  \"currency\": \"USD\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/list" } },
+    { "name": "Buy NFT", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"listingId\": \"{{listingId}}\",\n  \"walletId\": \"{{walletId}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/buy" } },
+    { "name": "Cancel Listing", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/{{listingId}}" } }
+  ]
+}

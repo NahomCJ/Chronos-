@@ -1,0 +1,19 @@
+{
+  "info": {
+    "name": "LifeX — Spiritual",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Dashboard", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/dashboard" } },
+    { "name": "Meditation Streak", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/streak" } },
+    { "name": "List Meditations", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation" } },
+    { "name": "Log Meditation", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"duration\": 15,\n  \"type\": \"Mindfulness\",\n  \"note\": \"Morning session\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation" } },
+    { "name": "Meditation Stats", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation/stats" } },
+    { "name": "List Gratitude Entries", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/gratitude" } },
+    { "name": "Add Gratitude Entry", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"entry\": \"Grateful for health and family today\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/gratitude" } },
+    { "name": "Spiritual Goals", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/goals" } },
+    { "name": "Create Spiritual Goal", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Meditate daily for 30 days\",\n  \"targetDays\": 30\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/goals" } },
+    { "name": "Spiritual Habits", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/habits" } },
+    { "name": "Log Spiritual Habit", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"habitId\": \"HABIT_ID\",\n  \"note\": \"Morning prayer\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/habits" } }
+  ]
+}

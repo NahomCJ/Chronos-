@@ -1,0 +1,15 @@
+# Kevin Chat — Promptfoo Configuration
+# Provider: Custom JS provider that POSTs to Kevin's FastAPI endpoint
+# Run: cd tests/promptfoo && promptfoo eval
+
+description: "Kevin Chat eval suite"
+
+# Ollama serializes inference — low concurrency prevents queue timeouts
+evaluateOptions:
+  maxConcurrency: 1
+
+providers:
+  - file://kevin_provider.js
+
+# Test cases live in a separate file for clarity
+tests: kevin_tests.yaml

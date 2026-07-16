@@ -1,0 +1,4348 @@
+{
+  "info": {
+    "name": "Chronos API — Complete",
+    "_postman_id": "chronos-api-complete-v2",
+    "description": "Chronos API — Complete collection (all endpoints).\n\nMain API:  http://chronos.us-east-1.elasticbeanstalk.com\nBlockHub:  http://blockhub-env.us-east-1.elasticbeanstalk.com\n\nHOW TO USE\n1. Open the Health folder and hit both health checks to confirm both services are up.\n2. Run Auth > Register (or Login) — token is auto-saved to {{token}}.\n3. All protected requests use {{token}} automatically.\n4. BlockHub shares the same token — no separate login.\n5. IDs returned by requests (accountId, walletId, nftId, etc.) are auto-saved as collection variables.\n\nFOLDERS\n  Health       — liveness checks (Main API + BlockHub)\n  Auth         — register, login, forgot/reset password\n  Banking      — accounts, wallets, cards, transfers, transactions, deposits, bills, FX, KYC\n  TickPay/BNPL — buy-now-pay-later accounts, purchases, repayments\n  LifeX        — 11 personal development modules\n  Panther AI   — Kevin chat, alerts, voice, scoring\n  Notifications — in-app notification management\n  BlockHub     — crypto trading + NFT minting/marketplace",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "accountId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "walletId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cardId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "groupId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "postId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "goalId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "nftId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "listingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "collectionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "jobId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/health"
+          }
+        },
+        {
+          "name": "BlockHub Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"email\": \"testuser@chronos.app\",\n  \"password\": \"Password123!\",\n  \"phone\": \"+12025550199\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/auth/register"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  var j = pm.response.json();",
+                  "  if (j.token) { pm.collectionVariables.set(\"token\", j.token); console.log(\"Token saved\"); }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@chronos.app\",\n  \"password\": \"Password123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  var j = pm.response.json();",
+                  "  if (j.token) { pm.collectionVariables.set(\"token\", j.token); console.log(\"Token saved\"); }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@chronos.app\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/auth/forgot-password"
+          }
+        },
+        {
+          "name": "Reset Password (with OTP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@chronos.app\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewPassword123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/auth/reset-password"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Onboarding",
+      "item": [
+        {
+          "name": "Start Onboarding (Register + KYC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@chronos.app\",\n  \"password\": \"Password123!\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1990-01-01\",\n  \"phoneNumber\": \"+12025550111\"\n}"
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/onboarding/start"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  var j = pm.response.json();",
+                  "  if (j.accessToken) { pm.collectionVariables.set(\"token\", j.accessToken); }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Onboarding Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/onboarding/status"
+          }
+        },
+        {
+          "name": "Link Bank Account (Auth Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/onboarding/link-bank"
+          }
+        },
+        {
+          "name": "Initiate ACH Deposit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500.00,\n  \"description\": \"Initial funding\"\n}"
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/onboarding/deposit"
+          }
+        },
+        {
+          "name": "List Bank Deposits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/onboarding/deposits"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Banking",
+      "item": [
+        {
+          "name": "Home / Dashboard",
+          "item": [
+            {
+              "name": "Summary",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/home/summary"
+              }
+            },
+            {
+              "name": "Spending Analysis",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/home/spending-analysis"
+              }
+            },
+            {
+              "name": "Offers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/home/offers"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Accounts",
+          "item": [
+            {
+              "name": "Create Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"CHECKING\",\n  \"tier\": \"basic\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts"
+              }
+            },
+            {
+              "name": "List Accounts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts"
+              }
+            },
+            {
+              "name": "Get Account",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id"
+              }
+            },
+            {
+              "name": "Get Statements",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/statements"
+              }
+            },
+            {
+              "name": "Freeze Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/freeze"
+              }
+            },
+            {
+              "name": "Upgrade Tier",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tier\": \"premium\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/upgrade"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Wallet",
+          "item": [
+            {
+              "name": "Create Wallet",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"type\": \"FIAT\",\n  \"currency\": \"USD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/wallet"
+              }
+            },
+            {
+              "name": "List Wallets for Account",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/wallet?accountId={{accountId}}"
+              }
+            },
+            {
+              "name": "Get Wallet",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/wallet/:id"
+              }
+            },
+            {
+              "name": "Cash Out",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"amount\": 100,\n  \"currency\": \"USD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/wallet/cashout"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cards",
+          "item": [
+            {
+              "name": "Issue Card",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"type\": \"VIRTUAL\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/issue"
+              }
+            },
+            {
+              "name": "List Cards",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards"
+              }
+            },
+            {
+              "name": "Get Card",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id"
+              }
+            },
+            {
+              "name": "Freeze Card",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Unfreeze Card",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Change PIN",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pin\": \"1234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id/pin"
+              }
+            },
+            {
+              "name": "Set Spending Limits",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"daily\": 500,\n  \"monthly\": 5000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id/limits"
+              }
+            },
+            {
+              "name": "Replace Card",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"LOST\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/cards/:id/replace"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transfers",
+          "item": [
+            {
+              "name": "Create Transfer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fromWalletId\": \"{{walletId}}\",\n  \"toWalletId\": \"TARGET_WALLET_ID\",\n  \"amount\": 50,\n  \"currency\": \"USD\",\n  \"note\": \"Test transfer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer"
+              }
+            },
+            {
+              "name": "List Transfers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer"
+              }
+            },
+            {
+              "name": "Get Transfer",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer/:id"
+              }
+            },
+            {
+              "name": "Cancel Transfer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/transfer/:id/cancel"
+              }
+            },
+            {
+              "name": "Core Transfer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fromWalletId\": \"{{walletId}}\",\n  \"toWalletId\": \"TARGET_WALLET_ID\",\n  \"amount\": 25,\n  \"currency\": \"USD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/transfer"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transactions",
+          "item": [
+            {
+              "name": "List Transactions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/transactions"
+              }
+            },
+            {
+              "name": "Get Transaction",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/transactions/:id"
+              }
+            },
+            {
+              "name": "Wallet Activity",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/transactions/wallet/:walletId"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deposits (ACH)",
+          "item": [
+            {
+              "name": "Create Deposit",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"source\": \"ACH\",\n  \"reference\": \"DEP-001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit"
+              }
+            },
+            {
+              "name": "List Deposits",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit"
+              }
+            },
+            {
+              "name": "Get Deposit",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit/:id"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bills",
+          "item": [
+            {
+              "name": "Get Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/providers"
+              }
+            },
+            {
+              "name": "Pay Bill",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"providerId\": \"PROVIDER_ID\",\n  \"amount\": 75,\n  \"walletId\": \"{{walletId}}\",\n  \"accountNumber\": \"BILL_ACCOUNT_NUM\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/pay"
+              }
+            },
+            {
+              "name": "Bill History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/history"
+              }
+            }
+          ]
+        },
+        {
+          "name": "FX & Currency",
+          "item": [
+            {
+              "name": "FX Quote",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"from\": \"USD\",\n  \"to\": \"EUR\",\n  \"amount\": 100\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/fx/quote"
+              }
+            },
+            {
+              "name": "FX Execute",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"QUOTE_ID\",\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/fx/execute"
+              }
+            },
+            {
+              "name": "Latest Rate",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/rates?base=USD&quote=EUR"
+              }
+            },
+            {
+              "name": "Convert Currency",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/convert?from=USD&to=EUR&amount=100"
+              }
+            },
+            {
+              "name": "Currency History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/currency/history?base=USD&quote=EUR"
+              }
+            }
+          ]
+        },
+        {
+          "name": "KYC",
+          "item": [
+            {
+              "name": "Get Profile",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/profile"
+              }
+            },
+            {
+              "name": "Create Profile",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/profile"
+              }
+            },
+            {
+              "name": "Create KYC Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/create"
+              }
+            },
+            {
+              "name": "Complete KYC Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sessionId\": \"SESSION_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/complete"
+              }
+            },
+            {
+              "name": "Retry KYC Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sessionId\": \"SESSION_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/retry"
+              }
+            },
+            {
+              "name": "Get KYC Session Status",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/:sessionId"
+              }
+            },
+            {
+              "name": "Create Bank Link Token",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/link"
+              }
+            },
+            {
+              "name": "Connect Bank Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publicToken\": \"PUBLIC_TOKEN\",\n  \"accountId\": \"PLAID_ACCOUNT_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/connect"
+              }
+            },
+            {
+              "name": "Get Linked Bank Account",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/account"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TickPay / BNPL",
+      "item": [
+        {
+          "name": "Onboard",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/onboard"
+          }
+        },
+        {
+          "name": "Get Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/account"
+          }
+        },
+        {
+          "name": "Create Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/account"
+          }
+        },
+        {
+          "name": "Create Purchase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 299.99,\n  \"merchant\": \"Apple Store\",\n  \"installments\": 4,\n  \"walletId\": \"{{walletId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/purchase"
+          }
+        },
+        {
+          "name": "Create Repayment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"purchaseId\": \"PURCHASE_ID\",\n  \"amount\": 75,\n  \"walletId\": \"{{walletId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/repayment"
+          }
+        },
+        {
+          "name": "List Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/transactions"
+          }
+        },
+        {
+          "name": "List Fees",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/fees"
+          }
+        }
+      ]
+    },
+    {
+      "name": "LifeX",
+      "item": [
+        {
+          "name": "Education",
+          "item": [
+            {
+              "name": "List Courses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses"
+              }
+            },
+            {
+              "name": "Get Course",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/:id"
+              }
+            },
+            {
+              "name": "Sync Courses",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/sync"
+              }
+            },
+            {
+              "name": "Enroll in Course",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/:id/enroll"
+              }
+            },
+            {
+              "name": "My Enrollments",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/enrollments"
+              }
+            },
+            {
+              "name": "Update Enrollment Progress",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/enrollments/:id/progress",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"progress\": 75\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "List Tutors",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors"
+              }
+            },
+            {
+              "name": "Get Tutor",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/:id"
+              }
+            },
+            {
+              "name": "Book Tutor Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-05-15T14:00:00Z\",\n  \"duration\": 60,\n  \"topic\": \"Personal Finance\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/:id/schedule"
+              }
+            },
+            {
+              "name": "My Tutor Sessions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/sessions"
+              }
+            },
+            {
+              "name": "List Student Loans",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans"
+              }
+            },
+            {
+              "name": "Loan Payment Schedule",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/:id/paymentSchedule"
+              }
+            },
+            {
+              "name": "Link Student Loan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"Sallie Mae\",\n  \"balance\": 25000,\n  \"interestRate\": 4.5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/link"
+              }
+            },
+            {
+              "name": "Repay Student Loan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 200,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/:id/repay"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health",
+          "item": [
+            {
+              "name": "Dashboard",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/dashboard"
+              }
+            },
+            {
+              "name": "List Metrics",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/metrics"
+              }
+            },
+            {
+              "name": "Log Metric",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"WEIGHT\",\n  \"value\": 175,\n  \"unit\": \"lbs\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/metrics"
+              }
+            },
+            {
+              "name": "List Fitness Sessions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/fitness"
+              }
+            },
+            {
+              "name": "Log Fitness Session",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"activity\": \"Running\",\n  \"duration\": 30,\n  \"calories\": 300\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/fitness"
+              }
+            },
+            {
+              "name": "List Diet Logs",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/diet"
+              }
+            },
+            {
+              "name": "Log Meal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"meal\": \"Breakfast\",\n  \"calories\": 450,\n  \"protein\": 30\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/diet"
+              }
+            },
+            {
+              "name": "Get HSA",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/hsa"
+              }
+            },
+            {
+              "name": "HSA Deposit",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 500,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/hsa/deposit"
+              }
+            },
+            {
+              "name": "HSA Withdraw",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100,\n  \"reason\": \"Medical expense\",\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/hsa/withdraw"
+              }
+            },
+            {
+              "name": "List Medical Records",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/medical"
+              }
+            },
+            {
+              "name": "Add Medical Record",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"Prescription\",\n  \"note\": \"Annual checkup\",\n  \"date\": \"2026-04-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/medical"
+              }
+            },
+            {
+              "name": "List Wellness Programs",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/wellness"
+              }
+            },
+            {
+              "name": "Enroll in Wellness Program",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"programId\": \"PROGRAM_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/wellness/enroll"
+              }
+            },
+            {
+              "name": "List Habits",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/habits"
+              }
+            },
+            {
+              "name": "Log Habit",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"habitId\": \"HABIT_ID\",\n  \"completedAt\": \"2026-04-26T09:00:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/habit"
+              }
+            },
+            {
+              "name": "List Gyms",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/health/gyms"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finance",
+          "item": [
+            {
+              "name": "Overview",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/overview"
+              }
+            },
+            {
+              "name": "List Savings Goals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/savings"
+              }
+            },
+            {
+              "name": "Create Savings Goal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Emergency Fund\",\n  \"target\": 5000,\n  \"currency\": \"USD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/savings"
+              }
+            },
+            {
+              "name": "List Budgets",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/budget"
+              }
+            },
+            {
+              "name": "Monthly Budget",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/budget/monthly"
+              }
+            },
+            {
+              "name": "Create Budget",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": \"Food\",\n  \"amount\": 400,\n  \"period\": \"MONTHLY\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/budget"
+              }
+            },
+            {
+              "name": "List Finance Goals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/goals"
+              }
+            },
+            {
+              "name": "Update Goal Progress",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/goals/:goalId/progress",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"progress\": 50\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Contribute to Goal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 200,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/goals/:goalId/contribute"
+              }
+            },
+            {
+              "name": "List Finance Loans",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/loans"
+              }
+            },
+            {
+              "name": "Create Finance Loan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"lender\": \"Bank\",\n  \"amount\": 1000,\n  \"interestRate\": 5.5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/loans"
+              }
+            },
+            {
+              "name": "Repay Finance Loan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100,\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/loans/:id/repay"
+              }
+            },
+            {
+              "name": "Investment Advice",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/investments/advice"
+              }
+            },
+            {
+              "name": "Credit Score",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/credit-score"
+              }
+            },
+            {
+              "name": "Tax Report",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/tax-report"
+              }
+            },
+            {
+              "name": "Log Expense",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 45,\n  \"category\": \"Food\",\n  \"note\": \"Lunch\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/finance/reports"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Vision Board",
+          "item": [
+            {
+              "name": "Home Dashboard",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/home"
+              }
+            },
+            {
+              "name": "Vision Boards",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/boards"
+              }
+            },
+            {
+              "name": "Create Vision Board",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"My 2026 Goals\",\n  \"description\": \"Year goals\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/boards"
+              }
+            },
+            {
+              "name": "Goals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/goals"
+              }
+            },
+            {
+              "name": "Create Goal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Run a marathon\",\n  \"category\": \"HEALTH\",\n  \"targetDate\": \"2026-12-31\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/goals"
+              }
+            },
+            {
+              "name": "Update Goal",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Run a 5K\",\n  \"status\": \"ACTIVE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/goals/:id"
+              }
+            },
+            {
+              "name": "Milestones",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/milestones"
+              }
+            },
+            {
+              "name": "Create Milestone",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"goalId\": \"{{goalId}}\",\n  \"title\": \"Week 1 complete\",\n  \"targetDate\": \"2026-05-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/milestones"
+              }
+            },
+            {
+              "name": "Update Milestone",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"COMPLETED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/milestones/:id"
+              }
+            },
+            {
+              "name": "Habits",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/habits"
+              }
+            },
+            {
+              "name": "Create Habit",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Morning run\",\n  \"frequency\": \"DAILY\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/habits"
+              }
+            },
+            {
+              "name": "Update Habit",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"ACTIVE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/habits/:id"
+              }
+            },
+            {
+              "name": "Mentorships",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/mentorship"
+              }
+            },
+            {
+              "name": "Register for Mentorship",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"mentorId\": \"MENTOR_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/mentorship/register"
+              }
+            },
+            {
+              "name": "Communities",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/community"
+              }
+            },
+            {
+              "name": "AI Recommendations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/vision/ai/recommendations"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Activity",
+          "item": [
+            {
+              "name": "List Activities",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/activity/"
+              }
+            },
+            {
+              "name": "Log Activity",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"WORKOUT\",\n  \"duration\": 45,\n  \"note\": \"Morning run\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/activity/"
+              }
+            },
+            {
+              "name": "Activity Stats",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/activity/stats"
+              }
+            },
+            {
+              "name": "Activity Streak",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/activity/streak"
+              }
+            }
+          ]
+        },
+        {
+          "name": "AI Coach",
+          "item": [
+            {
+              "name": "Life Insights",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/insights"
+              }
+            },
+            {
+              "name": "Chat with Coach",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"Help me build a fitness routine\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/chat"
+              }
+            },
+            {
+              "name": "Weekly Plan",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/weekly-plan"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Data Export",
+          "item": [
+            {
+              "name": "Export Health Data",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/health"
+              }
+            },
+            {
+              "name": "Export Finance Data",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/finance"
+              }
+            },
+            {
+              "name": "Export Education Data",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/education"
+              }
+            },
+            {
+              "name": "Export Vision Data",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/vision"
+              }
+            },
+            {
+              "name": "Full Export (All Data)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/full"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Family",
+          "item": [
+            {
+              "name": "My Family Groups",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/"
+              }
+            },
+            {
+              "name": "Create Family Group",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"The Johnsons\",\n  \"description\": \"Family finance group\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/"
+              }
+            },
+            {
+              "name": "Get Group",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId"
+              }
+            },
+            {
+              "name": "Add Member to Group",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"MEMBER_USER_ID\",\n  \"role\": \"MEMBER\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/members"
+              }
+            },
+            {
+              "name": "Remove Member from Group",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/members/:userId"
+              }
+            },
+            {
+              "name": "Family Goals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/goals"
+              }
+            },
+            {
+              "name": "Create Family Goal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Family vacation fund\",\n  \"target\": 3000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/goals"
+              }
+            },
+            {
+              "name": "Family Budgets",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/budgets"
+              }
+            },
+            {
+              "name": "Create Family Budget",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"category\": \"Groceries\",\n  \"amount\": 600\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/family/:groupId/budgets"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Social",
+          "item": [
+            {
+              "name": "My Followers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/followers"
+              }
+            },
+            {
+              "name": "Who I Follow",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/following"
+              }
+            },
+            {
+              "name": "Follow User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"TARGET_USER_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/follow"
+              }
+            },
+            {
+              "name": "Unfollow User",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/follow/:userId"
+              }
+            },
+            {
+              "name": "Community Feed",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/community"
+              }
+            },
+            {
+              "name": "Join Community",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"communityId\": \"COMMUNITY_ID\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/community/join"
+              }
+            },
+            {
+              "name": "My Posts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts"
+              }
+            },
+            {
+              "name": "Create Post",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"content\": \"Just hit my savings goal!\",\n  \"visibility\": \"PUBLIC\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts"
+              }
+            },
+            {
+              "name": "Like Post",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId/like"
+              }
+            },
+            {
+              "name": "Unlike Post",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId/like"
+              }
+            },
+            {
+              "name": "Delete Post",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/social/posts/:postId"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Spiritual",
+          "item": [
+            {
+              "name": "Dashboard",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/dashboard"
+              }
+            },
+            {
+              "name": "Meditation Streak",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/streak"
+              }
+            },
+            {
+              "name": "List Meditations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation"
+              }
+            },
+            {
+              "name": "Log Meditation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"duration\": 15,\n  \"type\": \"Mindfulness\",\n  \"note\": \"Morning session\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation"
+              }
+            },
+            {
+              "name": "Meditation Stats",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/meditation/stats"
+              }
+            },
+            {
+              "name": "List Gratitude Entries",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/gratitude"
+              }
+            },
+            {
+              "name": "Add Gratitude Entry",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entry\": \"Grateful for health and family today\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/gratitude"
+              }
+            },
+            {
+              "name": "Spiritual Goals",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/goals"
+              }
+            },
+            {
+              "name": "Create Spiritual Goal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Meditate daily for 30 days\",\n  \"targetDays\": 30\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/goals"
+              }
+            },
+            {
+              "name": "Spiritual Habits",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/habits"
+              }
+            },
+            {
+              "name": "Log Spiritual Habit",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"habitId\": \"HABIT_ID\",\n  \"note\": \"Morning prayer\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/spiritual/habits"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Feed",
+          "item": [
+            {
+              "name": "Personal Feed",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/feed/feed"
+              }
+            },
+            {
+              "name": "Community Feed",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/feed/community"
+              }
+            },
+            {
+              "name": "Daily Summary",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/feed/summary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Panther AI",
+      "item": [
+        {
+          "name": "Kevin Chat",
+          "item": [
+            {
+              "name": "Kevin Chat",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"message\": \"How much did I spend this month?\",\n  \"responseMode\": \"text\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/kevin/chat"
+              }
+            }
+          ]
+        },
+        {
+          "name": "AI Alerts",
+          "item": [
+            {
+              "name": "List Alerts",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts"
+              }
+            },
+            {
+              "name": "Generate Alerts",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts/generate"
+              }
+            },
+            {
+              "name": "Dismiss Alert",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/alerts/:id"
+              }
+            }
+          ]
+        },
+        {
+          "name": "User Level",
+          "item": [
+            {
+              "name": "Get User Level",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/user-level"
+              }
+            },
+            {
+              "name": "Set User Level",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"level\": \"INTERMEDIATE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/user-level"
+              }
+            },
+            {
+              "name": "Submit Level Quiz",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"answers\": {\n    \"q1\": \"a\",\n    \"q2\": \"b\",\n    \"q3\": \"c\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/user-level/quiz"
+              }
+            }
+          ]
+        },
+        {
+          "name": "BNPL Scoring",
+          "item": [
+            {
+              "name": "TickPay Affordability Score",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 250,\n  \"merchant\": \"Apple Store\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/tickpay/affordability"
+              }
+            },
+            {
+              "name": "Marketplace Search",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"query\": \"iPhone 15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/tickpay/search"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Voice",
+          "item": [
+            {
+              "name": "Voice Transcribe (multipart/form-data)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "audio",
+                      "type": "file",
+                      "src": "/path/to/audio.mp3",
+                      "description": "Audio file mp3/wav/m4a"
+                    }
+                  ]
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/voice/transcribe"
+              }
+            },
+            {
+              "name": "Voice Synthesize",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"text\": \"Hello, your balance is $500\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/ai/voice/synthesize"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/notifications"
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/notifications/read-all"
+          }
+        },
+        {
+          "name": "Mark One Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/notifications/:id/read"
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/notifications/:id"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BlockHub",
+      "item": [
+        {
+          "name": "Crypto / Market Prices",
+          "item": [
+            {
+              "name": "Get Price — BTC",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/BTC"
+              }
+            },
+            {
+              "name": "Get Price — ETH",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/ETH"
+              }
+            },
+            {
+              "name": "Get Price — SOL",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/SOL"
+              }
+            },
+            {
+              "name": "Get Price — UNI",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/UNI"
+              }
+            },
+            {
+              "name": "Get Price — AAVE",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/AAVE"
+              }
+            },
+            {
+              "name": "Get Price — LINK",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/price/LINK"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crypto / Portfolio",
+          "item": [
+            {
+              "name": "Get Crypto Dashboard",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto"
+              }
+            },
+            {
+              "name": "Create Paxos Sandbox Account",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/account"
+              }
+            },
+            {
+              "name": "Get Crypto History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/history?page=1&limit=25"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crypto / Trading",
+          "item": [
+            {
+              "name": "Buy Crypto",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"asset\": \"BTC\",\n  \"amount_usd\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/buy"
+              }
+            },
+            {
+              "name": "Sell Crypto",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"asset\": \"BTC\",\n  \"amount_crypto\": 0.0001\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/v1/crypto/sell"
+              }
+            }
+          ]
+        },
+        {
+          "name": "NFT / Browse",
+          "item": [
+            {
+              "name": "List All NFTs",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft"
+              }
+            },
+            {
+              "name": "Get NFT by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}"
+              }
+            },
+            {
+              "name": "Get NFT History",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}/history"
+              }
+            },
+            {
+              "name": "List Collections",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/collections"
+              }
+            },
+            {
+              "name": "Get Collection by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/collections/{{collectionId}}"
+              }
+            },
+            {
+              "name": "Toggle NFT Favorite",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/nft/{{nftId}}/favorite"
+              }
+            }
+          ]
+        },
+        {
+          "name": "NFT / Minting",
+          "item": [
+            {
+              "name": "Mint NFT (upload image)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": "",
+                      "description": "JPG/PNG/GIF/WEBP/MP4 — max 50 MB"
+                    },
+                    {
+                      "key": "name",
+                      "value": "My NFT #1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "A unique digital asset",
+                      "type": "text"
+                    },
+                    {
+                      "key": "collectionId",
+                      "value": "{{collectionId}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "royaltyPercent",
+                      "value": "5",
+                      "type": "text"
+                    },
+                    {
+                      "key": "attributes",
+                      "value": "[{\"trait_type\":\"Rarity\",\"value\":\"Rare\"}]",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/mint"
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if ([200,201,202].includes(pm.response.code)) {",
+                      "  var j = pm.response.json();",
+                      "  if (j.jobId) { pm.collectionVariables.set('jobId', j.jobId); console.log('jobId saved: ' + j.jobId); }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Poll Mint Status",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/status/{{jobId}}"
+              }
+            },
+            {
+              "name": "Create NFT Collection",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Chronos Genesis\",\n  \"symbol\": \"CGS\",\n  \"description\": \"The first Chronos NFT collection\",\n  \"royaltyPercent\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/collection/create"
+              }
+            }
+          ]
+        },
+        {
+          "name": "NFT / Marketplace",
+          "item": [
+            {
+              "name": "Browse Listings",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace"
+              }
+            },
+            {
+              "name": "Get Listing by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/{{listingId}}"
+              }
+            },
+            {
+              "name": "My Listings",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/my/listings"
+              }
+            },
+            {
+              "name": "My Purchases",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/my/purchases"
+              }
+            },
+            {
+              "name": "Create Listing",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nftId\": \"{{nftId}}\",\n  \"priceUsd\": 250,\n  \"currency\": \"USD\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/list"
+              }
+            },
+            {
+              "name": "Buy NFT",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"listingId\": \"{{listingId}}\",\n  \"walletId\": \"{{walletId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/buy"
+              }
+            },
+            {
+              "name": "Cancel Listing",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/marketplace/{{listingId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "NFT / Portfolio",
+          "item": [
+            {
+              "name": "My NFTs",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/nfts"
+              }
+            },
+            {
+              "name": "Portfolio Summary",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/summary"
+              }
+            },
+            {
+              "name": "Royalty Earnings",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/royalties"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

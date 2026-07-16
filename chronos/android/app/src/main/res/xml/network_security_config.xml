@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <!-- Backend has no TLS cert yet (tracked as [PLANNED] in CLAUDE.md) —
+             without this, real devices silently block every call to it,
+             including Chris chat and voice synthesis. -->
+        <domain includeSubdomains="true">chronos.us-east-1.elasticbeanstalk.com</domain>
+        <domain includeSubdomains="true">blockhub-env.us-east-1.elasticbeanstalk.com</domain>
+    </domain-config>
+</network-security-config>

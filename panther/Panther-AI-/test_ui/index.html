@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Chris — Voice Test</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F4F6FB;
+      --white:     #FFFFFF;
+      --navy:      #0A1F44;
+      --blue:      #1B4FD8;
+      --blue-light:#EEF3FF;
+      --border:    #DDE3F0;
+      --text:      #0A1F44;
+      --muted:     #6B7A99;
+      --green:     #16A34A;
+      --red:       #DC2626;
+      --yellow:    #D97706;
+      --shadow:    0 2px 12px rgba(10,31,68,.08);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 16px 20px;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1B4FD8, #38BDF8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    header h1 { font-size: 16px; font-weight: 600; color: #fff; }
+    header p  { font-size: 12px; color: rgba(255,255,255,.55); }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ADE80;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .status-dot.offline { background: #EF4444; }
+
+    /* ── Config bar ── */
+    .config {
+      padding: 10px 16px;
+      background: var(--blue-light);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .config label { font-size: 11px; color: var(--muted); white-space: nowrap; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .config input {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 5px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    .config input:focus { border-color: var(--blue); }
+
+    /* ── Warning banner ── */
+    .banner {
+      padding: 10px 16px;
+      background: #FEF3C7;
+      border-bottom: 1px solid #FCD34D;
+      font-size: 12px;
+      color: #92400E;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .banner.hidden { display: none; }
+
+    /* ── Chat area ── */
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat::-webkit-scrollbar { width: 4px; }
+    .chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── Bubbles ── */
+    .bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--navy);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble.chris {
+      align-self: flex-start;
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow);
+    }
+    .bubble.system {
+      align-self: center;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 2px 0;
+    }
+    .bubble.error {
+      align-self: center;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: var(--red);
+      font-size: 13px;
+      text-align: center;
+      border-radius: 8px;
+      max-width: 92%;
+    }
+
+    /* tool chips */
+    .meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      margin-left: 2px;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      background: var(--blue-light);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 7px;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .tag.green { background: #F0FDF4; border-color: #BBF7D0; color: var(--green); }
+    .tag.red   { background: #FEF2F2; border-color: #FECACA; color: var(--red); }
+    .tag.yellow{ background: #FFFBEB; border-color: #FCD34D; color: var(--yellow); }
+
+    /* transaction confirm card */
+    .confirm-card {
+      align-self: flex-start;
+      max-width: 88%;
+      background: var(--white);
+      border: 1.5px solid #FCD34D;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .confirm-card .title {
+      font-size: 11px;
+      color: var(--yellow);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+    .confirm-card p { font-size: 14px; color: var(--text); line-height: 1.5; }
+    .confirm-card .btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .confirm-card button {
+      flex: 1;
+      padding: 9px;
+      border-radius: 9px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-confirm { background: var(--navy); color: #fff; }
+    .btn-cancel  { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA !important; }
+
+    /* ── Controls ── */
+    .controls {
+      padding: 14px 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* mic orb */
+    .mic-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .mic-btn {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      background: var(--navy);
+      box-shadow: 0 4px 16px rgba(10,31,68,.25);
+      transition: transform .12s, box-shadow .2s;
+      position: relative;
+    }
+    .mic-btn:hover   { transform: scale(1.06); }
+    .mic-btn.active  {
+      background: var(--red);
+      box-shadow: 0 0 0 0 rgba(220,38,38,.4);
+      animation: pulse-red 1.2s infinite;
+    }
+    .mic-btn.loading {
+      background: #94A3B8;
+      cursor: not-allowed;
+      animation: none;
+    }
+    @keyframes pulse-red {
+      0%   { box-shadow: 0 0 0 0   rgba(220,38,38,.4); }
+      70%  { box-shadow: 0 0 0 16px rgba(220,38,38,0); }
+      100% { box-shadow: 0 0 0 0   rgba(220,38,38,0); }
+    }
+
+    .mic-hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    /* waveform during recording */
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 20px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .waveform.show { opacity: 1; }
+    .bar {
+      width: 3px;
+      background: var(--red);
+      border-radius: 2px;
+      animation: wave 0.6s ease-in-out infinite alternate;
+    }
+    .bar:nth-child(2) { animation-delay: .1s; }
+    .bar:nth-child(3) { animation-delay: .2s; }
+    .bar:nth-child(4) { animation-delay: .3s; }
+    .bar:nth-child(5) { animation-delay: .4s; }
+    @keyframes wave { from { height: 4px; } to { height: 18px; } }
+
+    /* voice toggle */
+    .toggle-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--muted);
+    }
+    .toggle {
+      width: 36px; height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle.on { background: var(--blue); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      top: 2px; left: 2px;
+      transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle.on::after { transform: translateX(16px); }
+
+    /* text input */
+    .text-row {
+      display: flex;
+      width: 100%;
+      gap: 8px;
+    }
+    .text-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 10px 14px;
+      font-size: 14px;
+      outline: none;
+    }
+    .text-row input:focus { border-color: var(--blue); background: var(--white); }
+    .text-row input::placeholder { color: var(--muted); }
+    .text-row button {
+      background: var(--navy);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .text-row button:hover    { background: var(--blue); }
+    .text-row button:disabled { opacity: .4; cursor: not-allowed; }
+
+    audio { display: none; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="avatar">C</div>
+    <div>
+      <h1>Chris</h1>
+      <p>Chronos financial sidekick</p>
+    </div>
+    <div class="status-dot" id="statusDot"></div>
+  </header>
+
+  <div class="config">
+    <label>User</label>
+    <input id="userId" value="user_001" />
+    <label>API</label>
+    <input id="apiUrl" value="http://localhost:8000" style="max-width:175px" />
+  </div>
+
+  <div class="banner" id="elevenBanner">
+    ⚠ ElevenLabs key not set — voice input/output disabled. Use text below to chat with Chris.
+  </div>
+
+  <div class="chat" id="chat">
+    <div class="bubble system">Tap the mic and start talking — Chris will respond naturally.</div>
+  </div>
+
+  <div class="controls">
+    <div class="toggle-row">
+      <div class="toggle on" id="voiceToggle" onclick="toggleVoice()"></div>
+      <span id="voiceLabel">Voice reply ON</span>
+    </div>
+
+    <div class="mic-wrap">
+      <button class="mic-btn" id="micBtn" onclick="toggleRecording()">🎙</button>
+      <div class="waveform" id="waveform">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div>
+      </div>
+      <div class="mic-hint" id="micHint">Tap to speak</div>
+    </div>
+
+    <div class="text-row">
+      <input id="textInput" placeholder="Type a message to Chris…" onkeydown="if(event.key==='Enter')sendText()" />
+      <button id="sendBtn" onclick="sendText()">Send</button>
+    </div>
+  </div>
+
+</div>
+
+<audio id="audioPlayer"></audio>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let mediaRecorder  = null;
+let audioChunks    = [];
+let isRecording    = false;
+let isBusy         = false;
+let voiceOn        = true;
+let audioCtx       = null;
+let analyser       = null;
+let vadTimer       = null;
+let silenceStart   = null;
+
+let conversationHistory = [];
+let historyUserId       = null;
+let pendingIntent       = null;
+let transferState       = null;
+
+const SILENCE_THRESHOLD = 0.012;  // RMS — below this = silence
+const SILENCE_DELAY     = 1600;   // ms of silence before auto-send
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const apiUrl = document.getElementById('apiUrl').value;
+  try {
+    const res = await fetch(`${apiUrl}/health`);
+    if (res.ok) document.getElementById('statusDot').className = 'status-dot';
+    else throw new Error();
+  } catch {
+    document.getElementById('statusDot').className = 'status-dot offline';
+  }
+
+  // Check if ElevenLabs key is set via a probe (try a tiny chat req)
+  // We'll just check if voice endpoint responds; banner hides once voice works
+  checkElevenLabs(apiUrl);
+});
+
+async function checkElevenLabs(apiUrl) {
+  // Hit /health only — banner state will update after first successful voice call
+}
+
+// ─── UI helpers ───────────────────────────────────────────────────────────────
+const chat    = document.getElementById('chat');
+const micBtn  = document.getElementById('micBtn');
+const micHint = document.getElementById('micHint');
+const wave    = document.getElementById('waveform');
+
+function scrollBottom() { chat.scrollTop = chat.scrollHeight; }
+
+function addBubble(role, text) {
+  const el = document.createElement('div');
+  el.className = `bubble ${role}`;
+  el.textContent = text;
+  chat.appendChild(el);
+  scrollBottom();
+  return el;
+}
+
+function addSystem(text) {
+  const el = document.createElement('div');
+  el.className = 'bubble system';
+  el.textContent = text;
+  chat.appendChild(el);
+  scrollBottom();
+}
+
+function addError(text) {
+  const el = document.createElement('div');
+  el.className = 'bubble error';
+  el.textContent = text;
+  chat.appendChild(el);
+  scrollBottom();
+}
+
+function addMeta(tools, domain, state) {
+  if (!tools.length && !domain && !state) return;
+  const el = document.createElement('div');
+  el.className = 'meta';
+  if (domain) el.innerHTML += `<span class="tag">${domain}</span>`;
+  tools.forEach(t => el.innerHTML += `<span class="tag green">${t}</span>`);
+  if (state) {
+    const cls = state === 'COMPLETED' ? 'green' : state === 'FAILED' ? 'red' : 'yellow';
+    el.innerHTML += `<span class="tag ${cls}">${state}</span>`;
+  }
+  chat.appendChild(el);
+  scrollBottom();
+}
+
+function addConfirmCard(text) {
+  const card = document.createElement('div');
+  card.className = 'confirm-card';
+  card.id = 'confirmCard';
+  card.innerHTML = `
+    <div class="title">Confirm Transaction</div>
+    <p>${text}</p>
+    <div class="btns">
+      <button class="btn-confirm" onclick="confirmTx()">Confirm</button>
+      <button class="btn-cancel"  onclick="cancelTx()">Cancel</button>
+    </div>`;
+  chat.appendChild(card);
+  scrollBottom();
+}
+
+// ─── Voice toggle ─────────────────────────────────────────────────────────────
+function toggleVoice() {
+  voiceOn = !voiceOn;
+  document.getElementById('voiceToggle').className = 'toggle' + (voiceOn ? ' on' : '');
+  document.getElementById('voiceLabel').textContent = voiceOn ? 'Voice reply ON' : 'Voice reply OFF';
+}
+
+// ─── Tap-to-talk (auto-stops on silence) ──────────────────────────────────────
+async function toggleRecording() {
+  if (isBusy) return;
+  if (isRecording) { stopRecording(); return; }
+  await startRecording();
+}
+
+async function startRecording() {
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch {
+    addError('Microphone access denied. Please allow mic permissions and refresh.');
+    return;
+  }
+
+  audioChunks = [];
+  silenceStart = null;
+
+  // Set up AudioContext for VAD
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 512;
+  const source = audioCtx.createMediaStreamSource(stream);
+  source.connect(analyser);
+
+  const mime = getSupportedMime();
+  mediaRecorder = new MediaRecorder(stream, { mimeType: mime });
+  mediaRecorder.ondataavailable = ev => { if (ev.data.size > 0) audioChunks.push(ev.data); };
+  mediaRecorder.start(80);
+
+  isRecording = true;
+  micBtn.classList.add('active');
+  wave.classList.add('show');
+  micHint.textContent = 'Listening… (tap to stop early)';
+
+  vadLoop();
+}
+
+function vadLoop() {
+  if (!isRecording) return;
+
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  const rms = Math.sqrt(buf.reduce((s, v) => s + v * v, 0) / buf.length);
+
+  if (rms < SILENCE_THRESHOLD) {
+    if (!silenceStart) silenceStart = Date.now();
+    else if (Date.now() - silenceStart > SILENCE_DELAY) {
+      stopRecording();
+      return;
+    }
+  } else {
+    silenceStart = null;
+  }
+
+  requestAnimationFrame(vadLoop);
+}
+
+function stopRecording() {
+  if (!isRecording || !mediaRecorder) return;
+  isRecording = false;
+  silenceStart = null;
+  if (vadTimer) { clearTimeout(vadTimer); vadTimer = null; }
+
+  mediaRecorder.stop();
+  mediaRecorder.onstop = () => {
+    const mime = getSupportedMime();
+    const blob = new Blob(audioChunks, { type: mime });
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
+
+    micBtn.classList.remove('active');
+    wave.classList.remove('show');
+    micHint.textContent = 'Processing…';
+    sendAudio(blob, mime);
+  };
+}
+
+function getSupportedMime() {
+  const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || 'audio/webm';
+}
+
+// ─── Text send ────────────────────────────────────────────────────────────────
+async function sendText() {
+  const input = document.getElementById('textInput');
+  const msg   = input.value.trim();
+  if (!msg || isBusy) return;
+  input.value = '';
+  setBusy(true);
+  addBubble('user', msg);
+
+  const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+  const userId = document.getElementById('userId').value.trim() || 'user_001';
+
+  try {
+    const res = await fetch(`${apiUrl}/api/chris/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: userId,
+        message: msg,
+        conversation_history: conversationHistory.length ? conversationHistory : undefined,
+        history_user_id: historyUserId || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+
+    addBubble('chris', data.response);
+    addMeta(data.tools_called || [], data.domain, null);
+    updateHistory(msg, data.response, userId, data.conversation_history);
+  } catch (err) {
+    addError(`${err.message}`);
+  } finally {
+    setBusy(false);
+  }
+}
+
+// ─── Audio send ───────────────────────────────────────────────────────────────
+async function sendAudio(blob, mime) {
+  setBusy(true);
+  const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+  const userId = document.getElementById('userId').value.trim() || 'user_001';
+  const ext    = mime.includes('mp4') ? 'mp4' : mime.includes('ogg') ? 'ogg' : 'webm';
+
+  const fd = new FormData();
+  fd.append('user_id', userId);
+  fd.append('audio',   new File([blob], `audio.${ext}`, { type: mime }));
+  fd.append('voice',   voiceOn ? 'true' : 'false');
+  if (historyUserId)  fd.append('history_user_id', historyUserId);
+  if (transferState)  fd.append('transfer_state',  transferState);
+  if (pendingIntent)  fd.append('payment_intent_json', JSON.stringify(pendingIntent));
+  if (conversationHistory.length)
+    fd.append('conversation_history_json', JSON.stringify(conversationHistory));
+
+  try {
+    const res  = await fetch(`${apiUrl}/api/chris/voice`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+    handleVoiceResponse(data, userId);
+    document.getElementById('elevenBanner').classList.add('hidden');
+  } catch (err) {
+    if (err.message.includes('401') || err.message.includes('Transcription') || err.message.includes('ElevenLabs')) {
+      document.getElementById('elevenBanner').classList.remove('hidden');
+      addError('Voice needs your ElevenLabs API key in .env → ELEVEN_API_KEY');
+    } else {
+      addError(`${err.message}`);
+    }
+    setBusy(false);
+    micHint.textContent = 'Tap to speak';
+  }
+}
+
+// ─── Handle response ──────────────────────────────────────────────────────────
+function handleVoiceResponse(data, userId) {
+  if (data.transcript) addBubble('user', data.transcript);
+
+  transferState = data.transfer_state || null;
+  pendingIntent = data.payment_intent || null;
+
+  if (data.transfer_state === 'INTENT_CAPTURED') {
+    addConfirmCard(data.response_text);
+  } else {
+    addBubble('chris', data.response_text);
+    addMeta(data.tools_called || [], data.domain, data.transfer_state);
+    if (['COMPLETED','CANCELLED','FAILED'].includes(data.transfer_state)) {
+      pendingIntent = null;
+      transferState = null;
+    }
+  }
+
+  updateHistory(data.transcript, data.response_text, userId, data.conversation_history);
+
+  if (data.audio_base64) {
+    const player = document.getElementById('audioPlayer');
+    player.src = `data:audio/${data.audio_format || 'mp3'};base64,${data.audio_base64}`;
+    player.play().catch(() => {});
+  }
+
+  setBusy(false);
+  micHint.textContent = 'Tap to speak';
+}
+
+// ─── Confirm / Cancel transaction ─────────────────────────────────────────────
+async function confirmTx() {
+  document.getElementById('confirmCard')?.remove();
+  await sendConfirmOrCancel('confirm');
+}
+async function cancelTx() {
+  document.getElementById('confirmCard')?.remove();
+  await sendConfirmOrCancel('cancel');
+}
+
+async function sendConfirmOrCancel(word) {
+  setBusy(true);
+  addBubble('user', word);
+
+  const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+  const userId = document.getElementById('userId').value.trim() || 'user_001';
+
+  const fd = new FormData();
+  fd.append('user_id',             userId);
+  fd.append('audio',               new File([buildSilentWav()], 'audio.wav', { type: 'audio/wav' }));
+  fd.append('voice',               voiceOn ? 'true' : 'false');
+  fd.append('transfer_state',      'INTENT_CAPTURED');
+  fd.append('transcript_override', word);
+  if (pendingIntent)  fd.append('payment_intent_json', JSON.stringify(pendingIntent));
+  if (historyUserId)  fd.append('history_user_id', historyUserId);
+  if (conversationHistory.length)
+    fd.append('conversation_history_json', JSON.stringify(conversationHistory));
+
+  pendingIntent = null;
+  transferState = null;
+
+  try {
+    const res  = await fetch(`${apiUrl}/api/chris/voice`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+    handleVoiceResponse(data, userId);
+  } catch (err) {
+    addError(`${err.message}`);
+    setBusy(false);
+  }
+}
+
+// ─── History ──────────────────────────────────────────────────────────────────
+function updateHistory(userMsg, assistantMsg, userId, serverHistory) {
+  if (serverHistory?.messages) {
+    conversationHistory = serverHistory.messages;
+    historyUserId       = serverHistory.user_id || userId;
+  } else {
+    conversationHistory.push({ role: 'user',      content: userMsg      || '' });
+    conversationHistory.push({ role: 'assistant', content: assistantMsg || '' });
+    historyUserId = userId;
+  }
+}
+
+// ─── Busy ─────────────────────────────────────────────────────────────────────
+function setBusy(busy) {
+  isBusy = busy;
+  micBtn.classList.toggle('loading', busy);
+  document.getElementById('sendBtn').disabled = busy;
+  if (!busy) micHint.textContent = 'Tap to speak';
+}
+
+// ─── Silent WAV ───────────────────────────────────────────────────────────────
+function buildSilentWav() {
+  const sr = 16000, n = sr * 0.1;
+  const buf = new ArrayBuffer(44 + n * 2);
+  const v   = new DataView(buf);
+  const ws  = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true);
+  ws(8, 'WAVE'); ws(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+  v.setUint16(32, 2, true);  v.setUint16(34, 16, true);
+  ws(36, 'data'); v.setUint32(40, n * 2, true);
+  return buf;
+}
+</script>
+</body>
+</html>
