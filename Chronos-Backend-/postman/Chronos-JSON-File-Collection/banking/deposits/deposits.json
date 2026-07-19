@@ -1,0 +1,40 @@
+{
+  "info": {
+    "name": "Banking — Deposits (ACH)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Deposit",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"walletId\": \"{{walletId}}\",\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"source\": \"ACH\",\n  \"reference\": \"DEP-001\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit"
+      }
+    },
+    {
+      "name": "List Deposits",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit"
+      }
+    },
+    {
+      "name": "Get Deposit",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/deposit/:id"
+      }
+    }
+  ]
+}

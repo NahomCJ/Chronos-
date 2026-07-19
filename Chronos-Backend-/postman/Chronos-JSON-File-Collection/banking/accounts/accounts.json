@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "Banking — Accounts",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Account",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"CHECKING\",\n  \"tier\": \"basic\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts"
+      }
+    },
+    {
+      "name": "List Accounts",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts"
+      }
+    },
+    {
+      "name": "Get Account",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id"
+      }
+    },
+    {
+      "name": "Get Statements",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/statements"
+      }
+    },
+    {
+      "name": "Freeze Account",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/freeze"
+      }
+    },
+    {
+      "name": "Upgrade Tier",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tier\": \"premium\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/core/accounts/:id/upgrade"
+      }
+    }
+  ]
+}

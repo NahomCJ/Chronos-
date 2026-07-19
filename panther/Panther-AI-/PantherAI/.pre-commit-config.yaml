@@ -1,0 +1,25 @@
+repos:
+  # Layer 1: Repository Hygiene (zero friction, always on)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: detect-private-key  # Non-negotiable. Always.
+
+  # Layer 2: Ruff — format + lint in one pass, sub-second
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.5
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # Removed for MVP:
+  # - mypy: types change too fast when architecture is evolving. Add post-MVP.
+  # - bandit: no real attack surface yet. Runs in CI instead.
+  # - pytest: slow hooks get --no-verify'd. Tests run in GitHub Actions on every PR.

@@ -1,0 +1,11 @@
+{
+  "info": {
+    "name": "BlockHub — NFT / Portfolio",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "My NFTs", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/nfts" } },
+    { "name": "Portfolio Summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/summary" } },
+    { "name": "Royalty Earnings", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio/royalties" } }
+  ]
+}

@@ -1,0 +1,22 @@
+.venv
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+Icon?
+Icon$'\r'
+Thumbs.db
+Icon?
+artifacts/
+dist/
+build/
+
+# Large Files (Model weights and datasets)
+*.safetensors
+*.bin
+*.pkl
+*.parquet
+*.csv
+datasets/
+models/

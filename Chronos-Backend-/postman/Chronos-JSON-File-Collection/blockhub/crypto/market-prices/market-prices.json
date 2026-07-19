@@ -1,0 +1,15 @@
+{
+  "info": {
+    "name": "BlockHub — Crypto / Market Prices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Get All Prices", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices" } },
+    { "name": "Get Price — BTC", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/BTC" } },
+    { "name": "Get Price — ETH", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/ETH" } },
+    { "name": "Get Price — SOL", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/SOL" } },
+    { "name": "Get Price — UNI", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/UNI" } },
+    { "name": "Get Price — AAVE", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/AAVE" } },
+    { "name": "Get Price — LINK", "request": { "method": "GET", "header": [], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/market/prices/LINK" } }
+  ]
+}

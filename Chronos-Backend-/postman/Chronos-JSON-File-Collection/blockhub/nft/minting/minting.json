@@ -1,0 +1,58 @@
+{
+  "info": {
+    "name": "BlockHub — NFT / Minting",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Mint NFT (upload image)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if ([200,201,202].includes(pm.response.code)) {",
+              "  var j = pm.response.json();",
+              "  if (j.jobId) { pm.collectionVariables.set('jobId', j.jobId); }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "image", "type": "file", "src": "", "description": "JPG/PNG/GIF/WEBP/MP4 — max 50 MB" },
+            { "key": "name", "value": "My NFT #1", "type": "text" },
+            { "key": "description", "value": "A unique digital asset", "type": "text" },
+            { "key": "collectionId", "value": "{{collectionId}}", "type": "text" },
+            { "key": "royaltyPercent", "value": "5", "type": "text" },
+            { "key": "attributes", "value": "[{\"trait_type\":\"Rarity\",\"value\":\"Rare\"}]", "type": "text" }
+          ]
+        },
+        "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/mint"
+      }
+    },
+    {
+      "name": "Poll Mint Status",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/status/{{jobId}}"
+      }
+    },
+    {
+      "name": "Create NFT Collection",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Chronos Genesis\",\n  \"symbol\": \"CGS\",\n  \"description\": \"The first Chronos NFT collection\",\n  \"royaltyPercent\": 5\n}", "options": { "raw": { "language": "json" } } },
+        "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/minting/collection/create"
+      }
+    }
+  ]
+}

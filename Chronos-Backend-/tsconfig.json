@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",                       // Modern JS output
+    //"module": "ES2022",                       // Use ES modules
+    "module": "Node16",                     // Use CommonJS modules
+    "moduleResolution": "node16",               // Resolve modules like Node.js
+    "outDir": "dist",                         // Output compiled JS
+    "rootDir": "src",                         // Root source folder
+    "strict": true,                           // Enable all strict type-checking options
+    "esModuleInterop": true,                  // For importing CommonJS modules
+    "forceConsistentCasingInFileNames": true,// Avoid case issues in imports
+    "skipLibCheck": true,                     // Skip type check of node_modules
+    "resolveJsonModule": true,                // Allow importing JSON files
+    "sourceMap": true,                        // Generate source maps for debugging
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noEmitOnError": false,
+    "experimentalDecorators": true,           // If you plan to use decorators
+    "emitDecoratorMetadata": true ,            // Needed for some ORMs like TypeORM (optional)
+     "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+  // Narrowing include to BNPL for focused typechecking (Option A). Restore to "src" after.
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "logs"]
+}

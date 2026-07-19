@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "dist-blockhub",
+    "rootDir": "src/modules/blockhub/src",
+    "strict": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noEmitOnError": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["src/modules/blockhub/src/**/*"],
+  "exclude": ["node_modules", "dist", "dist-blockhub", "**/*.spec.ts", "**/*.integration.ts"]
+}

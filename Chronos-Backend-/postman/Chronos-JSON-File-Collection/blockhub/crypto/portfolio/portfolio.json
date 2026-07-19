@@ -1,0 +1,10 @@
+{
+  "info": {
+    "name": "BlockHub — Crypto / Portfolio",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Get Crypto Holdings (PnL)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/portfolio" } },
+    { "name": "Get Trade History", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://blockhub-env.us-east-1.elasticbeanstalk.com/api/v1/transactions" } }
+  ]
+}

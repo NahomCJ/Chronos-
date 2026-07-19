@@ -1,0 +1,11 @@
+{
+  "info": {
+    "name": "LifeX — AI Coach",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Life Insights", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/insights" } },
+    { "name": "Chat with Coach", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"message\": \"Help me build a fitness routine\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/chat" } },
+    { "name": "Weekly Plan", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/ai/weekly-plan" } }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "info": {
+    "name": "Banking — KYC",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/profile"
+      }
+    },
+    {
+      "name": "Create Profile",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/profile"
+      }
+    },
+    {
+      "name": "Create KYC Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/create"
+      }
+    },
+    {
+      "name": "Complete KYC Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"SESSION_ID\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/complete"
+      }
+    },
+    {
+      "name": "Retry KYC Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"SESSION_ID\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/retry"
+      }
+    },
+    {
+      "name": "Get KYC Session Status",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/session/:sessionId"
+      }
+    },
+    {
+      "name": "Create Bank Link Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/link"
+      }
+    },
+    {
+      "name": "Connect Bank Account",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"publicToken\": \"PUBLIC_TOKEN\",\n  \"accountId\": \"PLAID_ACCOUNT_ID\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/connect"
+      }
+    },
+    {
+      "name": "Get Linked Bank Account",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/kyc/bank/account"
+      }
+    }
+  ]
+}

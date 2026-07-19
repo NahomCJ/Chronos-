@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "LifeX — Education",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "List Courses", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses" } },
+    { "name": "Get Course", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/:id" } },
+    { "name": "Sync Courses", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/sync" } },
+    { "name": "Enroll in Course", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/courses/:id/enroll" } },
+    { "name": "My Enrollments", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/enrollments" } },
+    { "name": "Update Enrollment Progress", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"progress\": 75\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/enrollments/:id/progress" } },
+    { "name": "List Tutors", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors" } },
+    { "name": "Get Tutor", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/:id" } },
+    { "name": "Book Tutor Session", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-05-15T14:00:00Z\",\n  \"duration\": 60,\n  \"topic\": \"Personal Finance\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/:id/schedule" } },
+    { "name": "My Tutor Sessions", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/tutors/sessions" } },
+    { "name": "List Student Loans", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans" } },
+    { "name": "Loan Payment Schedule", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/:id/paymentSchedule" } },
+    { "name": "Link Student Loan", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"provider\": \"Sallie Mae\",\n  \"balance\": 25000,\n  \"interestRate\": 4.5\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/link" } },
+    { "name": "Repay Student Loan", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"amount\": 200,\n  \"walletId\": \"{{walletId}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/education/loans/:id/repay" } }
+  ]
+}

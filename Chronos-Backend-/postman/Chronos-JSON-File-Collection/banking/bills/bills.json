@@ -1,0 +1,40 @@
+{
+  "info": {
+    "name": "Banking — Bills",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Providers",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/providers"
+      }
+    },
+    {
+      "name": "Pay Bill",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"providerId\": \"PROVIDER_ID\",\n  \"amount\": 75,\n  \"walletId\": \"{{walletId}}\",\n  \"accountNumber\": \"BILL_ACCOUNT_NUM\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/pay"
+      }
+    },
+    {
+      "name": "Bill History",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/bills/history"
+      }
+    }
+  ]
+}

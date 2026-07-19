@@ -1,0 +1,1703 @@
+// prisma/schema.prisma
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================
+// ENUMS
+// ==========================
+
+enum CardType {
+  VIRTUAL
+  PHYSICAL
+  CRYPTO
+  DISPOSABLE
+}
+
+enum CardStatus {
+  ACTIVE
+  BLOCKED
+  FROZEN
+  EXPIRED
+}
+
+enum TickPayAccountStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum TickPayTransactionType {
+  PURCHASE
+  REPAYMENT
+  REFUND
+  FEE
+  ADJUSTMENT
+}
+
+enum TickPayTransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TickPayFeeStatus {
+  SCHEDULED
+  DUE
+  PAID
+  MISSED
+  CANCELLED
+  WAIVED
+}
+
+enum PlanFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum PlanStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum LoanStatus {
+  ACTIVE
+  PAID
+  OVERDUE
+}
+
+//////////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////////
+
+enum GoalCategory {
+  CAREER
+  PERSONAL
+  FINANCE
+  HEALTH
+  SOCIAL
+  SPIRITUAL
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum MilestoneStatus {
+  PENDING
+  COMPLETED
+  MISSED
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum HabitStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
+enum MentorshipStatus {
+  UPCOMING
+  COMPLETED
+  CANCELED
+}
+
+enum CourseStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum CommunityCategory {
+  CAREER
+  PERSONAL
+  HEALTH
+  SOCIAL
+  SPIRITUAL
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+// ==========================
+// ENUMS (Core Banking)
+// ==========================
+
+// Account
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT
+  INVESTMENT
+}
+
+
+// Wallet
+enum WalletType {
+  FIAT
+  CRYPTO
+  STABLECOIN
+  SYSTEM
+  ESCROW
+  SETTLEMENT
+  FEE_POOL
+}
+
+enum WalletStatus {
+  ACTIVE
+  INACTIVE
+  FROZEN
+}
+
+// Transaction
+enum CoreTransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  TRANSFER
+  PURCHASE
+  PAYMENT
+  REPAYMENT
+  FEE
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  INITIATED // created but not posted
+  PENDING // waiting for processing
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// Ledger Entry
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerCategory {
+  TRANSFER
+  FEE
+  FX
+  ADJUSTMENT
+  DONATION
+  PURCHASE
+  HSA
+}
+
+enum FxOrderStatus {
+  QUOTED
+  LOCKED
+  EXECUTED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+// Transfer
+enum TransferStatus {
+  INITIATED
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// ==========================
+// MODELS
+// ==========================
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  firstName       String
+  middleName      String?
+  lastName        String
+  phone           String?   @unique
+  isEmailVerified Boolean   @default(false)
+  otpCode         String?
+  otpExpiresAt    DateTime?
+  role            Role      @default(USER)
+  tier            String    @default("standard")
+  userLevel       UserLevel @default(BEGINNER)
+  faith           String? // captured during onboarding, used by LifeX Spiritual
+  backgroundUrl       String? // user-chosen app-wide background (Pexels photo or video URL)
+  backgroundMediaType String? // "photo" | "video"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // ---------------- Core Banking ----------------
+  bankingProfile   BankingProfile? // 1:1
+  accounts         Account[] // 1:M
+  coreTransactions CoreTransaction[] // all transactions initiated by user
+  transfers        Transfer[] // all transfers initiated by user
+
+  // ---------------- Legacy / Other Modules ----------------
+  fxOrders                FxOrder[]
+  tickPayAccount          TickPayAccount?
+  tickPayOnboarding       TickPayOnboarding?
+  enrollments             Enrollment[]
+  scholarshipApplications ScholarshipApplication[]
+  tutorSessions           TutorSession[]
+  studentLoans            StudentLoan[]
+  financialPlans          FinancialPlan[]
+  transactions            Transaction[] // legacy transactions
+  loans                   Loan[]
+  investmentAdvice        InvestmentAdvice[]
+  creditScores            CreditScore[]
+  habits                  Habit[]
+  billPayments            BillPayment[]
+
+  // ---------------- BlockHub (Crypto & NFT) ----------------
+  cryptoWallet            CryptoWallet?
+  trades                  Trade[]
+  portfolio               PortfolioHolding[]
+  revenues                Revenue[]
+  auditLogs               AuditLog[]
+
+  nftsOwned               Nft[]            @relation("NftOwner")
+  nftsCreated             Nft[]            @relation("NftCreator")
+  nftListings             NftListing[]
+  nftPurchases            NftTransaction[] @relation("NftBuyer")
+  nftSales                NftTransaction[] @relation("NftSeller")
+  royaltyPayments         RoyaltyPayment[]
+  nftMintRecords          NftMintRecord[]
+  nftAuditLogs            NftAuditLog[]
+  aiAlerts                AiAlert[]
+  notifications           Notification[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// ============================================
+// ACCOUNTS
+// ============================================
+
+// ==========================
+// ACCOUNTS & WALLET (Ledger-first)
+// ==========================
+
+model Account {
+  id            String        @id @default(uuid())
+  userId        String
+  accountNumber String        @unique
+  type          AccountType
+  status        AccountStatus @default(DRAFT)
+  tier          String        @default("basic")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user             User            @relation(fields: [userId], references: [id])
+  wallets          Wallet[]
+  bankingProfileId String?
+  bankingProfile   BankingProfile? @relation(fields: [bankingProfileId], references: [id])
+
+  cards Card[]
+
+  @@index([userId])
+}
+model BankingProfile {
+  id          String        @id @default(uuid())
+  userId      String        @unique
+  status      AccountStatus @default(DRAFT)
+  kycVerified Boolean       @default(false)
+  riskLevel   RiskLevel?
+  frozen      Boolean       @default(false)
+
+  // Plaid Identity Verification (KYC)
+  plaidIdvId     String?
+  plaidStatus    String?
+
+  // Plaid Auth (bank account linking for ACH deposits)
+  plaidAccessToken String?
+  plaidItemId      String?
+  plaidAccountId   String?
+
+  // Unit BaaS
+  unitCustomerId        String?
+  unitApplicationId     String?
+  unitApplicationStatus String?
+
+  submittedAt     DateTime?
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  accounts     Account[]
+  unitAccounts UnitAccount[]
+  unitCards    UnitCard[]
+  unitTransfers UnitTransfer[]
+}
+
+// ==========================
+// UNIT BAAS MODELS
+// ==========================
+
+model UnitAccount {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String   @unique
+  routingNumber    String
+  accountNumber    String
+  depositProduct   String   @default("checking")
+  balance          Int      @default(0) // stored in cents
+  status           String   @default("open")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitCards      UnitCard[]
+  unitTransfers  UnitTransfer[]
+
+  @@index([bankingProfileId])
+}
+
+model UnitCard {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String
+  unitCardId       String   @unique
+  last4            String
+  type             String   @default("VIRTUAL")
+  status           String   @default("active")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitAccount    UnitAccount    @relation(fields: [unitAccountId], references: [unitAccountId])
+
+  @@index([bankingProfileId])
+  @@index([unitAccountId])
+}
+
+model UnitTransfer {
+  id               String   @id @default(uuid())
+  bankingProfileId String
+  unitAccountId    String
+  unitTransferId   String   @unique
+  type             String   // ACH | WIRE | BOOK
+  direction        String   @default("Debit")
+  amount           Int      // in cents
+  description      String?
+  status           String   @default("pending")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bankingProfile BankingProfile @relation(fields: [bankingProfileId], references: [id])
+  unitAccount    UnitAccount    @relation(fields: [unitAccountId], references: [unitAccountId])
+
+  @@index([bankingProfileId])
+  @@index([unitAccountId])
+}
+
+enum AccountStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Wallet {
+  id        String       @id @default(uuid())
+  accountId String
+  currency  String
+  type      WalletType
+  status    WalletStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account       Account       @relation(fields: [accountId], references: [id])
+  ledger        LedgerEntry[]
+  transfersFrom Transfer[]    @relation("TransferFrom")
+  transfersTo   Transfer[]    @relation("TransferTo")
+  card          Card[]
+  // Opposite relation fields for FX orders
+  fxOrdersFrom  FxOrder[]     @relation("FxFromWallet")
+  fxOrdersTo    FxOrder[]     @relation("FxToWallet")
+
+  @@unique([accountId, currency, type])
+  @@index([accountId])
+}
+
+model BillProvider {
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  createdAt DateTime @default(now())
+
+  payments BillPayment[]
+}
+
+model BillPayment {
+  id String @id @default(uuid())
+
+  userId     String
+  providerId String
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider BillProvider @relation(fields: [providerId], references: [id])
+
+  amount    Float
+  reference String        @unique
+  status    PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+// ==========================
+// CORE TRANSACTION + LEDGER
+// ==========================
+
+model CoreTransaction {
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  id        String              @id @default(uuid())
+  type      CoreTransactionType
+  status    TransactionStatus   @default(INITIATED)
+  reference String?             @unique
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transfer      Transfer?
+  ledgerEntries LedgerEntry[]
+}
+
+model LedgerEntry {
+  id            String          @id @default(uuid())
+  transactionId String
+  walletId      String
+  direction     LedgerDirection
+  category      LedgerCategory
+  amount        Decimal         @db.Decimal(30, 8)
+  currency      String
+  reference     String?
+  createdAt     DateTime        @default(now())
+
+  transaction CoreTransaction @relation(fields: [transactionId], references: [id])
+  wallet      Wallet          @relation(fields: [walletId], references: [id])
+
+  @@index([walletId])
+  @@index([transactionId])
+}
+
+model IdempotencyKey {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  userId      String?
+  requestHash String
+  response    Json?
+  createdAt   DateTime @default(now())
+}
+
+// ==========================
+// TRANSFERS (Wallet-to-Wallet)
+// ==========================
+
+model Transfer {
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  id            String         @id @default(uuid())
+  transactionId String         @unique
+  fromWalletId  String
+  toWalletId    String
+  toExternal    Json?
+  amount        Decimal        @db.Decimal(30, 8)
+  currency      String
+  fee           Decimal        @default(0) @db.Decimal(30, 8)
+  status        TransferStatus
+  reference     String?        @unique
+  note          String?
+  metadata      Json?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  transaction CoreTransaction @relation(fields: [transactionId], references: [id])
+  fromWallet  Wallet          @relation("TransferFrom", fields: [fromWalletId], references: [id])
+  toWallet    Wallet          @relation("TransferTo", fields: [toWalletId], references: [id])
+
+  @@index([fromWalletId])
+  @@index([toWalletId])
+  @@index([transactionId])
+}
+
+// ============================================
+// FX ORDERS
+// ============================================
+
+model FxOrder {
+  id           String        @id @default(cuid())
+  userId       String
+  fromWalletId String
+  toWalletId   String
+  side         String
+  buyCurrency  String
+  sellCurrency String
+  buyAmount    Decimal?      @db.Decimal(18, 6)
+  sellAmount   Decimal?      @db.Decimal(18, 6)
+  rate         Decimal?      @db.Decimal(18, 10)
+  provider     String
+  providerRef  String?
+  status       FxOrderStatus @default(QUOTED)
+  expiresAt    DateTime?
+  meta         Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  fromWallet Wallet @relation("FxFromWallet", fields: [fromWalletId], references: [id])
+  toWallet   Wallet @relation("FxToWallet", fields: [toWalletId], references: [id])
+  user       User   @relation(fields: [userId], references: [id])
+}
+
+// ============================================
+// CARDS
+// ============================================
+
+model Card {
+  id           String     @id @default(uuid())
+  accountId    String
+  brand        String
+  last4        String
+  type         CardType
+  status       CardStatus @default(ACTIVE)
+  walletId     String?
+  panToken     String?
+  pinHash      String?
+  dailyLimit   Decimal?   @db.Decimal(30, 8)
+  monthlyLimit Decimal?   @db.Decimal(30, 8)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  account     Account      @relation(fields: [accountId], references: [id])
+  wallet      Wallet?      @relation(fields: [walletId], references: [id])
+  tickPayCard TickPayCard? @relation("CardToTickPayCard")
+}
+
+model Currency {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  symbol    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ExchangeRate {
+  id            String   @id @default(uuid())
+  baseCurrency  String
+  quoteCurrency String
+  rate          Decimal
+  provider      String // must be added
+  createdAt     DateTime @default(now()) // renamed from timestamp
+
+  @@index([baseCurrency, quoteCurrency])
+}
+
+// ==========================
+// TICKPAY MODELS (UPDATED)
+// ==========================
+/// Add to prisma/schema.prisma (near other TickPay models)
+
+model TickPayOnboarding {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  employmentStatus   String
+  employerName       String?
+  monthlySalary      Decimal? @db.Decimal(30, 8)
+  incomeFrequency    String?
+  primaryIncomeSrc   String?
+  secondaryIncome    Decimal? @db.Decimal(30, 8)
+  bankName           String?
+  accountType        String?
+  monthlyRent        Decimal? @db.Decimal(30, 8)
+  monthlyUtilities   Decimal? @db.Decimal(30, 8)
+  otherObligations   Decimal? @db.Decimal(30, 8)
+  outstandingLoans   Decimal? @db.Decimal(30, 8)
+  avgMonthlySpending Decimal? @db.Decimal(30, 8)
+  purpose            String?
+  spendingPrefs      String?
+  agreedTerms        Boolean  @default(false)
+  agreedDataSharing  Boolean  @default(false)
+  noRecentBankruptcy Boolean?
+  score              Int? // optional scoring result (0-100)
+  recommendedLimit   Decimal? @db.Decimal(30, 8)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model TickPayAccount {
+  id          String               @id @default(cuid())
+  userId      String               @unique
+  user        User                 @relation(fields: [userId], references: [id])
+  creditLimit Decimal              @default("500") @db.Decimal(30, 8)
+  balance     Decimal              @default("0") @db.Decimal(30, 8) // outstanding principal
+  available   Decimal?             @db.Decimal(30, 8)
+  status      TickPayAccountStatus @default(ACTIVE)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  transactions    TickPayTransaction[]
+  feeInstallments TickPayFeeInstallment[]
+  card            TickPayCard?
+}
+
+model TickPayTransaction {
+  id               String                   @id @default(cuid())
+  tickPayAccountId String
+  tickPayAccount   TickPayAccount           @relation(fields: [tickPayAccountId], references: [id])
+  type             TickPayTransactionType
+  status           TickPayTransactionStatus @default(PENDING)
+  amount           Decimal                  @db.Decimal(30, 8)
+  currency         String                   @default("USD")
+  merchant         String?
+  meta             Json?
+  reference        String? // external provider reference
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  feeInstallments TickPayFeeInstallment[] @relation("PurchaseFee") // ✅ this line adds the opposite relation
+}
+
+model TickPayFeeInstallment {
+  id               String              @id @default(cuid())
+  tickPayAccountId String
+  tickPayAccount   TickPayAccount      @relation(fields: [tickPayAccountId], references: [id])
+  purchaseTxId     String?
+  purchaseTx       TickPayTransaction? @relation("PurchaseFee", fields: [purchaseTxId], references: [id])
+  amount           Decimal             @db.Decimal(30, 8)
+  status           TickPayFeeStatus    @default(SCHEDULED)
+  dueDate          DateTime
+  paidAt           DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([tickPayAccountId, dueDate])
+}
+
+model TickPayCard {
+  id               String @id @default(cuid())
+  cardId           String @unique
+  tickPayAccountId String @unique
+
+  card           Card           @relation("CardToTickPayCard", fields: [cardId], references: [id])
+  tickPayAccount TickPayAccount @relation(fields: [tickPayAccountId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TickPayAudit {
+  id        String   @id @default(cuid())
+  accountId String
+  actorId   String?
+  action    String
+  payload   Json?
+  createdAt DateTime @default(now())
+}
+
+// ==========================
+//lifeX (Education model)
+// ==========================
+
+model Course {
+  id            String       @id @default(cuid())
+  provider      String // "coursera", "udemy", "local"
+  providerId    String?      @unique // id from provider when present
+  title         String
+  description   String?
+  url           String?
+  durationHours Float?
+  level         String? // beginner/intermediate/advanced
+  price         Decimal?     @db.Decimal(18, 4)
+  currency      String?      @default("USD")
+  tags          String[]     @default([])
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  enrollments   Enrollment[]
+}
+
+model Enrollment {
+  id          String    @id @default(cuid())
+  userId      String
+  courseId    String
+  status      String // "IN_PROGRESS","COMPLETED","PLANNED"
+  progress    Float     @default(0) // 0..100
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+}
+
+model Scholarship {
+  id          String    @id @default(cuid())
+  provider    String
+  title       String
+  description String?
+  url         String?
+  country     String?
+  amount      Decimal?  @db.Decimal(18, 4)
+  deadline    DateTime?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  applications ScholarshipApplication[]
+}
+
+model ScholarshipApplication {
+  id            String    @id @default(cuid())
+  scholarshipId String
+  userId        String
+  status        String // "APPLIED","RECEIVED","AWARDED","DECLINED"
+  appliedAt     DateTime?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  scholarship Scholarship @relation(fields: [scholarshipId], references: [id])
+}
+
+model Tutor {
+  id           String         @id @default(cuid())
+  name         String
+  bio          String?
+  subjects     String[]       @default([])
+  rating       Float?
+  pricePerHour Decimal?       @db.Decimal(18, 4)
+  metadata     Json?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     TutorSession[]
+}
+
+model TutorSession {
+  id              String   @id @default(cuid())
+  tutorId         String
+  userId          String
+  scheduledAt     DateTime
+  durationMinutes Int
+  status          String // "SCHEDULED","COMPLETED","CANCELLED"
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  tutor Tutor @relation(fields: [tutorId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+model StudentLoan {
+  id          String    @id @default(cuid())
+  userId      String
+  lender      String
+  principal   Decimal   @db.Decimal(18, 4)
+  outstanding Decimal   @db.Decimal(18, 4)
+  ratePercent Float?
+  dueDate     DateTime?
+  status      String // "ACTIVE","PAID","DEFAULTED"
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ==========================
+//lifeX (finacial model)
+// ==========================
+
+model FinancialPlan {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  goalName     String
+  targetAmount Decimal       @db.Decimal(12, 2)
+  savedAmount  Decimal       @default(0) @db.Decimal(12, 2)
+  frequency    PlanFrequency
+  status       PlanStatus    @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Transaction {
+  id        String          @id @default(uuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  accountId String
+  type      TransactionType
+  category  String
+  amount    Decimal         @db.Decimal(12, 2)
+  currency  String
+  metadata  Json
+  createdAt DateTime        @default(now())
+}
+
+model Loan {
+  id                String     @id @default(uuid())
+  userId            String
+  user              User       @relation(fields: [userId], references: [id])
+  name              String // <-- add a name/title for the loan
+  principalAmount   Decimal    @db.Decimal(12, 2)
+  outstandingAmount Decimal    @db.Decimal(12, 2)
+  interestRate      Decimal    @db.Decimal(5, 2)
+  dueDate           DateTime
+  status            LoanStatus @default(ACTIVE)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model InvestmentAdvice {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  riskProfile       String
+  recommendedAssets Json
+  createdAt         DateTime @default(now())
+}
+
+model CreditScore {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  score     Int
+  provider  String
+  checkedAt DateTime @default(now())
+}
+
+model Budget {
+  id        String   @id @default(uuid())
+  userId    String
+  category  String
+  limit     Decimal
+  period    String // e.g. "2025-01"
+  createdAt DateTime @default(now())
+}
+
+// ==========================
+//lifeX (health model)
+// ==========================
+
+model HealthMetric {
+  id         String   @id @default(uuid())
+  userId     String
+  metricType String
+  value      Float
+  unit       String
+  source     String   @default("manual") // manual, apple_health, fitbit, garmin, google_fit
+  recordedAt DateTime @default(now())
+}
+
+model FitnessSession {
+  id             String   @id @default(uuid())
+  userId         String
+  type           String
+  duration       Int
+  caloriesBurned Float
+  recordedAt     DateTime @default(now())
+}
+
+model DietLog {
+  id        String   @id @default(uuid())
+  userId    String
+  mealType  String
+  calories  Float
+  nutrients Json
+  loggedAt  DateTime @default(now())
+}
+
+model HsaAccount {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  balance       Float    @default(0)
+  contributions Float    @default(0)
+  withdrawals   Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model HsaTransaction {
+  id           String   @id @default(uuid())
+  hsaAccountId String
+  type         String
+  amount       Float
+  currency     String
+  date         DateTime @default(now())
+}
+
+model MedicalRecord {
+  id          String   @id @default(uuid())
+  userId      String
+  recordType  String
+  description String
+  documentUrl String?
+  recordedAt  DateTime @default(now())
+}
+
+model WellnessProgram {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  provider    String
+  schedule    DateTime
+  status      String
+}
+
+model GymPartner {
+  id              String  @id @default(uuid())
+  name            String
+  location        String
+  city            String? // e.g. "New York", "San Francisco"
+  offer           String
+  discountPercent Float?
+  referralUrl     String?
+  imageUrl        String?
+  qrCode          String
+}
+
+// Insurance/nutrition catalogs are mock/curated content on the client (same
+// convention as Spiritual's charities/campaigns/trips/products) — enrollment
+// and connection records denormalize the catalog fields the client sent
+// rather than joining to a seeded catalog table.
+
+model InsuranceEnrollment {
+  id             String   @id @default(uuid())
+  userId         String
+  provider       String
+  planName       String
+  coverageType   String // health, dental, vision, life
+  monthlyPremium Float
+  status         String   @default("ACTIVE")
+  enrolledAt     DateTime @default(now())
+
+  @@index([userId])
+}
+
+model NutritionConnection {
+  id          String   @id @default(uuid())
+  userId      String
+  partnerName String
+  category    String?
+  status      String   @default("CONNECTED")
+  connectedAt DateTime @default(now())
+
+  @@unique([userId, partnerName])
+}
+
+model WearableConnection {
+  id          String    @id @default(uuid())
+  userId      String
+  provider    String // apple_health, fitbit, garmin, google_fit
+  status      String    @default("CONNECTED")
+  connectedAt DateTime  @default(now())
+  lastSyncAt  DateTime?
+
+  @@unique([userId, provider])
+}
+
+model Habit {
+  id          String    @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  type        String // water, sleep, exercise
+  frequency   Int
+  progress    Int       @default(0)
+  reminders   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+}
+
+//////////////////////////////////////////////////////
+// vision  MODELS
+//////////////////////////////////////////////////////
+
+model VisionBoard {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  imageUrls   Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("vision_board")
+}
+
+model LongTermGoal {
+  id          String       @id @default(uuid())
+  userId      String
+  title       String
+  description String
+  category    GoalCategory
+  startDate   DateTime
+  endDate     DateTime
+  status      GoalStatus   @default(ACTIVE)
+
+  milestones Milestone[]
+
+  @@map("long_term_goal")
+}
+
+model Milestone {
+  id          String          @id @default(uuid())
+  goalId      String
+  title       String
+  description String
+  dueDate     DateTime
+  status      MilestoneStatus @default(PENDING)
+
+  goal LongTermGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@map("milestone")
+}
+
+model HabitTracker {
+  id        String         @id @default(uuid())
+  userId    String
+  habitName String
+  frequency HabitFrequency
+  progress  Float?         @default(0)
+  status    HabitStatus    @default(ACTIVE)
+
+  @@map("habit_tracker")
+}
+
+model MentorshipProgram {
+  id          String           @id @default(uuid())
+  title       String
+  description String
+  mentorId    String
+  schedule    DateTime
+  status      MentorshipStatus @default(UPCOMING)
+
+  @@map("mentorship_program")
+}
+
+model CommunityGroup {
+  id          String            @id @default(uuid())
+  name        String
+  description String
+  category    CommunityCategory
+  members     Json
+
+  @@map("community_group")
+}
+
+// ============================================
+// CHRONOS CRYPTO (BlockHub) MODELS
+// ============================================
+
+enum TradeSide {
+  BUY
+  SELL
+}
+
+enum TradeStatus {
+  PENDING
+  FILLED
+  FAILED
+}
+
+enum RevenueType {
+  TRADE_FEE
+  SPREAD
+}
+
+model CryptoWallet {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  paxosCustomerId  String
+  paxosWalletId    String   @unique
+  nftWalletAddress String? // Added for NFT module
+  userIndex        Int      @default(0) // Added for NFT module
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Trade {
+  id             String      @id @default(uuid())
+  userId         String
+  asset          String
+  side           TradeSide
+  amountUsd      Decimal     @db.Decimal(18, 2)
+  amountCrypto   Decimal     @db.Decimal(18, 8)
+  fee            Decimal     @db.Decimal(18, 2)
+  executionPrice Decimal     @db.Decimal(18, 2)
+  paxosOrderId   String
+  status         TradeStatus @default(PENDING)
+  createdAt      DateTime    @default(now())
+  filledAt       DateTime?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revenues Revenue[]
+}
+
+model PortfolioHolding {
+  id        String   @id @default(uuid())
+  userId    String
+  asset     String
+  amount    Decimal  @db.Decimal(18, 8)
+  avgPrice  Decimal  @db.Decimal(18, 2)
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, asset])
+}
+
+model Revenue {
+  id        String      @id @default(uuid())
+  userId    String
+  tradeId   String
+  type      RevenueType
+  amount    Decimal     @db.Decimal(18, 2)
+  asset     String
+  createdAt DateTime    @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trade Trade @relation(fields: [tradeId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  amount    Decimal? @db.Decimal(18, 2)
+  asset     String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// ============================================
+// CHRONOS NFT (BlockHub) MODELS
+// ============================================
+
+enum NftStandard {
+  ERC721
+  ERC1155
+}
+
+enum NftStatus {
+  MINTED
+  LISTED
+  SOLD
+  BURNED
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+model NftContract {
+  id              String   @id @default(uuid())
+  name            String
+  symbol          String?
+  standard        NftStandard @default(ERC721)
+  contractAddress String   @unique
+  chain           String   @default("polygon")
+  ownerUserId     String?
+  royaltyBps      Int      @default(500)
+  deployTxHash    String?
+  isActive        Boolean  @default(true)
+  deployedAt      DateTime?
+  // Marketplace display metadata — collections had no cover image, blurb,
+  // curation flag, or category before this; the Flutter marketplace page
+  // was showing fully hardcoded content because of it.
+  imageUrl        String?
+  description     String?
+  isFeatured      Boolean  @default(false)
+  category        String   @default("ART") // ART | COLLECTIBLES | MUSIC
+  nfts            Nft[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Nft {
+  id            String   @id @default(uuid())
+  tokenId       String
+  contractId    String
+  ownerUserId   String
+  creatorUserId String
+  name          String
+  description   String?
+  imageUrl      String?
+  metadataUrl   String?
+  attributes    Json     @default("[]")
+  status        NftStatus @default(MINTED)
+  isFavoritedBy String[] @default([])
+  mintedAt      DateTime?
+
+  contract      NftContract @relation(fields: [contractId], references: [id])
+  owner         User        @relation("NftOwner", fields: [ownerUserId], references: [id])
+  creator       User        @relation("NftCreator", fields: [creatorUserId], references: [id])
+  listings      NftListing[]
+  transactions  NftTransaction[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([contractId])
+  @@index([ownerUserId])
+}
+
+model NftListing {
+  id                String        @id @default(uuid())
+  nftId             String
+  sellerUserId      String
+  priceAmount       Decimal       @db.Decimal(30, 18)
+  priceCurrency     String        @default("ETH")
+  listingType       String        @default("FIXED")
+  status            ListingStatus @default(ACTIVE)
+  thirdwebListingId String?
+  expiresAt         DateTime?
+
+  nft               Nft           @relation(fields: [nftId], references: [id])
+  seller            User          @relation(fields: [sellerUserId], references: [id])
+  transactions      NftTransaction[]
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([nftId])
+  @@index([sellerUserId])
+}
+
+model NftTransaction {
+  id                String            @id @default(uuid())
+  nftId             String
+  listingId         String?
+  buyerUserId       String
+  sellerUserId      String
+  salePrice         Decimal           @db.Decimal(30, 18)
+  platformFee       Decimal           @db.Decimal(30, 18)
+  royaltyAmount     Decimal           @db.Decimal(30, 18) @default(0)
+  sellerNet         Decimal           @db.Decimal(30, 18)
+  currency          String            @default("ETH")
+  paxosDebitTxId    String?
+  paxosCreditTxId   String?
+  onchainTxHash     String?
+  status            TransactionStatus @default(PENDING)
+
+  nft               Nft               @relation(fields: [nftId], references: [id])
+  listing           NftListing?       @relation(fields: [listingId], references: [id])
+  buyer             User              @relation("NftBuyer", fields: [buyerUserId], references: [id])
+  seller            User              @relation("NftSeller", fields: [sellerUserId], references: [id])
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([nftId])
+  @@index([buyerUserId])
+  @@index([sellerUserId])
+}
+
+model RoyaltyPayment {
+  id               String   @id @default(uuid())
+  nftTransactionId String?
+  creatorUserId    String
+  amount           Decimal  @db.Decimal(30, 18)
+  currency         String   @default("ETH")
+  paxosTxId        String?
+  paidAt           DateTime?
+  createdAt        DateTime @default(now())
+
+  creator User @relation(fields: [creatorUserId], references: [id])
+
+  @@index([nftTransactionId])
+  @@index([creatorUserId])
+}
+
+model NftMintRecord {
+  id            String   @id @default(uuid())
+  nftId         String?
+  creatorUserId String
+  jobId         String   @unique
+  status        String   @default("PENDING")
+  onchainTxHash String?
+  ipfsMetadata  String?
+  ipfsAsset     String?
+  mintFee       Decimal  @db.Decimal(30, 18) @default(0)
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  creator User @relation(fields: [creatorUserId], references: [id])
+
+  @@index([creatorUserId])
+  @@index([jobId])
+  @@index([status])
+}
+
+model NftAuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  event     String
+  nftId     String?
+  payload   Json     @default("{}")
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([event])
+  @@index([nftId])
+  @@index([createdAt])
+}
+
+// ==========================
+// lifeX (wellness enrollment)
+// ==========================
+
+model WellnessEnrollment {
+  id         String   @id @default(uuid())
+  userId     String
+  programId  String
+  enrolledAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ==========================
+// lifeX (activity module)
+// ==========================
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  module    String   // health, finance, vision, education, spiritual, social
+  type      String   // workout, meditation, budget_set, goal_created, post, etc.
+  title     String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, module])
+}
+
+// ==========================
+// lifeX (family module)
+// ==========================
+
+model FamilyGroup {
+  id        String         @id @default(uuid())
+  name      String
+  ownerId   String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  members FamilyMember[]
+  goals   FamilyGoal[]
+  budgets FamilyBudget[]
+}
+
+model FamilyMember {
+  id            String      @id @default(uuid())
+  familyGroupId String
+  userId        String
+  role          String      @default("member")
+  joinedAt      DateTime    @default(now())
+
+  familyGroup FamilyGroup @relation(fields: [familyGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([familyGroupId, userId])
+  @@index([userId])
+}
+
+model FamilyGoal {
+  id            String      @id @default(uuid())
+  familyGroupId String
+  title         String
+  description   String?
+  targetAmount  Decimal?    @db.Decimal(12, 2)
+  savedAmount   Decimal     @default(0) @db.Decimal(12, 2)
+  dueDate       DateTime?
+  status        String      @default("ACTIVE")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  familyGroup FamilyGroup @relation(fields: [familyGroupId], references: [id], onDelete: Cascade)
+}
+
+model FamilyBudget {
+  id            String      @id @default(uuid())
+  familyGroupId String
+  category      String
+  limit         Decimal     @db.Decimal(12, 2)
+  period        String
+  createdAt     DateTime    @default(now())
+
+  familyGroup FamilyGroup @relation(fields: [familyGroupId], references: [id], onDelete: Cascade)
+}
+
+// ==========================
+// lifeX (social module)
+// ==========================
+
+model SocialConnection {
+  id          String   @id @default(uuid())
+  userId      String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, followingId])
+  @@index([userId])
+  @@index([followingId])
+}
+
+model SocialPost {
+  id        String   @id @default(uuid())
+  userId    String
+  content   String
+  type      String   @default("update") // update, achievement, milestone
+  metadata  Json?
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postLikes PostLike[]
+
+  @@index([userId])
+}
+
+model PostLike {
+  id        String     @id @default(uuid())
+  postId    String
+  userId    String
+  createdAt DateTime   @default(now())
+
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+// ==========================
+// lifeX (spiritual module)
+// ==========================
+
+model MeditationSession {
+  id          String   @id @default(uuid())
+  userId      String
+  durationMin Int
+  type        String   // mindfulness, breathing, prayer, gratitude, reading
+  notes       String?
+  moodBefore  String?
+  moodAfter   String?
+  recordedAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+model GratitudeEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model SpiritualGoal {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  frequency   String   // daily, weekly
+  progress    Float    @default(0)
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Donations, crowdfunding, trips, and the ecommerce store are mock/curated
+// catalogs on the client (like TickPay's product catalog) — these models only
+// record the real wallet debit for each transaction, denormalizing the
+// catalog fields the client sent rather than joining to a catalog table.
+
+model Donation {
+  id            String        @id @default(uuid())
+  userId        String
+  charityName   String
+  category      String?
+  amount        Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  recurring     Boolean       @default(false)
+  frequency     String? // monthly, weekly
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model CampaignContribution {
+  id              String        @id @default(uuid())
+  userId          String
+  campaignTitle   String
+  campaignCategory String?
+  amount          Decimal       @db.Decimal(30, 8)
+  currency        String        @default("USD")
+  transactionId   String?
+  status          PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model TripBooking {
+  id            String        @id @default(uuid())
+  userId        String
+  tripTitle     String
+  destination   String?
+  travelers     Int           @default(1)
+  totalAmount   Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+}
+
+model SpiritualOrder {
+  id            String        @id @default(uuid())
+  userId        String
+  items         Json
+  totalAmount   Decimal       @db.Decimal(30, 8)
+  currency      String        @default("USD")
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+}
+
+// ==========================
+// PANTHER AI MODELS
+// ==========================
+
+enum AiAlertType {
+  SPENDING
+  CASHFLOW
+  BNPL_RISK
+  CRYPTO_RISK
+  FRAUD
+  GOAL
+}
+
+enum AiAlertDomain {
+  BANKING
+  TICKPAY
+  BLOCKHUB
+  LIFEX
+}
+
+model AiAlert {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  type      AiAlertType
+  domain    AiAlertDomain
+  title     String
+  message   String
+  dismissed Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([userId, dismissed])
+}
+
+enum NotificationType {
+  TRANSACTION
+  TRANSFER
+  DEPOSIT
+  CASHOUT
+  CARD
+  AI_ALERT
+  SYSTEM
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  title     String
+  body      String
+  read      Boolean          @default(false)
+  data      Json?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+}

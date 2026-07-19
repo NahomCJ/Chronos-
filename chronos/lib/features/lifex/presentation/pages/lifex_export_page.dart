@@ -1,0 +1,261 @@
+import 'package:flutter/material.dart';
+import '../../../../core/widgets/chris_home_fab.dart';
+import '../../../../core/theme/text_theme.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+class LifeXExportPage extends StatefulWidget {
+  const LifeXExportPage({super.key});
+
+  @override
+  State<LifeXExportPage> createState() => _LifeXExportPageState();
+}
+
+class _LifeXExportPageState extends State<LifeXExportPage> {
+  static const _bg = Color(0xFF0D0D22);
+  static const _card = Color(0xFF0F0F1C);
+  static const _accent = Colors.white;
+  static const _accentLight = Colors.white70;
+
+  static const _reports = [
+    _Report('Monthly LifeX Summary Report', 'May 2026', Icons.bar_chart_rounded, Colors.white, 'PDF'),
+    _Report('Health & Fitness Summary', 'May 2026', Icons.favorite_rounded, Colors.white, 'PDF'),
+    _Report('Financial Statement', 'May 2026', Icons.account_balance_rounded, Colors.white, 'CSV'),
+    _Report('Activity Log', 'May 2026', Icons.directions_run_rounded, Colors.white, 'CSV'),
+    _Report('Education Progress', 'May 2026', Icons.school_rounded, Colors.white, 'PDF'),
+  ];
+
+  static const _exportTypes = [
+    _ExportType('Full LifeX Report', 'All modules combined', Icons.summarize_rounded, Colors.white),
+    _ExportType('Financial Data', 'Transactions & budgets', Icons.attach_money_rounded, Colors.white),
+    _ExportType('Health Records', 'Vitals, habits, fitness', Icons.health_and_safety_rounded, Colors.white),
+    _ExportType('Activity History', 'Workouts & movement', Icons.directions_run_rounded, Colors.white),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: _bg,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 30),
+        child: const ChrisHomeFab(),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(child: _buildHero(context)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 20, 18, 0),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _sectionTitle('Quick Export'),
+                const SizedBox(height: 14),
+                _buildExportGrid(),
+                const SizedBox(height: 22),
+                _sectionTitle('Recent Reports'),
+                const SizedBox(height: 14),
+              ]),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, i) => Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
+                child: _ReportCard(report: _reports[i]),
+              ),
+              childCount: _reports.length,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _sectionTitle('Data Privacy'),
+                const SizedBox(height: 14),
+                _buildPrivacyCard(),
+              ]),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHero(BuildContext context) {
+    return SizedBox(
+      height: 250,
+      child: Stack(fit: StackFit.expand, children: [
+        CachedNetworkImage(
+          imageUrl: 'https://images.pexels.com/photos/669619/pexels-photo-669619.jpeg?auto=compress&cs=tinysrgb&w=900',
+          fit: BoxFit.cover,
+          placeholder: (_, __) => Container(color: _accent.withValues(alpha: 0.15)),
+          errorWidget: (_, __, ___) => Container(color: _accent.withValues(alpha: 0.15)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black.withValues(alpha: 0.2), _bg.withValues(alpha: 0.97)],
+            ),
+          ),
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                width: 36, height: 36,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.12)),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 24, left: 20,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Your Data,\nYour Way', style: TextStyles.displaySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 30, height: 1.1)),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildExportGrid() {
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.6,
+      children: _exportTypes.map((t) => _ExportTypeCard(type: t)).toList(),
+    );
+  }
+
+  Widget _buildPrivacyCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _accent.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: _accent.withValues(alpha: 0.1)),
+          child: Icon(Icons.lock_rounded, color: _accentLight, size: 17),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('End-to-end encrypted', style: TextStyle(color: _accentLight, fontSize: 13, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            Text(
+              'All exported data is encrypted and accessible only to you. Chronos never shares your personal data with third parties.',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12, height: 1.5),
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  Widget _sectionTitle(String t) =>
+      Text(t, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700));
+}
+
+class _Report {
+  final String title;
+  final String period;
+  final IconData icon;
+  final Color color;
+  final String format;
+  const _Report(this.title, this.period, this.icon, this.color, this.format);
+}
+
+class _ReportCard extends StatelessWidget {
+  final _Report report;
+  const _ReportCard({required this.report});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F0F1C),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: report.color.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Row(children: [
+        Container(
+          width: 44, height: 44,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: report.color.withValues(alpha: 0.1)),
+          child: Icon(report.icon, color: report.color, size: 22),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(report.title, style: const TextStyle(color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 3),
+            Text(report.period, style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 12)),
+          ]),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: report.color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: report.color.withValues(alpha: 0.3), width: 1),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.download_rounded, color: report.color, size: 13),
+            const SizedBox(width: 4),
+            Text(report.format, style: TextStyle(color: report.color, fontSize: 11, fontWeight: FontWeight.w700)),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+class _ExportType {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  const _ExportType(this.title, this.subtitle, this.icon, this.color);
+}
+
+class _ExportTypeCard extends StatelessWidget {
+  final _ExportType type;
+  const _ExportTypeCard({required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F0F1C),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: type.color.withValues(alpha: 0.25), width: 1),
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+            width: 32, height: 32,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: type.color.withValues(alpha: 0.12)),
+            child: Icon(type.icon, color: type.color, size: 16),
+          ),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(type.title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
+            Text(type.subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10)),
+          ]),
+        ]),
+      ),
+    );
+  }
+}

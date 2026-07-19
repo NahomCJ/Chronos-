@@ -1,0 +1,801 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../../core/services/tts_service.dart';
+import '../../../../core/theme/text_theme.dart';
+import '../bloc/chat_bloc.dart';
+import '../bloc/chat_event.dart';
+import '../bloc/chat_state.dart';
+import '../bloc/chat_visual.dart';
+import '../widgets/chris_voice_orb.dart';
+import '../widgets/panther_ring_chart.dart';
+
+class PantherAiChatPage extends StatefulWidget {
+  const PantherAiChatPage({super.key});
+
+  @override
+  State<PantherAiChatPage> createState() => _PantherAiChatPageState();
+}
+
+class _PantherAiChatPageState extends State<PantherAiChatPage>
+    with TickerProviderStateMixin {
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  late final ChatBloc _chatBloc;
+
+  // Voice output is spoken automatically when the turn that triggered it
+  // came from the mic (like ChatGPT/Claude's inline voice) — a typed
+  // message never starts talking unprompted. The speaker icon overrides
+  // this either way.
+  bool _voiceMuted = false;
+  bool _lastInputWasVoice = false;
+
+  final List<_ChatMessage> _messages = [
+    _ChatMessage(
+      text: "Hello! I'm Chris, your AI financial advisor. What can I do for you today?",
+      isUser: false,
+      time: '',
+    ),
+  ];
+
+  late AnimationController _dotController;
+  late AnimationController _pulseController;
+  OrbState _orbState = OrbState.idle;
+
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _speechAvailable = false;
+  bool _isListening = false;
+
+  final List<String> _suggestions = [
+    'Show my net worth',
+    'Where did my money go this month?',
+    "What's in my portfolio?",
+    'Should I buy a MacBook?',
+  ];
+
+  static const _bg = Color(0xFFF5F6FA);
+  static const _cardBg = Colors.white;
+  static const _textPrimary = Color(0xFF1A1A2E);
+  static const _textSecondary = Color(0xFF6B7080);
+  static const _purple = Color(0xFF7C6EF0);
+  static const _borderColor = Color(0xFFE8EAF0);
+
+  @override
+  void initState() {
+    super.initState();
+    _chatBloc = GetIt.I<ChatBloc>();
+    _dotController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+    _messages.first = _ChatMessage(
+      text: _messages.first.text,
+      isUser: false,
+      time: _currentTime(),
+    );
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechAvailable = await _speech.initialize(
+      onError: (_) => setState(() => _isListening = false),
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _toggleListening() async {
+    if (!_speechAvailable) return;
+    if (_isListening) {
+      await _speech.stop();
+      setState(() {
+        _isListening = false;
+        _orbState = OrbState.idle;
+      });
+    } else {
+      setState(() {
+        _isListening = true;
+        _orbState = OrbState.thinking;
+      });
+      await _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controller.text.length),
+            );
+          });
+          if (result.finalResult && result.recognizedWords.isNotEmpty) {
+            _sendMessage(result.recognizedWords, viaVoice: true);
+          }
+        },
+        listenOptions: stt.SpeechListenOptions(
+          partialResults: true,
+          cancelOnError: true,
+          listenFor: const Duration(seconds: 30),
+          pauseFor: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    TtsService().stop();
+    _chatBloc.close();
+    _dotController.dispose();
+    _pulseController.dispose();
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage(String text, {bool viaVoice = false}) {
+    if (text.trim().isEmpty) return;
+    // Snapshot prior turns before appending the new message, so Chris gets
+    // real multi-turn context ("what about crypto?" following a net-worth answer).
+    // Skip the hardcoded greeting bubble (index 0) — it's not a real turn,
+    // and Anthropic's Messages API requires the conversation to start with
+    // a user message. Sending it as history made every call in every
+    // session malformed, so the backend always fell back to its generic
+    // "something went wrong" apology no matter what was actually asked.
+    final history = _messages
+        .skip(1)
+        .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
+        .toList();
+    _lastInputWasVoice = viaVoice;
+    setState(() {
+      _messages.add(_ChatMessage(text: text.trim(), isUser: true, time: _currentTime()));
+      _controller.clear();
+      _orbState = OrbState.thinking;
+      _isListening = false;
+    });
+    _scrollToBottom();
+    _chatBloc.add(ChatMessageSent(text.trim(), history: history));
+  }
+
+  // ApiClient surfaces the backend's actual error message (e.g. "message is
+  // required", "Unauthorized") inside the Exception text — show that instead
+  // of a generic string so failures are debuggable from the chat itself.
+  String _friendlyErrorText(String rawError) {
+    final cleaned = rawError.replaceFirst('Exception: ', '').trim();
+    if (cleaned.isEmpty) {
+      return 'Sorry, something went wrong. Please try again.';
+    }
+    return 'Sorry, something went wrong: $cleaned';
+  }
+
+  String _currentTime() {
+    final now = DateTime.now();
+    final h = now.hour % 12 == 0 ? 12 : now.hour % 12;
+    final m = now.minute.toString().padLeft(2, '0');
+    final period = now.hour >= 12 ? 'PM' : 'AM';
+    return '$h:$m $period';
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _chatBloc,
+      child: BlocListener<ChatBloc, ChatState>(
+        listener: (context, state) {
+          if (state is ChatThinking) {
+            setState(() => _orbState = OrbState.thinking);
+          } else if (state is ChatReplied) {
+            setState(() {
+              _orbState = OrbState.speaking;
+              _messages.add(_ChatMessage(
+                text: state.reply,
+                isUser: false,
+                time: _currentTime(),
+                visual: state.visual,
+              ));
+            });
+            _scrollToBottom();
+            // Only auto-speak when the turn that triggered this reply came
+            // from the mic — a typed message shouldn't start talking
+            // unprompted. Keep the orb in "speaking" state for as long as
+            // Chris is actually talking rather than the fixed 2.2s
+            // placeholder, which used to be purely decorative since nothing
+            // was really being spoken.
+            if (_lastInputWasVoice && !_voiceMuted) {
+              TtsService().speak(state.reply).whenComplete(() {
+                if (mounted) setState(() => _orbState = OrbState.idle);
+              });
+            } else {
+              Future.delayed(const Duration(milliseconds: 2200), () {
+                if (mounted) setState(() => _orbState = OrbState.idle);
+              });
+            }
+          } else if (state is ChatError) {
+            setState(() {
+              _orbState = OrbState.idle;
+              _messages.add(_ChatMessage(
+                text: _friendlyErrorText(state.message),
+                isUser: false,
+                time: _currentTime(),
+              ));
+            });
+            _scrollToBottom();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: _bg,
+          body: SafeArea(
+            child: _buildTextView(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Chat View (text + inline voice, ChatGPT/Claude-style) ────────────────────
+
+  Widget _buildTextView() {
+    return Column(
+      children: [
+        _buildHeader(),
+        _buildOrbSection(),
+        Expanded(
+          child: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              final isThinking = state is ChatThinking;
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: _messages.length + (isThinking ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _messages.length && isThinking) {
+                    return _buildThinkingBubble();
+                  }
+                  return _buildMessageBubble(_messages[index]);
+                },
+              );
+            },
+          ),
+        ),
+        _buildSuggestions(),
+        _buildInputBar(),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        border: Border(bottom: BorderSide(color: _borderColor)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF374151), size: 16),
+            ),
+          ),
+          const Spacer(),
+          Text(
+            'Chris',
+            style: TextStyles.titleMedium.copyWith(
+              color: _textPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              setState(() => _voiceMuted = !_voiceMuted);
+              if (_voiceMuted) TtsService().stop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _voiceMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                color: const Color(0xFF374151),
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.settings_outlined,
+                color: Color(0xFF374151), size: 18),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrbSection() {
+    final label = _isListening
+        ? 'Listening...'
+        : switch (_orbState) {
+            OrbState.idle => 'Chris · AI Financial Advisor',
+            OrbState.thinking => 'Thinking...',
+            OrbState.speaking => 'Responding',
+          };
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+      height: _orbState == OrbState.idle ? 130 : 150,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ChrisVoiceOrb(state: _orbState, size: 88),
+          const SizedBox(height: 8),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              label,
+              key: ValueKey(label),
+              style: TextStyles.bodySmall.copyWith(
+                color: _orbState == OrbState.idle
+                    ? _textSecondary
+                    : _orbState == OrbState.thinking
+                        ? _purple
+                        : const Color(0xFF22C55E),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(_ChatMessage msg) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Align(
+        alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment:
+              msg.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.72,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: msg.isUser ? _purple : Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(msg.isUser ? 18 : 4),
+                  bottomRight: Radius.circular(msg.isUser ? 4 : 18),
+                ),
+                border: msg.isUser ? null : Border.all(color: _borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                msg.text,
+                style: TextStyles.bodyMedium.copyWith(
+                  color: msg.isUser ? Colors.white : _textPrimary,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+            ),
+            if (msg.visual != null) ...[
+              const SizedBox(height: 8),
+              _buildVisual(msg.visual!),
+            ],
+            if (msg.time.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                msg.time,
+                style: TextStyles.bodySmall.copyWith(
+                  color: _textSecondary.withValues(alpha: 0.6),
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVisual(ChatVisual visual) {
+    final width = MediaQuery.of(context).size.width * 0.78;
+    if (visual.isProducts) {
+      return SizedBox(
+        width: width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 2, bottom: 8),
+              child: Text(
+                visual.title,
+                style: TextStyles.bodySmall.copyWith(
+                  color: _textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 168,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: visual.products.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, i) => _ProductVisualCard(product: visual.products[i]),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      width: width,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: _borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            visual.title,
+            style: TextStyles.bodySmall.copyWith(
+              color: _textPrimary,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 14),
+          PantherRingChart(
+            size: 120,
+            centerLabel: visual.centerLabel ?? '',
+            centerSubLabel: visual.centerSubLabel ?? '',
+            slices: visual.slices
+                .map((s) => PantherRingSlice(label: s.label, value: s.value, color: s.color))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThinkingBubble() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(18),
+                topRight: Radius.circular(18),
+                bottomRight: Radius.circular(18),
+                bottomLeft: Radius.circular(4),
+              ),
+              border: Border.all(color: _borderColor),
+            ),
+            child: _ThinkingDots(controller: _dotController),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestions() {
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _suggestions.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () => _sendMessage(_suggestions[index]),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: _borderColor),
+              ),
+              child: Text(
+                _suggestions[index],
+                style: TextStyles.bodySmall.copyWith(
+                  color: _textPrimary,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildInputBar() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(color: _purple.withValues(alpha: 0.4), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: _purple.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.attach_file_outlined, color: _textSecondary, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              style: TextStyles.bodyMedium.copyWith(
+                color: _textPrimary,
+                fontSize: 14,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Ask Chris anything...',
+                hintStyle: TextStyles.bodyMedium.copyWith(
+                  color: _textSecondary,
+                  fontSize: 14,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onSubmitted: _sendMessage,
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: _toggleListening,
+            child: AnimatedBuilder(
+              animation: _pulseController,
+              builder: (_, child) {
+                final scale = _isListening ? 1.0 + _pulseController.value * 0.18 : 1.0;
+                return Transform.scale(scale: scale, child: child);
+              },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  _isListening ? Icons.mic : Icons.mic_none_outlined,
+                  key: ValueKey(_isListening),
+                  color: _isListening ? _purple : _textSecondary,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => _sendMessage(_controller.text),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: _purple,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+}
+
+// ── Shared widgets ─────────────────────────────────────────────────────────────
+
+class _ThinkingDots extends StatelessWidget {
+  final AnimationController controller;
+  const _ThinkingDots({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (i) {
+            final delay = i / 3;
+            final progress =
+                ((controller.value - delay) % 1.0).clamp(0.0, 1.0);
+            final bounce =
+                progress < 0.5 ? progress * 2 : (1.0 - progress) * 2;
+            return Container(
+              margin: const EdgeInsets.only(right: 5),
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C6EF0)
+                    .withValues(alpha: 0.4 + bounce * 0.5),
+                shape: BoxShape.circle,
+              ),
+              transform: Matrix4.translationValues(0, -4 * bounce, 0),
+            );
+          }),
+        );
+      },
+    );
+  }
+}
+
+class _ChatMessage {
+  final String text;
+  final bool isUser;
+  final String time;
+  final ChatVisual? visual;
+  const _ChatMessage({
+    required this.text,
+    required this.isUser,
+    required this.time,
+    this.visual,
+  });
+}
+
+class _ProductVisualCard extends StatelessWidget {
+  final ChatProductCard product;
+  const _ProductVisualCard({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 140,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE8EAF0), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: SizedBox(
+              height: 88,
+              width: double.infinity,
+              child: product.imageUrl.isNotEmpty
+                  ? Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: const Color(0xFFF3F4F6),
+                        child: const Icon(Icons.shopping_bag_outlined,
+                            color: Color(0xFF9CA3AF), size: 28),
+                      ),
+                    )
+                  : Container(
+                      color: const Color(0xFFF3F4F6),
+                      child: const Icon(Icons.shopping_bag_outlined,
+                          color: Color(0xFF9CA3AF), size: 28),
+                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF1A1A2E),
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    height: 1.25,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '\$${product.price.toStringAsFixed(0)} · ${product.vendor}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Color(0xFF6B7080), fontSize: 10),
+                ),
+                if (product.bnplEligible) ...[
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF22C55E).withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'BNPL eligible',
+                      style: TextStyle(
+                        color: Color(0xFF22C55E),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

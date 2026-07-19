@@ -1,0 +1,13 @@
+{
+  "info": {
+    "name": "LifeX — Data Export",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    { "name": "Export Health Data", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/health" } },
+    { "name": "Export Finance Data", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/finance" } },
+    { "name": "Export Education Data", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/education" } },
+    { "name": "Export Vision Data", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/vision" } },
+    { "name": "Full Export (All Data)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/lifex/export/full" } }
+  ]
+}

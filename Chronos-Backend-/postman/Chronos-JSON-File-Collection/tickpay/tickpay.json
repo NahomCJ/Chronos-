@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "TickPay — BNPL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Onboard",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/onboard"
+      }
+    },
+    {
+      "name": "Get Account",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/account"
+      }
+    },
+    {
+      "name": "Create Account",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/account"
+      }
+    },
+    {
+      "name": "Create Purchase",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 299.99,\n  \"merchant\": \"Apple Store\",\n  \"installments\": 4,\n  \"walletId\": \"{{walletId}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/purchase"
+      }
+    },
+    {
+      "name": "Create Repayment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"purchaseId\": \"PURCHASE_ID\",\n  \"amount\": 75,\n  \"walletId\": \"{{walletId}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/repayment"
+      }
+    },
+    {
+      "name": "List Transactions",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/transactions"
+      }
+    },
+    {
+      "name": "List Fees",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "http://chronos.us-east-1.elasticbeanstalk.com/api/tickpay/fees"
+      }
+    }
+  ]
+}

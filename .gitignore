@@ -1,0 +1,47 @@
+# Environment files - NEVER commit
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+dist-blockhub/
+*.zip
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+artifacts/
+
+# Flutter / Dart
+build/
+!chronos/build/
+!chronos/build/web
+!chronos/build/web/**
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Newman / test reports
+newman-report.html
+
+# Large model files
+*.safetensors
+*.bin
+*.pkl
+*.parquet
+.claude/
