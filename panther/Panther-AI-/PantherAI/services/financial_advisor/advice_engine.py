@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import Any
 
 TARGET_SAVINGS_RATE_PCT = 20.0
+HOUSING_COST_RATIO_THRESHOLD_PCT = 30.0  # the classic "front-end ratio" affordability rule
 DISCRETIONARY_SUBCATEGORIES = {
     "sub_restaurants_bars", "sub_delivery", "sub_fitness_gym", "sub_supplementation",
     "sub_wellness_beauty", "sub_subscriptions", "sub_events_culture", "sub_hobbies",
@@ -29,6 +30,8 @@ def build_advice(
     supplement_result: dict[str, Any],
     liability_result: dict[str, Any],
     tax_estimate: dict[str, Any],
+    crypto_result: dict[str, Any] | None = None,
+    nft_result: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     advice: list[dict[str, Any]] = []
 
@@ -89,6 +92,28 @@ def build_advice(
             }
         )
 
+    by_sub = {row["subcategory_id"]: row["monthly_total"] for row in expense_summary["by_subcategory"]}
+    housing_expense_side = (
+        by_sub.get("sub_rent_mortgage", 0.0) + by_sub.get("sub_utility_bills", 0.0) + by_sub.get("sub_insurance", 0.0)
+    )
+    mortgage_debt_side = sum(
+        d["monthly_payment"] for d in liability_result["debts"] if d["type"] == "mortgage"
+    ) + by_sub.get("sub_utility_bills", 0.0) + by_sub.get("sub_insurance", 0.0)
+    housing_cost = max(housing_expense_side, mortgage_debt_side)
+    housing_cost_ratio_pct = round((housing_cost / monthly_income) * 100, 1) if monthly_income > 0 else 0.0
+    if housing_cost_ratio_pct >= HOUSING_COST_RATIO_THRESHOLD_PCT:
+        advice.append(
+            {
+                "priority": 2,
+                "category": "housing_bills",
+                "impact_monthly": round(housing_cost, 2),
+                "advice": (
+                    f"Housing + utilities + insurance is {housing_cost_ratio_pct:.1f}% of monthly income "
+                    f"(${housing_cost:,.2f}/mo) — above the classic 30% affordability guideline."
+                ),
+            }
+        )
+
     for flag in gym_result.get("flags", []):
         advice.append(
             {
@@ -108,6 +133,28 @@ def build_advice(
                 "advice": flag["message"],
             }
         )
+
+    if crypto_result and crypto_result.get("has_crypto_activity"):
+        for flag in crypto_result.get("flags", []):
+            advice.append(
+                {
+                    "priority": 4,
+                    "category": "crypto",
+                    "impact_monthly": crypto_result.get("total_fees_paid", 0.0),
+                    "advice": flag["message"],
+                }
+            )
+
+    if nft_result and nft_result.get("has_nft_activity"):
+        for flag in nft_result.get("flags", []):
+            advice.append(
+                {
+                    "priority": 4,
+                    "category": "nft",
+                    "impact_monthly": nft_result.get("total_gas_fees", 0.0),
+                    "advice": flag["message"],
+                }
+            )
 
     top_discretionary = [
         row for row in expense_summary["by_subcategory"]

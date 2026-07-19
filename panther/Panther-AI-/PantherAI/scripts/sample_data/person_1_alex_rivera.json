@@ -17,5 +17,26 @@
   "debts": [
     {"name": "Chase Sapphire Credit Card", "type": "credit_card", "balance": 8000, "monthly_payment": 300, "interest_rate": 24.99},
     {"name": "Federal Student Loan", "type": "student_loan", "balance": 22000, "monthly_payment": 200, "interest_rate": 6.0}
+  ],
+  "crypto_transactions": [
+    {"asset": "BTC", "side": "buy", "quantity": 0.02, "price_per_unit": 58000, "fee": 40, "date": "2026-06-01"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.015, "price_per_unit": 59000, "fee": 35, "date": "2026-06-04"},
+    {"asset": "BTC", "side": "sell", "quantity": 0.01, "price_per_unit": 61000, "fee": 30, "date": "2026-06-06"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.02, "price_per_unit": 60000, "fee": 40, "date": "2026-06-08"},
+    {"asset": "BTC", "side": "sell", "quantity": 0.015, "price_per_unit": 62000, "fee": 35, "date": "2026-06-10"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.01, "price_per_unit": 59500, "fee": 25, "date": "2026-06-12"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.02, "price_per_unit": 60500, "fee": 40, "date": "2026-06-14"},
+    {"asset": "BTC", "side": "sell", "quantity": 0.01, "price_per_unit": 63000, "fee": 30, "date": "2026-06-16"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.015, "price_per_unit": 61000, "fee": 35, "date": "2026-06-18"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.01, "price_per_unit": 60000, "fee": 25, "date": "2026-06-20"},
+    {"asset": "BTC", "side": "sell", "quantity": 0.02, "price_per_unit": 64000, "fee": 45, "date": "2026-06-22"},
+    {"asset": "BTC", "side": "buy", "quantity": 0.02, "price_per_unit": 62000, "fee": 40, "date": "2026-06-24"}
+  ],
+  "crypto_current_prices": {"BTC": 65000},
+  "nft_transactions": [
+    {"collection": "CryptoPunks Clone", "event": "mint", "price": 50, "gas_fee": 80, "date": "2026-05-01"},
+    {"collection": "CryptoPunks Clone", "event": "purchase", "price": 200, "gas_fee": 60, "date": "2026-05-10"},
+    {"collection": "Bored Ape Fanart", "event": "purchase", "price": 500, "gas_fee": 40, "date": "2026-05-15", "current_floor_price": 300},
+    {"collection": "CryptoPunks Clone", "event": "sale", "price": 150, "gas_fee": 30, "date": "2026-06-01"}
   ]
 }

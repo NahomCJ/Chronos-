@@ -96,6 +96,17 @@ _KEYWORD_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\b(vet\b|veterinary|pet food|petco|petsmart)\b", re.I), "sub_pets"),
     # Cash
     (re.compile(r"\b(atm withdrawal|cash withdrawal)\b", re.I), "sub_atm_withdrawals"),
+    # Travel
+    (re.compile(r"\b(flight|airline|airfare|delta|united airlines|american airlines|jetblue)\b", re.I),
+     "sub_flights"),
+    (re.compile(r"\b(hotel|airbnb|hostel|motel|resort booking)\b", re.I), "sub_hotels_acc"),
+    (re.compile(r"\b(vacation package|tour operator|travel agency|expedia|holiday package)\b", re.I),
+     "sub_holidays_trips"),
+    # Personal / home extras
+    (re.compile(r"\b(home depot|lowe'?s|renovation|repair contractor|handyman)\b", re.I),
+     "sub_home_maintenance"),
+    (re.compile(r"\b(gift|donation|charity|gofundme)\b", re.I), "sub_gifts_donations"),
+    (re.compile(r"\b(gaming|steam|playstation|xbox|hobby shop)\b", re.I), "sub_hobbies"),
 ]
 
 _ID_TO_NAME: dict[str, str] = {

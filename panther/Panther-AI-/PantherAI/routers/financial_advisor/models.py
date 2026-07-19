@@ -29,6 +29,29 @@ class DebtInput(BaseModel):
     balance: float = 0.0
     monthly_payment: float = 0.0
     interest_rate: Optional[float] = Field(None, description="Annual interest rate as a percent, e.g. 22.5")
+    property_value: Optional[float] = Field(
+        None, description="Mortgage-type debts only. Enables an LTV/PMI check."
+    )
+
+
+class CryptoTransactionInput(BaseModel):
+    asset: str = Field(..., description="Ticker, e.g. 'BTC', 'ETH'.")
+    side: Literal["buy", "sell"]
+    quantity: float
+    price_per_unit: float = Field(..., description="USD price per unit at time of trade.")
+    fee: float = 0.0
+    date: Optional[str] = Field(None, description="ISO date of the trade.")
+
+
+class NftTransactionInput(BaseModel):
+    collection: str
+    event: Literal["mint", "purchase", "sale", "transfer_in", "transfer_out"]
+    price: float = Field(0.0, description="USD. 0 for transfers.")
+    gas_fee: float = 0.0
+    date: Optional[str] = None
+    current_floor_price: Optional[float] = Field(
+        None, description="USD, per-unit. Used to value unsold holdings."
+    )
 
 
 class PersonFinancialInput(BaseModel):
@@ -38,6 +61,11 @@ class PersonFinancialInput(BaseModel):
     filing_status: Literal["single", "married_joint"] = "single"
     transactions: list[TransactionInput] = Field(default_factory=list)
     debts: list[DebtInput] = Field(default_factory=list)
+    crypto_transactions: list[CryptoTransactionInput] = Field(default_factory=list)
+    crypto_current_prices: dict[str, float] = Field(
+        default_factory=dict, description="Optional current price per ticker, enables unrealized P&L."
+    )
+    nft_transactions: list[NftTransactionInput] = Field(default_factory=list)
 
 
 class BatchFinancialInput(BaseModel):
@@ -53,6 +81,8 @@ class FinancialAdviceReport(BaseModel):
     supplement_analysis: dict[str, Any]
     liabilities: dict[str, Any]
     tax_estimate: dict[str, Any]
+    crypto_analysis: dict[str, Any]
+    nft_analysis: dict[str, Any]
     advice: list[dict[str, Any]]
 
 

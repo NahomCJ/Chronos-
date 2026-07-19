@@ -99,6 +99,41 @@ def _render_markdown(report: dict) -> str:
     lines.append(f"- {tax['disclaimer']}")
     lines.append("")
 
+    crypto = report["crypto_analysis"]
+    lines.append("## Crypto")
+    if crypto["has_crypto_activity"]:
+        lines.append(f"- Total fees paid: ${crypto['total_fees_paid']:,.2f}")
+        lines.append(f"- Total realized P&L (estimate): ${crypto['total_realized_pnl']:,.2f}")
+        if crypto["portfolio_market_value"] is not None:
+            lines.append(f"- Current portfolio market value (estimate): ${crypto['portfolio_market_value']:,.2f}")
+        for h in crypto["holdings"]:
+            lines.append(
+                f"  - {h['asset']}: {h['remaining_quantity']} held, avg cost ${h['avg_cost_basis']:,.2f}, "
+                f"realized P&L ${h['realized_pnl_estimate']:,.2f}"
+            )
+        for flag in crypto["flags"]:
+            lines.append(f"- ⚠ {flag['message']}")
+    else:
+        lines.append("- No crypto activity detected.")
+    lines.append("")
+
+    nft = report["nft_analysis"]
+    lines.append("## NFTs")
+    if nft["has_nft_activity"]:
+        lines.append(f"- Total spent (acquisitions + gas): ${nft['total_spent']:,.2f}")
+        lines.append(f"- Total gas fees: ${nft['total_gas_fees']:,.2f}")
+        lines.append(f"- Net cash flow: ${nft['net_cash_flow']:,.2f}")
+        for c in nft["collections"]:
+            lines.append(
+                f"  - {c['collection']}: held {c['held_count']}, acquisition cost ${c['acquisition_cost']:,.2f}, "
+                f"net cash flow ${c['net_cash_flow']:,.2f}"
+            )
+        for flag in nft["flags"]:
+            lines.append(f"- ⚠ {flag['message']}")
+    else:
+        lines.append("- No NFT activity detected.")
+    lines.append("")
+
     lines.append("## Tailored advice")
     for a in report["advice"]:
         lines.append(f"- **[{a['category']}]** {a['advice']}")
