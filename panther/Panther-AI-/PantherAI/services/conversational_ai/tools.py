@@ -145,6 +145,20 @@ _BANKING_TOOLS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_gym_and_supplement_check",
+            "description": (
+                "Checks gym/fitness membership cost against typical pricing for the "
+                "user's area, flags duplicate memberships, and flags supplement/vitamin "
+                "spending only if it's material relative to income. Call this when the "
+                "user asks about their gym membership, fitness costs, or supplement/vitamin "
+                "spending."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
 ]
 
 _CRYPTO_TOOLS: list[dict[str, Any]] = [
@@ -500,6 +514,9 @@ def execute_tool(
             "count": len(recurring),
         }
 
+    elif tool_name == "get_gym_and_supplement_check":
+        return _gym_and_supplement_check(user_id)
+
     # --- Debt / liabilities tools ---
     elif tool_name == "get_credit_card_analysis":
         from services.liabilities.credit_card import analyze_credit_cards
@@ -580,6 +597,53 @@ def execute_tool(
 
     else:
         return {"error": f"Unknown tool: {tool_name}"}
+
+
+def _gym_and_supplement_check(user_id: str) -> dict[str, Any]:
+    """Aggregates 90 days of spend by merchant into a monthly-equivalent view,
+    then runs the same gym/supplement analysis used by the standalone
+    financial-advisor report (services/financial_advisor).
+
+    Only gym/supplement flags are returned here — no tax figures. tax_estimator
+    is intentionally not wired into Chris (see its module docstring): a rough
+    dollar tax liability reaching the LLM would bypass the hard-coded
+    "never state a specific tax liability" guardrail in _build_system_prompt.
+    """
+    from services.financial_advisor.categorizer import categorize_expenses
+    from services.financial_advisor.gym_analysis import analyze_gym_spending
+    from services.financial_advisor.supplement_analysis import analyze_supplement_spending
+    from services.income.ingestion import get_income_data
+
+    txns_90 = get_transactions(user_id, days_back=90)
+    spending = [t for t in txns_90 if t["amount"] < 0]
+
+    by_merchant: dict[str, dict[str, Any]] = {}
+    for t in spending:
+        key = t["merchant"]
+        entry = by_merchant.setdefault(key, {"merchant": key, "total": 0.0, "category": t.get("category")})
+        entry["total"] += abs(t["amount"])
+
+    synthetic_transactions = [
+        {
+            "merchant": entry["merchant"],
+            "amount": round(entry["total"] / 3, 2),  # 90 days -> monthly average
+            "frequency": "monthly",
+            "category": entry["category"],
+        }
+        for entry in by_merchant.values()
+    ]
+
+    expense_summary = categorize_expenses(synthetic_transactions)
+    income_data = get_income_data(user_id)
+    monthly_income = float(income_data.get("estimated_monthly_income") or 0.0)
+
+    gym_result = analyze_gym_spending(expense_summary["transactions"], default_location=None)
+    supplement_result = analyze_supplement_spending(expense_summary["transactions"], monthly_income)
+
+    return {
+        "gym_analysis": gym_result,
+        "supplement_analysis": supplement_result,
+    }
 
 
 _INCOME_AMOUNT_FIELDS = {
