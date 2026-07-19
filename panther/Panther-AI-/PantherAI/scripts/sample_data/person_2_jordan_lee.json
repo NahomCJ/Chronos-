@@ -1,0 +1,18 @@
+{
+  "name": "Jordan Lee",
+  "location": "Austin, TX",
+  "monthly_income": 4200,
+  "filing_status": "single",
+  "transactions": [
+    {"merchant": "PLANET FITNESS", "amount": 45, "frequency": "monthly", "location": "Austin, TX"},
+    {"merchant": "H-E-B GROCERY", "amount": 380, "frequency": "monthly", "category": "Groceries"},
+    {"merchant": "RENT PAYMENT", "amount": 1450, "frequency": "monthly", "category": "sub_rent_mortgage"},
+    {"merchant": "SPOTIFY", "amount": 10.99, "frequency": "monthly"},
+    {"merchant": "AUSTIN ENERGY UTILITY", "amount": 95, "frequency": "monthly", "category": "sub_utility_bills"},
+    {"merchant": "CHIPOTLE", "amount": 120, "frequency": "monthly", "category": "sub_restaurants_bars"},
+    {"merchant": "SHELL GAS STATION", "amount": 110, "frequency": "monthly"}
+  ],
+  "debts": [
+    {"name": "Toyota Auto Loan", "type": "auto_loan", "balance": 14000, "monthly_payment": 350, "interest_rate": 6.9}
+  ]
+}

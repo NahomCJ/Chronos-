@@ -1,0 +1,19 @@
+{
+  "name": "Sam Okafor",
+  "location": "rural Ohio",
+  "monthly_income": 3000,
+  "filing_status": "single",
+  "transactions": [
+    {"merchant": "CROSSFIT IRONCLAD", "amount": 180, "frequency": "monthly", "location": "rural Ohio"},
+    {"merchant": "VITAMIN SHOPPE", "amount": 80, "frequency": "monthly"},
+    {"merchant": "RENT PAYMENT", "amount": 1100, "frequency": "monthly", "category": "sub_rent_mortgage"},
+    {"merchant": "LOCAL GROCERY", "amount": 350, "frequency": "monthly", "category": "Groceries"},
+    {"merchant": "UTILITY CO", "amount": 160, "frequency": "monthly", "category": "sub_utility_bills"},
+    {"merchant": "PHONE BILL", "amount": 70, "frequency": "monthly", "category": "sub_internet_phone"},
+    {"merchant": "FAST FOOD SPEND", "amount": 140, "frequency": "monthly", "category": "sub_restaurants_bars"}
+  ],
+  "debts": [
+    {"name": "Capital One Credit Card", "type": "credit_card", "balance": 5000, "monthly_payment": 250, "interest_rate": 26.99},
+    {"name": "Personal Loan", "type": "personal_loan", "balance": 3000, "monthly_payment": 150, "interest_rate": 12.0}
+  ]
+}

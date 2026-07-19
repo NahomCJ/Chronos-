@@ -1,0 +1,21 @@
+{
+  "name": "Alex Rivera",
+  "location": "New York, NY",
+  "monthly_income": 6500,
+  "filing_status": "single",
+  "transactions": [
+    {"merchant": "EQUINOX", "amount": 310, "frequency": "monthly", "location": "New York, NY"},
+    {"merchant": "BLINK FITNESS", "amount": 25, "frequency": "monthly", "location": "New York, NY"},
+    {"merchant": "THORNE", "amount": 150, "frequency": "monthly"},
+    {"merchant": "RENT PAYMENT", "amount": 2800, "frequency": "monthly", "category": "sub_rent_mortgage"},
+    {"merchant": "WHOLE FOODS", "amount": 620, "frequency": "monthly", "category": "Groceries"},
+    {"merchant": "NETFLIX", "amount": 15.99, "frequency": "monthly"},
+    {"merchant": "UBER", "amount": 180, "frequency": "monthly"},
+    {"merchant": "RESTAURANT SPEND", "amount": 450, "frequency": "monthly", "category": "sub_restaurants_bars"},
+    {"merchant": "CON EDISON UTILITY", "amount": 140, "frequency": "monthly", "category": "sub_utility_bills"}
+  ],
+  "debts": [
+    {"name": "Chase Sapphire Credit Card", "type": "credit_card", "balance": 8000, "monthly_payment": 300, "interest_rate": 24.99},
+    {"name": "Federal Student Loan", "type": "student_loan", "balance": 22000, "monthly_payment": 200, "interest_rate": 6.0}
+  ]
+}

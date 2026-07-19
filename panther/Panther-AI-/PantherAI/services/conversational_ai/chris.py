@@ -539,6 +539,28 @@ def _mock_response(
         )
     elif any(
         kw in msg_lower
+        for kw in ["gym", "fitness", "membership", "supplement", "vitamin", "protein"]
+    ):
+        check = execute_tool("get_gym_and_supplement_check", user_id, {})
+        tools_called = ["get_gym_and_supplement_check"]
+        context_used.update(check)
+        gym = check["gym_analysis"]
+        supp = check["supplement_analysis"]
+        parts = []
+        if gym["has_gym_membership"]:
+            parts.append(f"gym costs ${gym['total_monthly_cost']:,.2f}/mo.")
+            for flag in gym["flags"]:
+                parts.append(flag["message"])
+        else:
+            parts.append("no gym/fitness charges found in the last 90 days.")
+        if supp["is_material"]:
+            parts.append(
+                f"supplements are ${supp['total_monthly_cost']:,.2f}/mo "
+                f"({supp['pct_of_monthly_income']:.1f}% of income) — worth a look."
+            )
+        reply = " ".join(parts)
+    elif any(
+        kw in msg_lower
         for kw in ["payday", "get paid", "next pay", "income", "salary", "wage", "earn"]
     ):
         plan = execute_tool("get_paycheck_plan", user_id, {})

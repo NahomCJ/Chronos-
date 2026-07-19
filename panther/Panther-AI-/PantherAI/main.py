@@ -19,6 +19,7 @@ from routers.liabilities.router import router as liabilities_router
 from routers.net_worth.router import router as net_worth_router
 from routers.plaid.router import router as plaid_router
 from routers.voice.router import router as voice_router
+from routers.financial_advisor.router import router as financial_advisor_router
 
 app = FastAPI(
     title="CHRONOS API",
@@ -53,5 +54,6 @@ app.include_router(insights_router, prefix="/api")
 app.include_router(income_router, prefix="/api")
 app.include_router(liabilities_router, prefix="/api")
 app.include_router(net_worth_router, prefix="/api")
+app.include_router(financial_advisor_router, prefix="/api")
 
 log.phase("server_started", module="main")
