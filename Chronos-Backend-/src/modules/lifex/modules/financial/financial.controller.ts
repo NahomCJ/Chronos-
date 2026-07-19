@@ -106,4 +106,23 @@ export class FinancialController {
   );
 };
 
+  /* ---------- FINANCIAL ADVICE ---------- */
+  analyzeAdvice = async (req: any, res: Response) => {
+    try {
+      const result = await service.analyzeAdvice(req.body);
+      res.json(result);
+    } catch (err: any) {
+      res.status(502).json({ error: err.message || 'Financial advisor request failed' });
+    }
+  };
+
+  analyzeAdviceBatch = async (req: any, res: Response) => {
+    try {
+      const result = await service.analyzeAdviceBatch(req.body?.people || []);
+      res.json(result);
+    } catch (err: any) {
+      res.status(502).json({ error: err.message || 'Financial advisor request failed' });
+    }
+  };
+
 }

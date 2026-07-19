@@ -5,11 +5,22 @@ import { CreateBudgetDto } from './dto/createBudget.dto';
 import { generateCSV, generatePDF } from './utils/taxReport';
 import './utils/scheduler';
 import { LoanStatus } from '@prisma/client';
+import { PantherFinancialAdvisorClient } from './financial.integration';
 
-
+const pantherAdvisor = new PantherFinancialAdvisorClient();
 
 
 export class FinancialService {
+
+  /* ---------------- FINANCIAL ADVICE (Panther AI) ---------------- */
+
+  async analyzeAdvice(person: unknown) {
+    return pantherAdvisor.analyzePerson(person);
+  }
+
+  async analyzeAdviceBatch(people: unknown[]) {
+    return pantherAdvisor.analyzeBatch(people);
+  }
 
   /* ---------------- DASHBOARD ---------------- */
 

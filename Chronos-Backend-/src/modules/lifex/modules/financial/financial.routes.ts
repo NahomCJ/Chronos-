@@ -45,5 +45,9 @@ router.post(
   financialCtrl.createExpense
 );
 
+/* ================= FINANCIAL ADVICE ================= */
+router.post("/advice/analyze", requireAuth, financialCtrl.analyzeAdvice);
+router.post("/advice/analyze/batch", requireAuth, financialCtrl.analyzeAdviceBatch);
+
 
 export default router;
