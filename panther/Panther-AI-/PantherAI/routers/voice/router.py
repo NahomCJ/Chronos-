@@ -36,6 +36,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import re
 from typing import Any, Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
@@ -358,9 +359,16 @@ def _maybe_tts(text: str, enabled: bool) -> tuple[str | None, str | None]:
 
 def _is_confirmation(text: str) -> bool:
     keywords = {"confirm", "yes", "proceed", "do it", "go ahead", "approve", "ok", "okay", "sure"}
-    return any(k in text.lower() for k in keywords)
+    return _contains_spoken_phrase(text, keywords)
 
 
 def _is_cancellation(text: str) -> bool:
-    keywords = {"cancel", "no", "stop", "abort", "nevermind", "never mind", "don't"}
-    return any(k in text.lower() for k in keywords)
+    keywords = {"cancel", "no", "nope", "stop", "abort", "nevermind", "never mind", "don't", "do not"}
+    return _contains_spoken_phrase(text, keywords)
+
+
+def _contains_spoken_phrase(text: str, phrases: set[str]) -> bool:
+    """Match whole spoken words/phrases, never substrings such as no in unknown."""
+    normalized = re.sub(r"[^a-z0-9']+", " ", text.casefold()).strip()
+    padded = f" {normalized} "
+    return any(f" {phrase.casefold()} " in padded for phrase in phrases)

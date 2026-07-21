@@ -5,7 +5,7 @@ TTS layer for Chris voice responses.
 
 Priority:
   1. VibeVoice-Realtime-0.5B (local, free) — VIBEVOICE_TTS_ENABLED=true + vibevoice installed
-  2. ElevenLabs API                         — ELEVEN_API_KEY set
+  2. ElevenLabs API                         — ELEVENLABS_API_KEY set
   3. OpenAI TTS                             — OPENAI_API_KEY set
 
 Setup for VibeVoice TTS:
@@ -18,8 +18,9 @@ Environment:
     VIBEVOICE_TTS_MODEL    — HF model ID (default: microsoft/VibeVoice-Realtime-0.5B)
     VIBEVOICE_SPEAKER      — voice preset name (default: carter)
     VIBEVOICE_VOICE_DIR    — path to directory containing <speaker>.pt voice files
-    ELEVEN_API_KEY         — ElevenLabs API key (primary cloud fallback)
-    ELEVEN_VOICE_ID        — ElevenLabs voice ID (default: JBFqnCBsd6RMkjVDRZzb)
+    ELEVENLABS_API_KEY     — ElevenLabs API key (ELEVEN_API_KEY/XI_API_KEY aliases supported)
+    ELEVENLABS_VOICE_ID    — ElevenLabs voice ID (default: Rachel, Chris's established voice)
+    ELEVENLABS_TTS_MODEL   — ElevenLabs model ID (default: eleven_multilingual_v2)
     OPENAI_API_KEY         — OpenAI API key (secondary cloud fallback)
 """
 
@@ -34,9 +35,35 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
-ELEVEN_VOICE_ID = os.getenv("ELEVEN_VOICE_ID", "JBFqnCBsd6RMkjVDRZzb")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+DEFAULT_ELEVEN_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"  # Rachel — Chris's established voice
+DEFAULT_ELEVEN_TTS_MODEL = "eleven_multilingual_v2"
+DEFAULT_ELEVEN_OUTPUT_FORMAT = "mp3_44100_128"
+
+
+def _get_eleven_api_key() -> str | None:
+    return (
+        os.getenv("ELEVENLABS_API_KEY")
+        or os.getenv("ELEVEN_API_KEY")
+        or os.getenv("XI_API_KEY")
+    )
+
+
+def _get_eleven_voice_id() -> str:
+    return (
+        os.getenv("ELEVENLABS_VOICE_ID")
+        or os.getenv("ELEVEN_VOICE_ID")
+        or DEFAULT_ELEVEN_VOICE_ID
+    )
+
+
+def _get_eleven_tts_model() -> str:
+    return (
+        os.getenv("ELEVENLABS_TTS_MODEL")
+        or os.getenv("ELEVEN_TTS_MODEL")
+        or DEFAULT_ELEVEN_TTS_MODEL
+    )
 
 VIBEVOICE_TTS_ENABLED = os.getenv("VIBEVOICE_TTS_ENABLED", "false").lower() == "true"
 VIBEVOICE_TTS_MODEL = os.getenv("VIBEVOICE_TTS_MODEL", "microsoft/VibeVoice-Realtime-0.5B")
@@ -68,7 +95,7 @@ def synthesize(text: str) -> Tuple[bytes, str]:
         except Exception:
             pass  # Fall through to cloud providers
 
-    if ELEVEN_API_KEY:
+    if _get_eleven_api_key():
         try:
             return _elevenlabs(text)
         except Exception:
@@ -79,7 +106,7 @@ def synthesize(text: str) -> Tuple[bytes, str]:
 
     raise RuntimeError(
         "No TTS provider configured. Set VIBEVOICE_TTS_ENABLED=true, "
-        "ELEVEN_API_KEY, or OPENAI_API_KEY."
+        "ELEVENLABS_API_KEY, or OPENAI_API_KEY."
     )
 
 
@@ -188,14 +215,23 @@ def _resolve_voice_path() -> str:
 def _elevenlabs(text: str) -> Tuple[bytes, str]:
     import httpx
 
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVEN_VOICE_ID}"
+    api_key = _get_eleven_api_key()
+    if not api_key:
+        raise RuntimeError("ELEVENLABS_API_KEY is not configured.")
+
+    voice_id = _get_eleven_voice_id()
+    output_format = os.getenv("ELEVENLABS_OUTPUT_FORMAT", DEFAULT_ELEVEN_OUTPUT_FORMAT)
+    url = (
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+        f"?output_format={output_format}"
+    )
     headers = {
-        "xi-api-key": ELEVEN_API_KEY,
+        "xi-api-key": api_key,
         "Content-Type": "application/json",
     }
     payload = {
         "text": text,
-        "model_id": "eleven_monolingual_v1",
+        "model_id": _get_eleven_tts_model(),
         "voice_settings": {
             "stability": 0.5,
             "similarity_boost": 0.75,

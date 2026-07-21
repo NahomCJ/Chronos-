@@ -7,6 +7,12 @@ function getElevenApiKey() {
 function getElevenVoiceId() {
   return process.env.ELEVENLABS_VOICE_ID || process.env.ELEVEN_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
 }
+function getElevenTtsModel() {
+  return process.env.ELEVENLABS_TTS_MODEL || process.env.ELEVEN_TTS_MODEL || 'eleven_multilingual_v2';
+}
+function getElevenOutputFormat() {
+  return process.env.ELEVENLABS_OUTPUT_FORMAT || 'mp3_44100_128';
+}
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,6 +30,8 @@ module.exports = async function handler(req, res) {
   }
   const ELEVEN_API_KEY = getElevenApiKey();
   const ELEVEN_VOICE_ID = getElevenVoiceId();
+  const ELEVEN_TTS_MODEL = getElevenTtsModel();
+  const ELEVEN_OUTPUT_FORMAT = getElevenOutputFormat();
   if (!ELEVEN_API_KEY) {
     return res.status(503).json({ error: 'ElevenLabs API key is not configured on the server.' });
   }
@@ -32,7 +40,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE_ID}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(ELEVEN_VOICE_ID)}?output_format=${encodeURIComponent(ELEVEN_OUTPUT_FORMAT)}`,
       {
         method: 'POST',
         headers: {
@@ -42,7 +50,7 @@ module.exports = async function handler(req, res) {
         },
         body: JSON.stringify({
           text: trimmed,
-          model_id: 'eleven_monolingual_v1',
+          model_id: ELEVEN_TTS_MODEL,
           voice_settings: { stability: 0.5, similarity_boost: 0.75 },
         }),
       }
@@ -55,7 +63,7 @@ module.exports = async function handler(req, res) {
     }
 
     const arrayBuffer = await response.arrayBuffer();
-    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Type', response.headers.get('content-type') || 'audio/mpeg');
     res.setHeader('Content-Length', arrayBuffer.byteLength.toString());
     return res.status(200).send(Buffer.from(arrayBuffer));
   } catch (err) {
