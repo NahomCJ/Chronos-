@@ -76,7 +76,7 @@ class ApiClient {
     return _handleMapResponse(response);
   }
 
-  Future<Uint8List> postBytesWithBase(
+  Future<({Uint8List bytes, String? contentType})> postBytesWithBase(
       String base, String path, Map<String, dynamic> body) async {
     final response = await _client.post(
       Uri.parse('$base$path'),
@@ -84,7 +84,10 @@ class ApiClient {
       body: jsonEncode(body),
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.bodyBytes;
+      return (
+        bytes: response.bodyBytes,
+        contentType: response.headers['content-type']?.split(';').first.trim(),
+      );
     }
     throw Exception(
       _extractError(response) ?? 'Request failed (${response.statusCode})',

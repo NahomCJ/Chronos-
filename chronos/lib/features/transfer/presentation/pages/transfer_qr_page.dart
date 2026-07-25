@@ -305,7 +305,7 @@ class _TransferQrPageState extends State<TransferQrPage>
                       MobileScanner(
                         controller: _cameraCtrl!,
                         onDetect: _onDetect,
-                        errorBuilder: (_, error, __) => _CameraErrorView(
+                        errorBuilder: (_, error) => _CameraErrorView(
                             error: error.errorDetails?.message ?? 'Camera error'),
                       )
                     else

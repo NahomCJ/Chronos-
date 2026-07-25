@@ -52,6 +52,11 @@ coverage/
 **/ios/Flutter/App.framework/
 **/ios/Flutter/engine/
 **/ios/Runner.xcworkspace/
+!ios/Runner.xcworkspace/
+!ios/Runner.xcworkspace/contents.xcworkspacedata
+!ios/Runner.xcworkspace/xcshareddata/
+!ios/Runner.xcworkspace/xcshareddata/swiftpm/
+!ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 # Android
 **/android/local.properties

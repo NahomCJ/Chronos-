@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -64,16 +63,17 @@ class TtsService {
     _isSpeaking = true;
     try {
       final sentences = _splitSentences(trimmed);
-      Future<Uint8List?>? nextFetch = _fetchAudio(sentences.first);
+      Future<({Uint8List bytes, String? mimeType})?>? nextFetch =
+          _fetchAudio(sentences.first);
       for (var i = 0; i < sentences.length; i++) {
         if (myGen != _generation) return;
-        final bytes = await nextFetch;
+        final audio = await nextFetch;
         nextFetch = (i + 1 < sentences.length)
             ? _fetchAudio(sentences[i + 1])
             : null;
         if (myGen != _generation) return;
-        if (bytes != null && bytes.isNotEmpty) {
-          await _playBytes(bytes, myGen);
+        if (audio != null && audio.bytes.isNotEmpty) {
+          await _playBytes(audio.bytes, myGen, mimeType: audio.mimeType);
         } else {
           await _speakFallback(sentences[i], myGen);
         }
@@ -112,20 +112,20 @@ class TtsService {
     }
   }
 
-  Future<Uint8List?> _fetchAudio(String text) async {
+  Future<({Uint8List bytes, String? mimeType})?> _fetchAudio(String text) async {
     try {
       final api = GetIt.instance<ApiClient>();
       final trimmed = text.length > 480 ? text.substring(0, 480) : text;
-      final bytes = await api.postBytesWithBase(
+      final audio = await api.postBytesWithBase(
         _kVoiceBase,
         '/api/synthesize',
         {'text': trimmed},
       );
-      if (bytes.isEmpty) {
+      if (audio.bytes.isEmpty) {
         _reportError('Voice synthesis returned an empty response.');
         return null;
       }
-      return bytes;
+      return (bytes: audio.bytes, mimeType: audio.contentType);
     } catch (e) {
       _reportError(e.toString());
       return null;
@@ -138,14 +138,20 @@ class TtsService {
     onError?.call(message);
   }
 
-  Future<void> _playBytes(Uint8List bytes, int myGen) async {
+  Future<void> _playBytes(
+    Uint8List bytes,
+    int myGen, {
+    String? mimeType,
+  }) async {
     final completer = Completer<void>();
     _activeCompleter = completer;
     final sub = _player.onPlayerComplete.listen((_) {
       if (!completer.isCompleted) completer.complete();
     });
     try {
-      await _player.play(BytesSource(bytes));
+      await _player.play(
+        BytesSource(bytes, mimeType: mimeType ?? 'audio/mpeg'),
+      );
       await completer.future.timeout(
         const Duration(seconds: 20),
         onTimeout: () {},
