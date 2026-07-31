@@ -273,7 +273,7 @@ class _PantherAiPageState extends State<PantherAiPage>
               value: '\$420',
               accent: _green,
               icon: Icons.wallet_rounded,
-              onTap: () => context.push(RouteConstants.tickPayAi.toPath),
+              onTap: () => context.push(RouteConstants.budgetIntelligence.toPath),
             ),
           ),
           const SizedBox(width: 10),
@@ -705,6 +705,14 @@ class _PantherAiPageState extends State<PantherAiPage>
         changeColor: _green,
         onTap: () => context.push(RouteConstants.netWorthIntelligence.toPath),
       ),
+      _IntelData(
+        icon: Icons.receipt_long_rounded,
+        title: 'Taxes',
+        value: '\$4,200',
+        change: 'Apr 15 due',
+        changeColor: const Color(0xFFF59E0B),
+        onTap: () => context.push(RouteConstants.taxIntelligence.toPath),
+      ),
     ];
 
     final grow = [
@@ -723,25 +731,6 @@ class _PantherAiPageState extends State<PantherAiPage>
         change: '87% conf.',
         changeColor: _purple,
         onTap: () => context.push(RouteConstants.tradingAssistant.toPath),
-      ),
-    ];
-
-    final payments = [
-      _IntelData(
-        icon: Icons.payment_rounded,
-        title: 'TickPay',
-        value: '\$420 safe',
-        change: 'This month',
-        changeColor: _green,
-        onTap: () => context.push(RouteConstants.tickPayAi.toPath),
-      ),
-      _IntelData(
-        icon: Icons.receipt_long_rounded,
-        title: 'Taxes',
-        value: '\$4,200',
-        change: 'Apr 15 due',
-        changeColor: const Color(0xFFF59E0B),
-        onTap: () => context.push(RouteConstants.taxIntelligence.toPath),
       ),
     ];
 
@@ -786,8 +775,6 @@ class _PantherAiPageState extends State<PantherAiPage>
         _buildIntelSection('Money Health', moneyHealth),
         const SizedBox(height: 20),
         _buildIntelSection('Grow', grow),
-        const SizedBox(height: 20),
-        _buildIntelSection('Payments', payments),
       ],
     );
   }
