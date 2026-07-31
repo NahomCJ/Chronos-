@@ -58,3 +58,35 @@ class FinancialAdviceReport(BaseModel):
 
 class BatchFinancialAdviceReport(BaseModel):
     reports: list[FinancialAdviceReport]
+
+
+class FullPictureBrief(BaseModel):
+    safe_to_spend_today: float
+    monthly_leftover: float
+    savings_rate_pct: float
+    itemized_transaction_count: int
+    top_advice: Optional[str] = None
+    hidden_spend_note: Optional[str] = Field(
+        None, description="Set when a receipt line item surfaces spend a merchant-level charge alone wouldn't show."
+    )
+
+
+class ItemLevelCategory(BaseModel):
+    subcategory_id: str
+    subcategory_name: str
+    category_name: str
+    amount: float
+
+
+class FullFinancialPictureReport(BaseModel):
+    user_id: str
+    brief: FullPictureBrief = Field(
+        ..., description="Headline summary — the brief surface for a UI to show inline, not a new bulk category section."
+    )
+    item_level_breakdown: list[ItemLevelCategory] = Field(
+        default_factory=list,
+        description="Receipt line items rolled up by taxonomy subcategory — detail Plaid alone can't provide.",
+    )
+    full_report: FinancialAdviceReport = Field(
+        ..., description="Full-capability advice report for a surface that explicitly wants to drill in."
+    )
