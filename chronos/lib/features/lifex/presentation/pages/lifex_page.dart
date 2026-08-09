@@ -123,8 +123,9 @@ class _LifeXPageState extends State<LifeXPage>
   // ── Hero ─────────────────────────────────────────────────────────────────────
 
   Widget _buildHero(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
     return SizedBox(
-      height: 200,
+      height: 200 + topPadding,
       child: Stack(
         fit: StackFit.expand,
         children: [
