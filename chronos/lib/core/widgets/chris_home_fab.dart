@@ -51,6 +51,8 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   Completer<String>? _commandCompleter;
 
   Offset _offset = Offset.zero;
+  Offset _dragStartPointer = Offset.zero;
+  Offset _dragStartOffset = Offset.zero;
   late final AnimationController _glowCtrl;
   late final Animation<double> _glowAnim;
   final _timeNotifier = ValueNotifier<double>(0);
@@ -65,9 +67,10 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
-    _glowAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut),
-    );
+    // Linear triangle wave (0→1→0 over 1200ms), matching the reference
+    // component's hand-rolled `t < 0.5 ? t*2 : (1-t)*2` ramp exactly —
+    // no easing.
+    _glowAnim = Tween<double>(begin: 0.0, end: 1.0).animate(_glowCtrl);
     _timeTicker = createTicker((elapsed) {
       _timeNotifier.value = elapsed.inMicroseconds / 1e6;
     })..start();
@@ -372,16 +375,29 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     super.dispose();
   }
 
-  double get _painterSpeed {
-    switch (_state) {
-      case _ChrisState.listening:
-        return 0.16;
-      case _ChrisState.thinking:
-        return 0.22;
-      case _ChrisState.speaking:
-        return 0.45;
-      case _ChrisState.idle:
-        return 0.07;
+  // Binary idle/responding speed, matching the reference component's
+  // `respondingMode ? 0.45 : 0.07` exactly — any non-idle state reads as
+  // "responding" for animation purposes, same as its 3-second post-wake flag.
+  double get _painterSpeed => _isBusy ? 0.45 : 0.07;
+
+  // Mirrors the reference component's onPointerDown/Move/Up: drag follows
+  // the pointer via a translated offset, and only a sub-5px total movement
+  // counts as a tap (opens/engages) rather than a drag.
+  void _onPanDown(DragDownDetails d) {
+    _dragStartPointer = d.globalPosition;
+    _dragStartOffset = _offset;
+  }
+
+  void _onPanUpdate(DragUpdateDetails d) {
+    setState(() {
+      _offset = _dragStartOffset + (d.globalPosition - _dragStartPointer);
+    });
+  }
+
+  void _onPanEnd(DragEndDetails d) {
+    final moved = _offset - _dragStartOffset;
+    if (moved.dx.abs() < 5 && moved.dy.abs() < 5) {
+      (widget.onTap ?? () => _engage())();
     }
   }
 
@@ -390,8 +406,9 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     return Transform.translate(
       offset: _offset,
       child: GestureDetector(
-        onTap: widget.onTap ?? () => _engage(),
-        onPanUpdate: (d) => setState(() => _offset += d.delta),
+        onPanDown: _onPanDown,
+        onPanUpdate: _onPanUpdate,
+        onPanEnd: _onPanEnd,
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeNotifier, _glowAnim]),
           builder: (_, __) {
