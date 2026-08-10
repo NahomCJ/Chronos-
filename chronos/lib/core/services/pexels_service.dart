@@ -92,13 +92,16 @@ class PexelsVideoFile {
       );
 }
 
+// Proxied through the Vercel deployment's serverless function (api/pexels.js),
+// which holds the Pexels key as a Vercel env var (`PEXELS_API_KEY`) — same
+// reasoning as `_kChrisChatBase`/`_kVoiceBase` elsewhere in this app: keeps
+// the key server-side instead of shipping it inside the client binary.
+const _kPexelsBase = String.fromEnvironment(
+  'PEXELS_BASE_URL',
+  defaultValue: 'https://chronosapp-rosy.vercel.app',
+);
+
 class PexelsService {
-  static const _apiKey =
-      'i6ls93pflOynKXcjErnWareN6StxMqK5DWvnJo3m2u5zlkseJhsLSgun';
-  static const _baseUrl = 'https://api.pexels.com';
-
-  static Map<String, String> get _headers => {'Authorization': _apiKey};
-
   // ── CDN helpers (public, no auth needed) ─────────────────────────────────
   static String photoUrl(int id, {int w = 600, int h = 400}) =>
       'https://images.pexels.com/photos/$id/pexels-photo-$id.jpeg'
@@ -111,9 +114,13 @@ class PexelsService {
     String orientation = 'landscape',
   }) async {
     try {
-      final uri = Uri.parse(
-          '$_baseUrl/v1/search?query=${Uri.encodeComponent(query)}&per_page=$perPage&orientation=$orientation');
-      final res = await http.get(uri, headers: _headers);
+      final uri = Uri.parse('$_kPexelsBase/api/pexels').replace(queryParameters: {
+        'type': 'photos',
+        'query': query,
+        'per_page': '$perPage',
+        if (orientation.isNotEmpty) 'orientation': orientation,
+      });
+      final res = await http.get(uri);
       if (res.statusCode != 200) return [];
       final data = jsonDecode(res.body) as Map<String, dynamic>;
       return ((data['photos'] as List?) ?? [])
@@ -131,10 +138,13 @@ class PexelsService {
     String orientation = '',
   }) async {
     try {
-      var url = '$_baseUrl/videos/search?query=${Uri.encodeComponent(query)}&per_page=$perPage';
-      if (orientation.isNotEmpty) url += '&orientation=${Uri.encodeComponent(orientation)}';
-      final uri = Uri.parse(url);
-      final res = await http.get(uri, headers: _headers);
+      final uri = Uri.parse('$_kPexelsBase/api/pexels').replace(queryParameters: {
+        'type': 'videos',
+        'query': query,
+        'per_page': '$perPage',
+        if (orientation.isNotEmpty) 'orientation': orientation,
+      });
+      final res = await http.get(uri);
       if (res.statusCode != 200) return [];
       final data = jsonDecode(res.body) as Map<String, dynamic>;
       return ((data['videos'] as List?) ?? [])

@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/theme/text_theme.dart';
+import 'lifex_walkthrough_page.dart';
 
 class LifeXPage extends StatefulWidget {
   const LifeXPage({super.key});
@@ -44,6 +46,8 @@ class _LifeXPageState extends State<LifeXPage>
     _Module('Export', Icons.ios_share_rounded),
   ];
 
+  bool _hasCheckedWalkthrough = false;
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +55,28 @@ class _LifeXPageState extends State<LifeXPage>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
+    _checkWalkthroughStatus();
+  }
+
+  Future<void> _checkWalkthroughStatus() async {
+    if (_hasCheckedWalkthrough) return;
+    _hasCheckedWalkthrough = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWalkthrough =
+        prefs.getBool('lifex_walkthrough_seen') ?? false;
+    if (hasSeenWalkthrough || !mounted) return;
+
+    await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => LifexWalkthroughPage(
+          onDone: () async {
+            await prefs.setBool('lifex_walkthrough_seen', true);
+            if (context.mounted) Navigator.of(context).pop();
+          },
+        ),
+      ),
+    );
   }
 
   @override
