@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
@@ -12,6 +13,7 @@ import '../bloc/tickpay_account_state.dart';
 import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 import 'chris_shopping_page.dart';
+import 'tickpay_walkthrough_page.dart';
 
 // ---------------------------------------------------------------------------
 // Design constants
@@ -79,6 +81,35 @@ class TickPayDashboardPage extends StatefulWidget {
 }
 
 class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
+  bool _hasCheckedWalkthrough = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkWalkthroughStatus();
+  }
+
+  Future<void> _checkWalkthroughStatus() async {
+    if (_hasCheckedWalkthrough) return;
+    _hasCheckedWalkthrough = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWalkthrough =
+        prefs.getBool('tickpay_walkthrough_seen') ?? false;
+    if (hasSeenWalkthrough || !mounted) return;
+
+    await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (context) => TickpayWalkthroughPage(
+          onDone: () async {
+            await prefs.setBool('tickpay_walkthrough_seen', true);
+            if (context.mounted) Navigator.of(context).pop();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TickpayAccountCubit, TickpayAccountState>(

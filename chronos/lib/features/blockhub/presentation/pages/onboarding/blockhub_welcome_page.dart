@@ -15,22 +15,23 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
   late AnimationController _animCtrl;
   bool _videoReady = false;
 
-  static const _bg = Color(0xFF06060E);
-  static const _lightGray = Color(0xFFE5E5E5);
-  static const _nearWhite = Color(0xFFF8F8F8);
+  static const _bg = Color(0xFFF7F8FA);
+  static const _titleColor = Color(0xFF1A1A2E);
+  static const _subtitleColor = Color(0xFF6B7080);
+  static const _accent = Color(0xFF7C6EF0);
 
   static const _videoUrl =
       'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4';
 
   static const _features = [
     _Feature(Icons.currency_bitcoin_rounded, 'Crypto Trading',
-        'Buy, sell and swap digital assets instantly'),
+        'Buy, sell and swap digital assets instantly', Color(0xFFF7931A)),
     _Feature(Icons.collections_rounded, 'NFT Gallery',
-        'Mint, collect and trade unique digital art'),
+        'Mint, collect and trade unique digital art', Color(0xFFEC4899)),
     _Feature(Icons.psychology_rounded, 'Panther AI',
-        'AI-powered signals and market intelligence'),
+        'AI-powered signals and market intelligence', Color(0xFF7C6EF0)),
     _Feature(Icons.account_balance_wallet_rounded, 'Multi-Chain Wallet',
-        'Ethereum, Polygon, Arbitrum & Base support'),
+        'Ethereum, Polygon, Arbitrum & Base support', Color(0xFF3B82F6)),
   ];
 
   @override
@@ -63,74 +64,37 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-          // Video background
-          if (_videoReady)
-            AnimatedOpacity(
-              opacity: _videoReady ? 0.3 : 0.0,
-              duration: const Duration(milliseconds: 600),
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _videoCtrl.value.size.width,
-                  height: _videoCtrl.value.size.height,
-                  child: VideoPlayer(_videoCtrl),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildVideoCard(),
+                    const SizedBox(height: 28),
+                    _buildHero(),
+                    const SizedBox(height: 32),
+                    _buildFeatures(),
+                    const SizedBox(height: 28),
+                    _buildStatsRow(),
+                  ],
                 ),
               ),
             ),
-
-          // Gradient overlay
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  _bg.withValues(alpha: 0.7),
-                  _bg.withValues(alpha: 0.85),
-                  _bg,
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-          ),
-
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                _buildTopBar(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildHero(),
-                        const SizedBox(height: 40),
-                        _buildFeatures(),
-                        const SizedBox(height: 40),
-                        _buildStatsRow(),
-                      ],
-                    ),
-                  ),
-                ),
-                _buildBottomCta(context),
-              ],
-            ),
-          ),
-        ],
+            _buildBottomCta(context),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildTopBar(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 8, 12, 0),
       child: Row(
         children: [
           GestureDetector(
@@ -139,30 +103,21 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8),
+                ],
               ),
               child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white, size: 16),
+                  color: _titleColor, size: 16),
             ),
           ),
           const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _lightGray.withValues(alpha: 0.08),
-              border: Border.all(
-                  color: _lightGray.withValues(alpha: 0.2), width: 0.8),
-            ),
-            child: Icon(Icons.hub_rounded,
-                color: _lightGray.withValues(alpha: 0.8), size: 18),
-          ),
-          const SizedBox(width: 8),
-          const Text('BlockHub',
+          Text('BlockHub',
               style: TextStyle(
-                  color: Colors.white,
+                  color: _titleColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w800)),
           const Spacer(),
@@ -171,11 +126,84 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               context,
               MaterialPageRoute(builder: (_) => const RiskDisclosurePage()),
             ),
-            child: Text('Skip',
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45), fontSize: 13)),
+            child: const Text('Skip',
+                style: TextStyle(color: _subtitleColor, fontSize: 13)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildVideoCard() {
+    return AnimatedBuilder(
+      animation: _animCtrl,
+      builder: (_, __) => Opacity(
+        opacity: (_animCtrl.value * 2).clamp(0.0, 1.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: AspectRatio(
+            aspectRatio: 1.5,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(color: _accent.withValues(alpha: 0.08)),
+                AnimatedOpacity(
+                  opacity: _videoReady ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 400),
+                  child: _videoReady
+                      ? FittedBox(
+                          fit: BoxFit.cover,
+                          child: SizedBox(
+                            width: _videoCtrl.value.size.width,
+                            height: _videoCtrl.value.size.height,
+                            child: VideoPlayer(_videoCtrl),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                if (!_videoReady)
+                  const Center(
+                    child: Icon(Icons.currency_bitcoin_rounded,
+                        size: 64, color: Color(0x557C6EF0)),
+                  ),
+                Positioned(
+                  left: 16,
+                  top: 16,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 8),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle, color: _accent)),
+                        const SizedBox(width: 6),
+                        const Text('POWERED BY PANTHER AI',
+                            style: TextStyle(
+                                color: _accent,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.0)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -186,52 +214,22 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
       builder: (_, __) => Opacity(
         opacity: (_animCtrl.value * 2).clamp(0.0, 1.0),
         child: Transform.translate(
-          offset: Offset(0, 30 * (1 - _animCtrl.value)),
-          child: Column(
+          offset: Offset(0, 20 * (1 - _animCtrl.value)),
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _lightGray.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: _lightGray.withValues(alpha: 0.2), width: 0.8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _lightGray.withValues(alpha: 0.7))),
-                    const SizedBox(width: 6),
-                    Text('POWERED BY PANTHER AI',
-                        style: TextStyle(
-                            color: _lightGray.withValues(alpha: 0.85),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text('The crypto hub\nyou\'ve been\nwaiting for.',
+              Text('The crypto hub\nyou\'ve been\nwaiting for.',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 38,
+                      color: _titleColor,
+                      fontSize: 34,
                       fontWeight: FontWeight.w800,
-                      height: 1.1,
+                      height: 1.15,
                       letterSpacing: -0.5)),
-              const SizedBox(height: 16),
+              SizedBox(height: 14),
               Text(
                 'Trade crypto, collect NFTs and get AI-powered market intelligence — all in one place.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.55),
-                    fontSize: 15,
-                    height: 1.6),
+                    color: _subtitleColor, fontSize: 15, height: 1.6),
               ),
             ],
           ),
@@ -253,7 +251,7 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               child: Transform.translate(
                 offset: Offset(20 * (1 - t), 0),
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
+                  padding: const EdgeInsets.only(bottom: 12),
                   child: _buildFeatureTile(e.value),
                 ),
               ),
@@ -268,10 +266,11 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: Colors.white.withValues(alpha: 0.07), width: 0.8),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+        ],
       ),
       child: Row(
         children: [
@@ -280,10 +279,9 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _lightGray.withValues(alpha: 0.08),
+              color: f.color.withValues(alpha: 0.12),
             ),
-            child: Icon(f.icon,
-                color: _lightGray.withValues(alpha: 0.75), size: 20),
+            child: Icon(f.icon, color: f.color, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -292,19 +290,18 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               children: [
                 Text(f.title,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: _titleColor,
                         fontSize: 14,
-                        fontWeight: FontWeight.w600)),
+                        fontWeight: FontWeight.w700)),
                 const SizedBox(height: 3),
                 Text(f.subtitle,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
-                        fontSize: 12)),
+                    style: const TextStyle(
+                        color: _subtitleColor, fontSize: 12)),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios_rounded,
-              color: Colors.white.withValues(alpha: 0.2), size: 14),
+          const Icon(Icons.arrow_forward_ios_rounded,
+              color: Color(0xFFC7CBD4), size: 14),
         ],
       ),
     );
@@ -327,25 +324,24 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: _lightGray.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: _lightGray.withValues(alpha: 0.12), width: 0.8),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8),
+          ],
         ),
         child: Column(
           children: [
             Text(value,
-                style: TextStyle(
-                    color: _nearWhite,
+                style: const TextStyle(
+                    color: _titleColor,
                     fontSize: 14,
                     fontWeight: FontWeight.w800)),
             const SizedBox(height: 3),
             Text(label,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.4),
-                    fontSize: 9,
-                    height: 1.3)),
+                style: const TextStyle(
+                    color: _subtitleColor, fontSize: 9, height: 1.3)),
           ],
         ),
       ),
@@ -354,7 +350,7 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
 
   Widget _buildBottomCta(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
       child: Column(
         children: [
           GestureDetector(
@@ -366,13 +362,12 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                borderRadius: BorderRadius.circular(16),
+                color: _accent,
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      spreadRadius: 0,
+                      color: _accent.withValues(alpha: 0.32),
+                      blurRadius: 16,
                       offset: const Offset(0, 6)),
                 ],
               ),
@@ -385,10 +380,9 @@ class _BlockHubWelcomePageState extends State<BlockHubWelcomePage>
             ),
           ),
           const SizedBox(height: 12),
-          Text('By continuing you agree to our Terms & Privacy Policy',
+          const Text('By continuing you agree to our Terms & Privacy Policy',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.25), fontSize: 11)),
+              style: TextStyle(color: _subtitleColor, fontSize: 11)),
         ],
       ),
     );
@@ -399,5 +393,6 @@ class _Feature {
   final IconData icon;
   final String title;
   final String subtitle;
-  const _Feature(this.icon, this.title, this.subtitle);
+  final Color color;
+  const _Feature(this.icon, this.title, this.subtitle, this.color);
 }
