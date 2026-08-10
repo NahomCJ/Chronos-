@@ -375,13 +375,13 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   double get _painterSpeed {
     switch (_state) {
       case _ChrisState.listening:
-        return 0.10;
+        return 0.16;
       case _ChrisState.thinking:
-        return 0.12;
+        return 0.22;
       case _ChrisState.speaking:
-        return 0.18;
+        return 0.45;
       case _ChrisState.idle:
-        return 0.02;
+        return 0.07;
     }
   }
 
@@ -427,14 +427,18 @@ class _StrandsPainter extends CustomPainter {
     this.pulseValue = 0.0,
     this.speed = 0.02,
   });
-  static const _colors = [Color(0xFF7C3AED), Color(0xFF06B6D4)];
+  static const _colors = [
+    Color(0xFF3B82F6),
+    Color(0xFF7C3AED),
+    Color(0xFF100820),
+  ];
   static const _count = 4;
-  static const _amplitude = 1.9;
+  static const _amplitude = 1.3;
   static const _waviness = 2.0;
-  static const _thickness = 1.1;
+  static const _thickness = 0.7;
   static const _glow = 2.1;
   static const _taper = 0.5;
-  static const _spread = 1.05;
+  static const _spread = 0.7;
   static const _scale = 1.5;
   static const _intensity = 0.6;
 
@@ -495,7 +499,7 @@ class _StrandsPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = color.withValues(alpha: 0.22)
+          ..color = color.withValues(alpha: 0.20)
           ..strokeWidth = baseStroke * 7 * _glow * pulseBoost
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
@@ -505,7 +509,7 @@ class _StrandsPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = color.withValues(alpha: 0.60)
+          ..color = color.withValues(alpha: 0.55)
           ..strokeWidth = baseStroke * 2.5
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
@@ -515,7 +519,7 @@ class _StrandsPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = color.withValues(alpha: 0.90)
+          ..color = color.withValues(alpha: 0.88)
           ..strokeWidth = baseStroke
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round,
