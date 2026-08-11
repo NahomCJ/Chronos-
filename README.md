@@ -212,19 +212,17 @@ Chronos Full Code/
 
 ---
 
-## Deployment (AWS Elastic Beanstalk)
+## Deployment
 
-### Backend (v22)
+**[PLANNED]** Migrating off AWS Elastic Beanstalk — new host TBD. Build steps are unchanged:
 ```bash
 cd Chronos-Backend-
 npx prisma generate
 npm run build
-# ZIP and deploy — see Chronos-Backend-/CLAUDE.md for full steps
-aws elasticbeanstalk update-environment --environment-name chronos-backend-env --version-label "chronos-v22"
 ```
+See [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#hosting--migrating-off-aws-elastic-beanstalk) for current hosting status.
 
-### Environment Variables on EB
-Set via AWS Console → Elastic Beanstalk → Configuration → Environment properties:
+### Required environment variables
 - `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`
 - `ANTHROPIC_API_KEY` — Panther AI chat
 - `SMTP_*` — Email notifications

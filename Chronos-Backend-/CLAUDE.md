@@ -267,124 +267,28 @@ PAXOS_ENV=sandbox                  # or production
 
 ---
 
-## AWS Deployment Setup
+## Hosting — Migrating Off AWS Elastic Beanstalk
 
-### Infrastructure
+**[PLANNED]** Both apps currently still run on their old AWS Elastic Beanstalk environments (URLs below), but EB is being retired as the deploy target — the AWS Console/CLI overhead (S3 zip uploads, `.ebextensions`, IAM, t3.micro timeouts, RDS auto-stop) turned every deploy into a debugging session. New hosting TBD; this doc will get a real "Deploying" section once that's decided.
 
-#### Main API
-- **App**: AWS Elastic Beanstalk (`chronos-backend-env`)
-  - URL: `http://chronos.us-east-1.elasticbeanstalk.com`
-  - Platform: Node.js 20 on 64-bit Amazon Linux 2023
-  - Instance: t3.micro (free tier)
-  - Region: us-east-1
-  - Account ID: 551451910710
-  - Current version: `chronos-v21`
+**What was removed from this repo**: `.ebextensions/`, the root `Procfile`, and the `zip:blockhub` build script (`scripts/zip-blockhub.py`) — all EB-specific packaging, no longer needed. `npm run build` / `npm start` (main API) and `npm run build:blockhub` (BlockHub) are unaffected; they never depended on those files, EB's buildpack did.
 
-#### BlockHub
-- **App**: AWS Elastic Beanstalk (`blockhub-env`)
-  - URL: `http://blockhub-env.us-east-1.elasticbeanstalk.com`
-  - Application name: `chronos-blockhub`
-  - Environment ID: `e-xyivdycae4`
-  - Platform: Node.js 24 on 64-bit Amazon Linux 2023
-  - Instance: t3.micro (free tier)
-  - Region: us-east-1
-  - Current version: `blockhub-v2`
-
-#### Shared
-- **Database**: AWS RDS PostgreSQL (`chronosdb`)
-  - Endpoint: `chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432`
-  - DB name: `chronosdb`, Username: `chronos`, Password: `chronosdbrds`
-  - Instance: db.t4g.micro (free tier), Public access: Yes
-- **S3 bucket**: `elasticbeanstalk-us-east-1-551451910710`
-
-### IAM / AWS CLI
-- AWS CLI installed via pip: `C:\Users\Nahom\AppData\Roaming\Python\Python313\Scripts\aws`
-- Credentials saved to `~/.aws/credentials` (persistent)
-- Add to PATH: `$env:PATH += ";C:\Users\Nahom\AppData\Roaming\Python\Python313\Scripts"`
-
----
-
-### Deploying the Main API
-
-```bash
-# 1. Build
-npx prisma generate
-npm run build
-
-# 2. ZIP (must use Python — PowerShell/tar break Linux paths)
-python -c "
-import zipfile, os
-files = [('dist', True), ('node_modules', True), ('package.json', False), ('package-lock.json', False), ('Procfile', False), ('prisma', True), ('.ebextensions', True)]
-with zipfile.ZipFile('chronos-deploy.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-    for name, is_dir in files:
-        if is_dir:
-            for root, dirs, fs in os.walk(name):
-                for f in fs:
-                    fp = os.path.join(root, f)
-                    zf.write(fp, fp.replace(os.sep, '/'))
-        else:
-            zf.write(name, name)
-print('Done!')
-"
-
-# 3. Upload + deploy
-aws s3 cp chronos-deploy.zip s3://elasticbeanstalk-us-east-1-551451910710/chronos-backend/chronos-vXX.zip
-aws elasticbeanstalk create-application-version --application-name chronos-backend --version-label "chronos-vXX" --source-bundle S3Bucket="elasticbeanstalk-us-east-1-551451910710",S3Key="chronos-backend/chronos-vXX.zip"
-aws elasticbeanstalk update-environment --environment-name chronos-backend-env --version-label "chronos-vXX"
-```
-
----
-
-### Deploying BlockHub
-
-```bash
-# 1. Build
-npx tsc -p tsconfig.blockhub.json
-
-# 2. ZIP (custom Procfile injected inline — do NOT use the root Procfile)
-python -c "
-import zipfile, os
-items = [('dist-blockhub', True), ('node_modules', True), ('package.json', False), ('package-lock.json', False), ('prisma', True), ('.ebextensions', True)]
-with zipfile.ZipFile('blockhub-deploy.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-    zf.writestr('Procfile', 'web: node dist-blockhub/main.js\n')
-    for name, is_dir in items:
-        if is_dir:
-            for root, dirs, files in os.walk(name):
-                dirs[:] = [d for d in dirs if d not in ['.cache', '.git']]
-                for f in files:
-                    fp = os.path.join(root, f)
-                    zf.write(fp, fp.replace(os.sep, '/'))
-        else:
-            if os.path.exists(name):
-                zf.write(name, name)
-print('Done!')
-"
-
-# 3. Upload to S3 (upload manually via console if on slow connection — file is ~300 MB)
-aws s3 cp blockhub-deploy.zip s3://elasticbeanstalk-us-east-1-551451910710/chronos-blockhub/blockhub-vXX.zip
-
-# 4. Deploy
-aws elasticbeanstalk create-application-version --application-name chronos-blockhub --version-label "blockhub-vXX" --source-bundle S3Bucket="elasticbeanstalk-us-east-1-551451910710",S3Key="chronos-blockhub/blockhub-vXX.zip"
-aws elasticbeanstalk update-environment --environment-name blockhub-env --version-label "blockhub-vXX"
-```
-
-**Key difference from main API**: The Procfile is written inline into the ZIP (`web: node dist-blockhub/main.js`), not from the root `Procfile` file (which points to `dist/server.js`).
-
----
+#### Still-live infrastructure (until migration)
+- **Main API**: `chronos.us-east-1.elasticbeanstalk.com` — EB app `chronos-backend`, env `chronos-backend-env`
+- **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`
+- **Database**: AWS RDS PostgreSQL (`chronosdb`) — `chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432`, not part of the EB migration, stays put for now
 
 ### Schema Changes
-Run locally — never on EB instance (too slow):
+Run locally, against the live RDS instance:
 ```powershell
 $env:DATABASE_URL="postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb"
 npx prisma db push --accept-data-loss
 ```
 
 ### Key Config Files
-- `Procfile` — `web: node dist/server.js` (main API only)
-- `.ebextensions/01_deploy.config` — sets `NODE_ENV=production` (used by both apps)
 - `tsconfig.json` — main API build config
 - `tsconfig.blockhub.json` — BlockHub build config, outputs to `dist-blockhub/`
-- `prisma/schema.prisma` — `binaryTargets = ["native", "rhel-openssl-3.0.x"]` (critical for Linux EB)
+- `prisma/schema.prisma` — `binaryTargets = ["native", "rhel-openssl-3.0.x"]` (was needed for Linux EB; keep until the new host's platform is confirmed)
 
 ---
 
@@ -439,7 +343,9 @@ User reported every single chat/voice query returned the same generic failure, a
 
 ---
 
-## Deployment Status — BOTH LIVE ✅
+## Legacy EB Deployment Status (pending migration)
+
+Still accurate as of the last EB deploy — kept for reference while the new host is decided. Do not deploy new versions this way; see [Hosting — Migrating Off AWS Elastic Beanstalk](#hosting--migrating-off-aws-elastic-beanstalk) above.
 
 ### Main API
 **Current version**: chronos-v21  

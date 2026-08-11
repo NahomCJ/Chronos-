@@ -197,10 +197,10 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                           if (slices.isNotEmpty)
                             Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.all(18),
+                              padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(16),
                                 border: Border.all(color: PantherColors.border),
                                 boxShadow: [
                                   BoxShadow(
@@ -224,7 +224,7 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                             style: TextStyles.titleMedium.copyWith(
                               color: PantherColors.textPrimary,
                               fontWeight: FontWeight.w700,
-                              fontSize: 17,
+                              fontSize: 15,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -261,10 +261,10 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
     final statusColor = _statusColor(plan.status);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: PantherColors.border),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 3)),
@@ -281,11 +281,11 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                 style: TextStyles.titleMedium.copyWith(
                   color: PantherColors.textPrimary,
                   fontWeight: FontWeight.w700,
-                  fontSize: 17,
+                  fontSize: 15,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(50),
@@ -331,12 +331,13 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                   : const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 18),
               label: Text(
                 'Invest Next Round Now',
-                style: TextStyles.labelLarge.copyWith(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                style: TextStyles.labelLarge.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: PantherColors.brand,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                minimumSize: const Size(double.infinity, 44),
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
               ),
@@ -353,13 +354,14 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                       : () => context.read<AutoInvestCubit>().togglePause(plan.id, isPaused: isPaused),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: PantherColors.textPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    minimumSize: const Size(double.infinity, 44),
                     side: const BorderSide(color: PantherColors.border),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                   ),
                   child: Text(
                     isPaused ? 'Resume' : 'Pause',
-                    style: TextStyles.labelLarge.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: TextStyles.labelLarge.copyWith(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -370,13 +372,14 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                     onPressed: actionLoading ? null : () => _confirmCancel(context, plan.id),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: PantherColors.negative,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      minimumSize: const Size(double.infinity, 44),
                       side: BorderSide(color: PantherColors.negative.withValues(alpha: 0.4)),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                     ),
                     child: Text(
                       'Cancel',
-                      style: TextStyles.labelLarge.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: TextStyles.labelLarge.copyWith(fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -405,7 +408,7 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],
@@ -427,15 +430,15 @@ class _ExecutionHistoryRow extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: PantherColors.border),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 18),
+          Icon(icon, color: color, size: 16),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

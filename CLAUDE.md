@@ -54,6 +54,8 @@ CHRONOS is a fintech super-app. Four services, one repo. The backend handles all
 
 ## Live Production URLs
 
+> **[MIGRATING]** Moving off AWS Elastic Beanstalk — new host TBD. The URLs below are still what's live today; deploy tooling for EB has been removed from this repo (see [Deployment](#deployment)).
+
 | Service | URL | Health Check |
 |---------|-----|-------------|
 | Chronos Backend | http://chronos.us-east-1.elasticbeanstalk.com | `GET /health` → `{"status":"ok"}` |
@@ -254,17 +256,9 @@ npm run prisma:studio
 
 ## Deployment
 
-Both backend services deploy to AWS Elastic Beanstalk. Full deploy instructions in [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#aws-deployment-setup).
+**[PLANNED]** AWS Elastic Beanstalk is being retired as the deploy target — too much operational overhead for what it bought us. New hosting TBD; both backend services (Chronos Backend, BlockHub) currently still run on their old EB environments (see [Live Production URLs](#live-production-urls)) until the move is done.
 
-| Service | App Name | Environment | Platform |
-|---------|----------|-------------|----------|
-| Chronos Backend | `chronos-backend` | `chronos-backend-env` | Node.js 20 / Amazon Linux 2023 |
-| BlockHub | `chronos-blockhub` | `blockhub-env` | Node.js 24 / Amazon Linux 2023 |
-
-AWS credentials: `~/.aws/credentials` (persistent). Add to PATH if needed:
-```powershell
-$env:PATH += ";C:\Users\Nahom\AppData\Roaming\Python\Python313\Scripts"
-```
+EB-specific deploy tooling (`.ebextensions/`, `Procfile`, `zip:blockhub`) has been removed from `Chronos-Backend-/`. History of the old EB setup and the bugs it caused is kept in [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#bugs-fixed) for reference — do not resurrect that tooling for the new host without a good reason.
 
 ---
 
