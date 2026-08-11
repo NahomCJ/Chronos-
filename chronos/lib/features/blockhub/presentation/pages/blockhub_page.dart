@@ -344,38 +344,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF59E0B).withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.45)),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                    Icon(Icons.currency_bitcoin,
-                                        color: Color(0xFFF59E0B), size: 12),
-                                    SizedBox(width: 5),
-                                    Text('CRYPTO & NFT MARKETPLACE',
-                                        style: TextStyle(
-                                            color: Color(0xFFF59E0B),
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.8)),
-                                  ],
-                                ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text('Your Digital\nAsset Hub',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.1)),
                           const SizedBox(height: 20),
                           // Wallet boxes
                           Row(
