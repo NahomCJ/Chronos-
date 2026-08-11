@@ -12,31 +12,29 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
   String? _selectedNetwork;
   String? _selectedWalletType;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
-  static const _amber = Color(0xFFF59E0B);
+  static const _bg = Color(0xFFF7F8FA);
+  static const _titleColor = Color(0xFF1A1A2E);
+  static const _subtitleColor = Color(0xFF6B7080);
+  static const _border = Color(0xFFEEEEEE);
 
   static const _networks = [
-    _Network('ethereum', 'Ethereum', 'ETH', Color(0xFF627EEA),
+    _Network('ethereum', 'Ethereum', Color(0xFF627EEA),
         Icons.currency_exchange_rounded, 'Largest DeFi ecosystem'),
-    _Network('polygon', 'Polygon', 'MATIC', Color(0xFF8247E5),
-        Icons.hexagon_rounded, 'Low fees, fast transactions'),
-    _Network('arbitrum', 'Arbitrum', 'ARB', Color(0xFF12AAFF),
-        Icons.bolt_rounded, 'Ethereum Layer 2 scaling'),
-    _Network('base', 'Base', 'BASE', Color(0xFF0052FF),
-        Icons.layers_rounded, 'Coinbase\'s L2 network'),
+    _Network('polygon', 'Polygon', Color(0xFF8247E5), Icons.hexagon_rounded,
+        'Low fees, fast'),
+    _Network('arbitrum', 'Arbitrum', Color(0xFF12AAFF), Icons.bolt_rounded,
+        'Layer 2 scaling'),
+    _Network('base', 'Base', Color(0xFF0052FF), Icons.layers_rounded,
+        'Coinbase\'s L2'),
   ];
 
   static const _walletTypes = [
     _WalletType('create', Icons.add_circle_outline_rounded, 'Create New Wallet',
-        'Generate a fresh wallet with a seed phrase you control',
-        Color(0xFF22C55E)),
+        'Fresh wallet with a seed phrase you control', Color(0xFF22C55E)),
     _WalletType('import', Icons.download_rounded, 'Import Existing Wallet',
-        'Connect using your seed phrase or private key',
-        Color(0xFF3B82F6)),
+        'Connect using your seed phrase or private key', Color(0xFF3B82F6)),
     _WalletType('connect', Icons.link_rounded, 'Connect External Wallet',
-        'Link MetaMask, Trust Wallet or WalletConnect',
-        Color(0xFFF59E0B)),
+        'Link MetaMask, Trust Wallet or WalletConnect', Color(0xFFF59E0B)),
   ];
 
   void _proceed() {
@@ -51,32 +49,28 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      body: Stack(
-          children: [
-            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
+      body: SafeArea(
         child: Column(
           children: [
             _buildHeader(context),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildIntro(),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 18),
                     _sectionLabel('Select Network'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     _buildNetworkGrid(),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 18),
                     _sectionLabel('Wallet Setup'),
-                    const SizedBox(height: 12),
-                    ..._walletTypes.map((w) => _buildWalletOption(w)),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
+                    ..._walletTypes.map(_buildWalletOption),
+                    const SizedBox(height: 14),
                     _buildSecurityNote(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -85,14 +79,12 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
           ],
         ),
       ),
-          ],
-        ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
           GestureDetector(
@@ -101,12 +93,11 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
               padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+                color: Colors.white,
+                border: Border.all(color: _border, width: 0.8),
               ),
               child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white, size: 16),
+                  color: _titleColor, size: 16),
             ),
           ),
           const SizedBox(width: 14),
@@ -116,13 +107,11 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
               children: [
                 const Text('Setup Wallet',
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                        color: _titleColor,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700)),
-                Text('Step 3 of 3',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.35),
-                        fontSize: 11)),
+                const Text('Step 3 of 3',
+                    style: TextStyle(color: _subtitleColor, fontSize: 11)),
               ],
             ),
           ),
@@ -134,9 +123,7 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
                 width: i == 2 ? 18 : 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: i == 2
-                      ? _amber
-                      : Colors.white.withValues(alpha: 0.2),
+                  color: i == 2 ? _titleColor : const Color(0xFFDADEE6),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
@@ -153,17 +140,14 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
       children: [
         const Text('Set up your\nwallet.',
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
+                color: _titleColor,
+                fontSize: 26,
                 fontWeight: FontWeight.w800,
                 height: 1.1)),
-        const SizedBox(height: 10),
-        Text(
-          'Choose the blockchain network and how you\'d like to manage your wallet.',
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 14,
-              height: 1.5),
+        const SizedBox(height: 8),
+        const Text(
+          'Choose a network and how you\'d like to manage your wallet.',
+          style: TextStyle(color: _subtitleColor, fontSize: 13, height: 1.45),
         ),
       ],
     );
@@ -171,8 +155,8 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
 
   Widget _sectionLabel(String text) {
     return Text(text,
-        style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.5),
+        style: const TextStyle(
+            color: _subtitleColor,
             fontSize: 12,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8));
@@ -183,10 +167,10 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.6,
-      children: _networks.map((n) => _buildNetworkTile(n)).toList(),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      childAspectRatio: 1.9,
+      children: _networks.map(_buildNetworkTile).toList(),
     );
   }
 
@@ -196,46 +180,51 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
       onTap: () => setState(() => _selectedNetwork = n.id),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? n.color.withValues(alpha: 0.1) : _card,
+          color: isSelected ? n.color.withValues(alpha: 0.08) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected
-                ? n.color.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.07),
-            width: isSelected ? 1.5 : 0.8,
+            color: isSelected ? n.color.withValues(alpha: 0.5) : _border,
+            width: isSelected ? 1.4 : 0.8,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                Icon(n.icon, color: n.color, size: 18),
-                const Spacer(),
-                if (isSelected)
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: n.color),
-                    child: const Icon(Icons.check_rounded,
-                        color: Colors.white, size: 10),
-                  ),
-              ],
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: n.color.withValues(alpha: 0.12)),
+              child: Icon(n.icon, color: n.color, size: 16),
             ),
-            const Spacer(),
-            Text(n.name,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
-            Text(n.tagline,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.35),
-                    fontSize: 9,
-                    height: 1.3)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(n.name,
+                      style: const TextStyle(
+                          color: _titleColor,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700)),
+                  Text(n.tagline,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: _subtitleColor, fontSize: 9.5)),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: n.color),
+                child: const Icon(Icons.check_rounded,
+                    color: Colors.white, size: 10),
+              ),
           ],
         ),
       ),
@@ -248,59 +237,53 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
       onTap: () => setState(() => _selectedWalletType = w.id),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? w.color.withValues(alpha: 0.08) : _card,
+          color: isSelected ? w.color.withValues(alpha: 0.06) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected
-                ? w.color.withValues(alpha: 0.4)
-                : Colors.white.withValues(alpha: 0.07),
-            width: isSelected ? 1.5 : 0.8,
+            color: isSelected ? w.color.withValues(alpha: 0.4) : _border,
+            width: isSelected ? 1.4 : 0.8,
           ),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: w.color.withValues(alpha: 0.12),
               ),
-              child: Icon(w.icon, color: w.color, size: 18),
+              child: Icon(w.icon, color: w.color, size: 16),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(w.title,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 3),
+                          color: _titleColor,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 2),
                   Text(w.subtitle,
-                      style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          fontSize: 11,
-                          height: 1.3)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: _subtitleColor, fontSize: 10.5)),
                 ],
               ),
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+            Container(
               width: 20,
               height: 20,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color:
-                    isSelected ? w.color : Colors.white.withValues(alpha: 0.05),
+                color: isSelected ? w.color : Colors.transparent,
                 border: Border.all(
-                    color: isSelected
-                        ? w.color
-                        : Colors.white.withValues(alpha: 0.15),
+                    color: isSelected ? w.color : const Color(0xFFD5D8DE),
                     width: 1.5),
               ),
               child: isSelected
@@ -316,25 +299,22 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
 
   Widget _buildSecurityNote() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF22C55E).withValues(alpha: 0.05),
+        color: const Color(0xFF22C55E).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: const Color(0xFF22C55E).withValues(alpha: 0.15), width: 0.8),
+            color: const Color(0xFF22C55E).withValues(alpha: 0.18), width: 0.8),
       ),
       child: Row(
         children: [
           const Icon(Icons.lock_outline_rounded,
-              color: Color(0xFF22C55E), size: 16),
+              color: Color(0xFF22C55E), size: 15),
           const SizedBox(width: 10),
-          Expanded(
+          const Expanded(
             child: Text(
-              'Your keys, your crypto. Chronos never stores your seed phrase or private keys.',
-              style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 11,
-                  height: 1.45),
+              'Your keys, your crypto. Chronos never stores your seed phrase.',
+              style: TextStyle(color: _subtitleColor, fontSize: 11, height: 1.4),
             ),
           ),
         ],
@@ -344,7 +324,7 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
 
   Widget _buildBottomBar(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
       child: GestureDetector(
         onTap: _canProceed ? _proceed : null,
         child: AnimatedContainer(
@@ -352,23 +332,13 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: _canProceed ? _amber : Colors.white.withValues(alpha: 0.05),
+            color: _canProceed ? _titleColor : const Color(0xFFE9EBEF),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: _canProceed
-                ? [
-                    BoxShadow(
-                        color: _amber.withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4))
-                  ]
-                : [],
           ),
           child: Text('Connect Wallet',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: _canProceed
-                      ? Colors.black
-                      : Colors.white.withValues(alpha: 0.3),
+                  color: _canProceed ? Colors.white : _subtitleColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w800)),
         ),
@@ -380,12 +350,10 @@ class _SetupWalletPageState extends State<SetupWalletPage> {
 class _Network {
   final String id;
   final String name;
-  final String symbol;
   final Color color;
   final IconData icon;
   final String tagline;
-  const _Network(
-      this.id, this.name, this.symbol, this.color, this.icon, this.tagline);
+  const _Network(this.id, this.name, this.color, this.icon, this.tagline);
 }
 
 class _WalletType {

@@ -25,11 +25,11 @@ const _slides = [
         'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4',
   ),
   WalkthroughSlide(
-    title: 'Powered by\nPanther AI',
-    subtitle: 'AI-powered signals and market\nintelligence, built in.',
+    title: 'Automated\nTrading',
+    subtitle: 'Smart signals and portfolio automation —\nlet Panther AI work the market for you.',
     icon: Icons.psychology_rounded,
     accentColor: Color(0xFF7C6EF0),
-    tags: ['AI Signals', 'Market Intel'],
+    tags: ['Auto-Trade', 'AI Signals'],
     pexelsQuery: 'purple light waves abstract technology',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
