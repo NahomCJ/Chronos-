@@ -293,7 +293,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    height: 150,
+                    height: 64,
                     child: IgnorePointer(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -421,7 +421,7 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           const SizedBox(height: 8),
                           // Reserves room below the action buttons for the
                           // fade strip so it doesn't wash over them.
-                          const SizedBox(height: 100),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
