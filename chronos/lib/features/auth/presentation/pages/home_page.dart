@@ -139,8 +139,10 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
   }) {
     final double heroHeight = (isSmallScreen ? 356 : 410) * scale;
     // Extra strip below the quick-action row where the hero image dissolves
-    // into the page background, instead of stopping at a hard edge.
-    final double fadeHeight = 110 * scale;
+    // into the page background, instead of stopping at a hard edge. Uses
+    // textScale (clamped to 1.1) rather than the unclamped `scale`, which
+    // blows up on wide viewports and was turning this into a huge gap.
+    final double fadeHeight = 48 * textScale;
     final double imageHeight = heroHeight + fadeHeight;
     const Color pageBg = Color(0xFFF5F5F5);
 
