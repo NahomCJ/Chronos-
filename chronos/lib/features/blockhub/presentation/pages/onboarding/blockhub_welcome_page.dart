@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/feature_walkthrough_page.dart';
 import 'risk_disclosure_page.dart';
 
+const _walkthroughVideo = 'assets/videos/blockhub_walkthrough.mp4';
+
 const _slides = [
   WalkthroughSlide(
     title: 'Crypto trading,\nmade simple',
@@ -13,6 +15,7 @@ const _slides = [
     pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4',
+    localVideoAsset: _walkthroughVideo,
   ),
   WalkthroughSlide(
     title: 'Mint, collect\nand trade NFTs',
@@ -23,6 +26,7 @@ const _slides = [
     pexelsQuery: 'digital art neon abstract cinematic',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4',
+    localVideoAsset: _walkthroughVideo,
   ),
   WalkthroughSlide(
     title: 'Automated\nTrading',
@@ -33,6 +37,7 @@ const _slides = [
     pexelsQuery: 'purple light waves abstract technology',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
+    localVideoAsset: _walkthroughVideo,
   ),
   WalkthroughSlide(
     title: 'One wallet,\nevery chain',
@@ -43,6 +48,7 @@ const _slides = [
     pexelsQuery: 'mobile wallet payment technology',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/4109600/4109600-hd_1080_1920_30fps.mp4',
+    localVideoAsset: _walkthroughVideo,
   ),
 ];
 
