@@ -99,6 +99,14 @@ enum RouteConstants {
   lifexAiInsights,
   lifexExport,
   unitBanking,
+  // Auto-Invest with Chris
+  autoInvestIntro,
+  autoInvestGoals,
+  autoInvestAmount,
+  autoInvestPreview,
+  autoInvestReview,
+  autoInvestSuccess,
+  autoInvestDashboard,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -299,6 +307,20 @@ extension RouteConstantsX on RouteConstants {
         return '/history';
       case RouteConstants.unitBanking:
         return '/unit-banking';
+      case RouteConstants.autoInvestIntro:
+        return '/panther-ai/auto-invest';
+      case RouteConstants.autoInvestGoals:
+        return '/panther-ai/auto-invest/goals';
+      case RouteConstants.autoInvestAmount:
+        return '/panther-ai/auto-invest/amount';
+      case RouteConstants.autoInvestPreview:
+        return '/panther-ai/auto-invest/preview';
+      case RouteConstants.autoInvestReview:
+        return '/panther-ai/auto-invest/review';
+      case RouteConstants.autoInvestSuccess:
+        return '/panther-ai/auto-invest/success';
+      case RouteConstants.autoInvestDashboard:
+        return '/panther-ai/auto-invest/dashboard';
     }
   }
 
@@ -499,6 +521,20 @@ extension RouteConstantsX on RouteConstants {
         return 'history';
       case RouteConstants.unitBanking:
         return 'unit-banking';
+      case RouteConstants.autoInvestIntro:
+        return 'auto-invest-intro';
+      case RouteConstants.autoInvestGoals:
+        return 'auto-invest-goals';
+      case RouteConstants.autoInvestAmount:
+        return 'auto-invest-amount';
+      case RouteConstants.autoInvestPreview:
+        return 'auto-invest-preview';
+      case RouteConstants.autoInvestReview:
+        return 'auto-invest-review';
+      case RouteConstants.autoInvestSuccess:
+        return 'auto-invest-success';
+      case RouteConstants.autoInvestDashboard:
+        return 'auto-invest-dashboard';
     }
   }
 }

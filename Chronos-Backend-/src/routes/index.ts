@@ -35,6 +35,7 @@ import notificationRoutes from "../modules/core/notifications/notifications.rout
 import onboardingRoutes from "../modules/core/onboarding/onboarding.routes";
 import unitRoutes from "../modules/core/unit/unit.routes";
 import userProfileRoutes from "../modules/user/user-profile.routes";
+import { AutoInvestModule } from "../modules/investing/auto-invest/auto-invest.module";
 
 const router = Router();
 
@@ -42,6 +43,7 @@ const router = Router();
 router.use("/v1/auth", authRoutes);
 router.use("/v1/transfer", transferRoutes);
 router.use("/v1/crypto", cryptoRoutes);
+AutoInvestModule(router); // mounts /v1/auto-invest
 router.use('/core/accounts', accountRoutes);
 
 // router.use("/v1/cards", cardRoutes);

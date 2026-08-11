@@ -44,7 +44,7 @@ lib/
     ├── exchange/     currency exchange (6 screens)
     ├── wallet/       wallet + ATM
     ├── blockhub/     crypto + NFT + 5-step onboarding
-    ├── panther_ai/   AI financial intelligence (10+ pages)
+    ├── panther_ai/   AI financial intelligence (10+ pages) + Auto-Invest with Chris (7-screen wizard + dashboard, `presentation/pages/auto_invest/`)
     ├── tickpay/      BNPL shopping platform (20+ screens)
     ├── lifex/        life coaching dashboard (12 sub-pages)
     └── profile/      settings, password, notifications
