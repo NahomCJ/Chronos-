@@ -452,7 +452,7 @@ class _StrandsPainter extends CustomPainter {
   static const _count = 4;
   static const _amplitude = 1.3;
   static const _waviness = 2.0;
-  static const _thickness = 0.7;
+  static const _thickness = 1.0;
   static const _glow = 2.1;
   static const _taper = 0.5;
   static const _spread = 0.7;
