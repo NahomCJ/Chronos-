@@ -212,10 +212,12 @@ page has a live chat UI wired to `/insights`, `/chat`, or `/weekly-plan` yet
 ```env
 NODE_ENV=production
 PORT=8080
-DATABASE_URL=postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb
+DATABASE_URL=postgresql://<user>:<password>@<project>-pooler.<region>.aws.neon.tech/chronosdb?sslmode=require
+DIRECT_URL=postgresql://<user>:<password>@<project>.<region>.aws.neon.tech/chronosdb?sslmode=require
 JWT_SECRET=<64-byte hex string>
 DEPOSIT_MIN_AMOUNT=1
 ```
+`DATABASE_URL` is Neon's pooled (PgBouncer) connection string — used by the app at runtime. `DIRECT_URL` is the unpooled connection — Prisma needs it for `migrate`/`db push`. Both come from the Neon dashboard → project → Connect.
 
 ### Main API — Optional (app boots and degrades gracefully without these)
 ```env
@@ -254,8 +256,9 @@ SENTRY_DSN=
 ```env
 NODE_ENV=production
 JWT_SECRET=<same or separate 64-byte hex string>
-DATABASE_URL=postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb
+DATABASE_URL=postgresql://<user>:<password>@<project>-pooler.<region>.aws.neon.tech/chronosdb?sslmode=require
 ```
+Same Neon database as the main API (see above) — shared schema.
 
 ### BlockHub — Optional
 ```env
@@ -276,14 +279,14 @@ PAXOS_ENV=sandbox                  # or production
 #### Still-live infrastructure (until migration)
 - **Main API**: `chronos.us-east-1.elasticbeanstalk.com` — EB app `chronos-backend`, env `chronos-backend-env`
 - **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`
-- **Database**: AWS RDS PostgreSQL (`chronosdb`) — `chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432`, not part of the EB migration, stays put for now
+- **Database**: **[LIVE]** Neon Postgres (`chronosdb`) — replaced AWS RDS as the database of record. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (unpooled, for migrations) come from the Neon dashboard. `DATABASE_URL` also needs to be set as an env var on whatever hosts the Main API and BlockHub (currently their EB environments; add it to Vercel env vars too for anything deployed there).
 
 ### Schema Changes
-Run locally, against the live RDS instance:
-```powershell
-$env:DATABASE_URL="postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb"
+Run locally, with `.env` pointed at Neon (`DATABASE_URL` + `DIRECT_URL` set — see [Environment Variables](#environment-variables) above):
+```bash
 npx prisma db push --accept-data-loss
 ```
+`db push`/`migrate` automatically use `DIRECT_URL` (the unpooled connection) per `directUrl` in `prisma/schema.prisma` — Neon's pooled connection (PgBouncer) doesn't support the session-level commands Prisma Migrate needs.
 
 ### Key Config Files
 - `tsconfig.json` — main API build config

@@ -34,8 +34,8 @@ CHRONOS is a fintech super-app. Four services, one repo. The backend handles all
            │
            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     AWS RDS PostgreSQL                          │
-│        chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com      │
+│                        NEON POSTGRES                             │
+│                    (database: chronosdb)                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -99,10 +99,12 @@ npm run dev
 ```env
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb
+DATABASE_URL=postgresql://<user>:<password>@<project>-pooler.<region>.aws.neon.tech/chronosdb?sslmode=require
+DIRECT_URL=postgresql://<user>:<password>@<project>.<region>.aws.neon.tech/chronosdb?sslmode=require
 JWT_SECRET=<run: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))">
 DEPOSIT_MIN_AMOUNT=1
 ```
+Both connection strings come from the Neon dashboard → project → Connect. `DATABASE_URL` is the pooled (PgBouncer) string the app uses at runtime; `DIRECT_URL` is the unpooled string Prisma needs for `migrate`/`db push`.
 
 Optional keys (app boots and degrades gracefully without them): `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, `SMTP_*`, `PLAID_*`, `FCM_SERVICE_ACCOUNT`, `REDIS_HOST`.
 
@@ -227,23 +229,20 @@ flutter run
 
 ## Database
 
-Shared PostgreSQL on AWS RDS. Both Chronos Backend and BlockHub connect to it.
+**[LIVE]** Shared Neon Postgres (`chronosdb`). Both Chronos Backend and BlockHub connect to it. Replaced AWS RDS — see [Chronos-Backend-/CLAUDE.md#hosting--migrating-off-aws-elastic-beanstalk](Chronos-Backend-/CLAUDE.md#hosting--migrating-off-aws-elastic-beanstalk).
 
-```
-Host:     chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com
-Port:     5432
-DB:       chronosdb
-User:     chronos
-```
+Get connection strings from the Neon dashboard → project → Connect:
+- `DATABASE_URL` — pooled (PgBouncer) connection, used by the app at runtime
+- `DIRECT_URL` — unpooled connection, used by Prisma for `migrate`/`db push`
+
+Both require `?sslmode=require`. Set both as env vars everywhere the backend or BlockHub runs (local `.env`, EB, and Vercel if deployed there).
 
 **Schema changes — run locally, never on EB:**
-```powershell
+```bash
 cd "Chronos-Backend-"
-$env:DATABASE_URL="postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb"
+# .env must have DATABASE_URL + DIRECT_URL pointed at Neon
 npx prisma db push --accept-data-loss
 ```
-
-**If RDS is offline (auto-stops after inactivity):** AWS Console → RDS → `chronosdb` → Actions → Start. Takes ~2 min.
 
 **Prisma Studio (visual DB browser):**
 ```bash
