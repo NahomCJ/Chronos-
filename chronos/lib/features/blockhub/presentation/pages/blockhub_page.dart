@@ -267,13 +267,11 @@ class _BlockHubPageState extends State<BlockHubPage> {
         child: Column(
           children: [
             // ── Hero Photo (header → wallet boxes → nav icons → action btns) ──
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(28),
-                bottomRight: Radius.circular(28),
-              ),
-              child: Stack(
-                children: [
+            // No rounded corners on purpose — clipping a soft gradient
+            // into a curve leaves a visible seam right at the arc, so
+            // this bleeds full width and dissolves into the section below.
+            Stack(
+              children: [
                   Positioned.fill(
                     child: CachedNetworkImage(
                       imageUrl:
@@ -289,12 +287,13 @@ class _BlockHubPageState extends State<BlockHubPage> {
                     child: Container(color: Colors.black.withValues(alpha: 0.20)),
                   ),
                   // Soft fade into the light section below, instead of a
-                  // hard edge where the hero image meets it.
+                  // hard edge where the hero image meets it. Extra stops
+                  // ease the curve so it reads as a dissolve, not a ramp.
                   Positioned(
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    height: 96,
+                    height: 150,
                     child: IgnorePointer(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -303,8 +302,12 @@ class _BlockHubPageState extends State<BlockHubPage> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
+                              Color(0x00F5F7FA),
+                              Color(0x80F5F7FA),
+                              Color(0xE6F5F7FA),
                               Color(0xFFF5F7FA),
                             ],
+                            stops: [0.0, 0.15, 0.55, 0.82, 1.0],
                           ),
                         ),
                       ),
@@ -418,14 +421,13 @@ class _BlockHubPageState extends State<BlockHubPage> {
                           const SizedBox(height: 8),
                           // Reserves room below the action buttons for the
                           // fade strip so it doesn't wash over them.
-                          const SizedBox(height: 64),
+                          const SizedBox(height: 100),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
 
             // ── Light-theme bottom section ─────────────────────────────────
             Container(
