@@ -272,40 +272,42 @@ PAXOS_ENV=sandbox                  # or production
 
 ## Hosting — Migrating Off AWS Elastic Beanstalk
 
-**[IN PROGRESS]** Moving both apps off AWS Elastic Beanstalk to Vercel (the AWS Console/CLI overhead — S3 zip uploads, `.ebextensions`, IAM, t3.micro timeouts, RDS auto-stop — turned every deploy into a debugging session; database already moved to Neon, see above).
+**[IN PROGRESS]** Moving off AWS Elastic Beanstalk (the AWS Console/CLI overhead — S3 zip uploads, `.ebextensions`, IAM, t3.micro timeouts, RDS auto-stop — turned every deploy into a debugging session). Database already moved to Neon. Main API moves to **Vercel** (serverless — see below). BlockHub moves to **Railway** (a persistent host, not Vercel) — its Socket.io gateway (real-time price/portfolio push) and Bull/Redis minting queue both need a long-running process; splitting BlockHub's HTTP routes onto Vercel while those ran elsewhere would mean the trade/mint code (which calls the gateway directly) and the socket connections it's pushing to live in two different processes — that needs Redis pub/sub wired between them to work at all, real redesign work, not just config. Running the whole app on Railway avoids that: it's the same `main.ts` that already runs on EB today, just relocated, zero behavior change.
 
 **What was removed from this repo**: `.ebextensions/`, the root `Procfile`, and the `zip:blockhub` build script (`scripts/zip-blockhub.py`) — all EB-specific packaging, no longer needed. `npm run build` / `npm start` (main API) and `npm run build:blockhub` (BlockHub) are unaffected; they never depended on those files, EB's buildpack did.
 
 #### Still-live infrastructure (until migration completes)
 - **Main API**: `chronos.us-east-1.elasticbeanstalk.com` — EB app `chronos-backend`, env `chronos-backend-env`. **[READY]** to redeploy on Vercel — see below.
-- **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`. **[READY]** to redeploy on Vercel, with known feature gaps (real-time push, NFT minting) — see below. Public base path changes from its own domain to `<vercel-domain>/blockhub/api/v1/...` — the Flutter app's BlockHub client and the Postman collection both need their base URL updated once this is live.
-- **Database**: **[LIVE]** Neon Postgres (`chronosdb`) — replaced AWS RDS as the database of record. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (unpooled, for migrations) come from the Neon dashboard. `DATABASE_URL` also needs to be set as an env var on whatever hosts the Main API and BlockHub.
+- **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`. **[READY]** to redeploy on Railway — see below. Gets its own Railway domain (or a custom domain), same shape as today's EB URL — the Flutter app's BlockHub client and the Postman collection just need their base URL swapped to it, no path changes.
+- **Database**: **[LIVE]** Neon Postgres (`chronosdb`) — replaced AWS RDS as the database of record. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (unpooled, for migrations) come from the Neon dashboard. `DATABASE_URL` needs to be set as an env var on both the Main API (Vercel) and BlockHub (Railway).
 
-### Vercel Deployment
+### Vercel Deployment — Main API
 
-Main API and BlockHub deploy as **one Vercel project**, Root Directory = `Chronos-Backend-` (they share `node_modules`/`package.json`, so they can't cleanly be two separate Vercel projects without a bigger monorepo restructure). `Chronos-Backend-/vercel.json` routes between them by path prefix:
+`api/index.ts` exports the Express `app` (from `src/app.ts`) directly as Vercel's serverless handler; an Express app is already a `(req, res)` function, no adapter needed. `src/server.ts` (which calls `app.listen()`) is untouched and still used for local dev / any non-serverless host — `api/index.ts` must never call `.listen()`. `vercel.json` rewrites every path to that one function, so Express's own internal routing (the `/api` prefix, `/health`) resolves exactly as it does on EB:
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }] }
+```
+
+**Vercel project settings**: Root Directory = `Chronos-Backend-`. `package.json`'s `"postinstall": "prisma generate"` ensures the Prisma client exists before the function bundles. Required env vars: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET`, `NODE_ENV=production`, plus whichever optional ones from [Environment Variables](#environment-variables) above are in use (`ANTHROPIC_API_KEY`, `SMTP_*`, etc.).
+
+**Known gap**: 6 `node-cron` jobs (LifeX education/financial/vision digests, TickPay reminders — see `src/modules/lifex/modules/{education,financial,vision}/*` and `src/modules/bnpl/jobs/tickpay.scheduler.ts`) rely on an in-process timer that never fires on serverless (each invocation is stateless and short-lived). They silently stop running on Vercel. Fix is to convert them to [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs) (a `vercel.json` `crons` array hitting a small API route on schedule, auth'd via a shared secret) — not done yet.
+
+**`public/` (bundled Flutter web build, ~37MB)**: not included in the Vercel function bundle — it's read via `fs`/`path` at runtime, not `import`, so Vercel's bundler doesn't trace it, and it's also listed in `.vercelignore`. `src/app.ts`'s SPA-fallback route checks `fs.existsSync` and returns a plain 404 JSON when `public/` isn't present, instead of crashing — the real Flutter web app already deploys separately (`chronos/vercel.json`), so this fallback only mattered on EB where the whole repo (`public/` included) was deployed together.
+
+### Railway Deployment — BlockHub
+
+BlockHub deploys as the **whole app** (HTTP + Socket.io gateway + Bull queue processor), unchanged from how it runs on EB today — `main.ts` still calls `app.listen()`, no serverless adapter, no code changes needed for this. `Chronos-Backend-/railway.json` configures the build/start commands for Railway's Nixpacks builder:
 ```json
 {
-  "buildCommand": "npx tsc -p tsconfig.blockhub.json",
-  "rewrites": [
-    { "source": "/blockhub/(.*)", "destination": "/api/blockhub" },
-    { "source": "/(.*)", "destination": "/api/index" }
-  ]
+  "build": { "builder": "NIXPACKS", "buildCommand": "npm run build:blockhub" },
+  "deploy": { "startCommand": "node dist-blockhub/main.js" }
 }
 ```
-Everything under `/blockhub/*` goes to BlockHub; everything else goes to the Main API — so the Main API's own paths (`/api/v1/auth/login`, `/health`, etc.) are unchanged from EB.
+(Field names are Railway's documented config shape as of this writing — not verified against a live deploy from this environment, since no Railway access exists here. If a build/deploy step rejects a field, check it against Railway's current `railway.json` schema.)
 
-**Main API** — `api/index.ts` exports the Express `app` (from `src/app.ts`) directly as Vercel's serverless handler; an Express app is already a `(req, res)` function, no adapter needed. `src/server.ts` (which calls `app.listen()`) is untouched and still used for local dev / any non-serverless host — `api/index.ts` must never call `.listen()`.
+**Railway service settings** (dashboard, not repo config): Root Directory = `Chronos-Backend-` (BlockHub shares `node_modules`/`package.json` with the Main API — it isn't a standalone package, so Railway needs to install from there). Add a **Redis** instance (Railway has a one-click Redis plugin) and point `REDIS_URL` at it — required for the Bull minting queue; without it `BullModule.forRootAsync` falls back to `redis://localhost:6379`, which won't exist on Railway either unless Redis is provisioned. Required env vars: `DATABASE_URL` (Neon), `JWT_SECRET` (same value as the Main API's, so tokens issued by one are valid on the other, unless you want them separate), `REDIS_URL`, `NODE_ENV=production`, plus BlockHub-specific ones from [Environment Variables](#environment-variables) above (`ALLOWED_ORIGIN`, `PAXOS_*`). Railway injects `PORT` automatically — `main.ts` already reads `process.env.PORT ?? 3000`, no change needed.
 
-**BlockHub** — `api/blockhub.ts` imports from `dist-blockhub/serverless.js` (**compiled**, not the raw TS source in `src/modules/blockhub/src/serverless.ts`). This matters: NestJS's DI resolves constructor params from decorator metadata that `tsc` emits correctly but esbuild (what Vercel's zero-config TS bundler uses) does not — pointing the Vercel function straight at the decorated TS source throws a false `UndefinedDependencyException` at boot (confirmed by reproducing it locally: same error from `main.ts` run via `tsx`, gone once run from a real `tsc -p tsconfig.blockhub.json` build). `vercel.json`'s `buildCommand` compiles `dist-blockhub/` before the function bundler runs, so it imports already-compiled JS with the metadata baked in as plain `Reflect.metadata()` calls, which esbuild passes through untouched. `src/modules/blockhub/src/serverless.ts` mirrors `main.ts`'s bootstrap (same pipes/filters/CORS) but calls `app.init()` instead of `app.listen()`, sets the global prefix to `blockhub/api/v1` (matching the public path under this rewrite scheme, vs. `main.ts`'s plain `api/v1`), and caches the resulting Express instance at module scope so a warm container reuses it instead of rebuilding the whole Nest app per request.
-
-**Vercel project settings**: Root Directory = `Chronos-Backend-`. `package.json`'s `"postinstall": "prisma generate"` ensures the Prisma client exists before either function bundles/compiles. Required env vars: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET`, `NODE_ENV=production`, plus whichever optional ones from [Environment Variables](#environment-variables) above are in use (`ANTHROPIC_API_KEY`, `SMTP_*`, BlockHub's `REDIS_URL`/`PAXOS_*`, etc.).
-
-**Known gaps**:
-- 6 `node-cron` jobs (LifeX education/financial/vision digests, TickPay reminders — see `src/modules/lifex/modules/{education,financial,vision}/*` and `src/modules/bnpl/jobs/tickpay.scheduler.ts`) rely on an in-process timer that never fires on serverless (each invocation is stateless and short-lived). They silently stop running on Vercel. Fix is to convert them to [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs) (a `vercel.json` `crons` array hitting a small API route on schedule, auth'd via a shared secret) — not done yet.
-- BlockHub's **Socket.io gateways** (`src/gateway/blockhub.gateway.ts`, `src/nft/websocket/nft-event.gateway.ts`) don't work — a serverless invocation can't hold a persistent WebSocket connection, so live price/portfolio push silently stops reaching clients. No crash, just no real-time updates.
-- BlockHub's **Bull minting queue** (`src/nft/minting/`, Redis-backed) can enqueue jobs from a request, but nothing ever processes them without an always-on worker — minting jobs will sit in `waiting` state forever. Needs either an external worker (e.g. a small Railway/Render process just running the Bull processor against the same Redis) or a redesign (synchronous minting instead of queued) before this is usable in production. **Not fixed yet** — deliberate tradeoff to get everything off AWS EB now; revisit before relying on minting in production.
-- `public/` (bundled Flutter web build, ~37MB, Main API only): not included in the Vercel function bundle — it's read via `fs`/`path` at runtime, not `import`, so Vercel's bundler doesn't trace it, and it's also listed in `.vercelignore`. `src/app.ts`'s SPA-fallback route checks `fs.existsSync` and returns a plain 404 JSON when `public/` isn't present, instead of crashing — the real Flutter web app already deploys separately (`chronos/vercel.json`), so this fallback only mattered on EB where the whole repo (`public/` included) was deployed together.
+**Why not Vercel for BlockHub**: confirmed by testing — pointing a Vercel-style serverless function straight at BlockHub's TypeScript source throws a false `UndefinedDependencyException` at boot, because NestJS's DI relies on decorator metadata that `tsc` emits correctly but esbuild (Vercel's zero-config TS bundler) does not (reproduced the same error running `main.ts` via `tsx`, confirmed gone with a real `tsc` build). That's fixable (compile first, bundle the compiled output) but moot here — even with that fixed, Socket.io and Bull still don't work split across a serverless HTTP layer and a separate worker without the Redis-pub/sub redesign mentioned above. Running the full app on Railway sidesteps both problems at once.
 
 ### Schema Changes
 Run locally, with `.env` pointed at Neon (`DATABASE_URL` + `DIRECT_URL` set — see [Environment Variables](#environment-variables) above):
@@ -374,9 +376,9 @@ User reported every single chat/voice query returned the same generic failure, a
 
 Discovered while preparing the Main API for Vercel: `src/app.ts`'s SPA-fallback catch-all used `app.get("*", ...)`, which is Express 4 syntax. Express 5's router (`path-to-regexp` v8) rejects a bare `*` outright — `PathError: Missing parameter name at index 1: *` — and crashes the process on startup, before the server ever binds a port. No `package-lock.json` is committed, so this always resolves to the latest `path-to-regexp` on any fresh `npm install`, meaning it wasn't limited to this task's environment. Fixed by switching to Express 5's named-wildcard syntax: `app.get("/*splat", ...)`. Verified: server boots, `GET /health` returns `{"status":"ok"}`, and an unmatched route correctly falls through to the SPA/404 handler.
 
-### 17. BlockHub's NestJS DI broke under esbuild (Vercel's bundler) — false "undefined dependency"
+### 17. BlockHub's NestJS DI breaks under esbuild — false "undefined dependency" (kept for reference, not the active deploy path)
 
-Also discovered while preparing BlockHub for Vercel: pointing a serverless function straight at BlockHub's TypeScript source threw `UndefinedDependencyException: Nest can't resolve dependencies of the MintingService (?, ...)` at boot — reproduced with plain `tsx` too, so it's an esbuild/decorator-metadata gap, not a real DI bug (confirmed clean boot via the actual `tsc -p tsconfig.blockhub.json` build). See [Vercel Deployment](#hosting--migrating-off-aws-elastic-beanstalk) above for the fix (`api/blockhub.ts` imports the compiled `dist-blockhub/` output, not the source).
+Discovered while first evaluating BlockHub for Vercel (before settling on Railway — see [Hosting](#hosting--migrating-off-aws-elastic-beanstalk) above): pointing a serverless-style bundler straight at BlockHub's TypeScript source throws `UndefinedDependencyException: Nest can't resolve dependencies of the MintingService (?, ...)` at boot — reproduced with plain `tsx` too, so it's an esbuild/decorator-metadata gap, not a real DI bug (confirmed clean boot via the actual `tsc -p tsconfig.blockhub.json` build). Not relevant to BlockHub's current Railway deployment (which runs the real `tsc` build, no esbuild involved) — documented here in case anyone points a zero-config TS bundler at BlockHub's source again.
 
 ---
 
