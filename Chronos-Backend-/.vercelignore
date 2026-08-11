@@ -1,6 +1,5 @@
 public
 dist
-dist-blockhub
 coverage
 docs
 src/**/*.spec.ts
