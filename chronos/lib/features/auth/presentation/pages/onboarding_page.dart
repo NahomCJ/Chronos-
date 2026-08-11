@@ -28,7 +28,7 @@ const _slides = [
     tags: ['BNPL', 'Shopping', 'Smart Limits'],
     pexelsQuery: 'smartphone mobile payment e-commerce',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
+        'https://videos.pexels.com/video-files/7534961/7534961-hd_1080_1920_25fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Powered by\nPanther AI',
@@ -38,7 +38,7 @@ const _slides = [
     tags: ['AI Insights', 'Predictions', 'Chris'],
     pexelsQuery: 'artificial intelligence technology neon',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/17144481/17144481-hd_1080_1920_30fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Trade beyond\nthe basics',
@@ -48,7 +48,7 @@ const _slides = [
     tags: ['Crypto', 'NFTs', 'BlockHub'],
     pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
+        'https://videos.pexels.com/video-files/6120121/6120121-hd_1080_1920_30fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Your Life,\nOrganized',
@@ -56,9 +56,10 @@ const _slides = [
     icon: Icons.self_improvement_rounded,
     accentColor: Color(0xFF14B8A6),
     tags: ['LifeX', 'Wellness', 'Growth'],
-    pexelsQuery: 'yoga wellness lifestyle nature park',
+    // No yoga imagery, per this repo's spiritual/wellness content rule.
+    pexelsQuery: 'peaceful nature sunrise mountains',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/5895563/5895563-hd_1080_1920_25fps.mp4',
   ),
 ];
 

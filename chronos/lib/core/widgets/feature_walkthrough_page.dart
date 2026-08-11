@@ -74,6 +74,10 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
     _controller = PageController();
     // video_player throws MEDIA_ERR_SRC_NOT_SUPPORTED in Chrome — stay on
     // the gradient/icon placeholder there instead of attempting playback.
+    // Re-verified: no video_player Windows-desktop implementation is
+    // registered either (pubspec.lock has android/avfoundation/web only),
+    // so there's currently no way to preview real playback except on an
+    // actual iOS/Android device or emulator.
     if (!kIsWeb) {
       _loadVideo(0);
       _fetchPexelsVideos();
@@ -128,7 +132,8 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
           ? VideoPlayerController.asset(localAsset)
           : VideoPlayerController.networkUrl(Uri.parse(_videoUrls[index]));
       await ctrl.initialize();
-    } catch (_) {
+    } catch (e) {
+      debugPrint('WALKTHROUGH VIDEO LOAD FAILED (index $index): $e');
       ctrl?.dispose();
       return;
     }
