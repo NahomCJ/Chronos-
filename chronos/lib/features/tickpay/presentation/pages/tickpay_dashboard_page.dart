@@ -10,6 +10,7 @@ import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
 import '../bloc/tickpay_account_cubit.dart';
 import '../bloc/tickpay_account_state.dart';
+import '../constants/tickpay_assets.dart';
 import '../constants/tickpay_colors.dart';
 import '../utils/tickpay_media.dart';
 import 'chris_shopping_page.dart';
@@ -19,9 +20,14 @@ import 'tickpay_walkthrough_page.dart';
 // Design constants
 // ---------------------------------------------------------------------------
 
+// Bundled locally — logo.clearbit.com's free logo API was discontinued, so
+// any brand relying on it here falls through to a generic Material icon.
+const _kLocalBrandLogos = <String, String>{
+  'amazon': TickpayAssets.amazon,
+  'nike': TickpayAssets.nike,
+};
+
 const _kBrandLogos = <String, String>{
-  'amazon':   'https://logo.clearbit.com/amazon.com',
-  'nike':     'https://logo.clearbit.com/nike.com',
   'apple':    'https://logo.clearbit.com/apple.com',
   'ikea':     'https://logo.clearbit.com/ikea.com',
   'samsung':  'https://logo.clearbit.com/samsung.com',
@@ -32,14 +38,34 @@ const _kBrandLogos = <String, String>{
 // Always use white background so dark/coloured logos are visible
 Widget _brandBadge(String brand, [Color bg = Colors.white]) {
   final key = brand.toLowerCase();
-  final entry = _kBrandLogos.entries.firstWhere(
+  final localEntry = _kLocalBrandLogos.entries.firstWhere(
     (e) => key.contains(e.key),
     orElse: () => const MapEntry('', ''),
   );
-  final url = entry.value;
+  Widget image;
+  if (localEntry.value.isNotEmpty) {
+    image = Image.asset(
+      localEntry.value,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => _brandFallbackIcon(key),
+    );
+  } else {
+    final url = _kBrandLogos.entries
+        .firstWhere((e) => key.contains(e.key), orElse: () => const MapEntry('', ''))
+        .value;
+    image = url.isNotEmpty
+        ? CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.contain,
+            placeholder: (_, __) => _brandFallbackIcon(key),
+            errorWidget: (_, __, ___) => _brandFallbackIcon(key),
+          )
+        : _brandFallbackIcon(key);
+  }
   return Container(
     width: 44,
     height: 44,
+    padding: EdgeInsets.all(localEntry.value.isNotEmpty ? 6 : 0),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(10),
@@ -48,15 +74,8 @@ Widget _brandBadge(String brand, [Color bg = Colors.white]) {
       ],
     ),
     child: ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: url.isNotEmpty
-          ? CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.contain,
-              placeholder: (_, __) => _brandFallbackIcon(key),
-              errorWidget: (_, __, ___) => _brandFallbackIcon(key),
-            )
-          : _brandFallbackIcon(key),
+      borderRadius: BorderRadius.circular(6),
+      child: image,
     ),
   );
 }

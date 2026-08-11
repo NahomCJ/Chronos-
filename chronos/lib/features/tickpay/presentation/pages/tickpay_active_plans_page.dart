@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../constants/tickpay_assets.dart';
 import '../constants/tickpay_colors.dart';
 
 class TickPayActivePlansPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
       tagBg: TickpayColors.chipElectronicsBg,
       icon: Icons.shopping_cart_outlined,
       iconColor: Color(0xFFFF9900),
+      logoAsset: TickpayAssets.amazon,
       paid: 3,
       total: 4,
       amount: '\$3xx',
@@ -36,6 +38,7 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
       tagBg: TickpayColors.chipFashionBg,
       icon: Icons.check_circle_outline,
       iconColor: Colors.white,
+      logoAsset: TickpayAssets.nike,
       paid: 2,
       total: 3,
       amount: '\$450',
@@ -271,15 +274,36 @@ class _TickPayActivePlansPageState extends State<TickPayActivePlansPage> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: plan.iconColor.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(plan.icon, color: plan.iconColor, size: 20),
-                ),
+                plan.logoAsset != null
+                    ? Container(
+                        width: 42,
+                        height: 42,
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: TickpayColors.divider),
+                        ),
+                        child: Image.asset(
+                          plan.logoAsset!,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(
+                              plan.icon,
+                              color: plan.iconColor == Colors.white
+                                  ? TickpayColors.textPrimaryLight
+                                  : plan.iconColor,
+                              size: 20),
+                        ),
+                      )
+                    : Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: plan.iconColor.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(plan.icon, color: plan.iconColor, size: 20),
+                      ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -482,6 +506,7 @@ class _Plan {
   final String brand, tag, amount, totalAmount, paidAmount, remaining, nextPayment;
   final Color tagColor, tagBg, iconColor;
   final IconData icon;
+  final String? logoAsset;
   final int paid, total;
   final double progress;
 
@@ -492,6 +517,7 @@ class _Plan {
     required this.tagBg,
     required this.icon,
     required this.iconColor,
+    this.logoAsset,
     required this.paid,
     required this.total,
     required this.amount,
