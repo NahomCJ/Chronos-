@@ -91,6 +91,7 @@ class _PantherAiPageState extends State<PantherAiPage>
               SliverToBoxAdapter(child: _buildHeader()),
               SliverToBoxAdapter(child: _buildOrbHero()),
               SliverToBoxAdapter(child: _buildRightNowBand()),
+              SliverToBoxAdapter(child: _buildAutoInvestCard()),
               SliverToBoxAdapter(child: _buildStoriesSection()),
               SliverToBoxAdapter(child: _buildLifeXCard()),
               SliverToBoxAdapter(child: _buildQuickActions()),
@@ -298,6 +299,76 @@ class _PantherAiPageState extends State<PantherAiPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Entry point for "Auto-Invest with Chris". Always routes to the intro
+  /// page — that page itself checks for an existing plan on load and
+  /// redirects straight to the dashboard state so a returning user never
+  /// sees the pitch twice.
+  Widget _buildAutoInvestCard() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      child: GestureDetector(
+        onTap: () => context.push(RouteConstants.autoInvestIntro.toPath),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [_purple, _purple.withValues(alpha: 0.75)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: _purple.withValues(alpha: 0.28),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(Icons.auto_graph_rounded, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Auto-Invest with Chris',
+                      style: TextStyles.titleMedium.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'Diversify automatically across crypto, stocks & ETFs.',
+                      style: TextStyles.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+            ],
+          ),
+        ),
       ),
     );
   }
