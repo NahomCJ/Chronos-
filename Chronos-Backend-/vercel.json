@@ -1,5 +1,7 @@
 {
+  "buildCommand": "npx tsc -p tsconfig.blockhub.json",
   "rewrites": [
+    { "source": "/blockhub/(.*)", "destination": "/api/blockhub" },
     { "source": "/(.*)", "destination": "/api/index" }
   ]
 }
