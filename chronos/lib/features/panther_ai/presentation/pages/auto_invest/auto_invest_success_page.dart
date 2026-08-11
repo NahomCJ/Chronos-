@@ -40,8 +40,8 @@ class AutoInvestSuccessPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 32),
                   Container(
-                    width: 72,
-                    height: 72,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
                       color: (hasFailure ? PantherColors.warning : PantherColors.positive)
                           .withValues(alpha: 0.15),
@@ -54,7 +54,7 @@ class AutoInvestSuccessPage extends StatelessWidget {
                     child: Icon(
                       hasFailure ? Icons.warning_amber_rounded : Icons.check_circle_outline,
                       color: hasFailure ? PantherColors.warning : PantherColors.positive,
-                      size: 36,
+                      size: 30,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -63,7 +63,7 @@ class AutoInvestSuccessPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyles.titleLarge.copyWith(
                       color: PantherColors.textPrimary,
-                      fontSize: 22,
+                      fontSize: 19,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -83,10 +83,10 @@ class AutoInvestSuccessPage extends StatelessWidget {
                   const SizedBox(height: 28),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: PantherColors.border),
                       boxShadow: [
                         BoxShadow(
@@ -129,14 +129,15 @@ class AutoInvestSuccessPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PantherColors.brand,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 46),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                       ),
                       child: Text(
                         'View Dashboard',
                         style: TextStyles.labelLarge.copyWith(
-                          fontSize: 15,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -151,7 +152,8 @@ class AutoInvestSuccessPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: PantherColors.textPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 46),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
@@ -161,7 +163,7 @@ class AutoInvestSuccessPage extends StatelessWidget {
                       child: Text(
                         'Done',
                         style: TextStyles.labelLarge.copyWith(
-                          fontSize: 15,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w600,
                           color: PantherColors.textPrimary,
                         ),
@@ -192,7 +194,7 @@ class _ExecutionRow extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: PantherColors.cardAlt,
         borderRadius: BorderRadius.circular(12),
@@ -200,7 +202,7 @@ class _ExecutionRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 18),
+          Icon(icon, color: color, size: 16),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

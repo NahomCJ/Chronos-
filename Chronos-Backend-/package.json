@@ -9,7 +9,6 @@
     "dev": "nodemon --watch src --ext ts,js --exec tsx src/server.ts",
     "build": "tsc",
     "build:blockhub": "tsc -p tsconfig.blockhub.json",
-    "zip:blockhub": "python scripts/zip-blockhub.py",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",

@@ -113,20 +113,21 @@ class AutoInvestReviewConfirmPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PantherColors.brand,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 46),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                       ),
                       child: isLoading
                           ? const SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: 16,
+                              height: 16,
                               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
                           : Text(
                               errorMessage != null ? 'Try Again' : 'Confirm & Invest',
                               style: TextStyles.labelLarge.copyWith(
-                                fontSize: 15,
+                                fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -145,10 +146,10 @@ class AutoInvestReviewConfirmPage extends StatelessWidget {
   Widget _buildSummaryCard(AutoInvestWizardInProgress wizard) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: PantherColors.border),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 3)),
@@ -162,10 +163,10 @@ class AutoInvestReviewConfirmPage extends StatelessWidget {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w700,
-              fontSize: 16,
+              fontSize: 15,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           _summaryRow('Amount', '\$${wizard.amountUsd!.toStringAsFixed(2)}'),
           _divider(),
           _summaryRow('Cadence', wizard.cadence.label),
@@ -202,16 +203,16 @@ class AutoInvestReviewConfirmPage extends StatelessWidget {
 
   Widget _buildDisclosure() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: PantherColors.warning.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: PantherColors.warning.withValues(alpha: 0.4), width: 1.2),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded, color: PantherColors.warning, size: 20),
+          const Icon(Icons.info_outline_rounded, color: PantherColors.warning, size: 17),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -287,7 +288,7 @@ class AutoInvestReviewConfirmPage extends StatelessWidget {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],
