@@ -13,7 +13,7 @@ const _slides = [
     tags: ['Health', 'Finance', 'Learning'],
     pexelsQuery: 'wellness lifestyle nature calm',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/8045815/8045815-hd_1080_1920_25fps.mp4',
   ),
   WalkthroughSlide(
     title: 'A guide who\nknows you',
@@ -23,7 +23,7 @@ const _slides = [
     tags: ['Chris AI', 'Check-ins', 'Nudges'],
     pexelsQuery: 'artificial intelligence technology neon',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/7687797/7687797-hd_1080_2048_24fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Twelve modules,\none score',
@@ -31,9 +31,9 @@ const _slides = [
     icon: Icons.insights_rounded,
     accentColor: Color(0xFF3B82F6),
     tags: ['12 Modules', 'One Score', 'Insights'],
-    pexelsQuery: 'purple abstract data visualization',
+    pexelsQuery: 'futuristic technology interface glow',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7101912/7101912-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/15440319/15440319-hd_1080_1920_30fps.mp4',
   ),
 ];
 

@@ -12,7 +12,7 @@ const _slides = [
     tags: ['Shopping', 'Brands', 'Flexible Pay'],
     pexelsQuery: 'woman shopping bags boutique',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/6565434/6565434-hd_1080_1920_24fps.mp4',
+        'https://videos.pexels.com/video-files/6565836/6565836-hd_1080_1920_24fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Flexible plans,\nreal limits',
@@ -22,7 +22,7 @@ const _slides = [
     tags: ['Credit Line', 'Planning', 'Control'],
     pexelsQuery: 'credit card finance planning',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7534191/7534191-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/6995103/6995103-hd_1080_1920_30fps.mp4',
   ),
   WalkthroughSlide(
     title: 'AI picks that fit\nyour budget',
@@ -30,9 +30,9 @@ const _slides = [
     icon: Icons.auto_awesome_rounded,
     accentColor: TickpayColors.info,
     tags: ['AI Picks', 'Budget', 'Deals'],
-    pexelsQuery: 'purple light waves abstract technology',
+    pexelsQuery: 'futuristic technology interface glow',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/7547770/7547770-uhd_1440_2560_25fps.mp4',
   ),
 ];
 
