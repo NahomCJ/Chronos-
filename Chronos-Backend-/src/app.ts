@@ -5,6 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import path from "path";
+import fs from "fs";
 // import * as Sentry from "@sentry/node";
 // import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
@@ -54,11 +55,24 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 
 // ===== Serve Flutter Web App =====
+// Only present on hosts that carry the bundled public/ dir (e.g. EB). On
+// serverless deploys (Vercel) it isn't in the function bundle — the Flutter
+// web app is deployed separately there (see chronos/vercel.json) — so this
+// falls back to a plain 404 instead of crashing on a missing file.
 const publicDir = path.join(__dirname, "..", "public");
-app.use(express.static(publicDir));
+const publicIndexHtml = path.join(publicDir, "index.html");
+const hasPublicDir = fs.existsSync(publicIndexHtml);
+if (hasPublicDir) {
+  app.use(express.static(publicDir));
+}
 // SPA fallback — send index.html for any non-API route
-app.get("*", (_req: Request, res: Response) => {
-  res.sendFile(path.join(publicDir, "index.html"));
+// Express 5's router (path-to-regexp v8) rejects a bare "*"; named wildcard required.
+app.get("/*splat", (_req: Request, res: Response) => {
+  if (hasPublicDir) {
+    res.sendFile(publicIndexHtml);
+  } else {
+    res.status(404).json({ error: "Not found" });
+  }
 });
 
 // ===== Sentry Error Handler =====
