@@ -15,6 +15,10 @@ class WalkthroughSlide {
   final List<String> tags;
   final String pexelsQuery;
   final String fallbackVideoUrl;
+  // Bundled video asset (e.g. 'assets/videos/foo.mp4'). Takes priority over
+  // the Pexels query/fallback when set -- used for a specific, deliberately
+  // chosen clip rather than a dynamically-fetched stock video.
+  final String? localVideoAsset;
 
   const WalkthroughSlide({
     required this.title,
@@ -24,6 +28,7 @@ class WalkthroughSlide {
     required this.pexelsQuery,
     required this.fallbackVideoUrl,
     this.tags = const [],
+    this.localVideoAsset,
   });
 }
 
@@ -79,6 +84,7 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
   /// Pexels, picking the best candidate rather than just the first hit.
   Future<void> _fetchPexelsVideos() async {
     for (int i = 0; i < widget.slides.length; i++) {
+      if (widget.slides[i].localVideoAsset != null) continue;
       final videos = await PexelsService.searchVideos(
         widget.slides[i].pexelsQuery,
         perPage: 15,
@@ -115,9 +121,12 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
   Future<void> _loadVideo(int index) async {
     _loadingForIndex = index;
 
+    final localAsset = widget.slides[index].localVideoAsset;
     VideoPlayerController? ctrl;
     try {
-      ctrl = VideoPlayerController.networkUrl(Uri.parse(_videoUrls[index]));
+      ctrl = localAsset != null
+          ? VideoPlayerController.asset(localAsset)
+          : VideoPlayerController.networkUrl(Uri.parse(_videoUrls[index]));
       await ctrl.initialize();
     } catch (_) {
       ctrl?.dispose();
