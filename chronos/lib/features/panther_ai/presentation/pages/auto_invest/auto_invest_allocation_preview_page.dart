@@ -9,6 +9,7 @@ import '../../../domain/entities/auto_invest.dart';
 import '../../../domain/entities/auto_invest_enums.dart';
 import '../../cubit/auto_invest_cubit.dart';
 import '../../cubit/auto_invest_state.dart';
+import '../../widgets/auto_invest_asset_icon.dart';
 import '../../widgets/panther_ring_chart.dart';
 
 class AutoInvestAllocationPreviewPage extends StatelessWidget {
@@ -58,11 +59,26 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
             final summary = preview.summary;
             final slices = <PantherRingSlice>[
               if (summary.cryptoPct > 0)
-                PantherRingSlice(label: 'Crypto', value: summary.cryptoPct, color: _cryptoColor),
+                PantherRingSlice(
+                  label: 'Crypto',
+                  value: summary.cryptoPct,
+                  color: _cryptoColor,
+                  icon: autoInvestClassIcon(AutoInvestAssetClass.crypto),
+                ),
               if (summary.stockPct > 0)
-                PantherRingSlice(label: 'Stocks', value: summary.stockPct, color: _stockColor),
+                PantherRingSlice(
+                  label: 'Stocks',
+                  value: summary.stockPct,
+                  color: _stockColor,
+                  icon: autoInvestClassIcon(AutoInvestAssetClass.stock),
+                ),
               if (summary.etfPct > 0)
-                PantherRingSlice(label: 'ETFs', value: summary.etfPct, color: _etfColor),
+                PantherRingSlice(
+                  label: 'ETFs',
+                  value: summary.etfPct,
+                  color: _etfColor,
+                  icon: autoInvestClassIcon(AutoInvestAssetClass.etf),
+                ),
             ];
 
             return Column(
@@ -77,23 +93,79 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
                         const SizedBox(height: 8),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(14),
+                          clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(18),
                             border: Border.all(color: PantherColors.border),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
+                                color: Colors.black.withValues(alpha: 0.06),
+                                blurRadius: 14,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: PantherRingChart(
-                            slices: slices,
-                            centerLabel: '\$${wizard?.amountUsd?.toStringAsFixed(0) ?? '0'}',
-                            centerSubLabel: 'Total',
+                          child: Stack(
+                            children: [
+                              // Soft brand-tinted glow behind the ring —
+                              // purely decorative, clipped to the card.
+                              Positioned(
+                                top: -40,
+                                right: -30,
+                                child: Container(
+                                  width: 150,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: PantherColors.brandLight.withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Portfolio Mix',
+                                          style: TextStyles.titleMedium.copyWith(
+                                            color: PantherColors.textPrimary,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14.5,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: PantherColors.brandLight,
+                                            borderRadius: BorderRadius.circular(50),
+                                          ),
+                                          child: Text(
+                                            '${preview.allocations.length} assets',
+                                            style: TextStyles.bodySmall.copyWith(
+                                              color: PantherColors.brandDark,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 10.5,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    PantherRingChart(
+                                      slices: slices,
+                                      centerLabel: '\$${wizard?.amountUsd?.toStringAsFixed(0) ?? '0'}',
+                                      centerSubLabel: 'Total',
+                                      size: 164,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 18),
@@ -233,19 +305,11 @@ class _AllocationRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    allocation.symbol.isNotEmpty ? allocation.symbol.substring(0, 1) : '?',
-                    style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 13),
-                  ),
-                ),
+              AutoInvestAssetIcon(
+                symbol: allocation.symbol,
+                assetClass: allocation.assetClass,
+                accent: color,
+                size: 40,
               ),
               const SizedBox(width: 12),
               Expanded(

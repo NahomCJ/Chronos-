@@ -9,6 +9,7 @@ import '../../../domain/entities/auto_invest.dart';
 import '../../../domain/entities/auto_invest_enums.dart';
 import '../../cubit/auto_invest_cubit.dart';
 import '../../cubit/auto_invest_state.dart';
+import '../../widgets/auto_invest_asset_icon.dart';
 import '../../widgets/panther_ring_chart.dart';
 
 class AutoInvestDashboardPage extends StatefulWidget {
@@ -175,6 +176,7 @@ class _AutoInvestDashboardPageState extends State<AutoInvestDashboardPage> {
                 label: a.symbol,
                 value: a.percentage,
                 color: _colorFor(a.assetClass),
+                icon: autoInvestClassIcon(a.assetClass),
               ));
             }
 

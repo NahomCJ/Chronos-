@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/panther_colors.dart';
 
 /// One wedge of a [PantherRingChart] — a labeled value with its own color.
+/// [icon], if set, renders as a small glyph inside the legend's dot instead
+/// of a bare color dot — used by Auto-Invest to show an asset-class icon
+/// next to each slice. Left null, existing callers render exactly as before.
 class PantherRingSlice {
   final String label;
   final double value;
   final Color color;
+  final IconData? icon;
   const PantherRingSlice({
     required this.label,
     required this.value,
     required this.color,
+    this.icon,
   });
 }
 
@@ -93,14 +98,25 @@ class PantherRingChart extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Row(
                   children: [
-                    Container(
-                      width: 9,
-                      height: 9,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: s.color,
+                    if (s.icon != null)
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: s.color.withValues(alpha: 0.14),
+                        ),
+                        child: Icon(s.icon, size: 12, color: s.color),
+                      )
+                    else
+                      Container(
+                        width: 9,
+                        height: 9,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: s.color,
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
