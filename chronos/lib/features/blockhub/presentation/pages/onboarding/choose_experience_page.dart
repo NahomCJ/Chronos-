@@ -12,53 +12,18 @@ class ChooseExperiencePage extends StatefulWidget {
 class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
   String? _selected;
 
-  static const _bg = Color(0xFF06060E);
-  static const _card = Color(0xFF0F0F1C);
-  static const _amber = Color(0xFF3B3B3B);
+  static const _bg = Color(0xFFF7F8FA);
+  static const _titleColor = Color(0xFF1A1A2E);
+  static const _subtitleColor = Color(0xFF6B7080);
+  static const _border = Color(0xFFEEEEEE);
 
   static const _levels = [
-    _Level(
-      'beginner',
-      Icons.school_rounded,
-      'Beginner',
-      'New to crypto',
-      'Just starting out with digital assets. I want guided tutorials and simple explanations.',
-      Color(0xFF22C55E),
-      [
-        'Step-by-step tutorials',
-        'Simplified market data',
-        'Risk warnings & tips',
-        'Beginner-safe defaults',
-      ],
-    ),
-    _Level(
-      'intermediate',
-      Icons.trending_up_rounded,
-      'Intermediate',
-      'Some experience',
-      'I\'ve bought and traded crypto before. Ready for more tools and deeper insights.',
-      Color(0xFF3B82F6),
-      [
-        'Advanced charts',
-        'Portfolio analytics',
-        'AI market signals',
-        'Multi-chain support',
-      ],
-    ),
-    _Level(
-      'expert',
-      Icons.auto_graph_rounded,
-      'Expert',
-      'Power trader',
-      'I\'m experienced with DeFi, NFTs and on-chain data. I want full control.',
-      Color(0xFFF59E0B),
-      [
-        'Full trading terminal',
-        'DeFi & yield tools',
-        'On-chain analytics',
-        'NFT mint & trade',
-      ],
-    ),
+    _Level('beginner', Icons.school_rounded, 'Beginner', 'New to crypto',
+        Color(0xFF22C55E)),
+    _Level('intermediate', Icons.trending_up_rounded, 'Intermediate',
+        'Some experience', Color(0xFF3B82F6)),
+    _Level('expert', Icons.auto_graph_rounded, 'Expert', 'Power trader',
+        Color(0xFFF59E0B)),
   ];
 
   Future<void> _continue() async {
@@ -77,26 +42,20 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _bg,
-      body: Stack(
-          children: [
-            Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-            Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-            SafeArea(
+      body: SafeArea(
         child: Column(
           children: [
             _buildHeader(context),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildIntro(),
-                    const SizedBox(height: 24),
-                    ..._levels.map((l) => _buildLevelCard(l)),
-                    const SizedBox(height: 24),
-                    if (_selected == 'beginner') _buildBeginnerGuide(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
+                    ..._levels.map(_buildLevelRow),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -105,14 +64,12 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
           ],
         ),
       ),
-          ],
-        ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
           GestureDetector(
@@ -121,12 +78,11 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
               padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1), width: 0.8),
+                color: Colors.white,
+                border: Border.all(color: _border, width: 0.8),
               ),
               child: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white, size: 16),
+                  color: _titleColor, size: 16),
             ),
           ),
           const SizedBox(width: 14),
@@ -136,13 +92,11 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
               children: [
                 const Text('Your Experience',
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                        color: _titleColor,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700)),
-                Text('Step 2 of 3',
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.35),
-                        fontSize: 11)),
+                const Text('Step 2 of 3',
+                    style: TextStyle(color: _subtitleColor, fontSize: 11)),
               ],
             ),
           ),
@@ -161,9 +115,7 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
           width: i + 1 == current ? 18 : 6,
           height: 6,
           decoration: BoxDecoration(
-            color: i + 1 == current
-                ? const Color(0xFFE5E5E5)
-                : Colors.white.withValues(alpha: 0.2),
+            color: i + 1 == current ? _titleColor : const Color(0xFFDADEE6),
             borderRadius: BorderRadius.circular(3),
           ),
         ),
@@ -177,226 +129,89 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
       children: [
         const Text('Choose your\nlevel.',
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
+                color: _titleColor,
+                fontSize: 26,
                 fontWeight: FontWeight.w800,
                 height: 1.1)),
-        const SizedBox(height: 10),
-        Text(
-          'We\'ll customize your BlockHub experience, layout and AI guidance to match your skill level.',
-          style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
-              fontSize: 14,
-              height: 1.5),
+        const SizedBox(height: 8),
+        const Text(
+          'We\'ll tailor your BlockHub layout and AI guidance to match.',
+          style: TextStyle(color: _subtitleColor, fontSize: 13, height: 1.45),
         ),
       ],
     );
   }
 
-  Widget _buildLevelCard(_Level level) {
+  Widget _buildLevelRow(_Level level) {
     final isSelected = _selected == level.id;
     return GestureDetector(
       onTap: () => setState(() => _selected = level.id),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(18),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? level.color.withValues(alpha: 0.08)
-              : _card,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? level.color.withValues(alpha: 0.06) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected
-                ? level.color.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.07),
-            width: isSelected ? 1.5 : 0.8,
+            color: isSelected ? level.color.withValues(alpha: 0.45) : _border,
+            width: isSelected ? 1.4 : 0.8,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                      color: level.color.withValues(alpha: 0.12),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4))
-                ]
-              : [],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: level.color.withValues(alpha: 0.12),
-                  ),
-                  child: Icon(level.icon, color: level.color, size: 20),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(level.title,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 2),
-                      Text(level.subtitle,
-                          style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
-                              fontSize: 12)),
-                    ],
-                  ),
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSelected
-                        ? level.color
-                        : Colors.white.withValues(alpha: 0.05),
-                    border: Border.all(
-                        color: isSelected
-                            ? level.color
-                            : Colors.white.withValues(alpha: 0.2),
-                        width: 1.5),
-                  ),
-                  child: isSelected
-                      ? const Icon(Icons.check_rounded,
-                          color: Colors.white, size: 12)
-                      : null,
-                ),
-              ],
-            ),
-            if (isSelected) ...[
-              const SizedBox(height: 14),
-              Text(level.description,
-                  style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.55),
-                      fontSize: 12,
-                      height: 1.5)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: level.features
-                    .map((f) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: level.color.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(f,
-                              style: TextStyle(
-                                  color: level.color,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600)),
-                        ))
-                    .toList(),
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: level.color.withValues(alpha: 0.12),
               ),
-            ],
+              child: Icon(level.icon, color: level.color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(level.title,
+                      style: const TextStyle(
+                          color: _titleColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 2),
+                  Text(level.subtitle,
+                      style: const TextStyle(
+                          color: _subtitleColor, fontSize: 11.5)),
+                ],
+              ),
+            ),
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? level.color : Colors.transparent,
+                border: Border.all(
+                    color: isSelected ? level.color : const Color(0xFFD5D8DE),
+                    width: 1.5),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check_rounded,
+                      color: Colors.white, size: 12)
+                  : null,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBeginnerGuide() {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFF22C55E).withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-            color: const Color(0xFF22C55E).withValues(alpha: 0.2), width: 0.8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.map_rounded,
-                  color: Color(0xFF22C55E), size: 16),
-              const SizedBox(width: 8),
-              const Text('Beginner Roadmap',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700)),
-            ],
-          ),
-          const SizedBox(height: 14),
-          _roadmapStep('1', 'Connect your wallet', 'Secure setup in minutes',
-              true),
-          _roadmapStep('2', 'Buy your first crypto',
-              'Start with \$10 — no pressure', false),
-          _roadmapStep(
-              '3', 'Track your portfolio', 'Watch it grow in real-time', false),
-          _roadmapStep('4', 'Explore NFTs',
-              'Discover digital art & collectibles', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _roadmapStep(
-      String num, String title, String sub, bool isFirst) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFF22C55E).withValues(alpha: 0.15),
-            ),
-            child: Center(
-              child: Text(num,
-                  style: const TextStyle(
-                      color: Color(0xFF22C55E),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500)),
-                Text(sub,
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        fontSize: 11)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomBar(BuildContext context) {
     final canContinue = _selected != null;
-    final color = _selected != null
-        ? const Color(0xFF1A1A2E)
-        : _amber;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
       child: GestureDetector(
         onTap: canContinue ? _continue : null,
         child: AnimatedContainer(
@@ -404,23 +219,13 @@ class _ChooseExperiencePageState extends State<ChooseExperiencePage> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: canContinue ? color : Colors.white.withValues(alpha: 0.05),
+            color: canContinue ? _titleColor : const Color(0xFFE9EBEF),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: canContinue
-                ? [
-                    BoxShadow(
-                        color: color.withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4))
-                  ]
-                : [],
           ),
           child: Text('Continue',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: canContinue
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: 0.3),
+                  color: canContinue ? Colors.white : _subtitleColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w800)),
         ),
@@ -434,9 +239,6 @@ class _Level {
   final IconData icon;
   final String title;
   final String subtitle;
-  final String description;
   final Color color;
-  final List<String> features;
-  const _Level(this.id, this.icon, this.title, this.subtitle, this.description,
-      this.color, this.features);
+  const _Level(this.id, this.icon, this.title, this.subtitle, this.color);
 }
