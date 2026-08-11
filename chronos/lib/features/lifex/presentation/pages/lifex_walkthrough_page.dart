@@ -10,6 +10,7 @@ const _slides = [
     subtitle: 'Health, finance, learning and growth —\ntracked together, not scattered.',
     icon: Icons.self_improvement_rounded,
     accentColor: _lifexTeal,
+    tags: ['Health', 'Finance', 'Learning'],
     pexelsQuery: 'wellness lifestyle nature calm',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
@@ -19,6 +20,7 @@ const _slides = [
     subtitle: 'Chris checks in, spots patterns and\nnudges you toward your goals.',
     icon: Icons.auto_awesome_rounded,
     accentColor: Color(0xFF7C6EF0),
+    tags: ['Chris AI', 'Check-ins', 'Nudges'],
     pexelsQuery: 'artificial intelligence technology neon',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
@@ -28,9 +30,10 @@ const _slides = [
     subtitle: 'Financial, social, spiritual and more —\nsee how they add up.',
     icon: Icons.insights_rounded,
     accentColor: Color(0xFF3B82F6),
-    pexelsQuery: 'sunrise mountains achievement calm',
+    tags: ['12 Modules', 'One Score', 'Insights'],
+    pexelsQuery: 'purple abstract data visualization',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
+        'https://videos.pexels.com/video-files/7101912/7101912-hd_1080_1920_30fps.mp4',
   ),
 ];
 
