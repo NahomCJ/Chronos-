@@ -1,0 +1,11 @@
+public
+dist
+dist-blockhub
+coverage
+docs
+src/**/*.spec.ts
+src/**/*.integration.ts
+src/tests
+Chronos-API.postman_collection.json
+Chronos-ENV.postman_environment.json
+newman-report.html

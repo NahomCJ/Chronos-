@@ -272,14 +272,37 @@ PAXOS_ENV=sandbox                  # or production
 
 ## Hosting — Migrating Off AWS Elastic Beanstalk
 
-**[PLANNED]** Both apps currently still run on their old AWS Elastic Beanstalk environments (URLs below), but EB is being retired as the deploy target — the AWS Console/CLI overhead (S3 zip uploads, `.ebextensions`, IAM, t3.micro timeouts, RDS auto-stop) turned every deploy into a debugging session. New hosting TBD; this doc will get a real "Deploying" section once that's decided.
+**[IN PROGRESS]** Moving both apps off AWS Elastic Beanstalk to Vercel (the AWS Console/CLI overhead — S3 zip uploads, `.ebextensions`, IAM, t3.micro timeouts, RDS auto-stop — turned every deploy into a debugging session; database already moved to Neon, see above).
 
 **What was removed from this repo**: `.ebextensions/`, the root `Procfile`, and the `zip:blockhub` build script (`scripts/zip-blockhub.py`) — all EB-specific packaging, no longer needed. `npm run build` / `npm start` (main API) and `npm run build:blockhub` (BlockHub) are unaffected; they never depended on those files, EB's buildpack did.
 
-#### Still-live infrastructure (until migration)
-- **Main API**: `chronos.us-east-1.elasticbeanstalk.com` — EB app `chronos-backend`, env `chronos-backend-env`
-- **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`
-- **Database**: **[LIVE]** Neon Postgres (`chronosdb`) — replaced AWS RDS as the database of record. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (unpooled, for migrations) come from the Neon dashboard. `DATABASE_URL` also needs to be set as an env var on whatever hosts the Main API and BlockHub (currently their EB environments; add it to Vercel env vars too for anything deployed there).
+#### Still-live infrastructure (until migration completes)
+- **Main API**: `chronos.us-east-1.elasticbeanstalk.com` — EB app `chronos-backend`, env `chronos-backend-env`. **[READY]** to redeploy on Vercel — see below.
+- **BlockHub**: `blockhub-env.us-east-1.elasticbeanstalk.com` — EB app `chronos-blockhub`, env `blockhub-env`. **[BLOCKED]** on Vercel until its Socket.io gateway + Bull/Redis minting queue get a plan — see below.
+- **Database**: **[LIVE]** Neon Postgres (`chronosdb`) — replaced AWS RDS as the database of record. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (unpooled, for migrations) come from the Neon dashboard. `DATABASE_URL` also needs to be set as an env var on whatever hosts the Main API and BlockHub.
+
+### Vercel Deployment — Main API
+
+`Chronos-Backend-/api/index.ts` exports the Express `app` (from `src/app.ts`) directly as Vercel's serverless handler — no adapter needed, an Express app is already a `(req, res)` function. `src/server.ts` (which calls `app.listen()`) is unaffected and still used for local dev / any non-serverless host; `api/index.ts` must never call `.listen()`.
+
+`Chronos-Backend-/vercel.json` rewrites every path to that one function, so Express's own internal routing (the `/api` prefix, `/health`) resolves exactly as it does on EB:
+```json
+{ "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }] }
+```
+
+**Vercel project settings**: Root Directory = `Chronos-Backend-`. `package.json` now has `"postinstall": "prisma generate"` so the Prisma client exists before Vercel's build bundles the function. Required env vars: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET`, `NODE_ENV=production`, plus whichever optional ones from [Environment Variables](#environment-variables) above are in use (`ANTHROPIC_API_KEY`, `SMTP_*`, etc.).
+
+**Known gap**: 6 `node-cron` jobs (LifeX education/financial/vision digests, TickPay reminders — see `src/modules/lifex/modules/{education,financial,vision}/*` and `src/modules/bnpl/jobs/tickpay.scheduler.ts`) rely on an in-process timer that never fires on serverless (each invocation is stateless and short-lived). They silently stop running once this is on Vercel. Fix is to convert them to [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs) (a `vercel.json` `crons` array hitting a small API route on schedule, auth'd via a shared secret) — not done yet.
+
+**`public/` (bundled Flutter web build, ~37MB)**: not included in the Vercel function bundle — it's read via `fs`/`path` at runtime, not `import`, so Vercel's bundler doesn't trace it, and it's also listed in `.vercelignore`. `src/app.ts`'s SPA-fallback route now checks `fs.existsSync` and returns a plain 404 JSON when `public/` isn't present, instead of crashing — the real Flutter web app already deploys separately (`chronos/vercel.json`), so this fallback only mattered on EB where the whole repo (`public/` included) was deployed together.
+
+### Vercel Deployment — BlockHub (not yet done)
+
+BlockHub's NestJS HTTP routes would deploy the same way (a serverless entrypoint exporting the Express-adapter instance without `.listen()`). Two subsystems don't translate to serverless without a redesign:
+- **Socket.io gateway** (`src/gateway/blockhub.gateway.ts`, `src/nft/websocket/nft-event.gateway.ts`) — needs a persistent WebSocket connection; a new serverless invocation per request can't hold one.
+- **Bull minting queue** (`src/nft/minting/`, Redis-backed) — needs an always-on worker process consuming jobs; enqueuing from a serverless function works, but nothing would ever process the queue.
+
+Options, not yet decided: (a) accept degraded behavior on Vercel — no live price/portfolio push, minting jobs queue but never process; (b) run just those two subsystems on a small persistent host (Render/Railway/Fly) while HTTP routes move to Vercel; (c) redesign — synchronous minting instead of queued, drop or replace Socket.io. Needs a decision before BlockHub moves.
 
 ### Schema Changes
 Run locally, with `.env` pointed at Neon (`DATABASE_URL` + `DIRECT_URL` set — see [Environment Variables](#environment-variables) above):
@@ -343,6 +366,10 @@ A same-day teammate PR (`agent/elevenlabs-voice-chat`, merged as #90) added a se
 User reported every single chat/voice query returned the same generic failure, and (reasonably) assumed the Anthropic/ElevenLabs keys they'd set were the problem — but those keys were set on **Vercel**, and the app hasn't called the Vercel serverless functions (`api/chat.js`/`api/synthesize.js`, both dead code) since Bug #13 repointed it straight at this backend's `/api/ai/chris/chat`/`/api/ai/voice/synthesize`. The real bug: `claude.client.ts`'s default model and all 5 domain agents (`banking-analyst`, `predictive-finance`, `risk-fraud`, `lifestyle`, `affordability`) plus `orchestrator.ts`'s UNIFIED fallback all hardcoded `model: "claude-sonnet-4-6"` — not a real Anthropic model id. Only `routing-agent.ts`/`compliance-guard.ts` (via `callLLMFast`, which correctly used `claude-haiku-4-5-20251001`) ever succeeded, so a query would route and pass compliance and then fail generating the actual answer — every single time, regardless of what was asked, matching the reported symptom exactly. Fixed all 9 occurrences (7 files here + the 2 dead Vercel functions, fixed for consistency in case they're ever repointed back) to `claude-sonnet-5`. **Requires an EB redeploy of the main API (`chronos-backend-env`) to reach the live app** — not done as part of this change; no AWS access from the environment that made this fix.
 
 **Follow-up**: since an EB redeploy wasn't actionable, and the user is running/testing against the Vercel deployment (`chronosapp-rosy.vercel.app`) where the Anthropic/ElevenLabs keys already work as Vercel env vars, the Flutter app's `PantherAiRemoteDataSource.sendMessage`/`TtsService._fetchAudio` were repointed at Vercel's `api/chat.js`/`api/synthesize.js` (see `chronos/FEATURES.md`) rather than this backend's `/api/ai/chris/chat`/`/api/ai/voice/synthesize`. This backend's routes and the `orchestrator.ts` domain-agent pipeline (real per-user financial context) are unchanged and still work — they're just not what the mobile app calls right now. Re-pointing back here (once redeployable) would restore that personalized context; Vercel's functions are a stateless Claude call with no user data.
+
+### 16. `app.get("*", ...)` crashed the server on any fresh install — Express 5 wildcard syntax
+
+Discovered while preparing the Main API for Vercel: `src/app.ts`'s SPA-fallback catch-all used `app.get("*", ...)`, which is Express 4 syntax. Express 5's router (`path-to-regexp` v8) rejects a bare `*` outright — `PathError: Missing parameter name at index 1: *` — and crashes the process on startup, before the server ever binds a port. No `package-lock.json` is committed, so this always resolves to the latest `path-to-regexp` on any fresh `npm install`, meaning it wasn't limited to this task's environment. Fixed by switching to Express 5's named-wildcard syntax: `app.get("/*splat", ...)`. Verified: server boots, `GET /health` returns `{"status":"ok"}`, and an unmatched route correctly falls through to the SPA/404 handler.
 
 ---
 
