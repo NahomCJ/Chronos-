@@ -62,22 +62,22 @@ class _ExistingPlanView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: PantherColors.brand.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.auto_graph_rounded, color: PantherColors.brand, size: 34),
+            child: const Icon(Icons.auto_graph_rounded, color: PantherColors.brand, size: 28),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
           Text(
             'Your Auto-Invest plan is already running',
             textAlign: TextAlign.center,
             style: TextStyles.titleLarge.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w700,
-              fontSize: 20,
+              fontSize: 18,
             ),
           ),
           const SizedBox(height: 8),
@@ -108,14 +108,15 @@ class _ExistingPlanView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: PantherColors.brand,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                minimumSize: const Size(double.infinity, 46),
                 elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
               ),
               child: Text(
                 'View Dashboard',
                 style: TextStyles.labelLarge.copyWith(
-                  fontSize: 15,
+                  fontSize: 13.5,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -172,21 +173,21 @@ class _PitchView extends StatelessWidget {
               children: [
                 const SizedBox(height: 8),
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: PantherColors.brand.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(18),
+                    shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.auto_graph_rounded, color: PantherColors.brand, size: 28),
+                  child: const Icon(Icons.auto_graph_rounded, color: PantherColors.brand, size: 24),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
                 Text(
                   'Let Chris invest for you',
                   style: TextStyles.headlineSmall.copyWith(
                     color: PantherColors.textPrimary,
                     fontWeight: FontWeight.w800,
-                    fontSize: 28,
+                    fontSize: 24,
                     height: 1.15,
                   ),
                 ),
@@ -195,7 +196,7 @@ class _PitchView extends StatelessWidget {
                   'Tell Chris a dollar amount, a risk tolerance and a goal. Chris proposes a diversified mix — you decide if it happens.',
                   style: TextStyles.bodyMedium.copyWith(
                     color: PantherColors.textSecondary,
-                    fontSize: 14.5,
+                    fontSize: 13.5,
                     height: 1.5,
                   ),
                 ),
@@ -206,16 +207,16 @@ class _PitchView extends StatelessWidget {
                     )),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: PantherColors.info.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: PantherColors.info.withValues(alpha: 0.25)),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.info_outline_rounded, color: PantherColors.info, size: 18),
+                      const Icon(Icons.info_outline_rounded, color: PantherColors.info, size: 16),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -249,14 +250,15 @@ class _PitchView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: PantherColors.brand,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size(double.infinity, 46),
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                   ),
                   child: Text(
                     'Get Started',
                     style: TextStyles.labelLarge.copyWith(
-                      fontSize: 15,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -291,10 +293,10 @@ class _BulletCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: PantherColors.border),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2)),
@@ -304,15 +306,15 @@ class _BulletCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: PantherColors.brand.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: PantherColors.brand, size: 18),
+            child: Icon(icon, color: PantherColors.brand, size: 16),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

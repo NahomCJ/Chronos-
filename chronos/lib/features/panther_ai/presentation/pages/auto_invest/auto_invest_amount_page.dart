@@ -74,16 +74,16 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
                           style: TextStyles.titleMedium.copyWith(
                             color: PantherColors.textPrimary,
                             fontWeight: FontWeight.w700,
-                            fontSize: 18,
+                            fontSize: 16,
                           ),
                         ),
                         const SizedBox(height: 18),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: PantherColors.border),
                             boxShadow: [
                               BoxShadow(
@@ -100,14 +100,14 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
                               style: TextStyles.displaySmall.copyWith(
                                 color: PantherColors.textPrimary,
-                                fontSize: 40,
+                                fontSize: 32,
                                 fontWeight: FontWeight.w800,
                               ),
                               decoration: InputDecoration(
                                 prefixText: '\$',
                                 prefixStyle: TextStyles.displaySmall.copyWith(
                                   color: PantherColors.textSecondary,
-                                  fontSize: 40,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.w800,
                                 ),
                                 border: InputBorder.none,
@@ -138,7 +138,7 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
                           style: TextStyles.titleMedium.copyWith(
                             color: PantherColors.textPrimary,
                             fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -188,14 +188,15 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PantherColors.brand,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 46),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                       ),
                       child: isLoading
                           ? const SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: 16,
+                              height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: Colors.white,
@@ -204,7 +205,7 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
                           : Text(
                               'Continue',
                               style: TextStyles.labelLarge.copyWith(
-                                fontSize: 15,
+                                fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -238,7 +239,7 @@ class _AutoInvestAmountPageState extends State<AutoInvestAmountPage> {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],
@@ -257,7 +258,7 @@ class _PresetChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: PantherColors.cardAlt,
           borderRadius: BorderRadius.circular(50),
@@ -267,7 +268,7 @@ class _PresetChip extends StatelessWidget {
           style: TextStyles.bodySmall.copyWith(
             color: PantherColors.textSecondary,
             fontWeight: FontWeight.w600,
-            fontSize: 12.5,
+            fontSize: 11.5,
           ),
         ),
       ),
@@ -296,7 +297,7 @@ class _CadenceSegmented extends StatelessWidget {
               onTap: () => onChanged(c),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                   color: selected ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(50),
