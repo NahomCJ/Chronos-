@@ -296,6 +296,9 @@ model User {
   nftAuditLogs            NftAuditLog[]
   aiAlerts                AiAlert[]
   notifications           Notification[]
+
+  // ---------------- Auto-Invest with Chris ----------------
+  autoInvestPlans         AutoInvestPlan[]
 }
 
 enum Role {
@@ -1700,4 +1703,101 @@ model Notification {
   createdAt DateTime         @default(now())
 
   @@index([userId, read])
+}
+
+// ============================================
+// AUTO-INVEST WITH CHRIS
+// ============================================
+// Crypto legs execute live via the existing Paxos pipeline (src/modules/crypto).
+// Stock/ETF legs have no brokerage integration anywhere in this codebase — they
+// are computed, shown, and persisted as a "planned" target only. See
+// AutoInvestExecutionStatus.PLANNED.
+
+enum AutoInvestRiskProfile {
+  CONSERVATIVE
+  BALANCED
+  AGGRESSIVE
+}
+
+enum AutoInvestGoal {
+  GROWTH
+  INCOME
+  RETIREMENT
+  SHORT_TERM
+}
+
+enum AutoInvestCadence {
+  ONE_TIME
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+}
+
+enum AutoInvestPlanStatus {
+  PENDING_CONFIRMATION
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum AutoInvestAssetClass {
+  CRYPTO
+  STOCK
+  ETF
+}
+
+enum AutoInvestExecutionStatus {
+  EXECUTED
+  PLANNED
+  FAILED
+}
+
+model AutoInvestPlan {
+  id              String                @id @default(uuid())
+  userId          String
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  riskProfile     AutoInvestRiskProfile
+  goal            AutoInvestGoal
+  amountUsd       Decimal               @db.Decimal(18, 2)
+  cadence         AutoInvestCadence
+  status          AutoInvestPlanStatus  @default(PENDING_CONFIRMATION)
+  roundsCompleted Int                   @default(0)
+  nextRoundAt     DateTime?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  allocations     AutoInvestAllocation[]
+  executions      AutoInvestExecution[]
+
+  @@index([userId])
+}
+
+model AutoInvestAllocation {
+  id         String               @id @default(uuid())
+  planId     String
+  plan       AutoInvestPlan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  assetClass AutoInvestAssetClass
+  symbol     String
+  name       String
+  percentage Decimal              @db.Decimal(5, 2)
+  rationale  String?
+
+  @@index([planId])
+}
+
+model AutoInvestExecution {
+  id            String                     @id @default(uuid())
+  planId        String
+  plan          AutoInvestPlan             @relation(fields: [planId], references: [id], onDelete: Cascade)
+  roundNumber   Int
+  assetClass    AutoInvestAssetClass
+  symbol        String
+  amountUsd     Decimal                    @db.Decimal(18, 2)
+  status        AutoInvestExecutionStatus
+  tradeId       String?
+  failureReason String?
+  executedAt    DateTime                   @default(now())
+
+  @@index([planId])
 }
