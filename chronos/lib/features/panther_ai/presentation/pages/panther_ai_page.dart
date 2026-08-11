@@ -308,6 +308,7 @@ class _PantherAiPageState extends State<PantherAiPage>
   /// redirects straight to the dashboard state so a returning user never
   /// sees the pitch twice.
   Widget _buildAutoInvestCard() {
+    const darkGray = Color(0xFF374151);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
       child: GestureDetector(
@@ -318,12 +319,12 @@ class _PantherAiPageState extends State<PantherAiPage>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [_purple, _purple.withValues(alpha: 0.75)],
+              colors: [darkGray, darkGray.withValues(alpha: 0.82)],
             ),
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: _purple.withValues(alpha: 0.28),
+                color: darkGray.withValues(alpha: 0.28),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
