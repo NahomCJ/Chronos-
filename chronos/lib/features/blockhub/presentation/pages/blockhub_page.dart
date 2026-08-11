@@ -288,6 +288,28 @@ class _BlockHubPageState extends State<BlockHubPage> {
                   Positioned.fill(
                     child: Container(color: Colors.black.withValues(alpha: 0.20)),
                   ),
+                  // Soft fade into the light section below, instead of a
+                  // hard edge where the hero image meets it.
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 96,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Color(0xFFF5F7FA),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   SafeArea(
                     bottom: false,
                     child: Padding(
@@ -394,6 +416,9 @@ class _BlockHubPageState extends State<BlockHubPage> {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          // Reserves room below the action buttons for the
+                          // fade strip so it doesn't wash over them.
+                          const SizedBox(height: 64),
                         ],
                       ),
                     ),

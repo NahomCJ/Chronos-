@@ -169,7 +169,18 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                       _buildCreditCard(context, loaded),
                       const SizedBox(height: 20),
                       _buildQuickActions(context),
-                      const SizedBox(height: 16),
+                      // Soft fade into the white section below, instead of
+                      // a hard edge where the hero image meets it.
+                      Container(
+                        height: 72,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Colors.white],
+                          ),
+                        ),
+                      ),
                       // White section, rounds top, then extends to end
                       Container(
                         decoration: const BoxDecoration(

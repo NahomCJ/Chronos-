@@ -138,6 +138,10 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required bool isLoading,
   }) {
     final double heroHeight = (isSmallScreen ? 356 : 410) * scale;
+    // Extra strip below the quick-action row where the hero image dissolves
+    // into the page background, instead of stopping at a hard edge.
+    final double fadeHeight = 64 * scale;
+    final double imageHeight = heroHeight + fadeHeight;
 
     return Stack(
       children: [
@@ -147,7 +151,7 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
             bottomRight: Radius.circular(32),
           ),
           child: SizedBox(
-            height: heroHeight,
+            height: imageHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -169,6 +173,29 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
                         Colors.black.withValues(alpha: 0.38),
                         Colors.black.withValues(alpha: 0.18),
                       ],
+                    ),
+                  ),
+                ),
+                // Soft fade into the page background below the quick
+                // actions, instead of a hard edge where the hero image
+                // meets the white content below.
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: fadeHeight + 48 * scale,
+                  child: IgnorePointer(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Color(0xFFF5F5F5),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
