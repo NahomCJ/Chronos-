@@ -9,15 +9,17 @@ const _slides = [
     subtitle: 'Buy from your favorite brands and\nsplit payments your way.',
     icon: Icons.shopping_bag_rounded,
     accentColor: TickpayColors.brandRed,
-    pexelsQuery: 'online shopping smartphone checkout',
+    tags: ['Shopping', 'Brands', 'Flexible Pay'],
+    pexelsQuery: 'woman shopping bags boutique',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
+        'https://videos.pexels.com/video-files/6565434/6565434-hd_1080_1920_24fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Flexible plans,\nreal limits',
     subtitle: 'See your credit line, plan payments,\nand stay in control.',
     icon: Icons.credit_score_rounded,
     accentColor: TickpayColors.accentPurple,
+    tags: ['Credit Line', 'Planning', 'Control'],
     pexelsQuery: 'credit card finance planning',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7534191/7534191-hd_1080_1920_30fps.mp4',
@@ -27,9 +29,10 @@ const _slides = [
     subtitle: 'Chris finds deals and flags what\nyou can actually afford.',
     icon: Icons.auto_awesome_rounded,
     accentColor: TickpayColors.info,
-    pexelsQuery: 'artificial intelligence shopping recommendation',
+    tags: ['AI Picks', 'Budget', 'Deals'],
+    pexelsQuery: 'purple light waves abstract technology',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
+        'https://videos.pexels.com/video-files/34576602/14651995_1080_1920_30fps.mp4',
   ),
 ];
 

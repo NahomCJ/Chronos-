@@ -15,6 +15,7 @@ const _slides = [
     subtitle: 'Banking, crypto, payments and\nlife tools, all connected.',
     icon: Icons.account_balance_wallet_rounded,
     accentColor: Color(0xFF3B82F6),
+    tags: ['Banking', 'Payments', 'Wallets'],
     pexelsQuery: 'contactless payment finance mobile',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
@@ -24,6 +25,7 @@ const _slides = [
     subtitle: 'Flexible payments, smart limits\nand responsible spending.',
     icon: Icons.shopping_bag_rounded,
     accentColor: Color(0xFFE53935),
+    tags: ['BNPL', 'Shopping', 'Smart Limits'],
     pexelsQuery: 'smartphone mobile payment e-commerce',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7680438/7680438-hd_1080_1920_25fps.mp4',
@@ -33,6 +35,7 @@ const _slides = [
     subtitle: 'Real-time insights, predictions\nand guidance built around you.',
     icon: Icons.psychology_rounded,
     accentColor: Color(0xFF7C6EF0),
+    tags: ['AI Insights', 'Predictions', 'Chris'],
     pexelsQuery: 'artificial intelligence technology neon',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/6984649/6984649-hd_1080_1920_30fps.mp4',
@@ -42,15 +45,17 @@ const _slides = [
     subtitle: 'Crypto, NFTs, tokenized assets,\nanalytics and AI insights.',
     icon: Icons.currency_bitcoin_rounded,
     accentColor: Color(0xFFF7931A),
+    tags: ['Crypto', 'NFTs', 'BlockHub'],
     pexelsQuery: 'cryptocurrency bitcoin trading smartphone',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/7413963/7413963-hd_1080_1920_25fps.mp4',
+        'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Your Life,\nOrganized',
     subtitle: 'Learning, growth, vision and\nwellbeing in one place.',
     icon: Icons.self_improvement_rounded,
     accentColor: Color(0xFF14B8A6),
+    tags: ['LifeX', 'Wellness', 'Growth'],
     pexelsQuery: 'yoga wellness lifestyle nature park',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4',
