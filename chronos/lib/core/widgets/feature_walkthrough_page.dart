@@ -5,7 +5,8 @@ import 'package:video_player/video_player.dart';
 import '../services/pexels_service.dart';
 
 /// Config for a single walkthrough slide. Video fills the entire screen —
-/// [accentColor] only tints the progress bar, tag chips and CTA pill.
+/// [accentColor] only tints the loading-state background wash behind the
+/// video (progress bar, tags and CTA pill are neutral white/black).
 class WalkthroughSlide {
   final String title;
   final String subtitle;
@@ -28,11 +29,11 @@ class WalkthroughSlide {
 
 /// Full-bleed, edge-to-edge video walkthrough — no card, no white page
 /// background. The video fills the whole screen behind status bar and all;
-/// controls are small icon buttons anchored to the four corners (logo +
-/// skip up top, mute toggle + CTA pill down low) so the footage stays the
-/// focal point. Title/subtitle/tags sit directly on the video over a
-/// bottom scrim. Used by the main app onboarding as well as the TickPay,
-/// BlockHub and LifeX first-time walkthroughs.
+/// controls are a top-right skip button and a bottom-right white CTA pill,
+/// both small and corner-anchored so the footage stays the focal point.
+/// Title/subtitle/tags sit directly on the video over a bottom scrim. Used
+/// by the main app onboarding as well as the TickPay, BlockHub and LifeX
+/// first-time walkthroughs.
 class FeatureWalkthroughPage extends StatefulWidget {
   final List<WalkthroughSlide> slides;
   final VoidCallback onSkip;
@@ -59,7 +60,6 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
 
   int _index = 0;
   bool _videoReady = false;
-  bool _muted = true;
   int _loadingForIndex = -1;
 
   @override
@@ -130,7 +130,7 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
     }
 
     ctrl.setLooping(true);
-    ctrl.setVolume(_muted ? 0 : 1);
+    ctrl.setVolume(0);
     ctrl.play();
 
     setState(() {
@@ -168,14 +168,8 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
     if (!kIsWeb) _loadVideo(v);
   }
 
-  void _toggleMute() {
-    setState(() => _muted = !_muted);
-    _currentCtrl?.setVolume(_muted ? 0 : 1);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final slide = widget.slides[_index];
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -198,13 +192,11 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
                   _ProgressBars(
                     count: widget.slides.length,
                     index: _index,
-                    color: slide.accentColor,
                   ),
                   const SizedBox(height: 14),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const _LogoBadge(),
                       _GlassIconButton(
                         icon: Icons.close_rounded,
                         onTap: widget.onSkip,
@@ -213,18 +205,10 @@ class _FeatureWalkthroughPageState extends State<FeatureWalkthroughPage> {
                   ),
                   const Spacer(),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      _GlassIconButton(
-                        icon: _muted
-                            ? Icons.volume_off_rounded
-                            : Icons.volume_up_rounded,
-                        onTap: _toggleMute,
-                      ),
-                      const Spacer(),
                       _NextPill(
                         label: _isLast ? widget.finishLabel : 'Next',
-                        color: slide.accentColor,
                         onTap: _next,
                       ),
                     ],
@@ -374,9 +358,7 @@ class _SlideVisual extends StatelessWidget {
 class _ProgressBars extends StatelessWidget {
   final int count;
   final int index;
-  final Color color;
-  const _ProgressBars(
-      {required this.count, required this.index, required this.color});
+  const _ProgressBars({required this.count, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +371,9 @@ class _ProgressBars extends StatelessWidget {
             margin: EdgeInsets.only(right: i == count - 1 ? 0 : 6),
             height: 3.5,
             decoration: BoxDecoration(
-              color: i <= index ? color : Colors.white.withValues(alpha: 0.28),
+              color: i <= index
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.28),
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -406,7 +390,7 @@ class _TagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(20),
@@ -417,7 +401,7 @@ class _TagChip extends StatelessWidget {
         label,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 12.5,
+          fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -451,39 +435,10 @@ class _GlassIconButton extends StatelessWidget {
   }
 }
 
-class _LogoBadge extends StatelessWidget {
-  const _LogoBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      padding: const EdgeInsets.all(9),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 10,
-              offset: const Offset(0, 3)),
-        ],
-      ),
-      child: Image.asset(
-        'assets/Chronoslogo-icon-black.png',
-        fit: BoxFit.contain,
-      ),
-    );
-  }
-}
-
 class _NextPill extends StatelessWidget {
   final String label;
-  final Color color;
   final VoidCallback onTap;
-  const _NextPill(
-      {required this.label, required this.color, required this.onTap});
+  const _NextPill({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -492,11 +447,11 @@ class _NextPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
         decoration: BoxDecoration(
-          color: color,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(26),
           boxShadow: [
             BoxShadow(
-                color: color.withValues(alpha: 0.45),
+                color: Colors.black.withValues(alpha: 0.25),
                 blurRadius: 16,
                 offset: const Offset(0, 6)),
           ],
@@ -507,13 +462,13 @@ class _NextPill extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 14.5,
                   fontWeight: FontWeight.w700),
             ),
             const SizedBox(width: 6),
             const Icon(Icons.arrow_forward_rounded,
-                color: Colors.white, size: 17),
+                color: Colors.black, size: 17),
           ],
         ),
       ),
