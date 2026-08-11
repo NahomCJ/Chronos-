@@ -173,7 +173,7 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                       // a hard edge where the hero image meets it. Extra
                       // stops ease the curve into a dissolve, not a ramp.
                       Container(
-                        height: 130,
+                        height: 56,
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
