@@ -100,6 +100,14 @@ class ApiClient {
     return _handleMapResponse(response);
   }
 
+  Future<Map<String, dynamic>> delete(String path) async {
+    final response = await _client.delete(
+      Uri.parse('$baseUrl$path'),
+      headers: _headers,
+    );
+    return _handleMapResponse(response);
+  }
+
   Map<String, dynamic> _handleMapResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final decoded = jsonDecode(response.body);

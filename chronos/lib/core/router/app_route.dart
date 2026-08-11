@@ -113,6 +113,14 @@ import '../../features/panther_ai/presentation/pages/bills_management_page.dart'
 import '../../features/panther_ai/presentation/pages/liabilities_intelligence_page.dart';
 import '../../features/panther_ai/presentation/pages/budget_intelligence_page.dart';
 import '../../features/panther_ai/presentation/pages/net_worth_intelligence_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_intro_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_goals_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_amount_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_allocation_preview_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_review_confirm_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_success_page.dart';
+import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_dashboard_page.dart';
+import '../../features/panther_ai/presentation/cubit/auto_invest_cubit.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -658,6 +666,73 @@ final GoRouter router = GoRouter(
       path: RouteConstants.pantherAiChat.toPath,
       name: RouteConstants.pantherAiChat.name,
       builder: (context, state) => const PantherAiChatPage(),
+    ),
+    // ── Auto-Invest with Chris (full-screen wizard, no bottom nav) ────────
+    // AutoInvestCubit is a lazy singleton (see panther_ai_di.dart) provided
+    // via `BlocProvider.value` — same pattern as ThemeCubit below — so
+    // wizard selections survive `context.push` navigation between steps.
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestIntro.toPath,
+      name: RouteConstants.autoInvestIntro.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestIntroPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestGoals.toPath,
+      name: RouteConstants.autoInvestGoals.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestGoalsPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestAmount.toPath,
+      name: RouteConstants.autoInvestAmount.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestAmountPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestPreview.toPath,
+      name: RouteConstants.autoInvestPreview.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestAllocationPreviewPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestReview.toPath,
+      name: RouteConstants.autoInvestReview.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestReviewConfirmPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestSuccess.toPath,
+      name: RouteConstants.autoInvestSuccess.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestSuccessPage(),
+      ),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.autoInvestDashboard.toPath,
+      name: RouteConstants.autoInvestDashboard.name,
+      builder: (context, state) => BlocProvider.value(
+        value: sl<AutoInvestCubit>(),
+        child: const AutoInvestDashboardPage(),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

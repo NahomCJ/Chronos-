@@ -281,6 +281,7 @@ $env:PATH += ";C:\Users\Nahom\AppData\Roaming\Python\Python313\Scripts"
 | `GET  /api/transactions` | Transaction ledger |
 | `POST /api/ai/chris/chat` | Panther AI chat |
 | `POST /api/ai/tickpay/affordability` | BNPL risk check |
+| `POST /api/v1/auto-invest/plans` | Auto-Invest with Chris — crypto legs live, stocks/ETFs planned-only |
 | `GET  /api/lifex/*` | 11 LifeX modules |
 | `GET  /health` | Health check (no auth) |
 | `GET  /api/docs` | Swagger UI |

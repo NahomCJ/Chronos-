@@ -41,6 +41,7 @@ A unified financial super-app backend. Two separate apps live in one repo, **bot
 |---|---|
 | `/api/v1/auth` | Auth (register, login, OTP, forgot/reset password) |
 | `/api/v1/transfer` | Transfers |
+| `/api/v1/auto-invest` | Auto-Invest with Chris — allocation preview, plan confirm/rounds/pause/resume/cancel. Crypto legs `[LIVE]` (Paxos), stock/ETF legs `[PLANNED — no brokerage integration]`. See below. |
 | `/api/core/accounts` | Bank accounts |
 | `/api/cards` | Virtual/physical cards |
 | `/api/transactions` | Ledger transactions |
@@ -57,6 +58,32 @@ A unified financial super-app backend. Two separate apps live in one repo, **bot
 | `/api/home` | Dashboard home |
 | `/api/notifications` | In-app notifications |
 | `/health` | Health check (no auth) |
+
+---
+
+## Auto-Invest with Chris (`/api/v1/auto-invest`, mounted in `src/modules/investing/auto-invest/`)
+
+User sets risk profile + goal + amount + cadence. Chris proposes a diversified crypto/stock/ETF allocation. User confirms before anything executes — no autonomous execution (see `panther/Panther-AI-/PantherAI/CLAUDE.md`).
+
+Only crypto has live trade execution (Paxos, same pipeline as `/api/v1/crypto`). Stock/ETF legs have zero brokerage integration in this codebase — they are computed and persisted as a planned target only, never executed.
+
+All routes require auth.
+
+| Route | Purpose | Status |
+|---|---|---|
+| `POST /allocation-preview` | Generate an allocation from `{ riskProfile, goal, amountUsd }` — no persistence | — |
+| `POST /plans` | Create a plan (`PENDING_CONFIRMATION`) from the preview's allocations | — |
+| `POST /plans/:id/confirm` | Execute round 1 | Crypto legs `[LIVE]`, stock/ETF legs `[PLANNED — no brokerage integration]` |
+| `POST /plans/:id/rounds` | Manually execute the next round (dashboard "Invest Next Round Now" button — no background scheduler) | same split as confirm |
+| `GET /plans/active` | Caller's current non-cancelled/non-completed plan | — |
+| `GET /plans/:id` | Single plan (allocations + executions) | — |
+| `PATCH /plans/:id/pause` / `/resume` | Toggle `ACTIVE` ↔ `PAUSED` | — |
+| `DELETE /plans/:id` | Soft-cancel (`CANCELLED`, rows kept) | — |
+| `GET /plans/:id/executions` | Full execution history, newest first | — |
+
+A failed crypto leg (e.g. compliance/balance rejection from the existing Paxos pipeline) is recorded as `FAILED` with a reason and does not block the other legs in the same round.
+
+Old dead-code stub at `src/modules/core/transactions/autonomous-investor/` (Mongoose-based, unmounted) is unrelated to this feature — left untouched.
 
 ---
 
