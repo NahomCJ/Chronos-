@@ -127,10 +127,13 @@ Server starts on `http://localhost:3000`.
 ```env
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql://user:password@localhost:5432/chronos
+DATABASE_URL=postgresql://<user>:<password>@<project>-pooler.<region>.aws.neon.tech/chronos?sslmode=require
+DIRECT_URL=postgresql://<user>:<password>@<project>.<region>.aws.neon.tech/chronos?sslmode=require
 JWT_SECRET=your_64_byte_hex_secret_here
 DEPOSIT_MIN_AMOUNT=1
 ```
+
+Get both connection strings from the Neon dashboard → your project → Connect. `DATABASE_URL` is the pooled (PgBouncer) string the app uses at runtime; `DIRECT_URL` is the unpooled string Prisma needs for `migrate`/`db push`.
 
 ### Optional — app boots without these, features degrade gracefully
 
@@ -910,7 +913,7 @@ PUT /api/notifications/device-token
 ## Database
 
 - **ORM**: Prisma 6
-- **Production DB**: AWS RDS PostgreSQL `chronosdb` (us-east-1)
+- **Production DB**: Neon Postgres `chronosdb`
 - **Schema**: [`prisma/schema.prisma`](prisma/schema.prisma)
 
 ```bash
@@ -919,7 +922,7 @@ npx prisma db push            # Push schema to DB (dev/staging)
 npm run prisma:studio         # Visual DB browser
 ```
 
-> **Production schema changes**: Run `npx prisma db push --accept-data-loss` locally with `DATABASE_URL` pointed at RDS. Never run directly on the production host.
+> **Production schema changes**: Run `npx prisma db push --accept-data-loss` locally with `DATABASE_URL`/`DIRECT_URL` pointed at Neon. Never run directly on the production host.
 
 ---
 
@@ -931,7 +934,7 @@ npm run prisma:studio         # Visual DB browser
 |----------|---------|
 | Main API (legacy EB) | `chronos-backend-env` — `http://chronos.us-east-1.elasticbeanstalk.com` |
 | BlockHub (legacy EB) | `blockhub-env` — `http://blockhub-env.us-east-1.elasticbeanstalk.com` |
-| Database | AWS RDS PostgreSQL `chronosdb` — not part of the migration, stays put |
+| Database | **[LIVE]** Neon Postgres `chronosdb` — replaced AWS RDS |
 
 Build commands are host-agnostic and unchanged:
 ```bash
@@ -951,7 +954,7 @@ npx tsc -p tsconfig.blockhub.json   # → dist-blockhub/, run with: node dist-bl
 |-----|-------|
 | `NODE_ENV` | `production` |
 | `JWT_SECRET` | 64-byte hex string |
-| `DATABASE_URL` | `postgresql://chronos:...@chronosdb...` |
+| `DATABASE_URL` | Neon pooled connection string (`?sslmode=require`) |
 | `REDIS_URL` | Redis URL (optional — NFT minting queue; app starts without it) |
 | `PAXOS_ENV` | `sandbox` or `production` |
 | `PAXOS_CLIENT_ID` | Paxos API credentials |
@@ -966,7 +969,8 @@ Set on whatever host is running the app (currently: EB Console → `chronos-back
 | Key | Value |
 |-----|-------|
 | `NODE_ENV` | `production` |
-| `DATABASE_URL` | `postgresql://chronos:...@chronosdb...` |
+| `DATABASE_URL` | Neon pooled connection string (`?sslmode=require`) |
+| `DIRECT_URL` | Neon unpooled connection string — only needed where migrations run |
 | `JWT_SECRET` | 64-byte hex string |
 | `ANTHROPIC_API_KEY` | Required for Chris + LifeX AI |
 | `OPENAI_API_KEY` | Required for voice transcription |

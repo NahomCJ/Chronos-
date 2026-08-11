@@ -27,8 +27,8 @@ A full-stack fintech platform with AI-powered financial tools, crypto/NFT tradin
 └──────┬───────┘
        ▼
 ┌─────────────────────────────────────┐
-│        AWS RDS PostgreSQL           │
-│  chronosdb.csjwyuqii28q.us-east-1   │
+│            Neon Postgres            │
+│           (chronosdb)               │
 └─────────────────────────────────────┘
 ```
 
@@ -71,10 +71,12 @@ Minimum `.env`:
 ```env
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql://chronos:chronosdbrds@chronosdb.csjwyuqii28q.us-east-1.rds.amazonaws.com:5432/chronosdb
+DATABASE_URL=postgresql://<user>:<password>@<project>-pooler.<region>.aws.neon.tech/chronosdb?sslmode=require
+DIRECT_URL=postgresql://<user>:<password>@<project>.<region>.aws.neon.tech/chronosdb?sslmode=require
 JWT_SECRET=<64-byte hex>
 DEPOSIT_MIN_AMOUNT=1
 ```
+Both connection strings come from the Neon dashboard → project → Connect.
 
 ### 2. BlockHub (NestJS)
 
@@ -223,7 +225,7 @@ npm run build
 See [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#hosting--migrating-off-aws-elastic-beanstalk) for current hosting status.
 
 ### Required environment variables
-- `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`
+- `DATABASE_URL` (Neon, pooled), `DIRECT_URL` (Neon, unpooled — for migrations), `JWT_SECRET`, `NODE_ENV=production`
 - `ANTHROPIC_API_KEY` — Panther AI chat
 - `SMTP_*` — Email notifications
 - `FCM_SERVICE_ACCOUNT` — Push notifications
@@ -238,7 +240,7 @@ See [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#hosting--migrating-o
 | Backend | Node.js 20 · Express 5 · TypeScript · Prisma 6 |
 | BlockHub | Node.js 24 · NestJS 11 · Socket.io |
 | AI | Python 3.12 · FastAPI · Anthropic Claude · DistilBERT |
-| Database | PostgreSQL (AWS RDS) |
+| Database | PostgreSQL (Neon) |
 | Auth | Firebase Auth · JWT (HS256) · bcrypt |
 | Storage | AWS S3 · Elastic Beanstalk |
 | Payments | Plaid (KYC/ACH) · Paxos (crypto) |
