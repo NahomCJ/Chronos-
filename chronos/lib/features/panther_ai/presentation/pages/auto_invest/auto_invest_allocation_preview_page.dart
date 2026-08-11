@@ -77,10 +77,10 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
                         const SizedBox(height: 8),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(18),
+                          padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: PantherColors.border),
                             boxShadow: [
                               BoxShadow(
@@ -96,13 +96,13 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
                             centerSubLabel: 'Total',
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         Text(
                           'Your mix',
                           style: TextStyles.titleMedium.copyWith(
                             color: PantherColors.textPrimary,
                             fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -117,16 +117,16 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: PantherColors.cardAlt,
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Icon(Icons.psychology_outlined,
-                                  color: PantherColors.brand, size: 18),
+                                  color: PantherColors.brand, size: 16),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
@@ -155,14 +155,15 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: PantherColors.brand,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        minimumSize: const Size(double.infinity, 46),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                       ),
                       child: Text(
                         'Continue',
                         style: TextStyles.labelLarge.copyWith(
-                          fontSize: 15,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -196,7 +197,7 @@ class AutoInvestAllocationPreviewPage extends StatelessWidget {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],
@@ -218,10 +219,10 @@ class _AllocationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final executesLive = allocation.assetClass.executesLive;
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: PantherColors.border),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
@@ -233,8 +234,8 @@ class _AllocationRow extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
+                width: 30,
+                height: 30,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.14),
                   shape: BoxShape.circle,

@@ -65,7 +65,7 @@ class AutoInvestGoalsPage extends StatelessWidget {
                           style: TextStyles.titleMedium.copyWith(
                             color: PantherColors.textPrimary,
                             fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -94,7 +94,7 @@ class AutoInvestGoalsPage extends StatelessWidget {
                           style: TextStyles.titleMedium.copyWith(
                             color: PantherColors.textPrimary,
                             fontWeight: FontWeight.w700,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -148,14 +148,15 @@ class AutoInvestGoalsPage extends StatelessWidget {
                     backgroundColor: PantherColors.brand,
                     foregroundColor: Colors.white,
                     disabledBackgroundColor: PantherColors.brand.withValues(alpha: 0.35),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size(double.infinity, 46),
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                   ),
                   child: Text(
                     'Continue',
                     style: TextStyles.labelLarge.copyWith(
-                      fontSize: 15,
+                      fontSize: 13.5,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -187,7 +188,7 @@ class AutoInvestGoalsPage extends StatelessWidget {
             style: TextStyles.titleMedium.copyWith(
               color: PantherColors.textPrimary,
               fontWeight: FontWeight.w600,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],
@@ -217,10 +218,10 @@ class _RiskCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: selected ? PantherColors.brand.withValues(alpha: 0.06) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected ? PantherColors.brand : PantherColors.border,
             width: selected ? 1.5 : 1,
@@ -232,15 +233,15 @@ class _RiskCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: PantherColors.brand.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(14),
+                shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: PantherColors.brand, size: 20),
+              child: Icon(icon, color: PantherColors.brand, size: 17),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,7 +301,7 @@ class _GoalChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
           color: selected ? PantherColors.brand : Colors.white,
           borderRadius: BorderRadius.circular(50),
@@ -311,7 +312,7 @@ class _GoalChip extends StatelessWidget {
           style: TextStyles.bodyMedium.copyWith(
             color: selected ? Colors.white : PantherColors.textPrimary,
             fontWeight: FontWeight.w600,
-            fontSize: 13.5,
+            fontSize: 12.5,
           ),
         ),
       ),

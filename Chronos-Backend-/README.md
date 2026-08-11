@@ -2,8 +2,8 @@
 
 A unified financial super-app backend combining core banking, BNPL credit, FX, KYC, AI, personal development, and crypto — built with Express 5, TypeScript, and Prisma on PostgreSQL.
 
-**Main API** — `http://chronos.us-east-1.elasticbeanstalk.com` — `chronos-v21` ✅  
-**BlockHub** — `http://blockhub-env.us-east-1.elasticbeanstalk.com` — `blockhub-v2` ✅  
+**Main API** — `http://chronos.us-east-1.elasticbeanstalk.com` (legacy EB, migrating — see [Hosting](#hosting))  
+**BlockHub** — `http://blockhub-env.us-east-1.elasticbeanstalk.com` (legacy EB, migrating — see [Hosting](#hosting))  
 **Health check**: `GET /health` → `{"status":"ok"}`
 
 ---
@@ -919,97 +919,31 @@ npx prisma db push            # Push schema to DB (dev/staging)
 npm run prisma:studio         # Visual DB browser
 ```
 
-> **Production schema changes**: Run `npx prisma db push --accept-data-loss` locally with `DATABASE_URL` pointed at RDS. Never run on the EB instance.
+> **Production schema changes**: Run `npx prisma db push --accept-data-loss` locally with `DATABASE_URL` pointed at RDS. Never run directly on the production host.
 
 ---
 
-## AWS Deployment
+## Hosting
 
-### Infrastructure
+**[PLANNED]** Migrating off AWS Elastic Beanstalk — the S3-zip-upload workflow below is retired; too much time went into debugging EB itself instead of the app. New host TBD. Until the move is done, both apps still run on their old EB environments:
 
 | Resource | Details |
 |----------|---------|
-| Main API (EB) | `chronos-backend-env` — Node.js 20, t3.micro, us-east-1 |
-| Main API URL | `http://chronos.us-east-1.elasticbeanstalk.com` |
-| BlockHub (EB) | `blockhub-env` — Node.js 24, t3.micro, us-east-1 |
-| BlockHub URL | `http://blockhub-env.us-east-1.elasticbeanstalk.com` |
-| Database | AWS RDS PostgreSQL `chronosdb`, db.t4g.micro (shared by both apps) |
-| S3 bucket | `elasticbeanstalk-us-east-1-551451910710` |
+| Main API (legacy EB) | `chronos-backend-env` — `http://chronos.us-east-1.elasticbeanstalk.com` |
+| BlockHub (legacy EB) | `blockhub-env` — `http://blockhub-env.us-east-1.elasticbeanstalk.com` |
+| Database | AWS RDS PostgreSQL `chronosdb` — not part of the migration, stays put |
 
-### Deploy via AWS CLI (recommended)
-
+Build commands are host-agnostic and unchanged:
 ```bash
-# 1. Build
+# Main API
 npx prisma generate
-npm run build
+npm run build      # → dist/, run with: node dist/server.js
 
-# 2. Create ZIP (must use Python — not PowerShell/tar, they break Linux paths)
-python -c "
-import zipfile, os
-files = [('dist', True), ('node_modules', True), ('package.json', False), ('package-lock.json', False), ('Procfile', False), ('prisma', True), ('.ebextensions', True)]
-with zipfile.ZipFile('chronos-deploy.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-    for name, is_dir in files:
-        if is_dir:
-            for root, dirs, fs in os.walk(name):
-                for f in fs:
-                    fp = os.path.join(root, f)
-                    zf.write(fp, fp.replace(os.sep, '/'))
-        else:
-            zf.write(name, name)
-print('Done!')
-"
-
-# 3. Upload to S3
-aws s3 cp chronos-deploy.zip s3://elasticbeanstalk-us-east-1-551451910710/chronos-backend/chronos-vXX.zip
-
-# 4. Create EB version
-aws elasticbeanstalk create-application-version \
-  --application-name chronos-backend \
-  --version-label "chronos-vXX" \
-  --source-bundle S3Bucket="elasticbeanstalk-us-east-1-551451910710",S3Key="chronos-backend/chronos-vXX.zip"
-
-# 5. Deploy
-aws elasticbeanstalk update-environment \
-  --environment-name chronos-backend-env \
-  --version-label "chronos-vXX"
+# BlockHub
+npx tsc -p tsconfig.blockhub.json   # → dist-blockhub/, run with: node dist-blockhub/main.js
 ```
 
-> **Why include `node_modules`**: EB t3.micro is too slow to run `npm install` + `prisma generate` within the 10-minute timeout. Pre-building locally and shipping the full `node_modules` (with the Linux Prisma binary already inside) bypasses this entirely.
-
-### Deploying BlockHub
-
-```bash
-# 1. Build
-npx tsc -p tsconfig.blockhub.json
-
-# 2. Create ZIP (custom Procfile injected inline — root Procfile is for the main API only)
-python -c "
-import zipfile, os
-items = [('dist-blockhub', True), ('node_modules', True), ('package.json', False), ('package-lock.json', False), ('prisma', True), ('.ebextensions', True)]
-with zipfile.ZipFile('blockhub-deploy.zip', 'w', zipfile.ZIP_DEFLATED) as zf:
-    zf.writestr('Procfile', 'web: node dist-blockhub/main.js\n')
-    for name, is_dir in items:
-        if is_dir:
-            for root, dirs, files in os.walk(name):
-                dirs[:] = [d for d in dirs if d not in ['.cache', '.git']]
-                for f in files:
-                    fp = os.path.join(root, f)
-                    zf.write(fp, fp.replace(os.sep, '/'))
-        else:
-            if os.path.exists(name): zf.write(name, name)
-print('Done!')
-"
-
-# 3. Upload + deploy (upload via S3 console if on slow connection — ZIP is ~300 MB)
-aws s3 cp blockhub-deploy.zip s3://elasticbeanstalk-us-east-1-551451910710/chronos-blockhub/blockhub-vXX.zip
-aws elasticbeanstalk create-application-version \
-  --application-name chronos-blockhub \
-  --version-label "blockhub-vXX" \
-  --source-bundle S3Bucket="elasticbeanstalk-us-east-1-551451910710",S3Key="chronos-blockhub/blockhub-vXX.zip"
-aws elasticbeanstalk update-environment \
-  --environment-name blockhub-env \
-  --version-label "blockhub-vXX"
-```
+`.ebextensions/`, the root `Procfile`, and the `zip:blockhub` script have been removed — they only existed to package EB's S3-zip deploy format.
 
 ### BlockHub Environment Variables
 
@@ -1027,7 +961,7 @@ aws elasticbeanstalk update-environment \
 
 ### Main API Environment Variables to Set
 
-Go to EB Console → `chronos-backend-env` → Configuration → Environment properties:
+Set on whatever host is running the app (currently: EB Console → `chronos-backend-env` → Configuration → Environment properties):
 
 | Key | Value |
 |-----|-------|
@@ -1069,17 +1003,17 @@ chore/*      → tooling, deps, refactors
 
 ### Deployment Checklist — Main API
 
-- [ ] `npx prisma generate` locally (produces Linux + Windows binaries)
+**[PLANNED]** Steps below through "create EB version" reflect the legacy EB workflow until the new host is chosen.
+
+- [ ] `npx prisma generate` locally
 - [ ] `npm run build`
 - [ ] If schema changed: `npx prisma db push` locally with production `DATABASE_URL`
-- [ ] Create ZIP with Python script
-- [ ] Upload to S3 → create EB version → deploy to `chronos-backend-env`
+- [ ] Deploy `dist/`, `node_modules`, `package.json`, `prisma/` to the host
 - [ ] Verify `GET /health` returns `{"status":"ok"}`
 - [ ] Run Newman: `newman run Chronos-API.postman_collection.json`
 
 ### Deployment Checklist — BlockHub
 
 - [ ] `npx tsc -p tsconfig.blockhub.json`
-- [ ] Create ZIP with Python script (Procfile injected inline as `web: node dist-blockhub/main.js`)
-- [ ] Upload to S3 → create EB version → deploy to `blockhub-env`
-- [ ] Verify `GET http://blockhub-env.us-east-1.elasticbeanstalk.com/health` returns `{"status":"ok"}`
+- [ ] Deploy `dist-blockhub/`, `node_modules`, `package.json`, `prisma/` to the host (run with `node dist-blockhub/main.js`)
+- [ ] Verify `GET /health` returns `{"status":"ok"}`

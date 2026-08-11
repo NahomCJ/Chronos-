@@ -313,14 +313,14 @@ class _PantherAiPageState extends State<PantherAiPage>
       child: GestureDetector(
         onTap: () => context.push(RouteConstants.autoInvestIntro.toPath),
         child: Container(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [_purple, _purple.withValues(alpha: 0.75)],
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
                 color: _purple.withValues(alpha: 0.28),
@@ -332,15 +332,15 @@ class _PantherAiPageState extends State<PantherAiPage>
           child: Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(14),
+                  shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.auto_graph_rounded, color: Colors.white, size: 22),
+                child: const Icon(Icons.auto_graph_rounded, color: Colors.white, size: 18),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,7 +350,7 @@ class _PantherAiPageState extends State<PantherAiPage>
                       style: TextStyles.titleMedium.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 15,
+                        fontSize: 13.5,
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -358,14 +358,14 @@ class _PantherAiPageState extends State<PantherAiPage>
                       'Diversify automatically across crypto, stocks & ETFs.',
                       style: TextStyles.bodySmall.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
-                        fontSize: 12,
+                        fontSize: 11.5,
                         height: 1.35,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
+              const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 16),
             ],
           ),
         ),
