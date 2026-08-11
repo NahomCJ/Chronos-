@@ -3,6 +3,7 @@ import '../data/data_source/panther_ai_remote_data_source.dart';
 import '../data/data_source/auto_invest_remote_data_source.dart';
 import '../data/repositories/panther_ai_repository_impl.dart';
 import '../data/repositories/auto_invest_repository_impl.dart';
+import '../data/repositories/auto_invest_mock_repository.dart';
 import '../domain/repositories/panther_ai_repository.dart';
 import '../domain/repositories/auto_invest_repository.dart';
 import '../domain/usecases/send_message.dart';
@@ -23,6 +24,14 @@ import '../presentation/bloc/spending_bloc.dart';
 import '../presentation/bloc/marketplace_bloc.dart';
 import '../presentation/cubit/auto_invest_cubit.dart';
 
+/// Set to `false` once a real backend is reachable from this app again and
+/// Auto-Invest should hit it. AWS Elastic Beanstalk is being retired (see
+/// root CLAUDE.md) and nothing has replaced it yet, so `POST /api/v1/auto-invest/*`
+/// has nowhere to land right now — this keeps the whole feature usable for
+/// front-end/design work in the meantime with zero backend dependency. See
+/// `AutoInvestMockRepository` for what it does instead.
+const bool kAutoInvestUseMockBackend = true;
+
 void initPantherAiDi(GetIt sl) {
   sl.registerLazySingleton(
       () => PantherAiRemoteDataSource(sl(), sl()));
@@ -31,7 +40,9 @@ void initPantherAiDi(GetIt sl) {
 
   sl.registerLazySingleton(() => AutoInvestRemoteDataSource(sl()));
   sl.registerLazySingleton<AutoInvestRepository>(
-      () => AutoInvestRepositoryImpl(sl()));
+      () => kAutoInvestUseMockBackend
+          ? AutoInvestMockRepository()
+          : AutoInvestRepositoryImpl(sl()));
 
   sl.registerLazySingleton(() => SendMessage(sl()));
   sl.registerLazySingleton(() => GetAlerts(sl()));
