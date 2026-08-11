@@ -170,22 +170,32 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                       const SizedBox(height: 20),
                       _buildQuickActions(context),
                       // Soft fade into the white section below, instead of
-                      // a hard edge where the hero image meets it.
+                      // a hard edge where the hero image meets it. Extra
+                      // stops ease the curve into a dissolve, not a ramp.
                       Container(
-                        height: 72,
+                        height: 130,
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.white],
+                            colors: [
+                              Colors.transparent,
+                              Color(0x00FFFFFF),
+                              Color(0x80FFFFFF),
+                              Color(0xE6FFFFFF),
+                              Colors.white,
+                            ],
+                            stops: [0.0, 0.15, 0.55, 0.82, 1.0],
                           ),
                         ),
                       ),
-                      // White section, rounds top, then extends to end
+                      // White section — no top radius on purpose: a rounded
+                      // corner clipping this gradient would reveal the dark
+                      // hero behind it in the corner cutout, so it stays a
+                      // flat edge and lets the fade above do the blending.
                       Container(
                         decoration: const BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
                         ),
                         constraints: BoxConstraints(
                           minHeight: MediaQuery.of(context).size.height * 0.6,

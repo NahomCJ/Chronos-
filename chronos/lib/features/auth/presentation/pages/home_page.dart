@@ -140,67 +140,70 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     final double heroHeight = (isSmallScreen ? 356 : 410) * scale;
     // Extra strip below the quick-action row where the hero image dissolves
     // into the page background, instead of stopping at a hard edge.
-    final double fadeHeight = 64 * scale;
+    final double fadeHeight = 110 * scale;
     final double imageHeight = heroHeight + fadeHeight;
+    const Color pageBg = Color(0xFFF5F5F5);
 
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(32),
-            bottomRight: Radius.circular(32),
-          ),
-          child: SizedBox(
-            height: imageHeight,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CachedNetworkImage(
-                  imageUrl:
-                      'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) =>
-                      Container(color: const Color(0xFF1A3A5E)),
-                  errorWidget: (_, __, ___) =>
-                      Container(color: const Color(0xFF1A3A5E)),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.38),
-                        Colors.black.withValues(alpha: 0.18),
-                      ],
-                    ),
+        // No rounded corners here on purpose — a hard-edged rounded rect
+        // clipping a soft gradient produces a visible seam right at the
+        // curve. A plain full-bleed rectangle dissolves cleanly instead.
+        SizedBox(
+          height: imageHeight,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl:
+                    'https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900',
+                fit: BoxFit.cover,
+                placeholder: (_, __) =>
+                    Container(color: const Color(0xFF1A3A5E)),
+                errorWidget: (_, __, ___) =>
+                    Container(color: const Color(0xFF1A3A5E)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.38),
+                      Colors.black.withValues(alpha: 0.18),
+                    ],
                   ),
                 ),
-                // Soft fade into the page background below the quick
-                // actions, instead of a hard edge where the hero image
-                // meets the white content below.
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: fadeHeight + 48 * scale,
-                  child: IgnorePointer(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Color(0xFFF5F5F5),
-                          ],
-                        ),
+              ),
+              // Soft fade into the page background below the quick
+              // actions, instead of a hard edge where the hero image
+              // meets the white content below. Extra stops ease the
+              // curve so it reads as a smooth dissolve, not a ramp.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: fadeHeight,
+                child: IgnorePointer(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Color(0x00F5F5F5),
+                          Color(0x80F5F5F5),
+                          Color(0xE6F5F5F5),
+                          pageBg,
+                        ],
+                        stops: [0.0, 0.15, 0.55, 0.82, 1.0],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         SizedBox(
