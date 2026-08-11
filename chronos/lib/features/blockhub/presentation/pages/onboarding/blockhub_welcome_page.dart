@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/feature_walkthrough_page.dart';
+import '../../../../../core/widgets/feature_walkthrough_page.dart';
 import 'risk_disclosure_page.dart';
 
 const _slides = [
