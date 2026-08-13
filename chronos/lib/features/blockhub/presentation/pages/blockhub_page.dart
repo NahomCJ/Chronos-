@@ -255,15 +255,19 @@ class _BlockHubPageState extends State<BlockHubPage> {
     final hp = isSmallScreen ? 16.0 : 20.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A14),
+      // Was 0xFF0A0A14 behind a full-screen Positioned.fill photo that
+      // duplicated the hero photo already scoped inside the scroll content
+      // below — that stray layer is what bled through (as a jarring
+      // "pop in") whenever the light section didn't reach the very bottom
+      // of the screen, e.g. on overscroll bounce. Removed the stray layer;
+      // this now matches the light section's own color so any gap below it
+      // reads as the same static background instead of a different photo.
+      backgroundColor: const Color(0xFFF5F7FA),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 90),
         child: const ChrisHomeFab(),
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-          SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             // ── Hero Photo (header → wallet boxes → nav icons → action btns) ──
@@ -398,8 +402,14 @@ class _BlockHubPageState extends State<BlockHubPage> {
               ),
 
             // ── Light-theme bottom section ─────────────────────────────────
+            // minHeight guarantees this reaches the bottom of the viewport
+            // even when the watchlist is short, so there's never a gap
+            // below it that could reveal anything else during scroll.
             Container(
               color: const Color(0xFFF5F7FA),
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height * 0.6,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -457,8 +467,6 @@ class _BlockHubPageState extends State<BlockHubPage> {
             ],
           ),
         ),
-        ],
-      ),
     );
   }
 
