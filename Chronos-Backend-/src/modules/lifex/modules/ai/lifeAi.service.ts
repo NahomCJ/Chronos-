@@ -1,5 +1,5 @@
 import prisma from "../../../../config/prisma";
-import { callLLMFast } from "../../../ai/panther/llm/claude.client";
+import { callLLMFast } from "../../../ai/panther/llm/llm.client";
 
 export class LifeAiService {
   async getInsights(userId: string) {

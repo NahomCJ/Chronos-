@@ -6,15 +6,13 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_it/get_it.dart';
 import '../network/api_client.dart';
 
-// Chris's voice is synthesized by the Vercel deployment's serverless
-// function (api/synthesize.js), which holds the ElevenLabs key as a Vercel
-// env var — same reasoning as ChrisChatBase in
-// panther_ai_remote_data_source.dart: this is the environment actually
-// being run/controlled, not the EB Express backend's (also-live)
-// /api/ai/voice/synthesize. Falls back to on-device TTS if the call fails.
+// Chris's voice is synthesized by Chronos-Backend-'s own ElevenLabs-backed
+// POST /api/ai/voice/synthesize (auth'd via the stored JWT, see ApiClient),
+// not the earlier stateless Vercel stand-in (see Chronos-Backend-/CLAUDE.md,
+// Bugs Fixed #15 and #18). Falls back to on-device TTS if the call fails.
 const _kVoiceBase = String.fromEnvironment(
   'CHRIS_VOICE_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
+  defaultValue: 'http://chronos.us-east-1.elasticbeanstalk.com',
 );
 
 class TtsService {
@@ -118,7 +116,7 @@ class TtsService {
       final trimmed = text.length > 480 ? text.substring(0, 480) : text;
       final bytes = await api.postBytesWithBase(
         _kVoiceBase,
-        '/api/synthesize',
+        '/api/ai/voice/synthesize',
         {'text': trimmed},
       );
       if (bytes.isEmpty) {

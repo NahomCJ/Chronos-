@@ -1,4 +1,4 @@
-import { callLLM } from "../../llm/claude.client";
+import { callLLM } from "../../llm/llm.client";
 import {
   compileSystemPrompt,
   UserLevel,

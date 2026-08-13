@@ -106,7 +106,7 @@ DEPOSIT_MIN_AMOUNT=1
 ```
 Both connection strings come from the Neon dashboard → project → Connect. `DATABASE_URL` is the pooled (PgBouncer) string the app uses at runtime; `DIRECT_URL` is the unpooled string Prisma needs for `migrate`/`db push`.
 
-Optional keys (app boots and degrades gracefully without them): `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, `SMTP_*`, `PLAID_*`, `FCM_SERVICE_ACCOUNT`, `REDIS_HOST`.
+Optional keys (app boots and degrades gracefully without them): `DEEPSEEK_API_KEY` (primary LLM for every chatbot — Chris + LifeX AI coach), `ANTHROPIC_API_KEY` (automatic fallback if DeepSeek is unset or errors), `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, `SMTP_*`, `PLAID_*`, `FCM_SERVICE_ACCOUNT`, `REDIS_HOST`.
 
 Full env reference: [Chronos-Backend-/CLAUDE.md](Chronos-Backend-/CLAUDE.md#environment-variables)
 
@@ -328,6 +328,7 @@ Token auto-saves on register (201) and login (200). Import both files into Postm
 - Flutter mobile (auth, home, core features)
 
 ### Needs Env Keys on EB [NEEDS CONFIG]
+- DeepSeek as primary chatbot LLM: `DEEPSEEK_API_KEY` not yet set on EB main API — chat/voice still work via the automatic Claude fallback, just not on DeepSeek
 - Email sending: `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` not yet set on EB main API
 - Push notifications: `FCM_SERVICE_ACCOUNT` not set on EB
 - Voice transcription: `OPENAI_API_KEY` not set on EB
