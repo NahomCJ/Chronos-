@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { processChrisChat } from "./chris.service";
 import { ResponseMode } from "../panther/llm/prompt-compiler";
-import { LLMMessage } from "../panther/llm/claude.client";
+import { LLMMessage } from "../panther/llm/llm.client";
 
 function sanitizeHistory(raw: unknown): LLMMessage[] {
   if (!Array.isArray(raw)) return [];

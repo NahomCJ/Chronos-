@@ -1,4 +1,4 @@
-import { callLLMFast } from "../llm/claude.client";
+import { callLLMFast } from "../llm/llm.client";
 
 const GUARD_PROMPT = `You are a financial AI compliance checker.
 
