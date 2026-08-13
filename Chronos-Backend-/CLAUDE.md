@@ -19,7 +19,7 @@ A unified financial super-app backend. Two separate apps live in one repo, **bot
 - **ORM**: Prisma 6 + PostgreSQL
 - **Auth**: JWT (HS256) + bcrypt
 - **KYC/Banking**: Plaid Sandbox (IDV + Auth)
-- **AI**: Anthropic Claude (Panther engine) + OpenAI Whisper (STT) + ElevenLabs (TTS)
+- **AI**: DeepSeek (primary LLM for every chatbot) + Anthropic Claude (automatic fallback, Panther engine) + OpenAI Whisper (STT) + ElevenLabs (TTS)
 - **Email**: Nodemailer (SMTP/SendGrid) — lazy init, works without config
 - **Push**: Firebase Admin SDK (FCM) — lazy init, works without config
 - **Cache**: Redis (optional, falls back to in-memory Map)
@@ -222,7 +222,8 @@ DEPOSIT_MIN_AMOUNT=1
 ### Main API — Optional (app boots and degrades gracefully without these)
 ```env
 # AI
-ANTHROPIC_API_KEY=       # Chris chat, AI alerts, LifeX AI coach
+DEEPSEEK_API_KEY=        # Primary LLM — Chris chat (all domain agents), AI alerts, LifeX AI coach
+ANTHROPIC_API_KEY=       # Automatic fallback if DeepSeek is unset or a call fails — same chatbots
 OPENAI_API_KEY=          # Voice transcription (Whisper)
 ELEVENLABS_API_KEY=      # Voice synthesis (ElevenLabs TTS)
 ELEVENLABS_VOICE_ID=     # Optional — defaults to Rachel voice
@@ -380,6 +381,12 @@ Discovered while preparing the Main API for Vercel: `src/app.ts`'s SPA-fallback 
 
 Discovered while first evaluating BlockHub for Vercel (before settling on Railway — see [Hosting](#hosting--migrating-off-aws-elastic-beanstalk) above): pointing a serverless-style bundler straight at BlockHub's TypeScript source throws `UndefinedDependencyException: Nest can't resolve dependencies of the MintingService (?, ...)` at boot — reproduced with plain `tsx` too, so it's an esbuild/decorator-metadata gap, not a real DI bug (confirmed clean boot via the actual `tsc -p tsconfig.blockhub.json` build). Not relevant to BlockHub's current Railway deployment (which runs the real `tsc` build, no esbuild involved) — documented here in case anyone points a zero-config TS bundler at BlockHub's source again.
 
+### 18. DeepSeek added as primary LLM for every chatbot; mobile repointed off the Vercel stand-in
+
+`claude.client.ts` was, until now, the only LLM entry point in this codebase — every chatbot (Chris's 5 domain agents + routing + compliance + general/unified fallback, the LifeX AI coach) imported it directly. Added `deepseek.client.ts` (OpenAI-compatible client, reuses the already-installed `openai` package pointed at `https://api.deepseek.com`) and `llm.client.ts`, a thin router that calls DeepSeek first and falls back to the existing Claude client automatically on any error (missing key, rate limit, network failure) — never a silent failure, Chris always answers as long as at least one provider is configured. All 12 call sites across both chatbots were repointed from `claude.client` to `llm.client` with no change to their call shape (`callLLM`/`callLLMFast`/`LLMMessage` all still exist, just re-exported). `claude.client.ts` itself is untouched and still does the real Anthropic call for the fallback path.
+
+Also re-pointed the Flutter app's Chris chat (`PantherAiRemoteDataSource.sendMessage`) and voice (`TtsService._fetchAudio`) off the Bug #15 Vercel stand-in and back onto this backend's own `/api/ai/chris/chat` and `/api/ai/voice/synthesize` — see `chronos/CLAUDE.md`/`FEATURES.md` for the mobile side of this change. This restores the personalized-financial-context orchestrator pipeline (real per-user data, not a stateless Claude call) as what the app actually uses, and is what the DeepSeek/Claude router above and ElevenLabs voice are actually wired into. **Still blocked on the same deploy gap as Bug #15**: this repo has no AWS/Vercel access to redeploy `chronos-backend-env` or confirm a live Vercel deployment of the real Express app (`api/index.ts`) exists at a known URL — whoever has deploy access needs to ship this backend (with `DEEPSEEK_API_KEY` set alongside the existing `ANTHROPIC_API_KEY`/`ELEVENLABS_API_KEY`) before the mobile app's chat/voice will work end-to-end again. Until then, `--dart-define=CHRIS_CHAT_BASE_URL=...`/`CHRIS_VOICE_BASE_URL=...` can override the default EB URL for local testing against a backend run with `npm run dev`.
+
 ---
 
 ## Legacy EB Deployment Status (pending migration)
@@ -428,6 +435,7 @@ Still accurate as of the last EB deploy — kept for reference while the new hos
 - [x] Fix Firebase crash — v18
 - [x] Fix Prisma Linux binary (rhel-openssl-3.0.x) — v21
 - [x] Deploy BlockHub (NestJS) as separate EB environment — blockhub-v2
+- [ ] **Add `DEEPSEEK_API_KEY` to EB env vars (main API)** — primary LLM for every chatbot; without it, all chat falls back to Claude automatically (see Bugs Fixed #18)
 - [x] **Add `ANTHROPIC_API_KEY` to EB env vars (main API)** — keys sourced from Panther repo
 - [ ] **Add `SMTP_HOST/USER/PASS` to EB env vars (main API)** — emails won't send without these
 - [ ] Add `OPENAI_API_KEY` to EB — voice transcription

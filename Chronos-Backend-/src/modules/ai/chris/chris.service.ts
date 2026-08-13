@@ -1,6 +1,6 @@
 import { runPanther } from "../panther/orchestrator";
 import { ResponseMode } from "../panther/llm/prompt-compiler";
-import { LLMMessage } from "../panther/llm/claude.client";
+import { LLMMessage } from "../panther/llm/llm.client";
 
 export interface ChatInput {
   userId: string;

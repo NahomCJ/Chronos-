@@ -7,16 +7,15 @@ const _kPantherBase = String.fromEnvironment(
   defaultValue: 'http://panther-env.us-east-1.elasticbeanstalk.com',
 );
 
-// Chris chat is served by the Vercel deployment's serverless function
-// (api/chat.js), which holds the Anthropic key as a Vercel env var — this is
-// the environment actually deployed/reachable publicly, unlike the EB
-// Express backend or the Panther AI FastAPI service (_kPantherBase), neither
-// of which is on a public URL. Override for local dev against a locally-run
-// Panther AI instance, e.g. --dart-define=CHRIS_CHAT_BASE_URL=http://localhost:8000
-// and --dart-define=CHRIS_CHAT_PATH=/api/chris/chat.
+// Chris chat is served by Chronos-Backend-'s own orchestrator
+// (POST /api/ai/chris/chat) — DeepSeek-primary/Claude-fallback LLM, with
+// real per-user financial context, not the earlier stateless Vercel stand-in
+// (see Chronos-Backend-/CLAUDE.md, Bugs Fixed #15 and #18). Requires the
+// caller to be logged in — ApiClient attaches the stored JWT automatically.
+// Override for local dev, e.g. --dart-define=CHRIS_CHAT_BASE_URL=http://localhost:3000.
 const _kChrisChatBase = String.fromEnvironment(
   'CHRIS_CHAT_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
+  defaultValue: 'http://chronos.us-east-1.elasticbeanstalk.com',
 );
 
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
@@ -35,9 +34,9 @@ class PantherAiRemoteDataSource {
     String message, {
     List<Map<String, String>> history = const [],
   }) async {
-    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
+    final data = await _client.postWithBase(_kChrisChatBase, '/api/ai/chris/chat', {
       'message': message,
-      'user_id': _userId,
+      'responseMode': 'text',
       if (history.isNotEmpty) 'history': history,
     });
     return ChatResponseModel.fromJson({

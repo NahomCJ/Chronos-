@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -34,6 +35,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
   static const _maxFollowUpTurns = 4;
 
   final _speech = stt.SpeechToText();
+  final _chimePlayer = AudioPlayer();
   bool _wakeActive = false;
   bool _wakeWordTriggered = false;
   _ChrisState _state = _ChrisState.idle;
@@ -207,6 +209,14 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     );
   }
 
+  Future<void> _playWakeChime() async {
+    try {
+      await _chimePlayer.play(AssetSource('sounds/chris_wake.wav'));
+    } catch (e) {
+      debugPrint('Chris wake chime failed to play: $e');
+    }
+  }
+
   // Shared entry point for "Hey Chris", a tap while idle, or a tap that
   // interrupts Chris mid-response. No sheet or overlay pops up; the strands
   // are the only visual feedback (their speed reflects the current state).
@@ -215,6 +225,11 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _speech.stop();
     await TtsService().stop();
     HapticFeedback.mediumImpact();
+    // Cue the start of a fresh conversation with a short chime — mirrors the
+    // "Hey Siri" ding. Skipped on an interrupt (the user's already mid-turn,
+    // a chime there would just be noise), and the FAB itself grows and
+    // circles faster the moment _state leaves idle (see build() below).
+    if (!interrupting) unawaited(_playWakeChime());
     if (!mounted) return;
 
     // Always start from a clean slate — if this is an interrupt, the
@@ -372,6 +387,7 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     _timeTicker.dispose();
     _timeNotifier.dispose();
     _speech.stop();
+    _chimePlayer.dispose();
     super.dispose();
   }
 
@@ -409,22 +425,31 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         onPanDown: _onPanDown,
         onPanUpdate: _onPanUpdate,
         onPanEnd: _onPanEnd,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([_timeNotifier, _glowAnim]),
-          builder: (_, __) {
-            final pulse = _wakeActive ? _glowAnim.value : 0.0;
-            return SizedBox(
-              width: widget.size,
-              height: widget.size,
-              child: CustomPaint(
-                painter: _StrandsPainter(
-                  time: _timeNotifier.value,
-                  pulseValue: pulse,
-                  speed: _painterSpeed,
+        // Grows to 2x and (via the strands painter's own speed/pulse below)
+        // circles noticeably faster the instant "Hey Chris" is heard or the
+        // FAB is tapped — settles back to its resting size once the
+        // conversation ends and _state returns to idle.
+        child: AnimatedScale(
+          scale: _isBusy ? 2.0 : 1.0,
+          duration: const Duration(milliseconds: 450),
+          curve: Curves.easeOutBack,
+          child: AnimatedBuilder(
+            animation: Listenable.merge([_timeNotifier, _glowAnim]),
+            builder: (_, __) {
+              final pulse = _wakeActive ? _glowAnim.value : 0.0;
+              return SizedBox(
+                width: widget.size,
+                height: widget.size,
+                child: CustomPaint(
+                  painter: _StrandsPainter(
+                    time: _timeNotifier.value,
+                    pulseValue: pulse,
+                    speed: _painterSpeed,
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
