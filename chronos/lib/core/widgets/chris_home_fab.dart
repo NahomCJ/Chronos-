@@ -217,9 +217,10 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     }
   }
 
-  // Shared entry point for "Hey Chris", a tap while idle, or a tap that
-  // interrupts Chris mid-response. No sheet or overlay pops up; the strands
-  // are the only visual feedback (their speed reflects the current state).
+  // Shared entry point for "Hey Chris" (wake word) and a tap that interrupts
+  // Chris mid-response (see _onPanEnd — an idle tap opens the chat page
+  // instead of calling this). No sheet or overlay pops up; the strands are
+  // the only visual feedback (their speed reflects the current state).
   Future<void> _engage({String? initialCommand}) async {
     final interrupting = _isBusy;
     _speech.stop();
@@ -412,9 +413,23 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
 
   void _onPanEnd(DragEndDetails d) {
     final moved = _offset - _dragStartOffset;
-    if (moved.dx.abs() < 5 && moved.dy.abs() < 5) {
-      (widget.onTap ?? () => _engage())();
+    if (moved.dx.abs() >= 5 || moved.dy.abs() >= 5) return;
+
+    if (widget.onTap != null) {
+      widget.onTap!();
+      return;
     }
+    if (_isBusy) {
+      // Mid-conversation — a tap here means "stop and let me talk",
+      // same as before this change.
+      _engage();
+      return;
+    }
+    // Idle with no caller-supplied destination: open the full chat page
+    // (text + voice, personalized financial context) instead of silently
+    // starting voice mode with no visible page — "Hey Chris" still engages
+    // voice directly via _startListening's wake-word detection above.
+    context.push(RouteConstants.pantherAiChat.toPath);
   }
 
   @override
