@@ -1,4 +1,4 @@
-import { callLLMFast } from "../llm/claude.client";
+import { callLLMFast } from "../llm/llm.client";
 import { AgentDomain } from "../llm/prompt-compiler";
 
 const ROUTING_PROMPT = `You are a query router for Chris, an AI assistant inside the Chronos finance app. Given a user message, classify it into exactly one of these domains:
