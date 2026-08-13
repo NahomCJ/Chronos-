@@ -217,9 +217,10 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     }
   }
 
-  // Shared entry point for "Hey Chris", a tap while idle, or a tap that
-  // interrupts Chris mid-response. No sheet or overlay pops up; the strands
-  // are the only visual feedback (their speed reflects the current state).
+  // Shared entry point for "Hey Chris" (wake word) and a tap that interrupts
+  // Chris mid-response (see _onPanEnd — an idle tap opens the chat page
+  // instead of calling this). No sheet or overlay pops up; the strands are
+  // the only visual feedback (their speed reflects the current state).
   Future<void> _engage({String? initialCommand}) async {
     final interrupting = _isBusy;
     _speech.stop();
@@ -412,9 +413,23 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
 
   void _onPanEnd(DragEndDetails d) {
     final moved = _offset - _dragStartOffset;
-    if (moved.dx.abs() < 5 && moved.dy.abs() < 5) {
-      (widget.onTap ?? () => _engage())();
+    if (moved.dx.abs() >= 5 || moved.dy.abs() >= 5) return;
+
+    if (widget.onTap != null) {
+      widget.onTap!();
+      return;
     }
+    if (_isBusy) {
+      // Mid-conversation — a tap here means "stop and let me talk",
+      // same as before this change.
+      _engage();
+      return;
+    }
+    // Idle with no caller-supplied destination: open the full chat page
+    // (text + voice, personalized financial context) instead of silently
+    // starting voice mode with no visible page — "Hey Chris" still engages
+    // voice directly via _startListening's wake-word detection above.
+    context.push(RouteConstants.pantherAiChat.toPath);
   }
 
   @override
@@ -425,30 +440,49 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
         onPanDown: _onPanDown,
         onPanUpdate: _onPanUpdate,
         onPanEnd: _onPanEnd,
-        // Grows to 2x and (via the strands painter's own speed/pulse below)
-        // circles noticeably faster the instant "Hey Chris" is heard or the
-        // FAB is tapped — settles back to its resting size once the
-        // conversation ends and _state returns to idle.
+        // Grows just a little (not the dramatic 2x this used to be) and
+        // (via the strands painter's own speed/pulse below) circles
+        // noticeably faster the instant "Hey Chris" is heard or the FAB is
+        // tapped — a soft glow blooms behind it at the same time so it
+        // reads as lifting/hovering rather than just scaling up, settling
+        // back to resting size once the conversation ends and _state
+        // returns to idle.
         child: AnimatedScale(
-          scale: _isBusy ? 2.0 : 1.0,
+          scale: _isBusy ? 1.35 : 1.0,
           duration: const Duration(milliseconds: 450),
           curve: Curves.easeOutBack,
-          child: AnimatedBuilder(
-            animation: Listenable.merge([_timeNotifier, _glowAnim]),
-            builder: (_, __) {
-              final pulse = _wakeActive ? _glowAnim.value : 0.0;
-              return SizedBox(
-                width: widget.size,
-                height: widget.size,
-                child: CustomPaint(
-                  painter: _StrandsPainter(
-                    time: _timeNotifier.value,
-                    pulseValue: pulse,
-                    speed: _painterSpeed,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.easeOutBack,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: _isBusy
+                  ? [
+                      BoxShadow(
+                        color: _teal.withValues(alpha: 0.30),
+                        blurRadius: 28,
+                        spreadRadius: 6,
+                      ),
+                    ]
+                  : const [],
+            ),
+            child: AnimatedBuilder(
+              animation: Listenable.merge([_timeNotifier, _glowAnim]),
+              builder: (_, __) {
+                final pulse = _wakeActive ? _glowAnim.value : 0.0;
+                return SizedBox(
+                  width: widget.size,
+                  height: widget.size,
+                  child: CustomPaint(
+                    painter: _StrandsPainter(
+                      time: _timeNotifier.value,
+                      pulseValue: pulse,
+                      speed: _painterSpeed,
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -477,7 +511,7 @@ class _StrandsPainter extends CustomPainter {
   static const _count = 4;
   static const _amplitude = 1.3;
   static const _waviness = 2.0;
-  static const _thickness = 1.0;
+  static const _thickness = 3.0;
   static const _glow = 2.1;
   static const _taper = 0.5;
   static const _spread = 0.7;
