@@ -135,7 +135,15 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
       builder: (context, state) {
         final loaded = state is TickpayAccountLoaded ? state : null;
         return Scaffold(
-          backgroundColor: Colors.transparent,
+          // Was Colors.transparent with the hero photo behind it as a
+          // full-screen Positioned.fill — that let the photo bleed through
+          // as a jarring "pop in" whenever the white section below didn't
+          // reach the very bottom of the screen (overscroll bounce, short
+          // content). The photo is now scoped to just the header below
+          // instead of the whole screen, so this solid white background is
+          // what actually shows through any gap — static, matching the
+          // white section it sits above.
+          backgroundColor: Colors.white,
           floatingActionButton: Container(
             margin: const EdgeInsets.only(bottom: 90),
             child: ChrisHomeFab(
@@ -154,42 +162,67 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
               }
             },
           ),
-          body: Stack(
-            children: [
-              Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
-              Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
-              // ── Content (fully scrollable) ────────────────────────────
-              SafeArea(
-                bottom: false,
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
+          // ── Content (fully scrollable) ────────────────────────────
+          body: SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  // Hero photo scoped to just the header (top bar + credit
+                  // card + quick actions) — sized by that content, not the
+                  // whole screen, so it can never bleed into the white
+                  // section or below it.
+                  Stack(
                     children: [
-                      _buildTopBar(context),
-                      _buildCreditCard(context, loaded),
-                      const SizedBox(height: 20),
-                      _buildQuickActions(context),
+                      Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
+                      Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildTopBar(context),
+                          _buildCreditCard(context, loaded),
+                          const SizedBox(height: 20),
+                          _buildQuickActions(context),
+                          // Reserves room below the quick actions for the
+                          // fade strip below so it doesn't wash over them.
+                          const SizedBox(height: 24),
+                        ],
+                      ),
                       // Soft fade into the white section below, instead of
                       // a hard edge where the hero image meets it. Extra
                       // stops ease the curve into a dissolve, not a ramp.
-                      Container(
+                      // Anchored to the bottom of this same Stack (bounded
+                      // to the header's own height) so it fades the photo
+                      // itself, instead of a separate layer relying on a
+                      // photo bleeding in from outside this Stack.
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
                         height: 56,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Color(0x00FFFFFF),
-                              Color(0x80FFFFFF),
-                              Color(0xE6FFFFFF),
-                              Colors.white,
-                            ],
-                            stops: [0.0, 0.15, 0.55, 0.82, 1.0],
+                        child: IgnorePointer(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Color(0x00FFFFFF),
+                                  Color(0x80FFFFFF),
+                                  Color(0xE6FFFFFF),
+                                  Colors.white,
+                                ],
+                                stops: [0.0, 0.15, 0.55, 0.82, 1.0],
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      // White section — no top radius on purpose: a rounded
+                    ],
+                  ),
+                  // White section — no top radius on purpose: a rounded
                       // corner clipping this gradient would reveal the dark
                       // hero behind it in the corner cutout, so it stays a
                       // flat edge and lets the fade above do the blending.
@@ -214,8 +247,6 @@ class _TickPayDashboardPageState extends State<TickPayDashboardPage> {
                   ),
                 ),
               ),
-            ],
-          ),
         );
       },
     );
