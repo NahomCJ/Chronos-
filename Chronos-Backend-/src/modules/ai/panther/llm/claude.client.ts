@@ -1,4 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { CircuitBreaker } from "./circuit-breaker";
+
+// Claude is the fallback provider (llm.client.ts calls this when DeepSeek
+// errors or times out) — a longer budget than DeepSeek's since there's no
+// further fallback behind it, but still bounded so a hung call fails fast
+// with a clear error instead of hanging the request indefinitely.
+const breaker = new CircuitBreaker("claude", {
+  failureThreshold: 3,
+  resetTimeoutMs: 30_000,
+  callTimeoutMs: 20_000,
+  maxConcurrent: 20,
+});
 
 let _client: Anthropic | null = null;
 function getClient(): Anthropic {
@@ -33,18 +45,20 @@ export async function callLLM(options: LLMCallOptions): Promise<string> {
     maxTokens = 1024,
   } = options;
 
-  const response = await getClient().messages.create({
-    model,
-    max_tokens: maxTokens,
-    system: [
-      {
-        type: "text",
-        text: systemPrompt,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages,
-  });
+  const response = await breaker.execute(() =>
+    getClient().messages.create({
+      model,
+      max_tokens: maxTokens,
+      system: [
+        {
+          type: "text",
+          text: systemPrompt,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      messages,
+    })
+  );
 
   const block = response.content[0];
   if (block.type !== "text") return "";

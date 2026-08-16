@@ -3,20 +3,14 @@ import prisma from '../../../../../config/prisma';
 
 /* ---------- AUTO SAVINGS ---------- */
 cron.schedule('0 0 * * *', async () => {
-  const plans = await prisma.financialPlan.findMany({
-    where: { status: 'ACTIVE' },
+  // Single batched UPDATE instead of one per active plan (was also writing a
+  // no-op increment:0 to every non-daily plan).
+  await prisma.financialPlan.updateMany({
+    where: { status: 'ACTIVE', frequency: 'DAILY' },
+    data: {
+      savedAmount: { increment: 10 }, // demo logic
+    },
   });
-
-  for (const plan of plans) {
-    await prisma.financialPlan.update({
-      where: { id: plan.id },
-      data: {
-        savedAmount: {
-          increment: String(plan.frequency).toLowerCase() === 'daily' ? 10 : 0, // demo logic
-        },
-      },
-    });
-  }
 });
 
 /* ---------- LOAN REMINDERS ---------- */
