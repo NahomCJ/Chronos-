@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
@@ -9,6 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'warn', 'error', 'debug'],
   });
+
+  // Gzip/brotli-negotiated compression for JSON responses above 1kb.
+  // `compression` reads the client's Accept-Encoding and skips responses
+  // that already carry a Content-Encoding header, so it never double-compresses.
+  app.use(compression());
 
   // ── Global exception filter ───────────────────────────────
   app.useGlobalFilters(new GlobalExceptionFilter());

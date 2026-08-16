@@ -7,6 +7,7 @@ Routers for Chris chat, transaction queries, etc. will be added in future sprint
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from core.logger import log
 from routers.payment_authorization.router import router as payment_router
@@ -35,6 +36,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Gzip responses above 500 bytes (JSON payloads from insights/transactions/etc.).
+# Starlette's GZipMiddleware negotiates via the client's Accept-Encoding header
+# and only compresses when gzip is accepted, so it never double-compresses.
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 
 @app.get("/health")

@@ -1,4 +1,15 @@
 import OpenAI from "openai";
+import { CircuitBreaker } from "./circuit-breaker";
+
+// DeepSeek is the primary provider for every chatbot call in this app — a
+// hung or slow-but-not-erroring response would otherwise block on the SDK's
+// default timeout before llm.client.ts's fallback ever kicks in.
+const breaker = new CircuitBreaker("deepseek", {
+  failureThreshold: 3,
+  resetTimeoutMs: 30_000,
+  callTimeoutMs: 8_000,
+  maxConcurrent: 20,
+});
 
 let _client: OpenAI | null = null;
 function getClient(): OpenAI {
@@ -39,11 +50,13 @@ export async function callLLM(options: LLMCallOptions): Promise<string> {
     maxTokens = 1024,
   } = options;
 
-  const response = await getClient().chat.completions.create({
-    model,
-    max_tokens: maxTokens,
-    messages: [{ role: "system", content: systemPrompt }, ...messages],
-  });
+  const response = await breaker.execute(() =>
+    getClient().chat.completions.create({
+      model,
+      max_tokens: maxTokens,
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
+    })
+  );
 
   return response.choices[0]?.message?.content ?? "";
 }
