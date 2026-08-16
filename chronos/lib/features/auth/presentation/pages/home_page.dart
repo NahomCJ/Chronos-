@@ -137,7 +137,10 @@ class _HomeViewState extends State<_HomeView> with WidgetsBindingObserver {
     required double balance,
     required bool isLoading,
   }) {
-    final double heroHeight = (isSmallScreen ? 356 : 410) * scale;
+    // Was 356/410 — the Spacer below (between the balance amount and the
+    // quick-action icon row) fills whatever's left inside this fixed height,
+    // so trimming it here is what pulls the icon row closer to the balance.
+    final double heroHeight = (isSmallScreen ? 318 : 370) * scale;
     // Extra strip below the quick-action row where the hero image dissolves
     // into the page background, instead of stopping at a hard edge. Uses
     // textScale (clamped to 1.1) rather than the unclamped `scale`, which

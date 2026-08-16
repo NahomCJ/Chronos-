@@ -214,10 +214,11 @@ class _PantherAiPageState extends State<PantherAiPage>
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ChrisHomeFab(
-                size: 124,
-                onTap: () => context.push(RouteConstants.pantherAiChat.toPath),
-              ),
+              // No onTap override — tapping starts a voice conversation
+              // (Siri-style, via ChrisHomeFab's default behavior) instead of
+              // opening the text chat page. That page is still one tap away
+              // via the "Talk to Chris" quick tile below.
+              const ChrisHomeFab(size: 124),
               const SizedBox(height: 18),
               Text(
                 'Tap to talk with Chris',
