@@ -411,25 +411,32 @@ class _ChrisHomeFabState extends State<ChrisHomeFab>
     });
   }
 
+  DateTime? _lastTapAt;
+  static const _tapThrottle = Duration(milliseconds: 600);
+
   void _onPanEnd(DragEndDetails d) {
     final moved = _offset - _dragStartOffset;
     if (moved.dx.abs() >= 5 || moved.dy.abs() >= 5) return;
+
+    // Throttle: a fast repeat tap (double-tap, or a stray extra pointer
+    // event) used to fire _engage() twice, overlapping the wake chime and
+    // greeting with themselves.
+    final now = DateTime.now();
+    if (_lastTapAt != null && now.difference(_lastTapAt!) < _tapThrottle) {
+      return;
+    }
+    _lastTapAt = now;
 
     if (widget.onTap != null) {
       widget.onTap!();
       return;
     }
-    if (_isBusy) {
-      // Mid-conversation — a tap here means "stop and let me talk",
-      // same as before this change.
-      _engage();
-      return;
-    }
-    // Idle with no caller-supplied destination: open the full chat page
-    // (text + voice, personalized financial context) instead of silently
-    // starting voice mode with no visible page — "Hey Chris" still engages
-    // voice directly via _startListening's wake-word detection above.
-    context.push(RouteConstants.pantherAiChat.toPath);
+    // A tap always means "talk to Chris" — voice, Siri-style (chime, listen,
+    // real spoken reply via _engage). Mid-conversation, the same tap means
+    // "stop and let me talk" instead. This never opens the text chat page —
+    // that's reached separately (e.g. the "Talk to Chris" quick tile on the
+    // Panther page), not through this gesture.
+    _engage();
   }
 
   @override

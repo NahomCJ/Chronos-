@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/widgets/app_background.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/fluid_glass.dart';
 import '../../../../core/router/route_constants.dart';
@@ -70,31 +71,25 @@ class _ProfilePageState extends State<ProfilePage> {
               margin: const EdgeInsets.only(bottom: 90),
               child: const ChrisHomeFab(),
             ),
-            body: Stack(
-              children: [
-                // Background
-                Positioned.fill(
-                  child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A))),
+            // Was a hardcoded flat 0.45 dark overlay — noticeably darker than
+            // the 0.20 every other page (and the picked-up bg photo/video via
+            // BackgroundCubit) uses. AppBackground matches that standard.
+            body: AppBackground(
+              overlayOpacity: 0.20,
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    _buildTopBar(context, user),
+                    Expanded(
+                      child: isLoading && user == null
+                          ? _buildSkeleton()
+                          : errorMsg != null && user == null
+                              ? _buildError(context, errorMsg)
+                              : _buildBody(context, user, isLoading),
+                    ),
+                  ],
                 ),
-                Positioned.fill(
-                  child: Container(color: Colors.black.withValues(alpha: 0.45)),
-                ),
-                // Content
-                SafeArea(
-                  child: Column(
-                    children: [
-                      _buildTopBar(context, user),
-                      Expanded(
-                        child: isLoading && user == null
-                            ? _buildSkeleton()
-                            : errorMsg != null && user == null
-                                ? _buildError(context, errorMsg)
-                                : _buildBody(context, user, isLoading),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           );
         },
