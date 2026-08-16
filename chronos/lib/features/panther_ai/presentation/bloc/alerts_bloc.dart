@@ -42,12 +42,33 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
 
   Future<void> _onDismiss(
       AlertDismissRequested event, Emitter<AlertsState> emit) async {
+    final current = state;
+    if (current is! AlertsLoaded) {
+      // No optimistic base to show/roll back to — fall back to the old
+      // await-then-refresh behavior.
+      try {
+        await dismissAlert(event.alertId);
+        final alerts = await getAlerts();
+        emit(AlertsLoaded(alerts));
+      } catch (e) {
+        emit(AlertsError(e.toString()));
+      }
+      return;
+    }
+
+    // Optimistic update: remove the alert immediately so the tap feels
+    // instant, then confirm with the server in the background. Roll back to
+    // the pre-dismiss list if the server call fails, so a failed dismiss
+    // doesn't silently hide an alert the user still has.
+    final previousAlerts = current.alerts;
+    final optimisticAlerts =
+        previousAlerts.where((a) => a.id != event.alertId).toList();
+    emit(AlertsLoaded(optimisticAlerts));
+
     try {
       await dismissAlert(event.alertId);
-      final alerts = await getAlerts();
-      emit(AlertsLoaded(alerts));
     } catch (e) {
-      emit(AlertsError(e.toString()));
+      emit(AlertsLoaded(previousAlerts));
     }
   }
 }
