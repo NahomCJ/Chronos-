@@ -17,9 +17,9 @@ class BillingService {
   ) {
     const totalFee = round(amount * FEE_RATE, 2);
     const per = Math.floor((totalFee / INSTALLMENTS) * 100) / 100;
-    const installments = [];
     let remaining = totalFee;
 
+    const installmentData = [];
     for (let i = 1; i <= INSTALLMENTS; i++) {
       const due = new Date();
       due.setMonth(due.getMonth() + i * BILL_CYCLE_MONTHS);
@@ -27,17 +27,22 @@ class BillingService {
       const feeAmount = i === INSTALLMENTS ? round(remaining, 2) : per;
       remaining = round(remaining - feeAmount, 2);
 
-      const rec = await tx.tickPayFeeInstallment.create({
-        data: {
-          tickPayAccountId,
-          purchaseTxId,
-          amount: toDecimalString(feeAmount),
-          dueDate: due,
-          status: "SCHEDULED",
-        },
+      installmentData.push({
+        tickPayAccountId,
+        purchaseTxId,
+        amount: toDecimalString(feeAmount),
+        dueDate: due,
+        status: "SCHEDULED" as const,
       });
-      installments.push(rec);
     }
+
+    // Single batched insert instead of one INSERT per installment — same
+    // effect, one round trip. createManyAndReturn (Prisma 6, Postgres) gives
+    // back the inserted rows (with ids) so callers keep getting full records.
+    const installments = await tx.tickPayFeeInstallment.createManyAndReturn({
+      data: installmentData,
+    });
+    installments.sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime());
 
     return {
       totalFee: toDecimalString(totalFee),

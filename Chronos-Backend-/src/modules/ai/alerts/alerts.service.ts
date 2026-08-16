@@ -2,7 +2,6 @@ import prisma from "../../../config/prisma";
 import { getUserFinancialContext } from "../panther/core/data-retrieval.service";
 import { runRiskFraudCheck } from "../panther/agents/banking/risk-fraud.agent";
 import { AiAlertType, AiAlertDomain } from "@prisma/client";
-import { createNotification } from "../../core/notifications/notifications.service";
 
 export async function getActiveAlerts(userId: string) {
   return prisma.aiAlert.findMany({
@@ -140,15 +139,21 @@ export async function generateAndStoreAlerts(userId: string): Promise<number> {
     data: created.map((a) => ({ ...a, userId })),
   });
 
-  // Mirror each alert as an in-app notification
-  await Promise.all(
-    created.map((a) =>
-      createNotification(userId, "AI_ALERT", a.title, a.message, {
-        domain: a.domain,
-        type: a.type,
-      }).catch(() => {})
-    )
-  );
+  // Mirror each alert as an in-app notification — one batched insert instead
+  // of one INSERT per alert. Best-effort like the rest of the notification
+  // system: a failure here shouldn't fail alert generation, which already
+  // succeeded above.
+  await prisma.notification
+    .createMany({
+      data: created.map((a) => ({
+        userId,
+        type: "AI_ALERT",
+        title: a.title,
+        body: a.message,
+        data: { domain: a.domain, type: a.type },
+      })),
+    })
+    .catch(() => {});
 
   return created.length;
 }
