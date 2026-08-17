@@ -15,7 +15,7 @@ const _kPantherBase = String.fromEnvironment(
 // Override for local dev, e.g. --dart-define=CHRIS_CHAT_BASE_URL=http://localhost:3000.
 const _kChrisChatBase = String.fromEnvironment(
   'CHRIS_CHAT_BASE_URL',
-  defaultValue: 'http://chronos.us-east-1.elasticbeanstalk.com',
+  defaultValue: 'https://chronosapp-rosy.vercel.app',
 );
 
 /// Panther AI FastAPI service  uses user_id in request bodies (no JWT required).
@@ -34,7 +34,7 @@ class PantherAiRemoteDataSource {
     String message, {
     List<Map<String, String>> history = const [],
   }) async {
-    final data = await _client.postWithBase(_kChrisChatBase, '/api/ai/chris/chat', {
+    final data = await _client.postWithBase(_kChrisChatBase, '/api/chat', {
       'message': message,
       'responseMode': 'text',
       if (history.isNotEmpty) 'history': history,

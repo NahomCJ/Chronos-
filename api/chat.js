@@ -1,16 +1,27 @@
+const Groq = require('groq-sdk');
 const Anthropic = require('@anthropic-ai/sdk').default;
 
-// Lazy init: constructing eagerly at module load means a single cold start
-// with a missing/not-yet-propagated key permanently breaks this module for
-// every request on that warm container until the next deploy, even after
-// the key is added. Build the client on first use instead.
-let client = null;
-function getClient() {
-  if (!client) {
-    const apiKey = process.env.CHRIS_CLAUDE_API || process.env.ANTHROPIC_API_KEY;
-    client = new Anthropic({ apiKey });
+// Lazy-init clients — reading keys at request time so a key added to Vercel
+// after a cold start is picked up without waiting for a fresh container.
+let groqClient = null;
+let anthropicClient = null;
+
+function getGroqClient() {
+  if (!groqClient) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return null;
+    groqClient = new Groq({ apiKey });
   }
-  return client;
+  return groqClient;
+}
+
+function getAnthropicClient() {
+  if (!anthropicClient) {
+    const apiKey = process.env.CHRIS_CLAUDE_API || process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) return null;
+    anthropicClient = new Anthropic({ apiKey });
+  }
+  return anthropicClient;
 }
 
 const CHRIS_SYSTEM = `You are Chris, the AI assistant inside Chronos, a premium fintech super-app. \
@@ -31,10 +42,6 @@ Be warm, direct, and confident. Keep responses concise (2-4 sentences) unless th
 more detail. Never say you can't access real account data, just give general advice based on what \
 the user tells you. Never recommend specific stocks by ticker. Avoid filler phrases.`;
 
-// Belt-and-suspenders for the system prompt's formatting rules: the model
-// doesn't always follow them exactly, and the app renders replies as plain
-// text with no markdown support, so strip anything that would leak through
-// as literal asterisks or an em/en dash.
 function sanitizeReply(text) {
   return text
     .replace(/\s*[—–]\s*/g, ', ')
@@ -55,6 +62,38 @@ function inferDomain(message) {
   return 'GENERAL';
 }
 
+async function chatWithGroq(message, priorTurns) {
+  const client = getGroqClient();
+  if (!client) throw new Error('GROQ_API_KEY not configured');
+
+  const response = await client.chat.completions.create({
+    model: 'llama-3.3-70b-versatile',
+    max_tokens: 512,
+    messages: [
+      { role: 'system', content: CHRIS_SYSTEM },
+      ...priorTurns,
+      { role: 'user', content: message.trim() },
+    ],
+  });
+
+  return response.choices[0]?.message?.content ?? '';
+}
+
+async function chatWithClaude(message, priorTurns) {
+  const client = getAnthropicClient();
+  if (!client) throw new Error('ANTHROPIC_API_KEY not configured');
+
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 512,
+    system: CHRIS_SYSTEM,
+    messages: [...priorTurns, { role: 'user', content: message.trim() }],
+  });
+
+  const textBlock = response.content.find((block) => block.type === 'text');
+  return textBlock?.text ?? '';
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -70,8 +109,6 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'message is required' });
   }
 
-  // Prior turns from this voice/chat session, for multi-turn memory.
-  // Capped and sanitized — only well-formed {role, content} pairs survive.
   const priorTurns = Array.isArray(history)
     ? history
         .filter(
@@ -85,34 +122,37 @@ module.exports = async function handler(req, res) {
         .map((h) => ({ role: h.role, content: h.content.trim() }))
     : [];
 
+  let rawReply = '';
+
+  // Try Groq first, fall back to Claude if Groq fails or is unconfigured.
   try {
-    const response = await getClient().messages.create({
-      model: 'claude-sonnet-5',
-      max_tokens: 512,
-      system: CHRIS_SYSTEM,
-      messages: [...priorTurns, { role: 'user', content: message.trim() }],
-    });
+    rawReply = await chatWithGroq(message, priorTurns);
+    console.log('[Chris chat] provider: groq');
+  } catch (groqErr) {
+    console.warn('[Chris chat] Groq failed, trying Claude:', groqErr?.message ?? groqErr);
+    try {
+      rawReply = await chatWithClaude(message, priorTurns);
+      console.log('[Chris chat] provider: claude (fallback)');
+    } catch (claudeErr) {
+      console.error('[Chris chat] Both providers failed:', claudeErr?.message ?? claudeErr);
+      return res.status(500).json({
+        error: 'Chat failed',
+        reply: 'Something went wrong on my end. Please try again in a moment.',
+      });
+    }
+  }
 
-    // claude-sonnet-5 sometimes reasons with an extended-thinking block before
-    // the actual reply, so content[0] isn't reliably the text block -- find
-    // it by type instead of assuming position. This was the real cause of
-    // "I could not generate a response": thinking-block runs (more common on
-    // complex/financial questions) silently hit the fallback below.
-    const textBlock = response.content.find((block) => block.type === 'text');
-    const rawReply = textBlock?.text ?? 'I could not generate a response. Please try again.';
-    const reply = sanitizeReply(rawReply);
-
-    return res.status(200).json({
-      reply,
-      domain: inferDomain(message),
-      userLevel: 'BEGINNER',
-      user_id: user_id ?? 'unknown',
-    });
-  } catch (err) {
-    console.error('[Chris chat]', err?.message ?? err);
+  if (!rawReply) {
     return res.status(500).json({
-      error: 'Chat failed',
-      reply: 'Something went wrong on my end. Please try again in a moment.',
+      error: 'Empty response',
+      reply: 'I could not generate a response. Please try again.',
     });
   }
+
+  return res.status(200).json({
+    reply: sanitizeReply(rawReply),
+    domain: inferDomain(message),
+    userLevel: 'BEGINNER',
+    user_id: user_id ?? 'unknown',
+  });
 };
