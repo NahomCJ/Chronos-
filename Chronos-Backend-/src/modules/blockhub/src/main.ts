@@ -4,8 +4,23 @@ import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
+const REQUIRED_ENV_VARS = ['JWT_SECRET', 'DATABASE_URL'];
+
+function assertRequiredEnvVars(logger: Logger) {
+  const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    logger.error(
+      `Missing required environment variable(s): ${missing.join(', ')}. ` +
+        'Set them in the Railway service Variables tab (or .env for local dev) and redeploy.',
+    );
+    process.exit(1);
+  }
+}
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
+
+  assertRequiredEnvVars(logger);
 
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'warn', 'error', 'debug'],
