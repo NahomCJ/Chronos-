@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { v4 as uuid } from 'uuid';
+import { randomUUID as uuid } from 'crypto';
 import { MintNftDto, DeployCollectionDto } from './minting.dto';
 import { ComplianceService } from '../compliance/compliance.service';
 import { NftService } from '../nft/nft.service';
