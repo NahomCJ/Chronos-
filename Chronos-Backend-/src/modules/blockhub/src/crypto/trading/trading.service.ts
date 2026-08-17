@@ -32,7 +32,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID as uuidv4 } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PaxosService } from '../../providers/paxos/paxos.service';
 import { PaxosMapper } from '../../providers/paxos/paxos.mapper';

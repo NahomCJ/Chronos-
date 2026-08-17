@@ -29,7 +29,7 @@
 
 import { PrismaClient, Prisma } from "@prisma/client";
 import { plaidClient } from "../../../config/plaid";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID as uuidv4 } from "crypto";
 
 const prisma = new PrismaClient();
 
