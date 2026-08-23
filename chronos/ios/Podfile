@@ -48,4 +48,19 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
     end
   end
+
+  # Fix sqflite_darwin 2.4.2 umbrella header bug — double-quoted include
+  # breaks framework builds on device. Replace with angle-bracket form.
+  sqflite_umbrella = File.join(
+    installer.sandbox.root,
+    'Target Support Files', 'sqflite_darwin', 'sqflite_darwin-umbrella.h'
+  )
+  if File.exist?(sqflite_umbrella)
+    content = File.read(sqflite_umbrella)
+    fixed = content.gsub(
+      '#include "SqfliteImportPublic.h"',
+      '#include <sqflite_darwin/SqfliteImportPublic.h>'
+    )
+    File.write(sqflite_umbrella, fixed) if fixed != content
+  end
 end
