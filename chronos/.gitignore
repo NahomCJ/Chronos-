@@ -32,7 +32,6 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-!/build/web
 
 # Flutter build outputs
 coverage/
