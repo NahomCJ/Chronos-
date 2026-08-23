@@ -35,6 +35,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -57,6 +59,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Chronos Bank uses the camera to scan QR codes for payments and to verify your identity.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Chronos Bank uses Face ID to securely authenticate you.</string>
 	<key>NSMicrophoneUsageDescription</key>
