@@ -13,7 +13,7 @@ import 'onboarding/blockhub_welcome_page.dart';
 import 'onboarding/setup_wallet_page.dart';
 import 'markets_page.dart';
 import 'trade_page.dart';
-import 'nft/nft_marketplace_page.dart';
+import 'stocks_etf/stocks_etf_page.dart';
 
 // ── Coin data model ────────────────────────────────────────────────────────────
 class _CoinData {
@@ -183,9 +183,8 @@ class _BlockHubPageState extends State<BlockHubPage> {
   }
 
   Future<void> _checkOnboardingStatus() async {
-    // Only check onboarding status once when the page first loads
     if (_hasCheckedOnboarding) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
       return;
     }
 
@@ -198,21 +197,18 @@ class _BlockHubPageState extends State<BlockHubPage> {
     _hasCheckedOnboarding = true;
 
     if (!hasCompletedOnboarding && mounted) {
-      // Navigate to onboarding using root navigator (hides bottom nav)
       await Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute(builder: (context) => const BlockHubWelcomePage()),
       );
-      // After returning, just show the page (don't check again)
+      if (!mounted) return;
       setState(() => _isLoading = false);
     } else if (!hasCompletedWalletSetup && mounted) {
-      // Navigate to wallet setup using root navigator (hides bottom nav)
-      await Navigator.of(
-        context,
-        rootNavigator: true,
-      ).push(MaterialPageRoute(builder: (context) => const SetupWalletPage()));
-      // After returning, just show the page (don't check again)
+      await Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(builder: (context) => const SetupWalletPage()),
+      );
+      if (!mounted) return;
       setState(() => _isLoading = false);
-    } else {
+    } else if (mounted) {
       setState(() => _isLoading = false);
     }
   }
@@ -363,13 +359,13 @@ class _BlockHubPageState extends State<BlockHubPage> {
                               )),
                               const SizedBox(width: 12),
                               Expanded(child: _buildWalletBox(
-                                label: 'NFT',
-                                value: '12 Items',
-                                sublabel: 'Collection',
-                                icon: Icons.collections_rounded,
-                                color: const Color(0xFF8B5CF6),
+                                label: 'Stocks & ETFs',
+                                value: '\$8,240',
+                                sublabel: 'Portfolio Value',
+                                icon: Icons.show_chart_rounded,
+                                color: const Color(0xFF22C55E),
                                 bg: Colors.white.withValues(alpha: 0.08),
-                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NftMarketplacePage())),
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StocksEtfPage())),
                               )),
                             ],
                           ),

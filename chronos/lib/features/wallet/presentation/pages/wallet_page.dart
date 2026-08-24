@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/text_theme.dart';
 import '../../../../core/widgets/chris_home_fab.dart';
 import '../../../../core/widgets/custom_bottom_nav.dart';
@@ -15,10 +16,6 @@ import '../widgets/card_actions.dart';
 import '../widgets/recent_transactions.dart';
 import '../widgets/features_section.dart';
 
-// Session-level flag: resets to false on every app launch (every-session behavior).
-// Set to true once onboarding has been shown this session.
-bool _walletOnboardingShownThisSession = false;
-
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
 
@@ -30,13 +27,14 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     super.initState();
-    if (!_walletOnboardingShownThisSession) {
-      _walletOnboardingShownThisSession = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          context.go(RouteConstants.walletOnboarding.toPath);
-        }
-      });
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final done = prefs.getBool('wallet_onboarding_completed') ?? false;
+    if (!done && mounted) {
+      context.go(RouteConstants.walletOnboarding.toPath);
     }
   }
 
