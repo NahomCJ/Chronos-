@@ -214,7 +214,7 @@ class _WalletConnectedSuccessPageState
       children: [
         _capabilityBadge(Icons.currency_bitcoin_rounded, 'Trade', _amber),
         const SizedBox(width: 14),
-        _capabilityBadge(Icons.collections_rounded, 'NFTs', _teal),
+        _capabilityBadge(Icons.show_chart_rounded, 'Stocks', _teal),
         const SizedBox(width: 14),
         _capabilityBadge(Icons.psychology_rounded, 'AI Intel', const Color(0xFF8B5CF6)),
       ],

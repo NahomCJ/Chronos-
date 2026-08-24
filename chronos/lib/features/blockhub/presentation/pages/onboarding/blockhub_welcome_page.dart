@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/widgets/feature_walkthrough_page.dart';
 import 'risk_disclosure_page.dart';
@@ -18,12 +19,12 @@ const _slides = [
     localVideoAsset: _walkthroughVideo,
   ),
   WalkthroughSlide(
-    title: 'Mint, collect\nand trade NFTs',
-    subtitle: 'Your gallery for unique digital art\nand collectibles.',
-    icon: Icons.collections_rounded,
-    accentColor: Color(0xFFEC4899),
-    tags: ['Mint', 'Collect', 'Trade'],
-    pexelsQuery: 'digital art neon abstract cinematic',
+    title: 'Stocks & ETFs,\nright here',
+    subtitle: 'Invest in top companies and funds\nwith real-time market data.',
+    icon: Icons.show_chart_rounded,
+    accentColor: Color(0xFF22C55E),
+    tags: ['Stocks', 'ETFs', 'Dividends'],
+    pexelsQuery: 'stock market finance trading chart',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4',
     localVideoAsset: _walkthroughVideo,
@@ -57,11 +58,15 @@ const _slides = [
 class BlockHubWelcomePage extends StatelessWidget {
   const BlockHubWelcomePage({super.key});
 
-  void _continue(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const RiskDisclosurePage()),
-    );
+  Future<void> _continue(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('blockhub_onboarding_completed', true);
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const RiskDisclosurePage()),
+      );
+    }
   }
 
   @override

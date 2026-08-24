@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/router/route_constants.dart';
 import '../../../../core/theme/text_theme.dart';
 
@@ -79,8 +80,10 @@ class _WalletOnboardingPageState extends State<WalletOnboardingPage>
     }
   }
 
-  void _getStarted() {
-    context.go(RouteConstants.wallet.toPath);
+  Future<void> _getStarted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('wallet_onboarding_completed', true);
+    if (mounted) context.go(RouteConstants.wallet.toPath);
   }
 
   @override
