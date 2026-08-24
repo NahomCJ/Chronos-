@@ -120,6 +120,7 @@ import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_all
 import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_review_confirm_page.dart';
 import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_success_page.dart';
 import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_dashboard_page.dart';
+import '../../features/blockhub/presentation/pages/stocks_etf/stocks_etf_page.dart';
 import '../../features/panther_ai/presentation/cubit/auto_invest_cubit.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -769,6 +770,12 @@ final GoRouter router = GoRouter(
       path: RouteConstants.unitBanking.toPath,
       name: RouteConstants.unitBanking.toName,
       builder: (_, __) => const UnitBankingPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: RouteConstants.stocksEtf.toPath,
+      name: RouteConstants.stocksEtf.toName,
+      builder: (_, __) => const StocksEtfPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
