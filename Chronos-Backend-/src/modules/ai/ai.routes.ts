@@ -3,6 +3,7 @@ import chrisRoutes from "./chris/chris.routes";
 import voiceRoutes from "./voice/voice.routes";
 import alertsRoutes from "./alerts/alerts.routes";
 import userLevelRoutes from "./user-level/user-level.routes";
+import connectionsRoutes from "./connections/connections.routes";
 import { requireAuth } from "../auth/middlewares/auth.middleware";
 import { runAffordabilityCheck } from "./panther/agents/tickpay/affordability.agent";
 import { runMarketplaceSearch } from "./panther/agents/tickpay/marketplace-search.agent";
@@ -15,6 +16,7 @@ router.use("/chris", chrisRoutes);
 router.use("/voice", voiceRoutes);
 router.use("/alerts", alertsRoutes);
 router.use("/user-level", userLevelRoutes);
+router.use("/connections", connectionsRoutes);
 
 router.post(
   "/tickpay/affordability",
