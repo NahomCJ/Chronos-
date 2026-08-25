@@ -122,6 +122,7 @@ import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_suc
 import '../../features/panther_ai/presentation/pages/auto_invest/auto_invest_dashboard_page.dart';
 import '../../features/blockhub/presentation/pages/stocks_etf/stocks_etf_page.dart';
 import '../../features/panther_ai/presentation/cubit/auto_invest_cubit.dart';
+import '../../features/connections/presentation/pages/connections_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
@@ -849,6 +850,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const LifeXExportPage(),
     ),
     GoRoute(
+      path: RouteConstants.connections.toPath,
+      name: RouteConstants.connections.name,
+      builder: (context, state) => const ConnectionsPage(),
+    ),
+        GoRoute(
       path: '/theme-settings',
       builder: (context, state) => BlocProvider.value(
         value: sl<ThemeCubit>(),

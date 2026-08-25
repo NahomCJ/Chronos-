@@ -108,6 +108,7 @@ enum RouteConstants {
   autoInvestSuccess,
   autoInvestDashboard,
   stocksEtf,
+  connections,
 }
 
 extension RouteConstantsX on RouteConstants {
@@ -324,6 +325,8 @@ extension RouteConstantsX on RouteConstants {
         return '/panther-ai/auto-invest/dashboard';
       case RouteConstants.stocksEtf:
         return '/blockhub/stocks-etf';
+      case RouteConstants.connections:
+        return '/connections';
     }
   }
 
@@ -540,6 +543,8 @@ extension RouteConstantsX on RouteConstants {
         return 'auto-invest-dashboard';
       case RouteConstants.stocksEtf:
         return 'stocks-etf';
+      case RouteConstants.connections:
+        return 'connections';
     }
   }
 }
