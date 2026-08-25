@@ -4,8 +4,19 @@ import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
+const REQUIRED_ENV_VARS = ['JWT_SECRET', 'DATABASE_URL'];
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
+
+  const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    logger.error(
+      `Missing required environment variable(s): ${missing.join(', ')}. ` +
+        'Set them on the BlockHub service (Railway → Project → Variables) before deploying.',
+    );
+    process.exit(1);
+  }
 
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'warn', 'error', 'debug'],
@@ -52,4 +63,7 @@ async function bootstrap() {
   );
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  new Logger('Bootstrap').error('Fatal error during startup', err instanceof Error ? err.stack : err);
+  process.exit(1);
+});
