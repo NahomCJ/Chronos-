@@ -282,6 +282,12 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => context.push(RouteConstants.notificationSettings.toPath)),
         ]),
         const SizedBox(height: 12),
+        _section('CONNECTIONS', [
+          _tile(Icons.hub_rounded, 'Connected Apps',
+              'GitHub, Notion, Canva, Figma & more',
+              onTap: () => context.push(RouteConstants.connections.toPath)),
+        ]),
+        const SizedBox(height: 12),
         _section('VERIFICATION', [
           _tile(Icons.badge_outlined, 'KYC Status', 'Verified',
               badge: _pill('Verified', const Color(0xFF10B981)),
