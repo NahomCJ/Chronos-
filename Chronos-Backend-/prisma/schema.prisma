@@ -374,6 +374,14 @@ model BankingProfile {
   rejectedAt      DateTime?
   rejectionReason String?
 
+  // KYC verification metadata from Plaid Identity Verification — document
+  // type/issuing country/expiration and per-step check results (kyc_check,
+  // documentary_verification, selfie_check, watchlist_screening, risk_check).
+  // Plaid remains the custodian of the actual ID/selfie images (never
+  // stored here) — this is the structured verification outcome only.
+  kycCompletedAt DateTime?
+  kycDetails     Json?
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
