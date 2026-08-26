@@ -32,6 +32,16 @@ interface CryptoWalletRecord {
 }
 
 export class CryptoService {
+  /**
+   * Read-only holdings + live value, without the wallet auto-provisioning
+   * or Paxos balance calls getDashboard() does — safe to call from other
+   * modules (home net-worth, AI portfolio context) on every page load.
+   */
+  async getPortfolioSummary(userId: string) {
+    const prices = await paxos.getAllMarketPrices();
+    return this.getPortfolio(userId, prices);
+  }
+
   async getDashboard(userId: string) {
     const lazyProvision = await this.tryLazyProvisionWallet(userId);
     const wallet = await prisma.cryptoWallet.findUnique({ where: { userId } });

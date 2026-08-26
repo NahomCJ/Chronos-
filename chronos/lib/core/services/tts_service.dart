@@ -8,13 +8,10 @@ import '../network/api_client.dart';
 
 // Chris's voice is synthesized by Chronos-Backend-'s own ElevenLabs-backed
 // POST /api/ai/voice/synthesize (auth'd via the stored JWT, see ApiClient),
-// not the earlier stateless Vercel stand-in (see Chronos-Backend-/CLAUDE.md,
-// Bugs Fixed #15 and #18). Falls back to on-device TTS if the call fails.
-const _kVoiceBase = String.fromEnvironment(
-  'CHRIS_VOICE_BASE_URL',
-  defaultValue: 'https://chronosapp-rosy.vercel.app',
-);
-
+// not the Vercel/Groq stand-in used between Bug #18 and this fix — reuses
+// ApiClient's own baseUrl (API_BASE_URL dart-define) so voice always points
+// at the same backend as the rest of the app, DeepSeek/ElevenLabs included.
+// Falls back to on-device TTS if the call fails.
 class TtsService {
   static final TtsService _instance = TtsService._();
   factory TtsService() => _instance;
@@ -115,8 +112,8 @@ class TtsService {
       final api = GetIt.instance<ApiClient>();
       final trimmed = text.length > 480 ? text.substring(0, 480) : text;
       final bytes = await api.postBytesWithBase(
-        _kVoiceBase,
-        '/api/synthesize',
+        api.baseUrl,
+        '/api/ai/voice/synthesize',
         {'text': trimmed},
       );
       if (bytes.isEmpty) {

@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import '../data/data_source/blockhub_remote_data_source.dart';
+import '../data/data_source/stocks_remote_data_source.dart';
 import '../data/repositories/blockhub_repository_impl.dart';
 import '../domain/repositories/blockhub_repository.dart';
 import '../domain/usecases/blockhub_usecases.dart';
@@ -11,6 +12,7 @@ import '../presentation/bloc/nft_marketplace/nft_marketplace_bloc.dart';
 
 void initBlockhubDi(GetIt sl) {
   sl.registerLazySingleton(() => BlockhubRemoteDataSource(sl()));
+  sl.registerLazySingleton(() => StocksRemoteDataSource(sl()));
   sl.registerLazySingleton<BlockhubRepository>(
       () => BlockhubRepositoryImpl(sl()));
 
