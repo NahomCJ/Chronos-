@@ -1,3 +1,12 @@
+import { webcrypto } from 'node:crypto';
+
+// @nestjs/schedule calls the global `crypto.randomUUID()` at bootstrap, which
+// is only auto-registered as a global on newer Node versions. Polyfill it
+// here so the app doesn't crash on whatever Node version the host picks.
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto as Crypto;
+}
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import compression from 'compression';
