@@ -42,6 +42,7 @@ A unified financial super-app backend. Two separate apps live in one repo, **bot
 | `/api/v1/auth` | Auth (register, login, OTP, forgot/reset password) |
 | `/api/v1/transfer` | Transfers |
 | `/api/v1/auto-invest` | Auto-Invest with Chris — allocation preview, plan confirm/rounds/pause/resume/cancel. Crypto legs `[LIVE]` (Paxos), stock/ETF legs `[PLANNED — no brokerage integration]`. See below. |
+| `/api/v1/stocks` | Stocks & ETFs — live quotes (Yahoo Finance, no key required), portfolio, paper-trading buy/sell. See below. |
 | `/api/core/accounts` | Bank accounts |
 | `/api/cards` | Virtual/physical cards |
 | `/api/transactions` | Ledger transactions |
@@ -84,6 +85,25 @@ All routes require auth.
 A failed crypto leg (e.g. compliance/balance rejection from the existing Paxos pipeline) is recorded as `FAILED` with a reason and does not block the other legs in the same round.
 
 Old dead-code stub at `src/modules/core/transactions/autonomous-investor/` (Mongoose-based, unmounted) is unrelated to this feature — left untouched.
+
+---
+
+## Stocks & ETFs (`/api/v1/stocks`, `src/modules/investing/stocks/`)
+
+**[LIVE]** — paper trading. No live brokerage is connected (same gap as Auto-Invest's stock/ETF legs above), so orders never leave this database: a buy/sell moves real cash between the user's own USD wallet ledger (`CoreTransaction`/`LedgerEntry`, same pattern as `wallet/cashout.service.ts`) and a DB-backed `StockHolding` position, priced with live market data. This makes the feature honest end to end — real DB positions, real live prices, real cash movement inside Chronos — without pretending a brokerage executes the trade.
+
+Market data (`stocks.market-data.ts`): Yahoo Finance's public batch quote endpoint (`query1.finance.yahoo.com/v7/finance/quote`), no API key required, with a per-symbol chart-endpoint fallback (`v8/finance/chart/:symbol`) and a 15s in-memory cache — mirrors the crypto module's Paxos-primary/CoinGecko-fallback pattern. Supported symbols are a curated allowlist of 15 (10 large-cap stocks + 5 ETFs) in `SUPPORTED_STOCKS`.
+
+| Route | Purpose | Auth |
+|---|---|---|
+| `GET /quotes` | Live quotes for every supported symbol | none |
+| `GET /quotes/:symbol` | Live quote for one symbol | none |
+| `GET /portfolio` | Holdings + live PnL | required |
+| `GET /orders` | Order history | required |
+| `POST /orders/buy` | `{ symbol, shares }` — debits USD wallet, creates/updates `StockHolding` | required |
+| `POST /orders/sell` | `{ symbol, shares }` — credits USD wallet, reduces/deletes `StockHolding` | required |
+
+`CryptoService.getPortfolioSummary(userId)` (new public method on the existing `src/modules/crypto/services/crypto.service.ts`) and `stocks.service.ts`'s `getPortfolioValueUsd(userId)` are both reused by `home.service.ts` to populate `netWorth.blockHub`/`netWorth.investments` with real numbers instead of hardcoded `0` — see Bugs Fixed #19.
 
 ---
 
@@ -380,6 +400,14 @@ Discovered while preparing the Main API for Vercel: `src/app.ts`'s SPA-fallback 
 ### 17. BlockHub's NestJS DI breaks under esbuild — false "undefined dependency" (kept for reference, not the active deploy path)
 
 Discovered while first evaluating BlockHub for Vercel (before settling on Railway — see [Hosting](#hosting--migrating-off-aws-elastic-beanstalk) above): pointing a serverless-style bundler straight at BlockHub's TypeScript source throws `UndefinedDependencyException: Nest can't resolve dependencies of the MintingService (?, ...)` at boot — reproduced with plain `tsx` too, so it's an esbuild/decorator-metadata gap, not a real DI bug (confirmed clean boot via the actual `tsc -p tsconfig.blockhub.json` build). Not relevant to BlockHub's current Railway deployment (which runs the real `tsc` build, no esbuild involved) — documented here in case anyone points a zero-config TS bundler at BlockHub's source again.
+
+### 19. Net worth showed hardcoded `0` for crypto/stocks/AI portfolio; mobile Chris chat/voice were pointed at Vercel/Groq (again) instead of this backend's DeepSeek pipeline; no stocks/ETF backend existed at all
+
+Three related gaps, fixed together: (1) `home.service.ts`'s `getHomeSummary()` returned `netWorth.aiPortfolio`, `netWorth.blockHub`, and `netWorth.investments` as literal `0` — the dashboard's total balance included real cash/TickPay but never reflected real crypto or stock holdings. (2) `/api/ai/blockhub/portfolio` was a permanent 503 stub. (3) There was no stocks/ETF backend at all — `chronos/lib/.../stocks_etf_page.dart` was a hardcoded list of tickers/prices with zero network calls. Separately, (4) a same-day human commit after Bug #18 (`c5545ec`, "Fix Chris voice and chat: point to Vercel, add Groq fallback") had silently re-pointed the Flutter app's Chris chat/voice off this backend's DeepSeek pipeline and onto the `chronosapp-rosy.vercel.app`/Groq stand-in again — so even with `DEEPSEEK_API_KEY` configured, the app's main chat surface wasn't using it.
+
+Fixed: added `src/modules/investing/stocks/` (`stocks.market-data.ts`, `.service.ts`, `.controller.ts`, `.routes.ts`, mounted at `/v1/stocks` — see the Stocks & ETFs section above) with new Prisma models `StockHolding`/`StockOrder` (plus `CoreTransactionType.INVESTMENT_SALE` and `LedgerCategory.INVESTMENT`). Added a public `CryptoService.getPortfolioSummary(userId)` (reuses the existing private `getPortfolio()` holdings+price logic without `getDashboard()`'s wallet-auto-provisioning side effect) and wired both it and the new stocks service into `home.service.ts`'s net worth breakdown, and into `/api/ai/blockhub/portfolio` (replacing the 503 stub). `netWorth.aiPortfolio` sums `AutoInvestExecution` rows with `assetClass IN (STOCK, ETF) AND status = EXECUTED` — genuinely `0` today since those legs are still `[PLANNED — no brokerage integration]` (see Auto-Invest above), not hardcoded; it becomes real the moment that execution path is ever wired up. On mobile, removed `_kChrisChatBase`/`_kVoiceBase` (the Vercel overrides) entirely from `panther_ai_remote_data_source.dart`/`tts_service.dart` — both now call `ApiClient`'s own `baseUrl` (`API_BASE_URL` dart-define), so chat/voice always follow whatever backend the rest of the app points at instead of drifting to a separate hardcoded stand-in again. `stocks_etf_page.dart` now loads live quotes/portfolio from the new backend via a new `StocksRemoteDataSource` and supports real buy/sell (see `chronos/FEATURES.md`).
+
+No live brokerage exists anywhere in this codebase — stocks/ETF positions are DB-backed paper trades priced with live market data, not real-money trades. Crypto is unaffected (still the existing Paxos/BlockHub pipeline); this only adds a read path for it into net worth.
 
 ### 18. DeepSeek added as primary LLM for every chatbot; mobile repointed off the Vercel stand-in
 
