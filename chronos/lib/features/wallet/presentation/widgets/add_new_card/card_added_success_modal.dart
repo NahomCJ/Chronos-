@@ -19,12 +19,12 @@ class CardAddedSuccessModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * 0.46,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          colors: [Color(0xFF16161D), Color(0xFF000000)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -82,7 +82,7 @@ class CardAddedSuccessModal extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 60),
+            const SizedBox(height: 36),
 
             // Success content
             Expanded(
@@ -91,24 +91,24 @@ class CardAddedSuccessModal extends StatelessWidget {
                 children: [
                   // Success icon
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 76,
+                    height: 76,
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.2),
+                      color: const Color(0xFF1E1E27),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.3),
-                        width: 2,
+                        color: Colors.white.withValues(alpha: 0.10),
+                        width: 1.5,
                       ),
                     ),
                     child: const Icon(
                       Icons.check_circle,
-                      color: Colors.green,
-                      size: 60,
+                      color: Colors.white,
+                      size: 38,
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 22),
 
                   // Success title
                   Text(
