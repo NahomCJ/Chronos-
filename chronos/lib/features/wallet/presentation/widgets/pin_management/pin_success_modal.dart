@@ -16,12 +16,12 @@ class PinSuccessModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.38,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          colors: [Color(0xFF16161D), Color(0xFF000000)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -37,16 +37,20 @@ class PinSuccessModal extends StatelessWidget {
 
             // Success checkmark
             Container(
-              width: 120,
-              height: 120,
-              decoration: const BoxDecoration(
-                color: Color(0xFF10B981),
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E1E27),
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.10),
+                  width: 1.5,
+                ),
               ),
-              child: const Icon(Icons.check, color: Colors.white, size: 60),
+              child: const Icon(Icons.check, color: Colors.white, size: 38),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
 
             // Title
             Text(
@@ -57,7 +61,7 @@ class PinSuccessModal extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
             // Subtitle
             Text(
@@ -68,7 +72,7 @@ class PinSuccessModal extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
             // Description
             Text(
@@ -79,8 +83,7 @@ class PinSuccessModal extends StatelessWidget {
               ),
             ),
 
-            
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             // Done button
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
