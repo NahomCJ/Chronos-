@@ -9,6 +9,7 @@ import { runAffordabilityCheck } from "./panther/agents/tickpay/affordability.ag
 import { runMarketplaceSearch } from "./panther/agents/tickpay/marketplace-search.agent";
 import { getUserFinancialContext } from "./panther/core/data-retrieval.service";
 import { Request, Response } from "express";
+import cryptoService from "../crypto/services/crypto.service";
 
 const router = Router();
 
@@ -80,11 +81,15 @@ router.post(
 router.get(
   "/blockhub/portfolio",
   requireAuth,
-  async (_req: Request, res: Response): Promise<void> => {
-    res.status(503).json({
-      message:
-        "BlockHub AI is not yet available. The crypto module is being deployed — portfolio analysis will be live soon.",
-    });
+  async (req: Request, res: Response): Promise<void> => {
+    const userId = (req as any).user?.id as string;
+    try {
+      const portfolio = await cryptoService.getPortfolioSummary(userId);
+      res.status(200).json(portfolio);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to fetch crypto portfolio";
+      res.status(500).json({ message });
+    }
   }
 );
 
