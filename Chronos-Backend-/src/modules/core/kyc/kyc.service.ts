@@ -1,6 +1,6 @@
 // src/modules/core/kyc/kyc.service.ts
 import jwt from "jsonwebtoken";
-import { CountryCode, Products, Strategy } from "plaid";
+import { CountryCode, IdentityVerification, Products, Strategy } from "plaid";
 import { AccountStatus } from "@prisma/client";
 import prisma from "../../../config/prisma";
 import { plaidClient } from "../../../config/plaid";
@@ -43,6 +43,35 @@ function mapPlaidStatus(plaidStatus: PlaidIdvStatus): {
   }
 }
 
+// Extracts the structured KYC verification outcome from Plaid's Identity
+// Verification response — per-step check results plus document type/
+// issuing country/expiration. Never includes the actual document/selfie
+// images (those stay hosted by Plaid, which is licensed for custody).
+function buildKycDetails(idv: IdentityVerification) {
+  const lastDocument =
+    idv.documentary_verification?.documents?.[
+      idv.documentary_verification.documents.length - 1
+    ] ?? null;
+  const extracted = lastDocument?.extracted_data ?? null;
+
+  // Round-tripped through JSON so the result is a plain JSON value (Prisma's
+  // Json field type rejects the Plaid SDK's typed enums/interfaces directly).
+  return JSON.parse(
+    JSON.stringify({
+      steps: idv.steps,
+      watchlistScreeningId: idv.watchlist_screening_id,
+      document: extracted
+        ? {
+            type: extracted.category,
+            issuingCountry: extracted.issuing_country,
+            issueDate: extracted.issue_date,
+            expirationDate: extracted.expiration_date,
+          }
+        : null,
+    }),
+  );
+}
+
 export class KycService {
   // ─── Profile ────────────────────────────────────────────────────────────────
 
@@ -59,6 +88,8 @@ export class KycService {
       plaidIdvId: profile.plaidIdvId,
       plaidStatus: profile.plaidStatus,
       bankLinked: !!profile.plaidAccessToken,
+      kycCompletedAt: profile.kycCompletedAt?.toISOString() ?? null,
+      kycDetails: profile.kycDetails,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString(),
     };
@@ -137,6 +168,10 @@ export class KycService {
         plaidStatus,
         status: mapped.status,
         kycVerified: mapped.kycVerified,
+        kycDetails: buildKycDetails(idvResponse.data),
+        ...(idvResponse.data.completed_at && {
+          kycCompletedAt: new Date(idvResponse.data.completed_at),
+        }),
         ...(mapped.approvedAt && { approvedAt: mapped.approvedAt }),
         ...(mapped.rejectedAt && { rejectedAt: mapped.rejectedAt }),
       },
@@ -367,6 +402,10 @@ export class KycService {
           plaidStatus,
           status: mapped.status,
           kycVerified: mapped.kycVerified,
+          kycDetails: buildKycDetails(idvResponse.data),
+          ...(idvResponse.data.completed_at && {
+            kycCompletedAt: new Date(idvResponse.data.completed_at),
+          }),
           ...(mapped.approvedAt && { approvedAt: mapped.approvedAt }),
           ...(mapped.rejectedAt && { rejectedAt: mapped.rejectedAt }),
         },
