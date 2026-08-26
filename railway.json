@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd Chronos-Backend- && npm install && npm run build:blockhub"
+    "buildCommand": "cd Chronos-Backend- && npm install --include=dev && npm run build:blockhub"
   },
   "deploy": {
     "startCommand": "cd Chronos-Backend- && node dist-blockhub/main.js",
