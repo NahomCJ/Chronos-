@@ -66,7 +66,7 @@ class _TickPayDiscoverPageState extends State<TickPayDiscoverPage> {
   static final _sportsProducts = [
     ('Nike Shoes', '\$130', TickPayMedia.nikeShoes, 0.20),
     ('Gym Bag', '\$55', TickPayMedia.gymBag, 0.10),
-    ('Yoga Mat', '\$35', TickPayMedia.yogaMat, 0.15),
+    ('Resistance Bands', '\$29', TickPayMedia.gymBag, 0.15),
     ('Fitbit Charge', '\$129', TickPayMedia.smartwatch, 0.10),
   ];
 

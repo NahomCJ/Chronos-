@@ -120,7 +120,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF1A0A2E),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                shape: const StadiumBorder(),
                                 elevation: 0,
                               ),
                               child: Text(
@@ -696,7 +696,7 @@ class _CalendarDialogState extends State<_CalendarDialog> {
                     onPressed: _day != null ? _confirm : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF7C3AED),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: const StadiumBorder(),
                       elevation: 0,
                     ),
                     child: const Text('Select', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
