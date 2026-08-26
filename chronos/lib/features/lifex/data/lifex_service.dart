@@ -48,16 +48,10 @@ class LifeXService {
       _api.get('/api/lifex/spiritual/dashboard');
   Future<Map<String, dynamic>> spiritualStreak() =>
       _api.get('/api/lifex/spiritual/streak');
-  Future<List<dynamic>> meditations() =>
-      _api.getList('/api/lifex/spiritual/meditation');
-  Future<Map<String, dynamic>> meditationStats() =>
-      _api.get('/api/lifex/spiritual/meditation/stats');
   Future<List<dynamic>> gratitude() =>
       _api.getList('/api/lifex/spiritual/gratitude');
   Future<List<dynamic>> spiritualGoals() =>
       _api.getList('/api/lifex/spiritual/goals');
-  Future<Map<String, dynamic>> logMeditation(Map<String, dynamic> body) =>
-      _api.post('/api/lifex/spiritual/meditation', body);
   Future<Map<String, dynamic>> addGratitude(Map<String, dynamic> body) =>
       _api.post('/api/lifex/spiritual/gratitude', body);
   Future<List<dynamic>> donationHistory() =>

@@ -972,7 +972,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   foregroundColor: Colors.red,
                   side: BorderSide(color: Colors.red.withValues(alpha: 0.4)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: const StadiumBorder(),
                 ),
               ),
             ),

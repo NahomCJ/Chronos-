@@ -10,9 +10,7 @@ class OOutlinedButton {
         foregroundColor: scheme.primary,
         padding: Constants.paddingHorizontalMedium
             .add(Constants.paddingVerticalSmall),
-        shape: const RoundedRectangleBorder(
-          borderRadius: Constants.borderRadiusMedium,
-        ),
+        shape: const StadiumBorder(),
         side: BorderSide(color: scheme.primary),
         textStyle: TextStyles.bodyMedium,
       ),

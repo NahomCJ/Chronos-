@@ -40,7 +40,7 @@ const String _f7  = 'https://images.pexels.com/photos/1152077/pexels-photo-11520
 
 const String _h1  = 'https://images.pexels.com/photos/2080590/pexels-photo-2080590.jpeg?auto=compress&cs=tinysrgb&w=600'; // coffee maker
 const String _h2  = 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&cs=tinysrgb&w=600'; // lamp
-const String _h3  = 'https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=600'; // yoga mat
+const String _h3  = 'https://images.pexels.com/photos/1112598/pexels-photo-1112598.jpeg?auto=compress&cs=tinysrgb&w=600'; // lamp alt
 
 const String _s1  = 'https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg?auto=compress&cs=tinysrgb&w=600'; // gym bag
 
@@ -85,13 +85,13 @@ const List<TProduct> kAllProducts = [
   TProduct(name: 'Ninja Air Fryer XL', price: '\$119', priceNum: 119, imageUrl: _h1, category: 'home', brand: 'Ninja', bnpl: '2 × \$59.50', discount: 0.12),
   TProduct(name: 'Instant Pot Duo 7-in-1', price: '\$99', priceNum: 99, imageUrl: _h1, category: 'home', brand: 'Instant Pot', bnpl: '2 × \$49.50', discount: 0.15),
   TProduct(name: 'Floor Lamp Arc', price: '\$79', priceNum: 79, imageUrl: _h2, category: 'home', brand: 'IKEA', bnpl: '2 × \$39.50', discount: 0.10),
-  TProduct(name: 'Yoga Mat Premium', price: '\$59', priceNum: 59, imageUrl: _h3, category: 'home', brand: 'Lululemon', bnpl: '2 × \$29.50', discount: 0.08),
+  TProduct(name: 'Modern Desk Lamp', price: '\$59', priceNum: 59, imageUrl: _h3, category: 'home', brand: 'IKEA', bnpl: '2 × \$29.50', discount: 0.08),
   TProduct(name: 'Robot Vacuum iRobot', price: '\$299', priceNum: 299, imageUrl: _h1, category: 'home', brand: 'iRobot', bnpl: '3 × \$99.67', discount: 0.15),
 
   // ── Sports ───────────────────────────────────────────────────────────────
   TProduct(name: 'Nike Dri-FIT Shorts', price: '\$45', priceNum: 45, imageUrl: _f4, category: 'sports', brand: 'Nike', bnpl: '', discount: 0.10),
   TProduct(name: 'Adidas Sports Bag', price: '\$55', priceNum: 55, imageUrl: _s1, category: 'sports', brand: 'Adidas', bnpl: '2 × \$27.50', discount: 0.10),
-  TProduct(name: 'Premium Yoga Mat', price: '\$35', priceNum: 35, imageUrl: _h3, category: 'sports', brand: 'Manduka', bnpl: '', discount: 0.15),
+  TProduct(name: 'Foam Roller', price: '\$35', priceNum: 35, imageUrl: _s1, category: 'sports', brand: 'TriggerPoint', bnpl: '', discount: 0.15),
   TProduct(name: 'Fitbit Charge 6', price: '\$129', priceNum: 129, imageUrl: _e7, category: 'sports', brand: 'Fitbit', bnpl: '2 × \$64.50', discount: 0.10),
   TProduct(name: 'Under Armour Hoodie', price: '\$75', priceNum: 75, imageUrl: _f4, category: 'sports', brand: 'Under Armour', bnpl: '2 × \$37.50', discount: 0.12),
   TProduct(name: 'Resistance Bands Set', price: '\$29', priceNum: 29, imageUrl: _s1, category: 'sports', brand: 'ProForm', bnpl: '', discount: 0.20),
