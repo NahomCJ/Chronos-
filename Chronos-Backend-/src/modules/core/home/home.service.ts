@@ -1,4 +1,6 @@
 import prisma from "../../../config/prisma";
+import cryptoService from "../../crypto/services/crypto.service";
+import { getPortfolioValueUsd as getStockPortfolioValueUsd } from "../../investing/stocks/stocks.service";
 
 export async function getHomeSummary(userId: string) {
   const [account, tickPay, coreTransactions] = await Promise.all([
@@ -41,6 +43,26 @@ export async function getHomeSummary(userId: string) {
 
   const accountBalance = wallets.reduce((sum, w) => sum + w.balance, 0);
   const tickPayUsed = tickPay ? parseFloat(tickPay.balance.toString()) : 0;
+
+  // Real, DB-backed net worth breakdown — crypto (BlockHub's shared
+  // PortfolioHolding table, live-priced) and stocks/ETFs (paper positions,
+  // live-priced) computed in parallel; a fetch failure degrades that one
+  // slice to 0 rather than failing the whole dashboard.
+  const [blockHubValue, investmentsValue, aiPortfolioValue] = await Promise.all([
+    cryptoService.getPortfolioSummary(userId).then((p) => p.total_value_usd).catch(() => 0),
+    getStockPortfolioValueUsd(userId).catch(() => 0),
+    prisma.autoInvestExecution
+      .aggregate({
+        where: {
+          plan: { userId },
+          assetClass: { in: ["STOCK", "ETF"] },
+          status: "EXECUTED",
+        },
+        _sum: { amountUsd: true },
+      })
+      .then((r) => parseFloat((r._sum.amountUsd ?? 0).toString()))
+      .catch(() => 0),
+  ]);
 
   // Map recent transactions — positive amount = credit, negative = debit
   const recentTransactions = coreTransactions.map((tx) => {
@@ -111,10 +133,10 @@ export async function getHomeSummary(userId: string) {
     netWorth: {
       cash: accountBalance,
       tickPay: tickPayUsed,
-      aiPortfolio: 0,
-      blockHub: 0,
-      investments: 0,
-      total: accountBalance - tickPayUsed,
+      aiPortfolio: aiPortfolioValue,
+      blockHub: blockHubValue,
+      investments: investmentsValue,
+      total: accountBalance - tickPayUsed + blockHubValue + investmentsValue + aiPortfolioValue,
     },
   };
 }

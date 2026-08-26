@@ -275,6 +275,8 @@ EB-specific deploy tooling (`.ebextensions/`, `Procfile`, `zip:blockhub`) has be
 | `POST /api/ai/chris/chat` | Panther AI chat |
 | `POST /api/ai/tickpay/affordability` | BNPL risk check |
 | `POST /api/v1/auto-invest/plans` | Auto-Invest with Chris — crypto legs live, stocks/ETFs planned-only |
+| `GET  /api/v1/stocks/quotes` | Live stock/ETF quotes (no key required) |
+| `POST /api/v1/stocks/orders/buy` | Stocks & ETFs — paper trading (DB-backed, live-priced, no brokerage) |
 | `GET  /api/lifex/*` | 11 LifeX modules |
 | `GET  /health` | Health check (no auth) |
 | `GET  /api/docs` | Swagger UI |
@@ -325,6 +327,8 @@ Token auto-saves on register (201) and login (200). Import both files into Postm
 - KYC via Plaid
 - Redis-cached FX rates
 - BlockHub: crypto wallets, buy/sell (Paxos sandbox), NFT minting/gallery/transfer
+- Stocks & ETFs: live quotes, portfolio, buy/sell — paper trading only, no live brokerage connected
+- Home dashboard net worth breakdown (cash, TickPay, crypto, stocks) — real, DB-backed
 - Flutter mobile (auth, home, core features)
 
 ### Needs Env Keys on EB [NEEDS CONFIG]
