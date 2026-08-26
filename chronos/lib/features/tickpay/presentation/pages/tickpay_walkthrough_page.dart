@@ -10,7 +10,7 @@ const _slides = [
     icon: Icons.shopping_bag_rounded,
     accentColor: TickpayColors.brandRed,
     tags: ['Shopping', 'Brands', 'Flexible Pay'],
-    pexelsQuery: 'woman shopping bags boutique',
+    pexelsQuery: 'young woman shopping fashion boutique smiling',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/6565836/6565836-hd_1080_1920_24fps.mp4',
   ),
@@ -20,7 +20,7 @@ const _slides = [
     icon: Icons.credit_score_rounded,
     accentColor: TickpayColors.accentPurple,
     tags: ['Credit Line', 'Planning', 'Control'],
-    pexelsQuery: 'credit card finance planning',
+    pexelsQuery: 'contactless card payment hand close up',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/6995103/6995103-hd_1080_1920_30fps.mp4',
   ),
@@ -30,7 +30,7 @@ const _slides = [
     icon: Icons.auto_awesome_rounded,
     accentColor: TickpayColors.info,
     tags: ['AI Picks', 'Budget', 'Deals'],
-    pexelsQuery: 'futuristic technology interface glow',
+    pexelsQuery: 'smartphone shopping app scrolling deals',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7547770/7547770-uhd_1440_2560_25fps.mp4',
   ),

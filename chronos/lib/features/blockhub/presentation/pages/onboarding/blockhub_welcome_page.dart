@@ -24,10 +24,9 @@ const _slides = [
     icon: Icons.show_chart_rounded,
     accentColor: Color(0xFF22C55E),
     tags: ['Stocks', 'ETFs', 'Dividends'],
-    pexelsQuery: 'stock market finance trading chart',
+    pexelsQuery: 'stock market chart screen trading',
     fallbackVideoUrl:
-        'https://videos.pexels.com/video-files/20407079/20407079-hd_1080_1920_50fps.mp4',
-    localVideoAsset: _walkthroughVideo,
+        'https://videos.pexels.com/video-files/6995103/6995103-hd_1080_1920_30fps.mp4',
   ),
   WalkthroughSlide(
     title: 'Automated\nTrading',

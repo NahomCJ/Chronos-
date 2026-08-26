@@ -413,7 +413,7 @@ class _BuyBtcPageState extends State<BuyBtcPage> {
                         backgroundColor: Colors.white.withValues(alpha: 0.9),
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: const StadiumBorder(),
                       ),
                       child: Text('Continue', style: TextStyles.bodyMedium.copyWith(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14)),
                     ),
