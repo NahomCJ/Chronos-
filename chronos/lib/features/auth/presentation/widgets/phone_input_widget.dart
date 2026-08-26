@@ -31,7 +31,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> {
   void initState() {
     super.initState();
     _selectedCountry =
-        widget.selectedCountry ?? CountryParser.parseCountryCode('ET');
+        widget.selectedCountry ?? CountryParser.parseCountryCode('US');
   }
 
   @override
