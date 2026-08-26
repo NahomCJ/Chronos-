@@ -32,18 +32,18 @@ class WalletConnectedModal extends StatelessWidget {
     final isMediumScreen = screenWidth >= 360 && screenWidth < 400;
 
     // Responsive sizing
-    final iconSize = isSmallScreen ? 80.0 : (isMediumScreen ? 90.0 : 100.0);
+    final iconSize = isSmallScreen ? 60.0 : (isMediumScreen ? 66.0 : 72.0);
     final titleFontSize = isSmallScreen ? 20.0 : (isMediumScreen ? 22.0 : 24.0);
     final bodyFontSize = isSmallScreen ? 13.0 : (isMediumScreen ? 14.0 : 15.0);
     final horizontalPadding = isSmallScreen ? 20.0 : 24.0;
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.55  ,
+      height: MediaQuery.of(context).size.height * 0.4,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF302B48), Color(0xFF6D64A5)],
+          colors: [Color(0xFF16161D), Color(0xFF000000)],
         ),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -52,10 +52,10 @@ class WalletConnectedModal extends StatelessWidget {
       ),
       child: Column(
         children: [
-        
 
 
-  
+
+
 
           // Content
           Expanded(
@@ -64,28 +64,28 @@ class WalletConnectedModal extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: isSmallScreen ? 40 : 60),
+                  SizedBox(height: isSmallScreen ? 24 : 36),
 
                   // Success icon
                   Container(
                     width: iconSize,
                     height: iconSize,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                      color: const Color(0xFF1E1E27),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                        width: 2,
+                        color: Colors.white.withValues(alpha: 0.10),
+                        width: 1.5,
                       ),
                     ),
                     child: Icon(
                       Icons.check_circle,
-                      color: const Color(0xFF10B981),
+                      color: Colors.white,
                       size: iconSize * 0.5,
                     ),
                   ),
 
-                  SizedBox(height: isSmallScreen ? 24 : 32),
+                  SizedBox(height: isSmallScreen ? 16 : 22),
 
                   // Success message
                   Text(
@@ -111,7 +111,7 @@ class WalletConnectedModal extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: isSmallScreen ? 24 : 32),
+                  SizedBox(height: isSmallScreen ? 16 : 22),
 
                   // Wallet Address
                   Container(
@@ -176,7 +176,7 @@ class WalletConnectedModal extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
