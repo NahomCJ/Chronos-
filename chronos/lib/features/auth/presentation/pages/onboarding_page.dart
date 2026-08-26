@@ -16,7 +16,7 @@ const _slides = [
     icon: Icons.account_balance_wallet_rounded,
     accentColor: Color(0xFF3B82F6),
     tags: ['Banking', 'Payments', 'Wallets'],
-    pexelsQuery: 'contactless payment finance mobile',
+    pexelsQuery: 'contactless card payment terminal close up',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7669659/7669659-hd_1080_1920_25fps.mp4',
   ),
@@ -26,7 +26,7 @@ const _slides = [
     icon: Icons.shopping_bag_rounded,
     accentColor: Color(0xFFE53935),
     tags: ['BNPL', 'Shopping', 'Smart Limits'],
-    pexelsQuery: 'smartphone mobile payment e-commerce',
+    pexelsQuery: 'woman online shopping smartphone smiling',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7534961/7534961-hd_1080_1920_25fps.mp4',
   ),
@@ -36,7 +36,7 @@ const _slides = [
     icon: Icons.psychology_rounded,
     accentColor: Color(0xFF7C6EF0),
     tags: ['AI Insights', 'Predictions', 'Chris'],
-    pexelsQuery: 'artificial intelligence technology neon',
+    pexelsQuery: 'financial data dashboard analytics screen',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/17144481/17144481-hd_1080_1920_30fps.mp4',
   ),
@@ -56,8 +56,8 @@ const _slides = [
     icon: Icons.self_improvement_rounded,
     accentColor: Color(0xFF14B8A6),
     tags: ['LifeX', 'Wellness', 'Growth'],
-    // No yoga imagery, per this repo's spiritual/wellness content rule.
-    pexelsQuery: 'peaceful nature sunrise mountains',
+    // No yoga or meditation imagery, per this repo's wellness content rule.
+    pexelsQuery: 'golden hour mountain landscape aerial',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/5895563/5895563-hd_1080_1920_25fps.mp4',
   ),

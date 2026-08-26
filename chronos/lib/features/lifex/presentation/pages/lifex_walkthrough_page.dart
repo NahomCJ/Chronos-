@@ -11,7 +11,7 @@ const _slides = [
     icon: Icons.self_improvement_rounded,
     accentColor: _lifexTeal,
     tags: ['Health', 'Finance', 'Learning'],
-    pexelsQuery: 'wellness lifestyle nature calm',
+    pexelsQuery: 'calm nature landscape scenic golden hour',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/8045815/8045815-hd_1080_1920_25fps.mp4',
   ),
@@ -21,7 +21,7 @@ const _slides = [
     icon: Icons.auto_awesome_rounded,
     accentColor: Color(0xFF7C6EF0),
     tags: ['Chris AI', 'Check-ins', 'Nudges'],
-    pexelsQuery: 'artificial intelligence technology neon',
+    pexelsQuery: 'abstract data network glowing particles',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/7687797/7687797-hd_1080_2048_24fps.mp4',
   ),
@@ -31,7 +31,7 @@ const _slides = [
     icon: Icons.insights_rounded,
     accentColor: Color(0xFF3B82F6),
     tags: ['12 Modules', 'One Score', 'Insights'],
-    pexelsQuery: 'futuristic technology interface glow',
+    pexelsQuery: 'financial growth chart analytics dashboard',
     fallbackVideoUrl:
         'https://videos.pexels.com/video-files/15440319/15440319-hd_1080_1920_30fps.mp4',
   ),

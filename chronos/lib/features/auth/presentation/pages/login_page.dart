@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: const Color(0xFF1A0A2E),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    shape: const StadiumBorder(),
                                     elevation: 0,
                                   ),
                                   child: isLoading
@@ -322,7 +322,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 46,
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(23),
           border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Row(

@@ -22,7 +22,7 @@ class _LifeXActivityPageState extends State<LifeXActivityPage>
     _ActivityLog('Morning Run', '5.4 km', '34 min', '385 kcal', Icons.directions_run_rounded, Colors.white),
     _ActivityLog('Weight Training', '45 min', '3 sets', '280 kcal', Icons.fitness_center_rounded, Colors.white),
     _ActivityLog('Cycling', '12 km', '38 min', '310 kcal', Icons.directions_bike_rounded, Colors.white),
-    _ActivityLog('Yoga Flow', '30 min', 'Flexibility', '140 kcal', Icons.self_improvement_rounded, Colors.white),
+    _ActivityLog('Swimming', '1.2 km', '32 min', '260 kcal', Icons.pool_rounded, Colors.white),
   ];
 
   @override
@@ -289,7 +289,7 @@ class _LifeXActivityPageState extends State<LifeXActivityPage>
         const SizedBox(height: 14),
         const _VideoCard('Beginner Strength Training', '35 min', 'https://images.pexels.com/photos/3837757/pexels-photo-3837757.jpeg?auto=compress&cs=tinysrgb&w=600'),
         const SizedBox(height: 14),
-        const _VideoCard('Evening Yoga & Stretch', '20 min', 'https://images.pexels.com/photos/2294354/pexels-photo-2294354.jpeg?auto=compress&cs=tinysrgb&w=600'),
+        const _VideoCard('Full-Body Mobility Routine', '20 min', 'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?auto=compress&cs=tinysrgb&w=600'),
       ]),
     );
   }

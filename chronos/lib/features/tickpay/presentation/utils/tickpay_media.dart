@@ -108,11 +108,6 @@ class TickPayMedia {
       'https://images.pexels.com/photos/1280064/pexels-photo-1280064.jpeg'
       '?auto=compress&cs=tinysrgb&w=600';
 
-  /// Yoga mat  (Pexels #3822906)
-  static const String yogaMat =
-      'https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg'
-      '?auto=compress&cs=tinysrgb&w=600';
-
   /// Coffee maker  (Pexels #2080590)
   static const String coffeeMaker =
       'https://images.pexels.com/photos/2080590/pexels-photo-2080590.jpeg'
@@ -164,10 +159,6 @@ class TickPayMedia {
   /// Slide 4  Crypto: crypto trading on smartphone (Pexels #34453413)
   static const String onboardingCrypto =
       'https://videos.pexels.com/video-files/34453413/14599279_1080_1920_25fps.mp4';
-
-  /// Slide 5  Lifestyle: yoga in the park (Pexels #8173075)
-  static const String onboardingLifestyle =
-      'https://videos.pexels.com/video-files/8173075/8173075-hd_1080_1920_30fps.mp4';
 
   /// Purple abstract background (Pexels #7101912)
   static const String purpleAbstractVideo =
