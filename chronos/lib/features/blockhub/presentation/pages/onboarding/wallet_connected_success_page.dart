@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +13,6 @@ class _WalletConnectedSuccessPageState
     extends State<WalletConnectedSuccessPage>
     with TickerProviderStateMixin {
   late AnimationController _pulseCtrl;
-  late AnimationController _confettiCtrl;
   late AnimationController _slideCtrl;
   late Animation<double> _slideAnim;
 
@@ -22,23 +20,6 @@ class _WalletConnectedSuccessPageState
   static const _amber = Color(0xFFF59E0B);
   static const _green = Color(0xFF22C55E);
   static const _teal = Color(0xFF14B8A6);
-
-  final _confettiItems = List.generate(
-    20,
-    (i) => _ConfettiItem(
-      x: Random().nextDouble(),
-      y: Random().nextDouble() * -1,
-      color: [
-        const Color(0xFFF59E0B),
-        const Color(0xFF22C55E),
-        const Color(0xFF3B82F6),
-        const Color(0xFF8B5CF6),
-        const Color(0xFF14B8A6),
-      ][i % 5],
-      size: 6.0 + Random().nextDouble() * 8,
-      speed: 0.3 + Random().nextDouble() * 0.7,
-    ),
-  );
 
   Future<void> _completeSetup() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,11 +38,6 @@ class _WalletConnectedSuccessPageState
       duration: const Duration(milliseconds: 2000),
     )..repeat(reverse: true);
 
-    _confettiCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-
     _slideCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -74,7 +50,6 @@ class _WalletConnectedSuccessPageState
   @override
   void dispose() {
     _pulseCtrl.dispose();
-    _confettiCtrl.dispose();
     _slideCtrl.dispose();
     super.dispose();
   }
@@ -88,38 +63,23 @@ class _WalletConnectedSuccessPageState
             Positioned.fill(child: Image.network('https://images.pexels.com/photos/30004067/pexels-photo-30004067.jpeg?auto=compress&cs=tinysrgb&w=900', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1A2A3A)))),
             Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.20))),
             SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            // Confetti
+            const Spacer(),
+            _buildSuccessOrb(),
+            const SizedBox(height: 32),
             AnimatedBuilder(
-              animation: _confettiCtrl,
-              builder: (_, __) => CustomPaint(
-                size: MediaQuery.of(context).size,
-                painter: _ConfettiPainter(
-                    items: _confettiItems, progress: _confettiCtrl.value),
+              animation: _slideAnim,
+              builder: (_, __) => Opacity(
+                opacity: _slideAnim.value,
+                child: Transform.translate(
+                  offset: Offset(0, 30 * (1 - _slideAnim.value)),
+                  child: _buildContent(),
+                ),
               ),
             ),
-
-            // Content
-            Column(
-              children: [
-                const Spacer(),
-                _buildSuccessOrb(),
-                const SizedBox(height: 32),
-                AnimatedBuilder(
-                  animation: _slideAnim,
-                  builder: (_, __) => Opacity(
-                    opacity: _slideAnim.value,
-                    child: Transform.translate(
-                      offset: Offset(0, 30 * (1 - _slideAnim.value)),
-                      child: _buildContent(),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                _buildBottomSection(),
-              ],
-            ),
+            const Spacer(),
+            _buildBottomSection(),
           ],
         ),
       ),
@@ -278,47 +238,4 @@ class _WalletConnectedSuccessPageState
       ),
     );
   }
-}
-
-class _ConfettiItem {
-  final double x;
-  final double y;
-  final Color color;
-  final double size;
-  final double speed;
-  const _ConfettiItem(
-      {required this.x,
-      required this.y,
-      required this.color,
-      required this.size,
-      required this.speed});
-}
-
-class _ConfettiPainter extends CustomPainter {
-  final List<_ConfettiItem> items;
-  final double progress;
-  const _ConfettiPainter({required this.items, required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    for (final item in items) {
-      final y = (item.y + progress * item.speed * 1.5) % 1.2;
-      final x = item.x * size.width;
-      final yPos = y * size.height;
-      if (yPos < 0 || yPos > size.height) continue;
-
-      canvas.drawRect(
-        Rect.fromCenter(
-            center: Offset(x, yPos),
-            width: item.size,
-            height: item.size * 0.5),
-        Paint()
-          ..color = item.color.withValues(alpha: 0.7)
-          ..style = PaintingStyle.fill,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ConfettiPainter old) => old.progress != progress;
 }
