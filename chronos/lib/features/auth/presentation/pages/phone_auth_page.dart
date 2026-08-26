@@ -26,7 +26,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   final _phoneController = TextEditingController();
   bool _isOtpSent = false;
   String _verificationId = '';
-  Country _selectedCountry = CountryParser.parseCountryCode('ET');
+  Country _selectedCountry = CountryParser.parseCountryCode('US');
 
   @override
   void dispose() {

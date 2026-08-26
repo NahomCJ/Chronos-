@@ -73,6 +73,8 @@ export interface KycProfileDTO {
   plaidIdvId?: string | null;
   plaidStatus?: string | null;
   bankLinked: boolean;
+  kycCompletedAt?: string | null;
+  kycDetails?: unknown;
   createdAt: string;
   updatedAt: string;
 }
