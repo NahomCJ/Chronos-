@@ -22,8 +22,9 @@ class AppTheme {
       listTileTheme: LListTile.theme(base.colorScheme),
       drawerTheme: DDrawer.theme(base.colorScheme),
       tabBarTheme: TTabBar.theme(base.colorScheme),
+      inputDecorationTheme: TTextField.theme(base.colorScheme),
       scaffoldBackgroundColor: base.colorScheme.surface,
-      
+
     );
   }
 
@@ -47,6 +48,7 @@ static ThemeData get darkTheme {
       drawerTheme: DDrawer.theme(base.colorScheme),
       appBarTheme: AAppBar.theme(base.colorScheme),
       tabBarTheme: TTabBar.theme(base.colorScheme),
+      inputDecorationTheme: TTextField.theme(base.colorScheme),
       scaffoldBackgroundColor: base.colorScheme.surface,
     );
   }

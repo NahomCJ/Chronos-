@@ -7,12 +7,11 @@ class IIconButton {
     return IconButtonThemeData(
       style: IconButton.styleFrom(
         foregroundColor: scheme.primary,
-        padding: Constants.paddingHorizontalMedium
-            .add(Constants.paddingVerticalSmall),
+        padding: Constants.paddingAllSmall,
         shape: const RoundedRectangleBorder(
           borderRadius: Constants.borderRadiusMedium,
         ),
-        iconSize: IconSize.medium,
+        iconSize: IconSize.small,
       ),
     );
   }

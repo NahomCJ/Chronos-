@@ -9,10 +9,10 @@ class BButton {
       style: ElevatedButton.styleFrom(
         backgroundColor: CColor.primaryButton,
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 54),
+        minimumSize: const Size(double.infinity, 44),
         padding: Constants.paddingHorizontalMedium,
         shape: const StadiumBorder(), // Capsule shape from image
-        textStyle: TextStyles.titleMedium.copyWith(
+        textStyle: TextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),

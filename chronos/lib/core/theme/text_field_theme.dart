@@ -4,8 +4,7 @@ import 'constants.dart';
 class TTextField {
   static InputDecorationTheme theme(ColorScheme scheme) {
     return InputDecorationTheme(
-      contentPadding: Constants.paddingAllSmall
-          .add(Constants.paddingAllSmall), 
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
 
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(Constants.paddingSmall),
