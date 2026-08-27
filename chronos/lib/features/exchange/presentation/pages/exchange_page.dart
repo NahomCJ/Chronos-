@@ -298,8 +298,8 @@ class _ExchangePageState extends State<ExchangePage>
                   builder: (_, __) => Transform.rotate(
                     angle: _swapAnim.value * 3.14159,
                     child: Container(
-                      width: 38,
-                      height: 38,
+                      width: 30,
+                      height: 30,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
@@ -310,13 +310,13 @@ class _ExchangePageState extends State<ExchangePage>
                         boxShadow: [
                           BoxShadow(
                             color: const Color(0xFF6C5CE7).withValues(alpha: 0.35),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
                       child: const Icon(Icons.swap_vert_rounded,
-                          color: Colors.white, size: 20),
+                          color: Colors.white, size: 16),
                     ),
                   ),
                 ),
@@ -371,7 +371,7 @@ class _ExchangePageState extends State<ExchangePage>
             : const Color(0xFF22C55E));
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -384,24 +384,24 @@ class _ExchangePageState extends State<ExchangePage>
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Row(
             children: [
               GestureDetector(
                 onTap: onTap,
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5FA),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: const Color(0xFFE8E8F0)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(flag, style: const TextStyle(fontSize: 20)),
-                      const SizedBox(width: 8),
+                      Text(flag, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(width: 6),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -410,21 +410,21 @@ class _ExchangePageState extends State<ExchangePage>
                             style: TextStyles.bodyMedium.copyWith(
                               color: const Color(0xFF1A1A2E),
                               fontWeight: FontWeight.w700,
-                              fontSize: 15,
+                              fontSize: 13,
                             ),
                           ),
                           Text(
                             currencyName,
                             style: TextStyles.bodySmall.copyWith(
                               color: const Color(0xFFAAAABB),
-                              fontSize: 10,
+                              fontSize: 9,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 4),
                       const Icon(Icons.keyboard_arrow_down_rounded,
-                          color: Color(0xFFAAAABB), size: 18),
+                          color: Color(0xFFAAAABB), size: 16),
                     ],
                   ),
                 ),
@@ -432,7 +432,7 @@ class _ExchangePageState extends State<ExchangePage>
               const Spacer(),
               if (isFrom)
                 SizedBox(
-                  width: 130,
+                  width: 110,
                   child: TextField(
                     controller: _amountController,
                     textAlign: TextAlign.right,
@@ -444,14 +444,14 @@ class _ExchangePageState extends State<ExchangePage>
                     style: TextStyles.headlineSmall.copyWith(
                       color: const Color(0xFF1A1A2E),
                       fontWeight: FontWeight.w700,
-                      fontSize: 26,
+                      fontSize: 20,
                     ),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: '0.00',
                       hintStyle: TextStyle(
                         color: Color(0xFFCCCCDD),
-                        fontSize: 26,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                       contentPadding: EdgeInsets.zero,
@@ -465,7 +465,7 @@ class _ExchangePageState extends State<ExchangePage>
                   style: TextStyles.headlineSmall.copyWith(
                     color: amountColor,
                     fontWeight: FontWeight.w700,
-                    fontSize: 26,
+                    fontSize: 20,
                   ),
                 ),
             ],
@@ -478,38 +478,38 @@ class _ExchangePageState extends State<ExchangePage>
   Widget _buildRateBadge() {
     return Center(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A3E),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 6,
-              height: 6,
+              width: 5,
+              height: 5,
               decoration: const BoxDecoration(
                 color: Color(0xFF22C55E),
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               '1 $_fromCurrency = 0.92 $_toCurrency',
               style: TextStyles.bodySmall.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
-                fontSize: 12,
+                fontSize: 11,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               'Live',
               style: TextStyles.bodySmall.copyWith(
                 color: const Color(0xFF22C55E),
                 fontWeight: FontWeight.w600,
-                fontSize: 11,
+                fontSize: 10,
               ),
             ),
           ],
@@ -540,11 +540,11 @@ class _ExchangePageState extends State<ExchangePage>
                 },
                 child: Container(
                   margin: EdgeInsets.only(
-                      right: amt == _quickAmounts.last ? 0 : 8),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                      right: amt == _quickAmounts.last ? 0 : 6),
+                  padding: const EdgeInsets.symmetric(vertical: 7),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0xFFE5E5F0)),
                   ),
                   child: Text(
@@ -553,7 +553,7 @@ class _ExchangePageState extends State<ExchangePage>
                     style: TextStyles.bodySmall.copyWith(
                       color: const Color(0xFF3A3A5A),
                       fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                   ),
                 ),
@@ -567,17 +567,17 @@ class _ExchangePageState extends State<ExchangePage>
 
   Widget _buildFeeRow() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
           _feeItem('Exchange rate', '1 $_fromCurrency = 0.92 $_toCurrency'),
-          const Divider(height: 16, color: Color(0xFFF0F0F8)),
+          const Divider(height: 12, color: Color(0xFFF0F0F8)),
           _feeItem('Our fee', '0.15% spread'),
-          const Divider(height: 16, color: Color(0xFFF0F0F8)),
+          const Divider(height: 12, color: Color(0xFFF0F0F8)),
           _feeItem('Estimated arrival', 'Instant'),
         ],
       ),
@@ -611,7 +611,7 @@ class _ExchangePageState extends State<ExchangePage>
     final enabled = _typedAmount > 0 && !isProcessing;
     return SizedBox(
       width: double.infinity,
-      height: 54,
+      height: 46,
       child: GestureDetector(
         onTap: enabled ? _onExchangePressed : null,
         child: AnimatedContainer(
@@ -625,13 +625,13 @@ class _ExchangePageState extends State<ExchangePage>
                   )
                 : null,
             color: enabled ? null : const Color(0xFFDDDDEE),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             boxShadow: enabled
                 ? [
                     BoxShadow(
                       color: const Color(0xFF6C5CE7).withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+                      blurRadius: 12,
+                      offset: const Offset(0, 5),
                     ),
                   ]
                 : null,
@@ -639,8 +639,8 @@ class _ExchangePageState extends State<ExchangePage>
           child: Center(
             child: isProcessing
                 ? const SizedBox(
-                    width: 22,
-                    height: 22,
+                    width: 18,
+                    height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
                       valueColor:
@@ -655,13 +655,13 @@ class _ExchangePageState extends State<ExchangePage>
                         style: TextStyles.bodyLarge.copyWith(
                           color: enabled ? Colors.white : const Color(0xFFAAAABB),
                           fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                       if (enabled) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         const Icon(Icons.arrow_forward_rounded,
-                            color: Colors.white, size: 18),
+                            color: Colors.white, size: 15),
                       ],
                     ],
                   ),
