@@ -5,7 +5,7 @@ import '../../features/auth/data/services/token_storage_service.dart';
 
 const _kBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://chronos-production-10c3.up.railway.app',
+  defaultValue: 'https://chronos-main-api-production.up.railway.app',
 );
 
 class ApiClient {
