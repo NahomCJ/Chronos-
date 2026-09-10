@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 import '../network/api_client.dart';
 
 // Chris's voice is synthesized by Chronos-Backend-'s own ElevenLabs-backed
@@ -140,11 +142,21 @@ class TtsService {
       if (!completer.isCompleted) completer.complete();
     });
     try {
-      await _player.play(BytesSource(bytes));
+      // iOS AVPlayer fails on BytesSource for MP3; write to a temp file and
+      // play the file URL instead. Android tolerates BytesSource, but going
+      // through DeviceFileSource on both keeps behavior consistent.
+      final tmp = await getTemporaryDirectory();
+      final file = File('${tmp.path}/chris_${DateTime.now().microsecondsSinceEpoch}.mp3');
+      await file.writeAsBytes(bytes, flush: true);
+      if (myGen != _generation) return;
+      await _player.play(DeviceFileSource(file.path));
       await completer.future.timeout(
         const Duration(seconds: 20),
         onTimeout: () {},
       );
+      // Best-effort cleanup — a missed delete just leaves a small mp3 in
+      // the sandboxed tmp dir that iOS/Android will purge on its own.
+      try { await file.delete(); } catch (_) {}
     } finally {
       await sub.cancel();
       if (identical(_activeCompleter, completer)) _activeCompleter = null;
