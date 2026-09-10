@@ -21,12 +21,7 @@ function sanitizeHistory(raw: unknown): LLMMessage[] {
 }
 
 export async function chrisChat(req: Request, res: Response): Promise<void> {
-  const userId = (req as any).user?.id as string;
-
-  if (!userId) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
+  const userId = (req as any).user?.id as string | undefined;
 
   const { message, responseMode, history } = req.body as {
     message?: string;
@@ -36,6 +31,19 @@ export async function chrisChat(req: Request, res: Response): Promise<void> {
 
   if (!message || typeof message !== "string") {
     res.status(400).json({ error: "message is required" });
+    return;
+  }
+
+  // Anonymous MVP-testing path: no user, no financial context — just a
+  // canned friendly reply so voice/chat can be exercised before sign-up.
+  // Personalised replies still require auth via processChrisChat below.
+  if (!userId) {
+    res.status(200).json({
+      reply: `Hi, I'm Chris. You said: "${message}". Sign in to unlock personalised financial insights, but I'm happy to chat with you meanwhile.`,
+      domain: "GENERAL",
+      userLevel: "BEGINNER",
+      timestamp: new Date().toISOString(),
+    });
     return;
   }
 
