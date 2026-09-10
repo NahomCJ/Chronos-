@@ -5,7 +5,7 @@ TTS layer for Chris voice responses.
 
 Priority:
   1. VibeVoice-Realtime-0.5B (local, free) — VIBEVOICE_TTS_ENABLED=true + vibevoice installed
-  2. ElevenLabs API                         — ELEVEN_API_KEY set
+  2. ElevenLabs API                         — ELEVENLABS_API_KEY (or ELEVEN_API_KEY) set
   3. OpenAI TTS                             — OPENAI_API_KEY set
 
 Setup for VibeVoice TTS:
@@ -18,8 +18,10 @@ Environment:
     VIBEVOICE_TTS_MODEL    — HF model ID (default: microsoft/VibeVoice-Realtime-0.5B)
     VIBEVOICE_SPEAKER      — voice preset name (default: carter)
     VIBEVOICE_VOICE_DIR    — path to directory containing <speaker>.pt voice files
-    ELEVEN_API_KEY         — ElevenLabs API key (primary cloud fallback)
-    ELEVEN_VOICE_ID        — ElevenLabs voice ID (default: JBFqnCBsd6RMkjVDRZzb)
+    ELEVENLABS_API_KEY     — ElevenLabs API key (canonical name, shared with Express backend)
+    ELEVEN_API_KEY         — legacy alias for ELEVENLABS_API_KEY (either works)
+    ELEVENLABS_VOICE_ID    — ElevenLabs voice ID (canonical name, shared with Express backend)
+    ELEVEN_VOICE_ID        — legacy alias for ELEVENLABS_VOICE_ID (either works)
     OPENAI_API_KEY         — OpenAI API key (secondary cloud fallback)
 """
 
@@ -34,8 +36,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
-ELEVEN_VOICE_ID = os.getenv("ELEVEN_VOICE_ID", "JBFqnCBsd6RMkjVDRZzb")
+# Accept both the canonical name (shared with Express backend) and the legacy alias
+ELEVEN_API_KEY = os.getenv("ELEVENLABS_API_KEY") or os.getenv("ELEVEN_API_KEY")
+# Default voice matches Express backend's Chris voice (Rachel) for a consistent sound
+ELEVEN_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID") or os.getenv("ELEVEN_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 VIBEVOICE_TTS_ENABLED = os.getenv("VIBEVOICE_TTS_ENABLED", "false").lower() == "true"
@@ -195,10 +199,12 @@ def _elevenlabs(text: str) -> Tuple[bytes, str]:
     }
     payload = {
         "text": text,
-        "model_id": "eleven_monolingual_v1",
+        "model_id": "eleven_multilingual_v2",
         "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.75,
+            "stability": 0.45,
+            "similarity_boost": 0.8,
+            "style": 0.25,
+            "use_speaker_boost": True,
         },
     }
     response = httpx.post(url, json=payload, headers=headers, timeout=30.0)
